@@ -1,0 +1,1 @@
+{"example_only":false,"inventory_sha256":"f56e9d6250e2d108f8307322f033e53c0ff26d5b2688ebf12b891c26439fea44","model_id":"zai-org/GLM-5.3-Flash-BF16","receipt_sha256":"bba6e387dd056f69c144dd0fc6c61ff44cf0d447bed3ffe88091e11390a626dd","revision":"a6c167b62691b2bac901344b65cb651a70f53e43","schema":"quant-pipeline.glm53-source-model.v1","weight_dtype":"bfloat16"}

@@ -1,0 +1,130 @@
+{
+  "arm": "jspark3",
+  "automatic_retries": 0,
+  "captured_utc": {
+    "first_counter": "2026-09-02T14:44:25.016626+00:00",
+    "last_counter": "2026-09-02T14:52:36.430351+00:00",
+    "postflight": "2026-09-02T14:52:54+00:00",
+    "preflight": "2026-09-02T14:43:08+00:00"
+  },
+  "comparability": {
+    "accounting": "server completion_tokens-1; scheduler service window is latest request end minus earliest request start; prefill proxy is server prompt_tokens divided by request-start to first-visible TTFT",
+    "counter_hook_sha256": "728273b28ec944ce7c1c63eea5eef62d48a68cbe7dace36837b38b08ebabb934",
+    "harness_sha256": "801b9ebcd607dbec4870adbf73971a15ccc63d924df3a17a6a45ee0d6f2c1e43",
+    "prefill_request_hash_sequence_equal_to_internal_ablation_control": true,
+    "prefill_windows_byte_equal_to_internal_ablation_control": true,
+    "scheduler_request_hash_sequence_equal_to_internal_ablation_control": true,
+    "scheduler_windows_byte_equal_to_internal_ablation_control": true,
+    "subset_runner_sha256": "fa8003d2f02a9ca493b0264466049ac99de9bf464257cc1c21007a1f47d7c6e4"
+  },
+  "correctness": {
+    "prefill_exact_done_responses": 2,
+    "scheduler_all_http_200": true,
+    "scheduler_all_nonempty_responses": true,
+    "scheduler_request_count": 84,
+    "semantic_code_correctness": "NOT_EVALUATED_BY_THE_SCHEDULER_HARNESS",
+    "transport_or_request_errors": 0
+  },
+  "grade": "ENGINEERING-EVIDENCE",
+  "interpretation": "JSpark3 v1 is slightly faster in aggregate at all three tested scheduler concurrencies in this single exact matched screen, with the largest difference at C48. Its DFlash2 acceptance is close to the internal ablation control. The slowest/fastest ratios are lower, driven in part by a faster outlying stream, so this is not a fairness win. the internal ablation control remains faster on the one matched scored long-prefill witness. These are one-wave measurements, not replicated universal claims.",
+  "prefill": {
+    "candidate_plan_sha256": "f38c8525a5c6984741d222fce10a3aa4ff3f7d90675a4a0f54ed393e25df0b1a",
+    "candidate_result_sha256": "9e1ed6678234068f51730c7eb383f943989ea49ce55e20da592c461794188ec4",
+    "internal_ablation_control_result_sha256": "93ad9a59c5f56c420c918c0f23dc09ed3d10756367521c0c14165c2e2967034c",
+    "request_set_sha256": "705f598d67329e400040c03169d0f2f44c34379ad954270306635c8a10d6cc03",
+    "scored": {
+      "candidate_prefill_proxy_tok_s": 1234.2463431619256,
+      "candidate_ttft_seconds": 92.289517916,
+      "dflash2_acceptance": 0.14285714285714285,
+      "internal_ablation_control_prefill_proxy_tok_s": 1277.4433682069523,
+      "internal_ablation_control_ttft_seconds": 89.168727816,
+      "prefill_proxy_delta_percent": -3.381521727,
+      "prompt_tokens": 113908,
+      "response": "DONE",
+      "ttft_delta_percent": 3.499870612
+    },
+    "warm": {
+      "candidate_prefill_proxy_tok_s": 1180.394493377258,
+      "candidate_ttft_seconds": 96.500789049,
+      "internal_ablation_control_prefill_proxy_tok_s": 1262.3245291698463,
+      "internal_ablation_control_ttft_seconds": 90.237492315,
+      "prompt_tokens": 113909,
+      "response": "DONE"
+    }
+  },
+  "safety": {
+    "active_gpu_throttle_bits": 0,
+    "all_counter_brackets": "PASS",
+    "all_exact_peer_hca_reconciliation": true,
+    "all_primary_hca_deltas_positive": true,
+    "all_three_running_through_counter_snapshots": true,
+    "container_ids_unchanged": true,
+    "max_memory_current_bytes": 17474691072,
+    "max_memory_peak_bytes": 33974652928,
+    "oom_events": 0,
+    "oom_killed": false,
+    "postflight_status": "PASS_READY_IDLE",
+    "restart_count": 0,
+    "swap_current_bytes": 0,
+    "twin_hca_deltas": 0
+  },
+  "scheduler": {
+    "candidate_plan_sha256": "0b61f04fcec3f681c120152b498df7ddda8ebbfd491165e619c57dc264fe7e14",
+    "candidate_result_sha256": "b52ef65d34400496d608567609e87d5df25891bcc36a7c6c0daac82566bd5d61",
+    "dflash2_acceptance_provenance": "quiet global request-window counter delta; not server-minted per-request attribution",
+    "internal_ablation_control_result_sha256": "d00a98b775bdc15698434b47a053548c0e1d61a4975bc0ec91861dab359bd7d1",
+    "request_set_sha256": "952073c061b14e04eb584410199270bb00bc15214cca20ac5692e4354d07f2bc",
+    "windows": {
+      "c12": {
+        "aggregate_delta_percent_vs_internal_ablation_control": 0.16277695627855415,
+        "candidate_aggregate_tok_s": 155.98619010230303,
+        "candidate_dflash2_acceptance": 0.6432306255835668,
+        "candidate_fairness_slowest_over_fastest": 0.30344689144240666,
+        "candidate_per_stream_max_tok_s": 58.85817917677249,
+        "candidate_per_stream_median_tok_s": 18.595489389418127,
+        "candidate_per_stream_min_tok_s": 17.860331507151802,
+        "candidate_per_stream_p90_tok_s": 19.501185668047576,
+        "candidate_ttft_p50_seconds": 14.634906153,
+        "candidate_ttft_p90_seconds": 14.635634814100001,
+        "internal_ablation_control_aggregate_tok_s": 155.73269316443933,
+        "internal_ablation_control_fairness_slowest_over_fastest": 0.3358631787055078,
+        "internal_ablation_control_per_stream_median_tok_s": 18.897348905480136,
+        "request_count": 12
+      },
+      "c24": {
+        "aggregate_delta_percent_vs_internal_ablation_control": 1.2065089265294038,
+        "candidate_aggregate_tok_s": 208.72319311161075,
+        "candidate_dflash2_acceptance": 0.6593516446898653,
+        "candidate_fairness_slowest_over_fastest": 0.1878409010455263,
+        "candidate_per_stream_max_tok_s": 60.569626448841426,
+        "candidate_per_stream_median_tok_s": 11.905923014282298,
+        "candidate_per_stream_min_tok_s": 11.377453208141315,
+        "candidate_per_stream_p90_tok_s": 12.4176387805989,
+        "candidate_ttft_p50_seconds": 18.935695271500002,
+        "candidate_ttft_p90_seconds": 18.9370000614,
+        "internal_ablation_control_aggregate_tok_s": 206.2349500298768,
+        "internal_ablation_control_fairness_slowest_over_fastest": 0.19131782932048613,
+        "internal_ablation_control_per_stream_median_tok_s": 11.555106030049629,
+        "request_count": 24
+      },
+      "c48": {
+        "aggregate_delta_percent_vs_internal_ablation_control": 3.4698808551198113,
+        "candidate_aggregate_tok_s": 237.94605755759198,
+        "candidate_dflash2_acceptance": 0.6456187979779068,
+        "candidate_fairness_slowest_over_fastest": 0.14823472331308088,
+        "candidate_per_stream_max_tok_s": 61.41886872874594,
+        "candidate_per_stream_median_tok_s": 9.61213545952118,
+        "candidate_per_stream_min_tok_s": 9.104409012208091,
+        "candidate_per_stream_p90_tok_s": 16.424866788973695,
+        "candidate_ttft_p50_seconds": 13.451236968,
+        "candidate_ttft_p90_seconds": 96.721589423,
+        "internal_ablation_control_aggregate_tok_s": 229.96649420208368,
+        "internal_ablation_control_fairness_slowest_over_fastest": 0.16390651529918457,
+        "internal_ablation_control_per_stream_median_tok_s": 9.605263912429734,
+        "request_count": 48
+      }
+    }
+  },
+  "schema_version": 1,
+  "status": "PASS_EXACT_MATCHED_EVIDENCE"
+}

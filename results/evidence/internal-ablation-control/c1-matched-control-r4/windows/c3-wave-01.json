@@ -1,0 +1,47 @@
+{
+  "acceptance_receipts": [
+    {
+      "accepted_divided_by_drafted": 0.42974527526705014,
+      "accepted_tokens_delta": 523.0,
+      "draft_tokens_delta": 1217.0,
+      "provenance": "counter_hook_window_delta",
+      "scope": "metrics.engine"
+    }
+  ],
+  "aggregate_decode_tokens_n_minus_1": 691,
+  "completion_wall_p50_seconds": 13.389389674,
+  "completion_wall_p90_seconds": 17.1905492876,
+  "counter_after_path": "counters/c3-wave-01.after.json",
+  "counter_before_path": "counters/c3-wave-01.before.json",
+  "counter_delta_path": "counters/c3-wave-01.delta.json",
+  "counter_required": true,
+  "counter_verdict": "PASS",
+  "dp_rank_assignment": null,
+  "dp_rank_provenance": "NOT_AVAILABLE_FROM_OPENAI_API; counter hook may supply it",
+  "error_count": 0,
+  "fairness_slowest_divided_by_fastest": 0.36206653833674174,
+  "legacy_visible_aggregate_decode_tokens_per_second": 39.85354822499112,
+  "legacy_visible_aggregate_interval_seconds": 17.338481284,
+  "per_stream_rate_max": 86.99589821457765,
+  "per_stream_rate_min": 31.498303716047662,
+  "per_stream_rates": {
+    "c3-wave-01-code": 60.83686806352226,
+    "c3-wave-01-prose": 31.498303716047662,
+    "c3-wave-01-tool": 86.99589821457765
+  },
+  "phase": "c3",
+  "primary_estimator": "sum(completion_tokens-1)/(latest_request_end-earliest_request_start)",
+  "queue_time_provenance": "NOT_AVAILABLE_FROM_OPENAI_API; counter hook may supply it",
+  "queue_time_seconds": null,
+  "request_ids": [
+    "c3-wave-01-prose",
+    "c3-wave-01-code",
+    "c3-wave-01-tool"
+  ],
+  "result_count": 3,
+  "service_decode_tokens_per_second": 38.0908508545083,
+  "service_request_window_seconds": 18.140839191,
+  "ttft_p50_seconds": 0.854112208,
+  "ttft_p90_seconds": 11.068525432000001,
+  "window_id": "c3-wave-01"
+}

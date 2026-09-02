@@ -1,0 +1,16 @@
+{
+  "adaptation_boundary": "the six runtime patches are bytes from the pinned source commit, not new model or runtime repairs by this project",
+  "adaptations": [
+    "local interface and GID mapping",
+    "existing read-only checkpoint mounts",
+    "API alias and port",
+    "isolated caches and evidence directories",
+    "hard no-swap containment"
+  ],
+  "arm": "mia-tp2-historical-0e2e78f",
+  "nodes": 2,
+  "pinned_files": 7,
+  "source_commit": "0e2e78f3de83624e6733b918724da27fc9040156",
+  "source_repository": "https://github.com/MiaAI-Lab/GLM-5.3-Flash-EXL3-2x-DGX-Sparks",
+  "tensor_parallel": 2
+}

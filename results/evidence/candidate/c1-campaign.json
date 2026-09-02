@@ -1,0 +1,50 @@
+{
+  "arm": "jspark3",
+  "batteries": [
+    {
+      "analyzer_sha256": "3733dfb75b740c1579af12a25064d9323c3d36f15387e8fbe622e95cf6954411",
+      "code_tok_s": 65.79286187288469,
+      "count_tok_s": 82.07547204126315,
+      "matrix_sha256": "35399d0bc6221e1f448cc7e7c309506e1014c872dd799a653a57302845791354",
+      "prose_tok_s": 27.76934161354545,
+      "run": "r1",
+      "tail_verdict": "PASS"
+    },
+    {
+      "analyzer_sha256": "a02c388ee707fb918607afa66587f518f08a2f400fae47b6690208d2e49932a7",
+      "code_tok_s": 68.67756250890517,
+      "count_tok_s": 81.38071666043244,
+      "matrix_sha256": "40af8d43b48ca82fa4dacec4cf2eadf9281c75f0e620199a9d70f8b28ec14401",
+      "prose_tok_s": 30.193501399118496,
+      "run": "r2",
+      "tail_verdict": "PASS"
+    },
+    {
+      "analyzer_sha256": "c9847db3dea5dc6e9b818d6eaedff045ef9a5cd414f0c418af64aec1a1580c88",
+      "code_tok_s": 66.25737445669152,
+      "count_tok_s": 81.96165910626901,
+      "matrix_sha256": "c920d632b5b96af6bb69b54824b5356350346151796eda1a5726ebe55011f49d",
+      "prose_tok_s": 29.04906880639416,
+      "run": "r3",
+      "tail_verdict": "PASS"
+    }
+  ],
+  "campaign_medians_tok_s": {
+    "c1_code": 66.25737445669152,
+    "c1_count": 81.96165910626901,
+    "c1_prose": 29.04906880639416,
+    "c3": 69.63361900622779,
+    "c6": 54.694347623297546
+  },
+  "failing_gate": "campaign median C1 code 66.25737445669152 < 67.0 tok/s",
+  "grade": "ENGINEERING-EVIDENCE",
+  "pi_voxel_admitted": false,
+  "promotion_verdict": "REJECT",
+  "safety": {
+    "active_gpu_throttle_bits": 0,
+    "cgroup_cpu_throttle_events": 0,
+    "max_gpu_temperature_c": 72,
+    "max_swap_current_bytes": 0
+  },
+  "schema_version": 1
+}

@@ -1,0 +1,153 @@
+{
+  "arm": "jspark3",
+  "automatic_retries": 0,
+  "grade": "ENGINEERING-EVIDENCE",
+  "kind": "prefill",
+  "request_set_sha256": "705f598d67329e400040c03169d0f2f44c34379ad954270306635c8a10d6cc03",
+  "run_id": "jspark3-prefill-evidence-r1",
+  "schema_version": 1,
+  "status": "RUN_PASS_EXACT_SUBSET",
+  "summary": {
+    "prefill-32768-score": {
+      "prefill_proxy_tok_s": 1234.2463431619256,
+      "prompt_tokens": 113908,
+      "ttft_seconds": 92.289517916
+    },
+    "prefill-32768-warm": {
+      "prefill_proxy_tok_s": 1180.394493377258,
+      "prompt_tokens": 113909,
+      "ttft_seconds": 96.500789049
+    }
+  },
+  "summary_exit_recovered": "expected absent full-plan families",
+  "windows": [
+    {
+      "counter_verdict": "PASS",
+      "family": "prefill-32768",
+      "per_position_acceptance": {
+        "accepted_divided_by_draft_tokens": 0.14285714285714285,
+        "accepted_tokens": 1.0,
+        "draft_iterations": 1.0,
+        "draft_tokens": 7.0,
+        "mean_accepted_length_including_bonus": 2.0,
+        "positions": {
+          "0": {
+            "accepted": 1.0,
+            "accepted_per_draft": 1.0
+          },
+          "1": {
+            "accepted": 0.0,
+            "accepted_per_draft": 0.0
+          },
+          "2": {
+            "accepted": 0.0,
+            "accepted_per_draft": 0.0
+          },
+          "3": {
+            "accepted": 0.0,
+            "accepted_per_draft": 0.0
+          },
+          "4": {
+            "accepted": 0.0,
+            "accepted_per_draft": 0.0
+          },
+          "5": {
+            "accepted": 0.0,
+            "accepted_per_draft": 0.0
+          },
+          "6": {
+            "accepted": 0.0,
+            "accepted_per_draft": 0.0
+          }
+        }
+      },
+      "request_count": 1,
+      "requests": [
+        {
+          "completion_tokens": 2,
+          "content": "DONE",
+          "decode_seconds": 0.0,
+          "decode_tok_s": null,
+          "decode_tokens": 1,
+          "end_ns": 418897402128675,
+          "http_status": 200,
+          "prompt_tokens": 113909,
+          "raw_sha256": "b2f6a3c6671b936b25e422854781a03007a75438e6388430dd9d2621f83d98a1",
+          "reasoning": "",
+          "request_sha256": "ccc10b1303781f7b27e13898be565b232ae012793b4fb0f0c6d038f36940c715",
+          "start_ns": 418800828237071,
+          "ttft_seconds": 96.500789049,
+          "wall_seconds": 96.573891604
+        }
+      ],
+      "scored": false,
+      "service_decode_tok_s": 0.010354765489833289,
+      "service_window_seconds": 96.573891604,
+      "window_id": "prefill-32768-warm"
+    },
+    {
+      "counter_verdict": "PASS",
+      "family": "prefill-32768",
+      "per_position_acceptance": {
+        "accepted_divided_by_draft_tokens": 0.14285714285714285,
+        "accepted_tokens": 1.0,
+        "draft_iterations": 1.0,
+        "draft_tokens": 7.0,
+        "mean_accepted_length_including_bonus": 2.0,
+        "positions": {
+          "0": {
+            "accepted": 1.0,
+            "accepted_per_draft": 1.0
+          },
+          "1": {
+            "accepted": 0.0,
+            "accepted_per_draft": 0.0
+          },
+          "2": {
+            "accepted": 0.0,
+            "accepted_per_draft": 0.0
+          },
+          "3": {
+            "accepted": 0.0,
+            "accepted_per_draft": 0.0
+          },
+          "4": {
+            "accepted": 0.0,
+            "accepted_per_draft": 0.0
+          },
+          "5": {
+            "accepted": 0.0,
+            "accepted_per_draft": 0.0
+          },
+          "6": {
+            "accepted": 0.0,
+            "accepted_per_draft": 0.0
+          }
+        }
+      },
+      "request_count": 1,
+      "requests": [
+        {
+          "completion_tokens": 2,
+          "content": "DONE",
+          "decode_seconds": 0.0,
+          "decode_tok_s": null,
+          "decode_tokens": 1,
+          "end_ns": 418994196513102,
+          "http_status": 200,
+          "prompt_tokens": 113908,
+          "raw_sha256": "e86e971cb6dcf3d59fb6fad351077bf560f7091f28c05d33a89531591d00096e",
+          "reasoning": "",
+          "request_sha256": "52a66b537d4ed7cda3a0dcc0ab54024e982c0e120d81e5cc9e45f94df4f3de93",
+          "start_ns": 418901868659128,
+          "ttft_seconds": 92.289517916,
+          "wall_seconds": 92.327853974
+        }
+      ],
+      "scored": true,
+      "service_decode_tok_s": 0.010830967654480576,
+      "service_window_seconds": 92.327853974,
+      "window_id": "prefill-32768-score"
+    }
+  ]
+}

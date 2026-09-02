@@ -1,0 +1,224 @@
+{
+  "files": [
+    {
+      "changed_lines": 4,
+      "measured_sha256": "43968dc183d6227ace86a89c300180df0f56e64ea18c16a22fd758b22e51d13d",
+      "public": ".env.example",
+      "public_sha256": "9be9c475f380a198b204c58e61f6d8b1b8fa15bb0ea58762bbd0e08745718b68"
+    },
+    {
+      "changed_lines": 2,
+      "measured_sha256": "84dec1e2c64ca8183236303b7330c4de5c1fc795ecae80fcba255c2ed23ea579",
+      "public": ".gitignore",
+      "public_sha256": "7751781d164e00bc55f0f7973b44f0c6d402ce3e3c23abb15bc93e4a5b79d475"
+    },
+    {
+      "changed_lines": 2,
+      "measured_sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "public": "LICENSE",
+      "public_sha256": "2943c466850c35ce34561ad3ef9135687e09965a97df9adf673769624e1d17e2"
+    },
+    {
+      "changed_lines": 0,
+      "measured_sha256": "61cac2a6a6c47b4c1880af6c69845a9c41e54e3b091745616f0bfeddbf8f8d62",
+      "public": "REQUIRED_ATTRIBUTION.md",
+      "public_sha256": "61cac2a6a6c47b4c1880af6c69845a9c41e54e3b091745616f0bfeddbf8f8d62"
+    },
+    {
+      "changed_lines": 0,
+      "measured_sha256": "3a72a3716e923fb993aa567eb7c24cec86a0635e969768b45271a5c85933a414",
+      "public": "THIRD_PARTY_NOTICES.md",
+      "public_sha256": "3a72a3716e923fb993aa567eb7c24cec86a0635e969768b45271a5c85933a414"
+    },
+    {
+      "changed_lines": 15,
+      "measured_sha256": "f4f287f93c2ac367abfeebec2bc6722cade1631f34dc896a196c839e39c40096",
+      "public": "config/profile.json",
+      "public_sha256": "79e757e8da22050eadf50584501bf25e2bd09a34abf15a6942dfda0d1408bb05"
+    },
+    {
+      "changed_lines": 2,
+      "measured_sha256": "9cb5ab184967a18cdab5bd21340ebd4ca0bf9688cd085491c09fccd3c066b94f",
+      "public": "config/checkpoint-contract.json",
+      "public_sha256": "5f39ea600fa38f2baf8a67caaf4f1a71845637d79a8eeed4afaadc1857c55210"
+    },
+    {
+      "changed_lines": 2,
+      "measured_sha256": "48d433151f6b98d43a46391347d7c1043749dd3472fb03a4e4c1e8699f204510",
+      "public": "config/patch-contract.json",
+      "public_sha256": "b3430f6daede8f1d867621517ebd1e6b343892c1286b8c5d2baa83b0cb9f61c5"
+    },
+    {
+      "changed_lines": 18,
+      "measured_sha256": "e949d6e73d4604ba5dbd567331e173c346375f89670f386593882f74dc40e65a",
+      "public": "overlays/patch_base_loader_hook.py",
+      "public_sha256": "c84bdfbf69f7b1d3841155d35f73a06a601f2bcb33ae9e1d8423178dc31139b4"
+    },
+    {
+      "changed_lines": 30,
+      "measured_sha256": "737e80417d925da6759e48fef471e35309122acf0b6c289cba11956b874e4437",
+      "public": "overlays/trunk_w8a16.py",
+      "public_sha256": "5aeff0cf92e715094d737faded2bf35000f7ce586213c495431b5a4805f7307d"
+    },
+    {
+      "changed_lines": 12,
+      "measured_sha256": "86ba907c270fc2ecfbc39e45853c81c0337bf5c3fac74358120fcc8aee056ee5",
+      "public": "scripts/_atomic.py",
+      "public_sha256": "91369e86b02e3dd8f0b02c47fd3cce1377c98ec16ed7c301493ca9bad744fc99"
+    },
+    {
+      "changed_lines": 0,
+      "measured_sha256": "5fa3cf9fdb19dabef3b3d1df28f2caa2a755097c2443143b6767b182b99bd5dd",
+      "public": "scripts/_contracts.py",
+      "public_sha256": "5fa3cf9fdb19dabef3b3d1df28f2caa2a755097c2443143b6767b182b99bd5dd"
+    },
+    {
+      "changed_lines": 0,
+      "measured_sha256": "2e823762ea37c0fbb7c3b94c1771820feb56847026741828f767b43b5114e4d7",
+      "public": "scripts/api_smoke.py",
+      "public_sha256": "2e823762ea37c0fbb7c3b94c1771820feb56847026741828f767b43b5114e4d7"
+    },
+    {
+      "changed_lines": 2,
+      "measured_sha256": "558a69307552897f21f721ba0038179eeb5fc52259267e19ece42d29c722fceb",
+      "public": "scripts/apply_base_pipeline.py",
+      "public_sha256": "95d37061b18eac0f5390852c0b3ff676d82c35f160cc3ad14e31c90113103c11"
+    },
+    {
+      "changed_lines": 4,
+      "measured_sha256": "c504490b177af499d981888d24678286d0abc8f9b85a19909bd2947da4ca2d09",
+      "public": "scripts/apply_image_glm_dflash.py",
+      "public_sha256": "44abb6a67bf41cf094b69531389b57b1e821f8918fb947a859109068dd9b1fda"
+    },
+    {
+      "changed_lines": 2,
+      "measured_sha256": "607e5e8fe499acde872ae079978b181c157a5a36f4024253d8c161e0e835118e",
+      "public": "scripts/apply_kda_fg.py",
+      "public_sha256": "977630b2b9e134ac9815a701a7ed01213065d178a0846c5504335185f2657cda"
+    },
+    {
+      "changed_lines": 0,
+      "measured_sha256": "838801654ebfa9b3f950ef30cb163fca56b62d3db8052587bee85892c1110f73",
+      "public": "scripts/apply_kda_mixed.py",
+      "public_sha256": "838801654ebfa9b3f950ef30cb163fca56b62d3db8052587bee85892c1110f73"
+    },
+    {
+      "changed_lines": 0,
+      "measured_sha256": "0d588b7416dffc1e5464c11c66d9739aa6490363dde29d668c204189f101ad44",
+      "public": "scripts/apply_kpool_tail.py",
+      "public_sha256": "0d588b7416dffc1e5464c11c66d9739aa6490363dde29d668c204189f101ad44"
+    },
+    {
+      "changed_lines": 4,
+      "measured_sha256": "264e55bac7ec14dd4a62159adfc296b3a19d1dc80088586bfdf30cff439c690e",
+      "public": "scripts/apply_tp3_overlay.py",
+      "public_sha256": "5de3e265c8cacb19ed2bfb6f5f4ba0c4bc721783e921cf3d63588eb3bca2d03b"
+    },
+    {
+      "changed_lines": 0,
+      "measured_sha256": "7b49204aecd811125bbe50fdfd80ea28cbfd26da88c585588250607778f1b419",
+      "public": "scripts/clean-room-setup.sh",
+      "public_sha256": "7b49204aecd811125bbe50fdfd80ea28cbfd26da88c585588250607778f1b419"
+    },
+    {
+      "changed_lines": 20,
+      "measured_sha256": "e1e295dd9ebd874322fec528ee1e1852a66e85bc063397c76c902fd92ee1f59b",
+      "public": "scripts/container_entry.sh",
+      "public_sha256": "0902de96d7e06d5c5f31412bae5476fdcbd819288e89ae5d6b3c6c5ea5d62de7"
+    },
+    {
+      "changed_lines": 82,
+      "measured_sha256": "4b30987138b8382bb716091e8f9bf68e56a5f97ea6a8b382ec39734004f6a654",
+      "public": "scripts/fleetctl.py",
+      "public_sha256": "22690003d9bcb826b826c96005d1ef97b2fb94dcafd5abca87d6612d2d0b161c"
+    },
+    {
+      "changed_lines": 4,
+      "measured_sha256": "dd78941a4bbedeedf09e6dcaf854e4851eeee5908c0b20d6d2e9950756d56d82",
+      "public": "scripts/focused_witness.py",
+      "public_sha256": "506550dd63bd7c1ea90b0592c2c71c0f3b84577512d7ecc016f20c722ab72e1e"
+    },
+    {
+      "changed_lines": 0,
+      "measured_sha256": "7ba091d89c1a5c5ac31da0e0aefb1dec4f016cf767aef74e886c18f5f69d5a92",
+      "public": "scripts/health.sh",
+      "public_sha256": "7ba091d89c1a5c5ac31da0e0aefb1dec4f016cf767aef74e886c18f5f69d5a92"
+    },
+    {
+      "changed_lines": 0,
+      "measured_sha256": "949cb9b904135e6d1fbe9a6f3bffe63fedc4368faef27a2320650261d6d947db",
+      "public": "scripts/make_image_receipt.py",
+      "public_sha256": "949cb9b904135e6d1fbe9a6f3bffe63fedc4368faef27a2320650261d6d947db"
+    },
+    {
+      "changed_lines": 0,
+      "measured_sha256": "7acbe3a2c672f4389033e4ffa9c3bcc08ca025949226bd47e25fc03b0b1807be",
+      "public": "scripts/preflight.sh",
+      "public_sha256": "7acbe3a2c672f4389033e4ffa9c3bcc08ca025949226bd47e25fc03b0b1807be"
+    },
+    {
+      "changed_lines": 0,
+      "measured_sha256": "9c841dacaddf9049b89f7a698e19871f54be1e839e12b335789b6a5f75d68fb4",
+      "public": "scripts/prepare_runtime_views.py",
+      "public_sha256": "9c841dacaddf9049b89f7a698e19871f54be1e839e12b335789b6a5f75d68fb4"
+    },
+    {
+      "changed_lines": 6,
+      "measured_sha256": "94c1dc0b5f1c153f6132ac101d1fa9308ca3d3574f4eebb14f50d1ca906fb0ed",
+      "public": "scripts/remote_preflight.py",
+      "public_sha256": "b353d0f9719589bc267e357e42b975d4b20f95bd1e890010661d38ce3926d944"
+    },
+    {
+      "changed_lines": 2,
+      "measured_sha256": "b96373699b61930739ec238370b6b719832aaf8b3aa1bcb2d573ae531ef7f37c",
+      "public": "scripts/rollback.sh",
+      "public_sha256": "96e48080558bd37c8b4b7406f3fc49b27f7dc804f9bf566c1787170761943755"
+    },
+    {
+      "changed_lines": 0,
+      "measured_sha256": "fe64887388c384a6cdf68bdc056a7df3c13c9c57782458b9e497ed5fad1da01c",
+      "public": "scripts/start.sh",
+      "public_sha256": "fe64887388c384a6cdf68bdc056a7df3c13c9c57782458b9e497ed5fad1da01c"
+    },
+    {
+      "changed_lines": 0,
+      "measured_sha256": "7ba091d89c1a5c5ac31da0e0aefb1dec4f016cf767aef74e886c18f5f69d5a92",
+      "public": "scripts/status.sh",
+      "public_sha256": "7ba091d89c1a5c5ac31da0e0aefb1dec4f016cf767aef74e886c18f5f69d5a92"
+    },
+    {
+      "changed_lines": 0,
+      "measured_sha256": "bcbefa28de373d389c398d00eed0b11f40c9777cc313046ed6058976e99e105e",
+      "public": "scripts/stop.sh",
+      "public_sha256": "bcbefa28de373d389c398d00eed0b11f40c9777cc313046ed6058976e99e105e"
+    },
+    {
+      "changed_lines": 4,
+      "measured_sha256": "25cc9239df120be1bcdd2c315b970569abf19c9635783b80c51d129aa279d34b",
+      "public": "scripts/validate_checkpoint.py",
+      "public_sha256": "efac036e8261ff5aa5b17bf47efaede33ba0ca1a50142bd1de013bf594974f26"
+    },
+    {
+      "changed_lines": 0,
+      "measured_sha256": "b3a7ee6e34f0eaad89125b6f2a3fdabe984dd3ba9491fdfd8fb73a784bd213ed",
+      "public": "scripts/verify.sh",
+      "public_sha256": "b3a7ee6e34f0eaad89125b6f2a3fdabe984dd3ba9491fdfd8fb73a784bd213ed"
+    }
+  ],
+  "loader_patcher": {
+    "measured_sha256": "e949d6e73d4604ba5dbd567331e173c346375f89670f386593882f74dc40e65a",
+    "public_sha256": "c84bdfbf69f7b1d3841155d35f73a06a601f2bcb33ae9e1d8423178dc31139b4"
+  },
+  "overlay_module": {
+    "measured_sha256": "737e80417d925da6759e48fef471e35309122acf0b6c289cba11956b874e4437",
+    "public_sha256": "5aeff0cf92e715094d737faded2bf35000f7ce586213c495431b5a4805f7307d"
+  },
+  "patched_base_loader": {
+    "before_sha256": "a7e925f232ad3eebbee7ab37d3aba724c24465c3078da29489da0438664c6b08",
+    "measured_after_sha256": "34d6004771c27b202355f80a998a9aa7b6f2004859db19067ad6bc70719f35bf",
+    "public_after_sha256": "3205bff77aac34785167f5b21306048b9dc916b2c0691bf774bb3d9202bbd8da",
+    "recomputed_from_pristine": true
+  },
+  "schema_version": 1,
+  "statement": "The public recipe was derived from the measured engineering recipe by identifier renames only (file names and string literals) plus re-pinning the two overlay-file hashes and the loader hook's after-hash that those renames change. No control flow, contract hash, transform seam, serving argument, or environment value changed. Measured-file hashes are listed so a reviewer holding the private bundle can confirm the mapping."
+}

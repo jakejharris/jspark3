@@ -1,0 +1,19 @@
+{
+  "arm": "mia-tp2-current-c190db1a-adapted",
+  "automatic_retries": 0,
+  "corruption_battery_cleared": false,
+  "ended_utc": "2026-09-01T23:16:26.768215+00:00",
+  "fatal_error": null,
+  "first_rate_scope": false,
+  "grade": "ENGINEERING-EVIDENCE",
+  "matrix_path": "MATRIX.json",
+  "matrix_rate_receipt_eligible": false,
+  "publication_eligible": false,
+  "quality_cleared": false,
+  "rate_claim_eligible_engineering": false,
+  "requests_completed": 24,
+  "run_id": "fresh-r2",
+  "schema_version": 2,
+  "started_utc": "2026-09-01T23:11:15.413309+00:00",
+  "status": "COMPLETE"
+}

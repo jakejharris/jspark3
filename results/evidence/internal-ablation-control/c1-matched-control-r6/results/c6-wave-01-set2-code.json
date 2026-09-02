@@ -1,0 +1,277 @@
+{
+  "analysis": {
+    "cjk": {
+      "counts": {
+        "han": 0,
+        "hangul": 0,
+        "hiragana": 0,
+        "katakana": 0
+      },
+      "expected_scripts": [],
+      "pass": true,
+      "unexpected_counts": {}
+    },
+    "failures": [],
+    "finish_reason": "stop",
+    "holds": [],
+    "loops": {
+      "text_reasoning_content_32cp_x4": {
+        "fired": false,
+        "minimum_period_codepoints": 32,
+        "repetitions": 4
+      },
+      "text_tool_arguments_32cp_x4": {
+        "fired": false,
+        "minimum_period_codepoints": 32,
+        "repetitions": 4
+      },
+      "token_block_8x4": {
+        "block_size": 8,
+        "fired": false,
+        "repetitions": 4
+      }
+    },
+    "message": {
+      "content": "def is_prime(n):\n    if n < 2:\n        return False\n    if n < 4:\n        return True\n    if n % 2 == 0:\n        return False\n    i = 3\n    while i * i <= n:\n        if n % i == 0:\n            return False\n        i += 2\n    return True\n\n\ndef run_tests():\n    test_cases = [\n        (-5, False),\n        (0, False),\n        (1, False),\n        (2, True),\n        (3, True),\n        (4, False),\n        (5, True),\n        (9, False),\n        (11, True),\n        (13, True),\n        (25, False),\n        (29, True),\n        (97, True),\n        (100, False),\n        (7919, True),\n        (7920, False),\n        (2147483647, True),\n    ]\n    for value, expected in test_cases:\n        result = is_prime(value)\n        assert result == expected, f\"is_prime({value}) returned {result}, expected {expected}\"\n    print(f\"All {len(test_cases)} tests passed.\")\n\n\nif __name__ == \"__main__\":\n    run_tests()",
+      "reasoning": "",
+      "role": "assistant"
+    },
+    "offline_decode": {
+      "reason": "server returned no output token IDs",
+      "verdict": "HOLD"
+    },
+    "output_token_id_count": null,
+    "output_token_ids_present": false,
+    "rendered": {
+      "anomalous_controls": [],
+      "content_codepoints": 896,
+      "content_sha256": "1b47999cceebcd3025061670d0c43f365e9f788477881018098a5a8a71b863e5",
+      "reasoning_codepoints": 0,
+      "reasoning_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tool_argument_codepoints": 0,
+      "tool_arguments_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "u_fffd_count": 0,
+      "u_fffd_fields_anywhere_in_response": []
+    },
+    "semantic": {
+      "compiled": true,
+      "function_names": [
+        "is_prime",
+        "run_tests"
+      ],
+      "has_test_expression": true,
+      "verdict": "PASS"
+    },
+    "token_ids_match_completion_usage": false,
+    "usage": {
+      "completion_tokens": 262,
+      "prompt_tokens": 21,
+      "total_tokens": 283
+    },
+    "verdict": "PASS"
+  },
+  "decode_interval_seconds": 4.083188891,
+  "decode_tokens_n_minus_1": 261,
+  "decode_tokens_per_second_n_minus_1": 63.920628451768586,
+  "end_monotonic_ns": 382499118334618,
+  "ended_utc": "2026-09-02T04:44:21.310144+00:00",
+  "first_visible_monotonic_ns": 382495034784251,
+  "http_status": 200,
+  "last_visible_monotonic_ns": 382499117973142,
+  "phase": "c6",
+  "rate_valid": true,
+  "raw_bytes": 10581,
+  "raw_path": "raw/c6-wave-01-set2-code.sse",
+  "raw_sha256": "197a957e9c09dfd441ee90519bb13f274482253bf5c539540bb8f20734522a2c",
+  "request_id": "c6-wave-01-set2-code",
+  "request_sha256": "681a284f6d441734ccaade4d7b7c4731c736e7fb7ce87cabff1312326c5187a7",
+  "response_headers": {
+    "connection": "close",
+    "content-type": "text/event-stream; charset=utf-8",
+    "date": "Wed, 02 Sep 2026 04:44:16 GMT",
+    "server": "uvicorn",
+    "transfer-encoding": "chunked"
+  },
+  "scored": true,
+  "sent_utc": "2026-09-02T04:44:17.069305+00:00",
+  "sse_event_receipts": [
+    {
+      "data_sha256": "6c0c3c03a725bff418e102080937ccebc15bae40472a877caa00a85f326099b6",
+      "timestamp_ns": 382495034759121
+    },
+    {
+      "data_sha256": "8cc6cb93c5c733e398a1eb4e0805544eaf7fc9255d739f3ffeae741337df42f0",
+      "timestamp_ns": 382495034784251
+    },
+    {
+      "data_sha256": "f4c64a317653c40a2e686449d53b26fe11641b028f2efcc3c40e6b45c6dcfcee",
+      "timestamp_ns": 382495136238247
+    },
+    {
+      "data_sha256": "cee4919491255d684642630deef6c8a7fd40e15a253d6cd583d7f12164c8ba62",
+      "timestamp_ns": 382495241267164
+    },
+    {
+      "data_sha256": "c2348bda4c7c270f6a51230327ee36d796084d51ece338a554f04f785fed4983",
+      "timestamp_ns": 382495345314516
+    },
+    {
+      "data_sha256": "971a4c0dcab3406491f187c07bcfafb56484e0287f76bc53f8dbd70fa8df497b",
+      "timestamp_ns": 382495448621837
+    },
+    {
+      "data_sha256": "8c8b94ec2a2bd7040f8a0abb72be5a0ae7f2361d06df0f8d0155df51822b9520",
+      "timestamp_ns": 382495558896021
+    },
+    {
+      "data_sha256": "14c07ee20ef9d59dc0dbbc71ec866265aa23f062248a8167098f334a2b936266",
+      "timestamp_ns": 382495658115033
+    },
+    {
+      "data_sha256": "90b73abfe30fa9eedc7d2108eeb81e5ba57a4184d476d2bb436a640ec937a592",
+      "timestamp_ns": 382495760329708
+    },
+    {
+      "data_sha256": "9178200610f8fc4261527eb6ef76334787866acbc70f55ac20a4a69698afc7f0",
+      "timestamp_ns": 382495866590721
+    },
+    {
+      "data_sha256": "686b01134606261a48c377541eef59b76a4d465766fb28391d5a61ea61112ea0",
+      "timestamp_ns": 382495972880209
+    },
+    {
+      "data_sha256": "a597cc0b1583192dec5bfb614f7d63b9e2109981ae5e7998109c258e09cde630",
+      "timestamp_ns": 382496080548293
+    },
+    {
+      "data_sha256": "66fc8d738537659f92392538b8b85bfad7c9f70a9bef4e7f38e604c90d1f028f",
+      "timestamp_ns": 382496182861670
+    },
+    {
+      "data_sha256": "dc1cf7a0f9ddf3e845d52dffd9bec35b8b21e23312a52d83a08c095513b0d33a",
+      "timestamp_ns": 382496284157223
+    },
+    {
+      "data_sha256": "ca24436d3e0bb7e6f1c74b1897e7b4852132225aab031387583696b20dde402c",
+      "timestamp_ns": 382496388713024
+    },
+    {
+      "data_sha256": "078201d478ec9fce158ef564a34d10822e5590ce04071c73e985b63b84dfce77",
+      "timestamp_ns": 382496488137328
+    },
+    {
+      "data_sha256": "bac92741e362c3c2e09fd84520652e0881fc595a45622fc9b4072576db0d6291",
+      "timestamp_ns": 382496590897482
+    },
+    {
+      "data_sha256": "3517f01573293a1ab71d507b1fd27d67f94f519a392f904ff5555cb2dd962495",
+      "timestamp_ns": 382496697850727
+    },
+    {
+      "data_sha256": "279d493714cb9973fd07ed934a01c035c43c0327d41be55fb7efbec0912d1f12",
+      "timestamp_ns": 382496796178817
+    },
+    {
+      "data_sha256": "8cccb741c40cc9c33732e7865731f1c5621d935b823c0a8bce6057af7cec3405",
+      "timestamp_ns": 382496900030546
+    },
+    {
+      "data_sha256": "dafca56472128d7fe9c041fea6176326ea08f5a9f1776419bc7641fc00ef24fc",
+      "timestamp_ns": 382497001030774
+    },
+    {
+      "data_sha256": "32a824eb798e002ab201cfbda793d0e0817ac9efc6369cf23e8e765d5d57b59c",
+      "timestamp_ns": 382497099788390
+    },
+    {
+      "data_sha256": "255cf4963a852a527b8fd36ff3ebc0f42dee98b8053a6312171f229fbb57cfe6",
+      "timestamp_ns": 382497201490428
+    },
+    {
+      "data_sha256": "5d07ef035822b1395ea88bb6449acc1229912be89ce925d9b7adc29a73634500",
+      "timestamp_ns": 382497300771873
+    },
+    {
+      "data_sha256": "c4244566be9782aed76464a440997ca2b6e463dcc8934c3912a0884f41e4c97d",
+      "timestamp_ns": 382497400391062
+    },
+    {
+      "data_sha256": "0c40b21730772648781baf414f7db961aa0ef5768e4199a1b884cebf531e1be8",
+      "timestamp_ns": 382497501141300
+    },
+    {
+      "data_sha256": "532c4ca3d99576fa3f170d760a1211886c01f66750dc67093a0804f57f15dafb",
+      "timestamp_ns": 382497598191964
+    },
+    {
+      "data_sha256": "61f64c7d08c762086c7c195fec0f7ad0ed0977455e6c283ae8094253c136e725",
+      "timestamp_ns": 382497698461855
+    },
+    {
+      "data_sha256": "4f053672cd289e9ab887c27aef10b47c21a06c546fabd7a104cae393a29ee72b",
+      "timestamp_ns": 382497796641395
+    },
+    {
+      "data_sha256": "ff44456c22ccd36505c8df4f6f0a827b24428a3d6c53b0dd53a20cd3f9b541db",
+      "timestamp_ns": 382497897452054
+    },
+    {
+      "data_sha256": "1517273c5d4705c7493c1e11d393ca78fa0dccc2a047ab04cb02a73b6b42311d",
+      "timestamp_ns": 382497998506197
+    },
+    {
+      "data_sha256": "0346958145b1b2c60809b9543ba92230e22731f73754522fca216a001b4924bb",
+      "timestamp_ns": 382498104256106
+    },
+    {
+      "data_sha256": "a4387e559b11397cd1cd7217996dd525c3c1e66dcfd2ea4b589a100d33c0997f",
+      "timestamp_ns": 382498197798119
+    },
+    {
+      "data_sha256": "322558d57a0b3aab274354db89bc3dbcde3cb65c1deca53391548a692ca920fc",
+      "timestamp_ns": 382498302862659
+    },
+    {
+      "data_sha256": "6cc21d685c749274baf6b86c74833a9c6eff5c0900589d917edef139494282ce",
+      "timestamp_ns": 382498410237292
+    },
+    {
+      "data_sha256": "f801b6c67932049577e3b87e1501fcc1a52998c95540d23e9513f6f0ddcb70e5",
+      "timestamp_ns": 382498509221934
+    },
+    {
+      "data_sha256": "dd9179393a2af1d51ea88a8b7e00c3e9fe62d8d8bfa34f1fa7fbf9d3631404bf",
+      "timestamp_ns": 382498607390525
+    },
+    {
+      "data_sha256": "17b14b22761f9944ad44c4b74cea79ea5c83ddeb8c7ffc743798113903627c6a",
+      "timestamp_ns": 382498708793931
+    },
+    {
+      "data_sha256": "27549a562bf7b983f17af007cdaf7c915db023d6cd9a52c4b829906168df07b3",
+      "timestamp_ns": 382498812541972
+    },
+    {
+      "data_sha256": "77453faa5732704cd4cb091d2a7251206689852f5a643da3dc940acf15fafaed",
+      "timestamp_ns": 382498911977032
+    },
+    {
+      "data_sha256": "a56104b46ef893d2e1a87c345d5e3e038838f4dc9f87ea58d6cd23eef6d3b81b",
+      "timestamp_ns": 382499015982566
+    },
+    {
+      "data_sha256": "90d3cc3f5b38bee04d5e7353844562702b5463c108e37aefe6edadce508f19e7",
+      "timestamp_ns": 382499117973142
+    },
+    {
+      "data_sha256": "ac8a20cd9e03bfb5fa347f2571ebff5a2515a07e992e71a25e385d5c6794ad9b",
+      "timestamp_ns": 382499117998273
+    }
+  ],
+  "start_monotonic_ns": 382494877498662,
+  "ttft_seconds": 0.157285589,
+  "verdict": "PASS",
+  "visible_events": 41,
+  "wall_seconds": 4.240835956,
+  "workload": "code"
+}

@@ -1,0 +1,57 @@
+{
+  "chat_template_kwargs": {
+    "enable_thinking": false
+  },
+  "max_tokens": 400,
+  "messages": [
+    {
+      "content": "Call record_trip exactly once with city Austin, country USA, and note baseline. Do not output prose.",
+      "role": "user"
+    }
+  ],
+  "model": "glm-5.3-flash",
+  "parallel_tool_calls": false,
+  "seed": 20260830,
+  "stream": true,
+  "stream_options": {
+    "include_usage": true
+  },
+  "temperature": 0,
+  "tool_choice": {
+    "function": {
+      "name": "record_trip"
+    },
+    "type": "function"
+  },
+  "tools": [
+    {
+      "function": {
+        "description": "Record a trip entry.",
+        "name": "record_trip",
+        "parameters": {
+          "additionalProperties": false,
+          "properties": {
+            "city": {
+              "type": "string"
+            },
+            "country": {
+              "type": "string"
+            },
+            "note": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "city",
+            "country",
+            "note"
+          ],
+          "type": "object"
+        },
+        "strict": true
+      },
+      "type": "function"
+    }
+  ],
+  "top_p": 1
+}

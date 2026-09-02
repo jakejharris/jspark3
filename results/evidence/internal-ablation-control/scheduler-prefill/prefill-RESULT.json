@@ -1,0 +1,153 @@
+{
+  "arm": "internal-ablation-control",
+  "automatic_retries": 0,
+  "grade": "ENGINEERING-EVIDENCE",
+  "kind": "prefill",
+  "request_set_sha256": "705f598d67329e400040c03169d0f2f44c34379ad954270306635c8a10d6cc03",
+  "run_id": "internal-ablation-control-prefill-32k-r1",
+  "schema_version": 1,
+  "status": "RUN_PASS_EXACT_SUBSET",
+  "summary": {
+    "prefill-32768-score": {
+      "prefill_proxy_tok_s": 1277.4433682069523,
+      "prompt_tokens": 113908,
+      "ttft_seconds": 89.168727816
+    },
+    "prefill-32768-warm": {
+      "prefill_proxy_tok_s": 1262.3245291698463,
+      "prompt_tokens": 113909,
+      "ttft_seconds": 90.237492315
+    }
+  },
+  "summary_exit_recovered": "expected absent full-plan families",
+  "windows": [
+    {
+      "counter_verdict": "PASS",
+      "family": "prefill-32768",
+      "per_position_acceptance": {
+        "accepted_divided_by_draft_tokens": 0.14285714285714285,
+        "accepted_tokens": 1.0,
+        "draft_iterations": 1.0,
+        "draft_tokens": 7.0,
+        "mean_accepted_length_including_bonus": 2.0,
+        "positions": {
+          "0": {
+            "accepted": 1.0,
+            "accepted_per_draft": 1.0
+          },
+          "1": {
+            "accepted": 0.0,
+            "accepted_per_draft": 0.0
+          },
+          "2": {
+            "accepted": 0.0,
+            "accepted_per_draft": 0.0
+          },
+          "3": {
+            "accepted": 0.0,
+            "accepted_per_draft": 0.0
+          },
+          "4": {
+            "accepted": 0.0,
+            "accepted_per_draft": 0.0
+          },
+          "5": {
+            "accepted": 0.0,
+            "accepted_per_draft": 0.0
+          },
+          "6": {
+            "accepted": 0.0,
+            "accepted_per_draft": 0.0
+          }
+        }
+      },
+      "request_count": 1,
+      "requests": [
+        {
+          "completion_tokens": 2,
+          "content": "DONE",
+          "decode_seconds": 0.0,
+          "decode_tok_s": null,
+          "decode_tokens": 1,
+          "end_ns": 279219991086020,
+          "http_status": 200,
+          "prompt_tokens": 113909,
+          "raw_sha256": "8c13b91eba6fdd6ae160b7064aab5397060e1453f4a9e5892999501a16c2398f",
+          "reasoning": "",
+          "request_sha256": "ccc10b1303781f7b27e13898be565b232ae012793b4fb0f0c6d038f36940c715",
+          "start_ns": 279129693087311,
+          "ttft_seconds": 90.237492315,
+          "wall_seconds": 90.297998709
+        }
+      ],
+      "scored": false,
+      "service_decode_tok_s": 0.011074442560157539,
+      "service_window_seconds": 90.297998709,
+      "window_id": "prefill-32768-warm"
+    },
+    {
+      "counter_verdict": "PASS",
+      "family": "prefill-32768",
+      "per_position_acceptance": {
+        "accepted_divided_by_draft_tokens": 0.14285714285714285,
+        "accepted_tokens": 1.0,
+        "draft_iterations": 1.0,
+        "draft_tokens": 7.0,
+        "mean_accepted_length_including_bonus": 2.0,
+        "positions": {
+          "0": {
+            "accepted": 1.0,
+            "accepted_per_draft": 1.0
+          },
+          "1": {
+            "accepted": 0.0,
+            "accepted_per_draft": 0.0
+          },
+          "2": {
+            "accepted": 0.0,
+            "accepted_per_draft": 0.0
+          },
+          "3": {
+            "accepted": 0.0,
+            "accepted_per_draft": 0.0
+          },
+          "4": {
+            "accepted": 0.0,
+            "accepted_per_draft": 0.0
+          },
+          "5": {
+            "accepted": 0.0,
+            "accepted_per_draft": 0.0
+          },
+          "6": {
+            "accepted": 0.0,
+            "accepted_per_draft": 0.0
+          }
+        }
+      },
+      "request_count": 1,
+      "requests": [
+        {
+          "completion_tokens": 2,
+          "content": "DONE",
+          "decode_seconds": 0.0,
+          "decode_tok_s": null,
+          "decode_tokens": 1,
+          "end_ns": 279313943793900,
+          "http_status": 200,
+          "prompt_tokens": 113908,
+          "raw_sha256": "2ff6c0a52dda477b0f60279a9c571fdbe422ea9d02f49259f1c814ae38e6ae5a",
+          "reasoning": "",
+          "request_sha256": "52a66b537d4ed7cda3a0dcc0ab54024e982c0e120d81e5cc9e45f94df4f3de93",
+          "start_ns": 279224726374815,
+          "ttft_seconds": 89.168727816,
+          "wall_seconds": 89.217419085
+        }
+      ],
+      "scored": true,
+      "service_decode_tok_s": 0.011208573507907365,
+      "service_window_seconds": 89.217419085,
+      "window_id": "prefill-32768-score"
+    }
+  ]
+}

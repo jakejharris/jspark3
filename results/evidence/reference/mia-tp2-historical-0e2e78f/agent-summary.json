@@ -1,0 +1,19 @@
+{
+  "arm": "mia-tp2-historical-0e2e78f",
+  "artifact_checks": "23 of 23 passed on three consecutive runs",
+  "cached_prompt_tokens": 3236352,
+  "decode_seconds": 4222.681664,
+  "decode_tok_s": 24.913,
+  "estimator": "exclusive idle-to-idle server-counter delta over the agent trajectory; aggregate decode rate is generated tokens over summed decode seconds",
+  "evidence_class": "local_reproduction",
+  "fidelity": "site/safety-adapted",
+  "generation_tokens": 105198,
+  "mean_ttft_seconds": 3.862,
+  "note": "same agent task and prompt as this release's demonstration, independent trajectory; a product run, not a request replay and not the source's own published benchmark",
+  "prefill_seconds": 161.617186,
+  "prompt_sha256": "af3d5740768bbad46c6e99d07dc3c21916ce44ba8006a39f129b307e3d52aa80",
+  "prompt_tokens": 3317035,
+  "task_requests": 43,
+  "thinking_sampling": "high-effort thinking, provider default sampling",
+  "wall_time": "1h40m39.913s"
+}

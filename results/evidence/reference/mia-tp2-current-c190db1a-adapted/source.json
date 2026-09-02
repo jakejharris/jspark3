@@ -1,0 +1,14 @@
+{
+  "adaptation_boundary": "the rightsize repair is what makes the full 1,000,000-token current source runnable under this safety envelope, so this is an adapted local reproduction and not an exact one",
+  "arm": "mia-tp2-current-c190db1a-adapted",
+  "deviation_effect": {
+    "kv_capacity_tokens": 1033101,
+    "reclaimed_gib": 4.91
+  },
+  "nodes": 2,
+  "sole_model_or_runtime_deviation": "GLM53_INDEXER_WORKSPACE=rightsize",
+  "source_commit": "c190db1ae17ba8dff20129ed1f308d10c63cf37d",
+  "source_repository": "https://github.com/MiaAI-Lab/GLM-5.3-Flash-EXL3-2x-DGX-Sparks",
+  "source_tree": "83e466719fdfb20d41ed4b33a9db2b912a4763be",
+  "tensor_parallel": 2
+}

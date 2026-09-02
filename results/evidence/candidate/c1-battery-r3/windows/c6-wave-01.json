@@ -1,0 +1,53 @@
+{
+  "acceptance_receipts": [
+    {
+      "accepted_divided_by_drafted": 0.37844036697247707,
+      "accepted_tokens_delta": 990.0,
+      "draft_tokens_delta": 2616.0,
+      "provenance": "counter_hook_window_delta",
+      "scope": "metrics.engine"
+    }
+  ],
+  "aggregate_decode_tokens_n_minus_1": 1361,
+  "completion_wall_p50_seconds": 22.8108982585,
+  "completion_wall_p90_seconds": 24.0691833885,
+  "counter_after_path": "counters/c6-wave-01.after.json",
+  "counter_before_path": "counters/c6-wave-01.before.json",
+  "counter_delta_path": "counters/c6-wave-01.delta.json",
+  "counter_required": true,
+  "counter_verdict": "PASS",
+  "dp_rank_assignment": null,
+  "dp_rank_provenance": "NOT_AVAILABLE_FROM_OPENAI_API; counter hook may supply it",
+  "error_count": 0,
+  "fairness_slowest_divided_by_fastest": 0.1897414589059287,
+  "legacy_visible_aggregate_decode_tokens_per_second": 56.92253036981793,
+  "legacy_visible_aggregate_interval_seconds": 23.909689031,
+  "per_stream_rate_max": 111.38841369213317,
+  "per_stream_rate_min": 21.13500011916247,
+  "per_stream_rates": {
+    "c6-wave-01-set1-code": 68.432409057483,
+    "c6-wave-01-set1-prose": 22.435568269878935,
+    "c6-wave-01-set1-tool": 111.35534713141489,
+    "c6-wave-01-set2-code": 40.95628618911209,
+    "c6-wave-01-set2-prose": 21.13500011916247,
+    "c6-wave-01-set2-tool": 111.38841369213317
+  },
+  "phase": "c6",
+  "primary_estimator": "sum(completion_tokens-1)/(latest_request_end-earliest_request_start)",
+  "queue_time_provenance": "NOT_AVAILABLE_FROM_OPENAI_API; counter hook may supply it",
+  "queue_time_seconds": null,
+  "request_ids": [
+    "c6-wave-01-set1-prose",
+    "c6-wave-01-set1-code",
+    "c6-wave-01-set1-tool",
+    "c6-wave-01-set2-prose",
+    "c6-wave-01-set2-code",
+    "c6-wave-01-set2-tool"
+  ],
+  "result_count": 6,
+  "service_decode_tokens_per_second": 56.54297178438351,
+  "service_request_window_seconds": 24.070188691,
+  "ttft_p50_seconds": 4.478494662,
+  "ttft_p90_seconds": 23.871319437,
+  "window_id": "c6-wave-01"
+}

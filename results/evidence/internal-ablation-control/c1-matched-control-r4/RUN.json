@@ -1,0 +1,19 @@
+{
+  "arm": "internal-ablation-control-matched",
+  "automatic_retries": 0,
+  "corruption_battery_cleared": false,
+  "ended_utc": "2026-09-02T04:34:10.174624+00:00",
+  "fatal_error": null,
+  "first_rate_scope": false,
+  "grade": "ENGINEERING-EVIDENCE",
+  "matrix_path": "MATRIX.json",
+  "matrix_rate_receipt_eligible": true,
+  "publication_eligible": false,
+  "quality_cleared": false,
+  "rate_claim_eligible_engineering": false,
+  "requests_completed": 24,
+  "run_id": "battery-r4",
+  "schema_version": 2,
+  "started_utc": "2026-09-02T04:30:14.496489+00:00",
+  "status": "COMPLETE"
+}

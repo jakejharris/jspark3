@@ -1,0 +1,20 @@
+{
+  "chat_template_kwargs": {
+    "enable_thinking": false
+  },
+  "max_tokens": 400,
+  "messages": [
+    {
+      "content": "Explain how distributed tensor and expert parallel inference works. Cover data flow, collectives, benefits, bottlenecks, and correctness checks in a detailed technical note.",
+      "role": "user"
+    }
+  ],
+  "model": "glm-5.3-flash",
+  "seed": 20260830,
+  "stream": true,
+  "stream_options": {
+    "include_usage": true
+  },
+  "temperature": 0,
+  "top_p": 1
+}

@@ -1,0 +1,61 @@
+{
+  "arithmetic_probe": 323,
+  "counter_after_verdict": "PASS",
+  "counter_hook_sha256": "728273b28ec944ce7c1c63eea5eef62d48a68cbe7dace36837b38b08ebabb934",
+  "health_http": 200,
+  "models_http": 200,
+  "ranks": {
+    "rank0": {
+      "memory_events": {
+        "high": 0,
+        "low": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_group_kill": 0,
+        "oom_kill": 0
+      },
+      "memory_limit_bytes": 68719476736,
+      "memory_peak_bytes": 27711627264,
+      "oom_killed": false,
+      "restart_count": 0,
+      "running": true,
+      "swap_current_bytes": 0,
+      "swap_max": "0"
+    },
+    "rank1": {
+      "memory_events": {
+        "high": 0,
+        "low": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_group_kill": 0,
+        "oom_kill": 0
+      },
+      "memory_limit_bytes": 68719476736,
+      "memory_peak_bytes": 27008593920,
+      "oom_killed": false,
+      "restart_count": 0,
+      "running": true,
+      "swap_current_bytes": 0,
+      "swap_max": "0"
+    },
+    "rank2": {
+      "memory_events": {
+        "high": 0,
+        "low": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_group_kill": 0,
+        "oom_kill": 0
+      },
+      "memory_limit_bytes": 68719476736,
+      "memory_peak_bytes": 27356491776,
+      "oom_killed": false,
+      "restart_count": 0,
+      "running": true,
+      "swap_current_bytes": 0,
+      "swap_max": "0"
+    }
+  },
+  "status": "ADMISSION_PASS"
+}

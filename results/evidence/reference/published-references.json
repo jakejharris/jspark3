@@ -1,0 +1,173 @@
+{
+  "basis": "author-reported; none of these numbers was measured on this fleet",
+  "references": {
+    "flycockpit-tp3-9093765c": {
+      "basis": "author-reported",
+      "checkpoint": "Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw@25a44fdbf16862a46b7cc9921142c6c81350af2f",
+      "concurrency": "single stream",
+      "context": 1000000,
+      "display_name": "FlyCockpit TP3",
+      "estimator": "author-reported per-run decode tok/s",
+      "expert_parallel": true,
+      "hardware": "three NVIDIA DGX Sparks",
+      "limitations": "no prose row, no fixed JSpark3 request set, no raw local receipt, and no estimator-equivalent comparison exists for this source",
+      "nodes": 3,
+      "quantization_lane": "EXL3/TR3 4 bpw",
+      "reported": {
+        "code_is_prime_tok_s": [
+          52.3,
+          58.7,
+          58.2
+        ],
+        "global_draft_acceptance_percent": 81.5,
+        "hello_tok_s": [
+          37.9,
+          36.9,
+          37.3
+        ],
+        "structured_count_tok_s": [
+          69.0,
+          68.5,
+          71.2
+        ],
+        "ttft_seconds": [
+          0.35,
+          0.36,
+          0.37
+        ]
+      },
+      "runtime": "FlyCockpit recipe at 9093765c757bd1976372196e44af84a67cf86bad; mesh interconnect with NCCL_PROTO=LL",
+      "safety_state": "measured at gpu_memory_utilization 0.87, where the source records about 6 GiB of cgroup swap; the safer 0.83 profile was not rate-measured in that source",
+      "sample_count": "3 runs per prompt",
+      "source_url": "https://github.com/FlyCockpit/GLM-5.3-Flash-EXL3-3x-DGX-Sparks/tree/9093765c757bd1976372196e44af84a67cf86bad",
+      "speculation_as_loaded": "DFlash2 k=7; the source advertises draft TP 1, but a pinned-source audit found the loader builds the padded draft over world TP3, so the loaded behaviour is TP3",
+      "tensor_parallel": 3,
+      "thinking_sampling": "thinking off, temperature 0",
+      "workload": "three runs each of a short hello prompt (17-token stop), a structured count 1-200 prompt (length 200), and an is_prime code prompt (length 200)"
+    },
+    "jetnet-tp3-nvfp4": {
+      "additional_source_urls": [
+        "https://github.com/jetnet/glm53-flash-nvfp4-tp3/pull/1",
+        "https://github.com/jetnet/glm53-flash-nvfp4-tp3/tree/4fdba0041e838299b5da581a84843f594861aea7",
+        "https://forums.developer.nvidia.com/t/glm-5-3-flash-nvfp4-on-3x-dgx-spark-tp-3-512k-context-35-tok-s/381534"
+      ],
+      "basis": "author-reported",
+      "checkpoint": "LibertAIDAI NVFP4 GLM-5.3 Flash (a different quantization lane from this release)",
+      "concurrency": "single stream for the decode rows",
+      "context": 512000,
+      "display_name": "jetnet TP3",
+      "estimator": "author-reported Markdown results without local raw stream, GPU, or log receipts",
+      "expert_parallel": null,
+      "hardware": "three NVIDIA DGX Sparks",
+      "limitations": "a different target and speculation lane, a 512K rather than 1,000,000-token envelope, a clock-capped and prompt-dependent headline, and no exact request match or local reproduction; the tool-eval receipt appears only in the later forum post and must not be attributed to the earlier pinned commit",
+      "nodes": 3,
+      "quantization_lane": "NVFP4 with Marlin W4A16",
+      "reported": {
+        "current_main_dflash2_thinking_on_tok_s": 47.2,
+        "forum_tool_eval_bench": {
+          "fail": 3,
+          "harness": "tool-eval-bench v2.6.1.dev24+g845f15e6c",
+          "partial": 11,
+          "pass": 74,
+          "reasoning": "default max",
+          "score_of_100": 90,
+          "seconds": 1883.6
+        },
+        "main_mtp4_range_tok_s": [
+          32.1,
+          39.0
+        ],
+        "main_mtp4_tok_s": 35.2,
+        "main_prefill_tok_s_range": [
+          1718,
+          1800
+        ],
+        "main_ttft_seconds": 0.26,
+        "needle_seconds": 274.6,
+        "needle_tokens": 471813,
+        "pr1_code_tok_s": "57-67",
+        "pr1_freeform_tok_s": "29-32",
+        "pr1_structured_count_tok_s": "46-65"
+      },
+      "runtime": "jetnet recipe, eager execution, 1500 MHz clock cap",
+      "safety_state": "author-reported Xid 0; the historical checkpoint carried a scale concern documented by the local audit",
+      "sample_count": "author-reported ranges rather than a fixed sample count",
+      "source_url": "https://github.com/jetnet/glm53-flash-nvfp4-tp3/tree/bfc820ec45cf7d30b8a1430207db3b653907eca0",
+      "speculation_as_loaded": "MTP-4 on historical and current main; the current main additionally reports a DFlash2 lane with thinking on",
+      "tensor_parallel": 3,
+      "thinking_sampling": "current main states the model always thinks; the headline is prompt-dependent",
+      "workload": "author's own decode rows, a needle retrieval, and a separate tool-eval-bench run reported in the author's NVIDIA forum post"
+    },
+      "neko-legends-tp4-a1d8daff": {
+        "basis": "author-reported",
+        "checkpoint": "Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw with EXL3/TR3 4-bpw weights",
+        "concurrency": "single stream for the four prompt rows; four concurrent streams for the aggregate row",
+        "context": 1000000,
+        "display_name": "neko-legends TP4",
+        "estimator": "author-reported warm client-wall bench_exl3.py rates; prompt-specific C1 and steady C4 aggregate estimators",
+        "expert_parallel": null,
+        "hardware": "four NVIDIA DGX Sparks",
+        "limitations": "four rather than three nodes, a separately patched TP4 runtime, no JSpark3 request match, no local reproduction, and no estimator-equivalent comparison with this release",
+        "nodes": 4,
+        "quantization_lane": "EXL3/TR3 4 bpw",
+        "reported": {
+          "c1_code_tok_s": 64.5,
+          "c1_math_tok_s": 77.8,
+          "c1_prose_tok_s": 23.1,
+          "c1_structured_tok_s": 100.9,
+          "c4_aggregate_tok_s": 253,
+          "c4_per_stream_tok_s": 63.3
+        },
+        "runtime": "vLLM EXL3 TP4 primary stack at a1d8daffad44ad69d8f9e27e621b5f4afc4157fe with the MiaAI overlay and documented runtime-mounted fixes",
+        "safety_state": "author-reported 0.82 GPU memory utilization and a 95 GB available-RAM launch gate; no local safety receipt",
+        "sample_count": "author-reported final table; run count not stated",
+        "source_url": "https://github.com/neko-legends/spark-bench/blob/a1d8daffad44ad69d8f9e27e621b5f4afc4157fe/README.md#L81-L188",
+        "speculation_as_loaded": "DFlash2 k=7, draft TP1 on rank 0",
+        "tensor_parallel": 4,
+        "thinking_sampling": "thinking off; other sampling parameters not stated in the cited table",
+        "workload": "warm bench_exl3.py single-stream code, structured, math, and prose prompts plus a four-stream steady aggregate row"
+      },
+      "mia-tp2-c190db1a": {
+      "basis": "author-reported",
+      "checkpoint": "Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw@25a44fdbf16862a46b7cc9921142c6c81350af2f",
+      "concurrency": "sparkDash rows at C1, C2 and C4; bench_decode rows at C4",
+      "context": 1000000,
+      "display_name": "Mia TP2",
+      "estimator": "author-reported; per-stream and aggregate estimators differ between rows and must not be mixed",
+      "expert_parallel": false,
+      "hardware": "two NVIDIA DGX Sparks (node count differs from this release)",
+      "limitations": "prompt sensitivity is the point of this source: structured rates are not prose rates, and the stream and aggregate estimators differ",
+      "nodes": 2,
+      "quantization_lane": "EXL3/TR3 4 bpw",
+      "reported": {
+        "bench_decode_draft_tp1_prose_tok_s": 26.9,
+        "bench_decode_draft_tp1_structured_tok_s": 61.7,
+        "bench_decode_prose_acceptance": 0.341,
+        "bench_decode_prose_accepted_per_step": 2.39,
+        "bench_decode_prose_tok_s": 27.1,
+        "bench_decode_structured_acceptance": 0.959,
+        "bench_decode_structured_accepted_per_step": 6.71,
+        "bench_decode_structured_tok_s": 65.1,
+        "long_mixed_60k_100k_kv_tok_s": "24-27",
+        "mtp_k2_tok_s": 24.6,
+        "sparkdash_c1_tok_s": 62.9,
+        "sparkdash_c1_ttft_ms": 719,
+        "sparkdash_c2_aggregate_tok_s": 103.3,
+        "sparkdash_c2_per_stream_tok_s": 51.7,
+        "sparkdash_c2_ttft_seconds": 6.62,
+        "sparkdash_c4_aggregate_tok_s": 146.5,
+        "sparkdash_c4_per_stream_tok_s": 37.1,
+        "sparkdash_c4_ttft_seconds": 6.3
+      },
+      "runtime": "Mia recipe at c190db1ae17ba8dff20129ed1f308d10c63cf37d",
+      "safety_state": "author-reported; not stated in the captured source",
+      "sample_count": "bench_decode rows are the median of five 400-token runs",
+      "source_url": "https://github.com/MiaAI-Lab/GLM-5.3-Flash-EXL3-2x-DGX-Sparks/tree/c190db1ae17ba8dff20129ed1f308d10c63cf37d",
+      "speculation_as_loaded": "DFlash2 k=7; the sparkDash rows run at draft TP setting 1 and the lab bench_decode rows at draft TP setting 2, with one prior setting-1 pair also reported",
+      "tensor_parallel": 2,
+      "thinking_sampling": "thinking off, temperature 0",
+      "workload": "official sparkDash Decode protocol (warm, empty KV, 400 tokens, graphs, fused EXL3 MoE; structured count 1-200 and clamp code are high-accept prompt types) and the lab tests/bench_decode.py harness"
+    }
+  },
+  "rule": "no percentage, delta, or ranking is computed between this release and any row"
+}

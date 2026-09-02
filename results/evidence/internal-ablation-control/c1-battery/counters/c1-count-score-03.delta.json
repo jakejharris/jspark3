@@ -1,0 +1,208 @@
+{
+  "hca": {
+    "rank0": {
+      "roceP2p1s0f0": {
+        "port_rcv_data": 0,
+        "port_rcv_packets": 0,
+        "port_xmit_data": 0,
+        "port_xmit_packets": 0
+      },
+      "roceP2p1s0f1": {
+        "port_rcv_data": 0,
+        "port_rcv_packets": 0,
+        "port_xmit_data": 0,
+        "port_xmit_packets": 0
+      },
+      "rocep1s0f0": {
+        "port_rcv_data": 300489952,
+        "port_rcv_packets": 554609,
+        "port_xmit_data": 9335746,
+        "port_xmit_packets": 338983
+      },
+      "rocep1s0f1": {
+        "port_rcv_data": 8991112,
+        "port_rcv_packets": 328676,
+        "port_xmit_data": 299783299,
+        "port_xmit_packets": 543734
+      }
+    },
+    "rank1": {
+      "roceP2p1s0f0": {
+        "port_rcv_data": 0,
+        "port_rcv_packets": 0,
+        "port_xmit_data": 0,
+        "port_xmit_packets": 0
+      },
+      "roceP2p1s0f1": {
+        "port_rcv_data": 0,
+        "port_rcv_packets": 0,
+        "port_xmit_data": 0,
+        "port_xmit_packets": 0
+      },
+      "rocep1s0f0": {
+        "port_rcv_data": 299783299,
+        "port_rcv_packets": 543734,
+        "port_xmit_data": 8991112,
+        "port_xmit_packets": 328676
+      },
+      "rocep1s0f1": {
+        "port_rcv_data": 9089033,
+        "port_rcv_packets": 332472,
+        "port_xmit_data": 300211233,
+        "port_xmit_packets": 546033
+      }
+    },
+    "rank2": {
+      "roceP2p1s0f0": {
+        "port_rcv_data": 0,
+        "port_rcv_packets": 0,
+        "port_xmit_data": 0,
+        "port_xmit_packets": 0
+      },
+      "roceP2p1s0f1": {
+        "port_rcv_data": 0,
+        "port_rcv_packets": 0,
+        "port_xmit_data": 0,
+        "port_xmit_packets": 0
+      },
+      "rocep1s0f0": {
+        "port_rcv_data": 300211233,
+        "port_rcv_packets": 546033,
+        "port_xmit_data": 9089033,
+        "port_xmit_packets": 332472
+      },
+      "rocep1s0f1": {
+        "port_rcv_data": 9335746,
+        "port_rcv_packets": 338983,
+        "port_xmit_data": 300489952,
+        "port_xmit_packets": 554609
+      }
+    }
+  },
+  "memory": {
+    "rank0": {
+      "host_vmstat": {
+        "pgmajfault": 45,
+        "pswpin": 52,
+        "pswpout": 0
+      },
+      "labels": {},
+      "memory_current": 266240,
+      "memory_events": {
+        "high": 0,
+        "low": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_group_kill": 0,
+        "oom_kill": 0
+      },
+      "memory_peak": 0,
+      "memory_stat": {
+        "active_anon": 12288,
+        "active_file": 0,
+        "anon": 12288,
+        "file": 0,
+        "file_dirty": 0,
+        "file_mapped": 0,
+        "file_writeback": 0,
+        "inactive_anon": 0,
+        "inactive_file": 0,
+        "pgfault": 3,
+        "pgmajfault": 0,
+        "shmem": 0,
+        "swapcached": 0
+      },
+      "swap_current": 0
+    },
+    "rank1": {
+      "host_vmstat": {
+        "pgmajfault": 5,
+        "pswpin": 3,
+        "pswpout": 0
+      },
+      "labels": {},
+      "memory_current": -192512,
+      "memory_events": {
+        "high": 0,
+        "low": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_group_kill": 0,
+        "oom_kill": 0
+      },
+      "memory_peak": 0,
+      "memory_stat": {
+        "active_anon": 8192,
+        "active_file": 0,
+        "anon": 8192,
+        "file": 0,
+        "file_dirty": 0,
+        "file_mapped": 0,
+        "file_writeback": 0,
+        "inactive_anon": 0,
+        "inactive_file": 0,
+        "pgfault": 2,
+        "pgmajfault": 0,
+        "shmem": 0,
+        "swapcached": 0
+      },
+      "swap_current": 0
+    },
+    "rank2": {
+      "host_vmstat": {
+        "pgmajfault": 10,
+        "pswpin": 12,
+        "pswpout": 0
+      },
+      "labels": {},
+      "memory_current": -299008,
+      "memory_events": {
+        "high": 0,
+        "low": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_group_kill": 0,
+        "oom_kill": 0
+      },
+      "memory_peak": 0,
+      "memory_stat": {
+        "active_anon": 4096,
+        "active_file": 0,
+        "anon": 4096,
+        "file": 0,
+        "file_dirty": 0,
+        "file_mapped": 0,
+        "file_writeback": 0,
+        "inactive_anon": 0,
+        "inactive_file": 0,
+        "pgfault": 1,
+        "pgmajfault": 0,
+        "shmem": 0,
+        "swapcached": 0
+      },
+      "swap_current": 0
+    }
+  },
+  "metrics": {
+    "engine": {
+      "accepted_per_position": {
+        "0": 53.0,
+        "1": 53.0,
+        "2": 53.0,
+        "3": 50.0,
+        "4": 49.0,
+        "5": 46.0,
+        "6": 46.0
+      },
+      "accepted_tokens": 350.0,
+      "draft_iterations": 53.0,
+      "draft_tokens": 371.0
+    },
+    "gauges": {
+      "vllm:num_requests_running": 0.0,
+      "vllm:num_requests_waiting": 0.0,
+      "vllm:num_requests_waiting_by_reason": 0.0
+    },
+    "selected_metric_row_count": 0
+  }
+}

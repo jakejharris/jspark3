@@ -1,0 +1,20 @@
+{
+  "chat_template_kwargs": {
+    "enable_thinking": false
+  },
+  "max_tokens": 512,
+  "messages": [
+    {
+      "content": "Count from 1 to 200, one integer per line, nothing else.",
+      "role": "user"
+    }
+  ],
+  "model": "glm-5.3-flash",
+  "seed": 20260830,
+  "stream": true,
+  "stream_options": {
+    "include_usage": true
+  },
+  "temperature": 0,
+  "top_p": 1
+}

@@ -1,0 +1,81 @@
+{
+  "candidate": "JSpark3 v1",
+  "grade": "ENGINEERING-EVIDENCE",
+  "hardware": {
+    "architecture": "aarch64",
+    "count": 3,
+    "gpu": "NVIDIA GB10",
+    "sm": "12.1",
+    "system": "NVIDIA DGX Spark"
+  },
+  "image": {
+    "config_digest": "sha256:ad0cdd86d1ddd15ee758f519d16da15ac237f7f0648a5c52fbc20f9554944263",
+    "manifest_digest": "sha256:9bb1557a4234fce63d59599e44d10747eabd742beb337eebf9e7070be8a0fd58",
+    "reference": "ghcr.io/miaai-lab/glm-5.3-flash-2x-dgx-sparks@sha256:9bb1557a4234fce63d59599e44d10747eabd742beb337eebf9e7070be8a0fd58"
+  },
+  "runtime": {
+    "observed_system_fingerprint": "vllm-0.1.dev20051+g487ecf187-tp3-ep-ded8abdb",
+    "base_pipeline": "scripts/apply_base_pipeline.py",
+    "patch_contract": "config/patch-contract.json",
+    "overlay": "overlays/trunk_w8a16.py",
+    "loader_patcher": "overlays/patch_base_loader_hook.py"
+  },
+  "topology": {
+    "tensor_parallel": 3,
+    "pipeline_parallel": 1,
+    "expert_parallel": true,
+    "executor": "mp",
+    "nodes": 3,
+    "observed_gid_index": 3,
+    "mtu": 9000,
+    "hcas_per_rank": 2
+  },
+  "server": {
+    "served_model": "glm-5.3-flash",
+    "quantization": "exl3",
+    "gpu_memory_utilization": 0.83,
+    "max_model_len": 1000000,
+    "max_num_seqs": 32,
+    "max_num_batched_tokens": 8192,
+    "kv_cache_dtype": "fp8",
+    "prefix_caching": true,
+    "flashinfer_autotune": false,
+    "cuda_graph_mode": "FULL_DECODE_ONLY",
+    "cuda_graph_capture_sizes": [8, 16, 24, 32, 48],
+    "tool_call_parser": "glm47",
+    "reasoning_parser": "glm45",
+    "auto_tool_choice": true,
+    "language_model_only": true,
+    "thinking_default": false
+  },
+  "speculation": {
+    "method": "dflash",
+    "num_speculative_tokens": 7,
+    "draft_sample_method": "probabilistic",
+    "rejection_sample_method": "standard",
+    "draft_tensor_parallel_size": 1,
+    "attention_backend": "FLASH_ATTN"
+  },
+  "container": {
+    "memory_bytes": 68719476736,
+    "memory_swap_bytes": 68719476736,
+    "memory_swap_max": 0,
+    "shm_bytes": 34359738368,
+    "restart": "no",
+    "network": "host",
+    "ipc": "host"
+  },
+  "w8a16_overlay": {
+    "base": "the matched three-Spark control (same recipe, overlay disabled)",
+    "runtime_modules": 169,
+    "logical_tensors": 225,
+    "excluded_kda_fg_runtime_modules": 34,
+    "group_policy": [128, 64, 32],
+    "k704_group": 64,
+    "net_bytes_freed_per_rank": 1595392320,
+    "overlay_sha256": "5aeff0cf92e715094d737faded2bf35000f7ce586213c495431b5a4805f7307d",
+    "loader_patcher_sha256": "c84bdfbf69f7b1d3841155d35f73a06a601f2bcb33ae9e1d8423178dc31139b4",
+    "base_loader_before_sha256": "a7e925f232ad3eebbee7ab37d3aba724c24465c3078da29489da0438664c6b08",
+    "base_loader_after_sha256": "3205bff77aac34785167f5b21306048b9dc916b2c0691bf774bb3d9202bbd8da"
+  }
+}

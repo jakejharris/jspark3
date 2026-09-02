@@ -1,0 +1,4 @@
+dist/
+validation.json
+__pycache__/
+*.pyc

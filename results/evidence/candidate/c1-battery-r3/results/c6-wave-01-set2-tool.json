@@ -1,0 +1,138 @@
+{
+  "analysis": {
+    "cjk": {
+      "counts": {
+        "han": 0,
+        "hangul": 0,
+        "hiragana": 0,
+        "katakana": 0
+      },
+      "expected_scripts": [],
+      "pass": true,
+      "unexpected_counts": {}
+    },
+    "failures": [],
+    "finish_reason": "stop",
+    "holds": [],
+    "loops": {
+      "text_reasoning_content_32cp_x4": {
+        "fired": false,
+        "minimum_period_codepoints": 32,
+        "repetitions": 4
+      },
+      "text_tool_arguments_32cp_x4": {
+        "fired": false,
+        "minimum_period_codepoints": 32,
+        "repetitions": 4
+      },
+      "token_block_8x4": {
+        "block_size": 8,
+        "fired": false,
+        "repetitions": 4
+      }
+    },
+    "message": {
+      "content": "",
+      "reasoning": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{\"city\": \"Austin\", \"country\": \"USA\", \"note\": \"baseline\"}",
+            "name": "record_trip"
+          },
+          "id": "chatcmpl-tool-94ce8bae16bde74a",
+          "type": "function"
+        }
+      ]
+    },
+    "offline_decode": {
+      "reason": "server returned no output token IDs",
+      "verdict": "HOLD"
+    },
+    "output_token_id_count": null,
+    "output_token_ids_present": false,
+    "rendered": {
+      "anomalous_controls": [],
+      "content_codepoints": 0,
+      "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "reasoning_codepoints": 0,
+      "reasoning_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tool_argument_codepoints": 56,
+      "tool_arguments_sha256": "c3451b1323ac5c307690aa3ba7bbde1ccd15fdeac0cab7a02fa633a9b4fec537",
+      "u_fffd_count": 0,
+      "u_fffd_fields_anywhere_in_response": []
+    },
+    "semantic": {
+      "arguments": {
+        "city": "Austin",
+        "country": "USA",
+        "note": "baseline"
+      },
+      "exact_argument_names_and_string_types": true,
+      "exact_arguments": true,
+      "function_name": "record_trip",
+      "no_prose_outside_json": true,
+      "verdict": "PASS"
+    },
+    "token_ids_match_completion_usage": false,
+    "usage": {
+      "completion_tokens": 23,
+      "prompt_tokens": 197,
+      "total_tokens": 220
+    },
+    "verdict": "PASS"
+  },
+  "decode_interval_seconds": 0.197507077,
+  "decode_tokens_n_minus_1": 22,
+  "decode_tokens_per_second_n_minus_1": 111.38841369213317,
+  "end_monotonic_ns": 389122028324433,
+  "ended_utc": "2026-09-02T06:34:44.220135+00:00",
+  "first_visible_monotonic_ns": 389121830492151,
+  "http_status": 200,
+  "last_visible_monotonic_ns": 389122027999228,
+  "phase": "c6",
+  "rate_valid": true,
+  "raw_bytes": 1510,
+  "raw_path": "raw/c6-wave-01-set2-tool.sse",
+  "raw_sha256": "d1a50363a9dfb18e069f7ccca363e0dd4c41364b56b5523f02f3f4cf36d8eb39",
+  "request_id": "c6-wave-01-set2-tool",
+  "request_sha256": "fd9f917fcca2c1502984673331da1fc169f8681c36bb37378f19aa574a0a1a2f",
+  "response_headers": {
+    "connection": "close",
+    "content-type": "text/event-stream; charset=utf-8",
+    "date": "Wed, 02 Sep 2026 06:34:19 GMT",
+    "server": "uvicorn",
+    "transfer-encoding": "chunked"
+  },
+  "scored": true,
+  "sent_utc": "2026-09-02T06:34:20.151147+00:00",
+  "sse_event_receipts": [
+    {
+      "data_sha256": "d5e4bfabef03a9142e26f233551ebbfd7c023ad3c4d93099acbcfbd04c067e0c",
+      "timestamp_ns": 389121731724577
+    },
+    {
+      "data_sha256": "f86182565d23a28b41ffdde0a6bf3ea2ca3fb6c540a05eed64636885de599bd4",
+      "timestamp_ns": 389121830492151
+    },
+    {
+      "data_sha256": "77e036ca0a90fdccae4c70d6c23119bdd3f189f8917a3f6937db0abf8306410f",
+      "timestamp_ns": 389121931567824
+    },
+    {
+      "data_sha256": "e50d283b5be2306182673f347e8f8ef8e8e9d10d3f313bd58928e3874c3cc360",
+      "timestamp_ns": 389122027999228
+    },
+    {
+      "data_sha256": "4dbdec537c1dc23da98d1d37b0850ccc719e4097d229a9f6e45678d6d902832f",
+      "timestamp_ns": 389122028055929
+    }
+  ],
+  "start_monotonic_ns": 389097959340076,
+  "ttft_seconds": 23.871152075,
+  "verdict": "PASS",
+  "visible_events": 3,
+  "wall_seconds": 24.068984357,
+  "workload": "tool"
+}

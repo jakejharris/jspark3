@@ -1,0 +1,77 @@
+{
+  "arm": "mia-tp2-current-c190db1a-adapted",
+  "estimator": "server prompt tokens over time to first visible token",
+  "evidence_class": "local_reproduction",
+  "ladder": [
+    {
+      "cache_hits": 0.0,
+      "finish_reason": "stop",
+      "http": 200,
+      "kind": "cold",
+      "name": "~8k",
+      "prefill_tok_s": 540.9334945581267,
+      "prompt_tokens": 8002,
+      "ttft_seconds": 14.792946046974976
+    },
+    {
+      "cache_hits": 7168.0,
+      "finish_reason": "stop",
+      "http": 200,
+      "kind": "apc",
+      "name": "~8k follow-up",
+      "prefill_tok_s": 3937.380896789239,
+      "prompt_tokens": 8011,
+      "ttft_seconds": 2.034601226041559
+    },
+    {
+      "cache_hits": 0.0,
+      "finish_reason": "stop",
+      "http": 200,
+      "kind": "cold",
+      "name": "~12k",
+      "prefill_tok_s": 1208.0757009991091,
+      "prompt_tokens": 12002,
+      "ttft_seconds": 9.93480788503075
+    },
+    {
+      "cache_hits": 0.0,
+      "finish_reason": "stop",
+      "http": 200,
+      "kind": "cold",
+      "name": "~16k",
+      "prefill_tok_s": 1222.544086826509,
+      "prompt_tokens": 16002,
+      "ttft_seconds": 13.089098522032145
+    },
+    {
+      "cache_hits": 0.0,
+      "finish_reason": "stop",
+      "http": 200,
+      "kind": "cold",
+      "name": "~100k",
+      "prefill_tok_s": 1152.9290626329794,
+      "prompt_tokens": 100002,
+      "ttft_seconds": 86.73733991198242
+    },
+    {
+      "cache_hits": 0.0,
+      "finish_reason": "stop",
+      "http": 200,
+      "kind": "cold",
+      "name": "~256k",
+      "prefill_tok_s": 1174.210216524619,
+      "prompt_tokens": 256002,
+      "ttft_seconds": 218.02058643102646
+    },
+    {
+      "cache_hits": 0.0,
+      "finish_reason": "stop",
+      "http": 200,
+      "kind": "cold",
+      "name": "~300k",
+      "prefill_tok_s": 1182.7420548584957,
+      "prompt_tokens": 300002,
+      "ttft_seconds": 253.6495584710501
+    }
+  ]
+}

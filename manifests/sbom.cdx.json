@@ -1,0 +1,291 @@
+{
+  "bomFormat": "CycloneDX",
+  "components": [
+    {
+      "bom-ref": "pkg:oci/glm-5.3-flash-2x-dgx-sparks@sha256%3A9bb1557a4234fce63d59599e44d10747eabd742beb337eebf9e7070be8a0fd58",
+      "description": "Pinned upstream serving image; observed server fingerprint vllm-0.1.dev20051+g487ecf187-tp3-ep-ded8abdb",
+      "group": "ghcr.io/miaai-lab",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "9bb1557a4234fce63d59599e44d10747eabd742beb337eebf9e7070be8a0fd58"
+        }
+      ],
+      "name": "glm-5.3-flash-2x-dgx-sparks",
+      "properties": [
+        {
+          "name": "jspark3:config_digest",
+          "value": "sha256:ad0cdd86d1ddd15ee758f519d16da15ac237f7f0648a5c52fbc20f9554944263"
+        },
+        {
+          "name": "jspark3:redistributed_here",
+          "value": "false"
+        }
+      ],
+      "purl": "pkg:oci/glm-5.3-flash-2x-dgx-sparks@sha256%3A9bb1557a4234fce63d59599e44d10747eabd742beb337eebf9e7070be8a0fd58?repository_url=ghcr.io/miaai-lab/glm-5.3-flash-2x-dgx-sparks&arch=arm64",
+      "supplier": {
+        "name": "MiaAI-Lab"
+      },
+      "type": "container",
+      "version": "sha256:9bb1557a4234fce63d59599e44d10747eabd742beb337eebf9e7070be8a0fd58"
+    },
+    {
+      "bom-ref": "pkg:huggingface/Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw@25a44fdbf16862a46b7cc9921142c6c81350af2f",
+      "description": "target checkpoint served by the recipe (fetched by the operator, never bundled)",
+      "group": "Mia-AiLab",
+      "licenses": [
+        {
+          "license": {
+            "name": "ShapleyMcg License v1.0 (attribution-required; see REQUIRED_ATTRIBUTION.md)"
+          }
+        }
+      ],
+      "name": "GLM-5.3-Flash-EXL3-TR3-4bpw",
+      "properties": [
+        {
+          "name": "jspark3:native_config_sha256",
+          "value": "4f5341e048984459471bfb9c894e6bf87e69b9c67402672af901631d1349f265"
+        },
+        {
+          "name": "jspark3:runtime_config_sha256",
+          "value": "55201c73ed092c5a77f9b87ce40298edb450790ad864c1256cb6ca3a182683bd"
+        },
+        {
+          "name": "jspark3:model_index_sha256",
+          "value": "2f64d21c67c90bbafeb36c4e9b2f06f54063ed439e9f7cf95962d425a1d8515d"
+        },
+        {
+          "name": "jspark3:tokenizer_sha256",
+          "value": "19e773648cb4e65de8660ea6365e10acca112d42a854923df93db4a6f333a82d"
+        },
+        {
+          "name": "jspark3:tokenizer_config_sha256",
+          "value": "98b1271574f41abf89427ae2dda030d94dc9478f0edc5a8bd240db213c6fd5fc"
+        },
+        {
+          "name": "jspark3:mirror_status",
+          "value": "authorized, transfer in progress on a separate review branch; not merged"
+        },
+        {
+          "name": "jspark3:mirror_repository",
+          "value": "Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw"
+        },
+        {
+          "name": "jspark3:mirror_revision",
+          "value": "25a44fdbf16862a46b7cc9921142c6c81350af2f"
+        },
+        {
+          "name": "jspark3:mirror_intended_destination",
+          "value": "https://huggingface.co/jakejharris/jspark3"
+        },
+        {
+          "name": "jspark3:mirror_files",
+          "value": "144"
+        },
+        {
+          "name": "jspark3:mirror_bytes",
+          "value": "175715854754"
+        },
+        {
+          "name": "jspark3:mirror_upload_files",
+          "value": "123"
+        },
+        {
+          "name": "jspark3:mirror_upload_bytes",
+          "value": "175715659341"
+        },
+        {
+          "name": "jspark3:mirror_destination_policy",
+          "value": "existing Hugging Face pull-request revision only; never main"
+        },
+        {
+          "name": "jspark3:mirror_transfer_client",
+          "value": "hf upload-large-folder"
+        },
+        {
+          "name": "jspark3:mirror_resume_cache",
+          "value": ".cache/huggingface"
+        },
+        {
+          "name": "jspark3:mirror_completion_receipt",
+          "value": "jspark3/MIRROR-COMPLETION.json"
+        },
+        {
+          "name": "jspark3:mirror_merge_policy",
+          "value": "manual only after exact remote verification"
+        },
+        {
+          "name": "jspark3:mirror_manifest",
+          "value": "huggingface/jspark3/WEIGHTS-MANIFEST.json"
+        },
+        {
+          "name": "jspark3:redistributed_here",
+          "value": "authorized, transfer in progress on a separate review branch; not merged"
+        }
+      ],
+      "purl": "pkg:huggingface/Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw@25a44fdbf16862a46b7cc9921142c6c81350af2f",
+      "type": "machine-learning-model",
+      "version": "25a44fdbf16862a46b7cc9921142c6c81350af2f"
+    },
+    {
+      "bom-ref": "pkg:huggingface/incoai/GLM-5.3-Flash-DFlash2@dc77ff1c99eeb2df044ee3d4f0094eb033fee410",
+      "description": "DFlash2 speculative draft checkpoint (fetched by the operator, never bundled)",
+      "group": "incoai",
+      "licenses": [
+        {
+          "license": {
+            "name": "CC BY-NC-ND 4.0; research and evaluation use; commercial use requires separate permission from Inco AI"
+          }
+        }
+      ],
+      "name": "GLM-5.3-Flash-DFlash2",
+      "properties": [
+        {
+          "name": "jspark3:native_config_sha256",
+          "value": "c4aeac0101196a6e26705b34c45230bcd0c7c68ee2d2d1efdb242087f3712573"
+        },
+        {
+          "name": "jspark3:runtime_config_sha256",
+          "value": "c9f0c3a6c41f8a226fb31a1fb7817cea274d1f4b7b0d2e4d787d38c0f508283f"
+        },
+        {
+          "name": "jspark3:model_sha256",
+          "value": "b33c03475ba7322cf398828f2d8d1be376df30dc05c6b40c28c8ea8da23e410b"
+        },
+        {
+          "name": "jspark3:redistributed_here",
+          "value": "false"
+        }
+      ],
+      "purl": "pkg:huggingface/incoai/GLM-5.3-Flash-DFlash2@dc77ff1c99eeb2df044ee3d4f0094eb033fee410",
+      "type": "machine-learning-model",
+      "version": "dc77ff1c99eeb2df044ee3d4f0094eb033fee410"
+    },
+    {
+      "bom-ref": "pkg:github/FlyCockpit/GLM-5.3-Flash-EXL3-3x-DGX-Sparks@9093765c757bd1976372196e44af84a67cf86bad",
+      "description": "pinned TP3/EP3 technique sources and patch data reconstructed by recipe/scripts/apply_tp3_overlay.py and apply_image_glm_dflash.py; mounted read-only at launch",
+      "group": "FlyCockpit",
+      "name": "GLM-5.3-Flash-EXL3-3x-DGX-Sparks",
+      "purl": "pkg:github/FlyCockpit/GLM-5.3-Flash-EXL3-3x-DGX-Sparks@9093765c757bd1976372196e44af84a67cf86bad",
+      "type": "library",
+      "version": "9093765c757bd1976372196e44af84a67cf86bad"
+    },
+    {
+      "bom-ref": "pkg:github/vcruz305/GLM-5.3-Flash-EXL3-K2-DGX-Spark-recipe@622cb878d66f703c597bd6baaa2423caa1786f99",
+      "description": "K-pool hybrid-position and persistent tail-slot correction reconstructed by recipe/scripts/apply_kpool_tail.py",
+      "group": "vcruz305",
+      "name": "GLM-5.3-Flash-EXL3-K2-DGX-Spark-recipe",
+      "purl": "pkg:github/vcruz305/GLM-5.3-Flash-EXL3-K2-DGX-Spark-recipe@622cb878d66f703c597bd6baaa2423caa1786f99",
+      "type": "library",
+      "version": "622cb878d66f703c597bd6baaa2423caa1786f99"
+    },
+    {
+      "bom-ref": "pkg:github/sfxnz/GLM-5.3-Flash-NVFP4-vLLM-2x-DGX-Spark@f59cb7cc41c3ee32146782900d87133f538b5d30",
+      "description": "referenced DGX Spark serving context",
+      "group": "sfxnz",
+      "name": "GLM-5.3-Flash-NVFP4-vLLM-2x-DGX-Spark",
+      "purl": "pkg:github/sfxnz/GLM-5.3-Flash-NVFP4-vLLM-2x-DGX-Spark@f59cb7cc41c3ee32146782900d87133f538b5d30",
+      "type": "library",
+      "version": "f59cb7cc41c3ee32146782900d87133f538b5d30"
+    },
+    {
+      "bom-ref": "pkg:github/tonyd2wild/GLM-5.3-Flash-NVFP4-DFlash2-2x-DGX-Spark@3eef46632c45ffb6c397de0716c23b3d2d594798",
+      "description": "scheduler and concurrency benchmarking context",
+      "group": "tonyd2wild",
+      "name": "GLM-5.3-Flash-NVFP4-DFlash2-2x-DGX-Spark",
+      "purl": "pkg:github/tonyd2wild/GLM-5.3-Flash-NVFP4-DFlash2-2x-DGX-Spark@3eef46632c45ffb6c397de0716c23b3d2d594798",
+      "type": "library",
+      "version": "3eef46632c45ffb6c397de0716c23b3d2d594798"
+    },
+    {
+      "bom-ref": "vllm@487ecf187",
+      "description": "487ecf187 as shipped inside the pinned container image; serving engine; five hash-gated runtime transforms are applied inside the container at start",
+      "name": "vllm",
+      "type": "library",
+      "version": "487ecf187"
+    }
+  ],
+  "dependencies": [
+    {
+      "dependsOn": [
+        "pkg:oci/glm-5.3-flash-2x-dgx-sparks@sha256%3A9bb1557a4234fce63d59599e44d10747eabd742beb337eebf9e7070be8a0fd58",
+        "pkg:huggingface/Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw@25a44fdbf16862a46b7cc9921142c6c81350af2f",
+        "pkg:huggingface/incoai/GLM-5.3-Flash-DFlash2@dc77ff1c99eeb2df044ee3d4f0094eb033fee410",
+        "pkg:github/FlyCockpit/GLM-5.3-Flash-EXL3-3x-DGX-Sparks@9093765c757bd1976372196e44af84a67cf86bad",
+        "pkg:github/vcruz305/GLM-5.3-Flash-EXL3-K2-DGX-Spark-recipe@622cb878d66f703c597bd6baaa2423caa1786f99",
+        "pkg:github/sfxnz/GLM-5.3-Flash-NVFP4-vLLM-2x-DGX-Spark@f59cb7cc41c3ee32146782900d87133f538b5d30",
+        "pkg:github/tonyd2wild/GLM-5.3-Flash-NVFP4-DFlash2-2x-DGX-Spark@3eef46632c45ffb6c397de0716c23b3d2d594798",
+        "vllm@487ecf187"
+      ],
+      "ref": "pkg:github/jakejharris/jspark3@v1.0.0"
+    }
+  ],
+  "metadata": {
+    "component": {
+      "bom-ref": "pkg:github/jakejharris/jspark3@v1.0.0",
+      "description": "reproducible three-DGX-Spark serving and runtime recipe for GLM-5.3 Flash; the original JSpark3 recipe is not a weights redistribution and is paired with an authorized, attributed, byte-identical Hugging Face mirror of the pinned target checkpoint",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "jspark3",
+      "purl": "pkg:github/jakejharris/jspark3@v1.0.0",
+      "type": "application",
+      "version": "1.0.0"
+    },
+    "properties": [
+      {
+        "name": "jspark3:policy",
+        "value": "No checkpoint, tokenizer, model configuration, container layer, or patched vLLM tree is redistributed. Operators fetch the exact revisions and digests below; the recipe refuses anything else."
+      },
+      {
+        "name": "jspark3:release_status",
+        "value": "v1.0.0-released-hf-metadata-live-weights-review-pending"
+      },
+      {
+        "name": "jspark3:release_date",
+        "value": "2026-09-02"
+      },
+      {
+        "name": "jspark3:release_url",
+        "value": "https://github.com/jakejharris/jspark3/releases/tag/v1.0.0"
+      },
+      {
+        "name": "jspark3:hf_metadata_revision",
+        "value": "e9cbbafaf9ae4ab64f385c2f68e7fe2f06d78676"
+      },
+      {
+        "name": "jspark3:hf_weight_mirror_status",
+        "value": "authorized, transfer in progress on a separate review branch; not merged"
+      },
+      {
+        "name": "jspark3:owned_image_status",
+        "value": "not published and not a v1.0.0 deliverable; docker/ is retained for local reproducibility only. Do not redistribute a local build without independently satisfying NVIDIA and upstream terms."
+      },
+      {
+        "name": "jspark3:owned_image_publication_policy",
+        "value": "NO-GO for v1.0.0"
+      },
+      {
+        "name": "jspark3:runtime_image_reference",
+        "value": "ghcr.io/miaai-lab/glm-5.3-flash-2x-dgx-sparks@sha256:9bb1557a4234fce63d59599e44d10747eabd742beb337eebf9e7070be8a0fd58"
+      },
+      {
+        "name": "jspark3:owned_image_redistributed",
+        "value": "false"
+      }
+    ],
+    "tools": [
+      {
+        "name": "jspark3-build-sbom",
+        "version": "1.0.0"
+      }
+    ]
+  },
+  "serialNumber": "urn:uuid:f023ec38-ef28-574a-86b2-37c34d4b11f2",
+  "specVersion": "1.5",
+  "version": 1
+}

@@ -1,0 +1,197 @@
+{
+  "accounting_contract": {
+    "automatic_retries": 0,
+    "completion_tokens": "server usage.completion_tokens only",
+    "decode_denominator": "last visible SSE timestamp - first visible SSE timestamp",
+    "decode_numerator": "completion_tokens - 1 (N-1)",
+    "legacy_visible_aggregate": "sum(N-1) / (last visible across wave - first visible across wave)",
+    "primary_service_rate": "sum(N-1) / (latest request end - earliest request start)",
+    "warmups_excluded": true
+  },
+  "corruption_battery_clearance_eligible_by_design": false,
+  "limitations": [
+    "OpenAI chat-completions does not expose queue time or DP-rank assignment; the counter hook must capture them if available.",
+    "One quality repeat is a practical incumbent smoke, not the synthesis-required three-repeat quality clearance.",
+    "Acceptance is claimable only when the counter hook emits request-window attributed receipts; stream chunks are never used for acceptance."
+  ],
+  "missing_quality_rows": [
+    "8k/32k/128k/382k prefill and context ladder",
+    "needle ladder",
+    "seven-probe and 23-turn tool battery",
+    "designated >=700-token long-output battery",
+    "same-boot fidelity replay"
+  ],
+  "model": "glm-5.3-flash",
+  "profile": "fresh",
+  "quality_clearance_eligible_by_design": false,
+  "quality_max_tokens": 1024,
+  "quality_repeats": 1,
+  "request_manifest": {
+    "path": "REQUESTS.json",
+    "request_count": 24,
+    "sha256": "b011cccb918a24d643911507c59c7d1d6aa4470cad3618ba621fabb8ddc01209"
+  },
+  "schema_version": 2,
+  "windows": [
+    {
+      "concurrent": false,
+      "counter_bracket_required": false,
+      "phase": "warmup",
+      "request_ids": [
+        "c1-prose-warm-01"
+      ],
+      "window_id": "c1-prose-warm-01"
+    },
+    {
+      "concurrent": false,
+      "counter_bracket_required": false,
+      "phase": "warmup",
+      "request_ids": [
+        "c1-prose-warm-02"
+      ],
+      "window_id": "c1-prose-warm-02"
+    },
+    {
+      "concurrent": false,
+      "counter_bracket_required": true,
+      "phase": "c1-prose",
+      "request_ids": [
+        "c1-prose-score-01"
+      ],
+      "window_id": "c1-prose-score-01"
+    },
+    {
+      "concurrent": false,
+      "counter_bracket_required": true,
+      "phase": "c1-prose",
+      "request_ids": [
+        "c1-prose-score-02"
+      ],
+      "window_id": "c1-prose-score-02"
+    },
+    {
+      "concurrent": false,
+      "counter_bracket_required": true,
+      "phase": "c1-prose",
+      "request_ids": [
+        "c1-prose-score-03"
+      ],
+      "window_id": "c1-prose-score-03"
+    },
+    {
+      "concurrent": false,
+      "counter_bracket_required": true,
+      "phase": "c1-prose",
+      "request_ids": [
+        "c1-prose-score-04"
+      ],
+      "window_id": "c1-prose-score-04"
+    },
+    {
+      "concurrent": false,
+      "counter_bracket_required": false,
+      "phase": "warmup",
+      "request_ids": [
+        "c1-code-warm-01"
+      ],
+      "window_id": "c1-code-warm-01"
+    },
+    {
+      "concurrent": false,
+      "counter_bracket_required": true,
+      "phase": "c1-code",
+      "request_ids": [
+        "c1-code-score-01"
+      ],
+      "window_id": "c1-code-score-01"
+    },
+    {
+      "concurrent": false,
+      "counter_bracket_required": true,
+      "phase": "c1-code",
+      "request_ids": [
+        "c1-code-score-02"
+      ],
+      "window_id": "c1-code-score-02"
+    },
+    {
+      "concurrent": false,
+      "counter_bracket_required": true,
+      "phase": "c1-code",
+      "request_ids": [
+        "c1-code-score-03"
+      ],
+      "window_id": "c1-code-score-03"
+    },
+    {
+      "concurrent": false,
+      "counter_bracket_required": false,
+      "phase": "warmup",
+      "request_ids": [
+        "c1-count-warm-01"
+      ],
+      "window_id": "c1-count-warm-01"
+    },
+    {
+      "concurrent": false,
+      "counter_bracket_required": true,
+      "phase": "c1-count",
+      "request_ids": [
+        "c1-count-score-01"
+      ],
+      "window_id": "c1-count-score-01"
+    },
+    {
+      "concurrent": false,
+      "counter_bracket_required": true,
+      "phase": "c1-count",
+      "request_ids": [
+        "c1-count-score-02"
+      ],
+      "window_id": "c1-count-score-02"
+    },
+    {
+      "concurrent": false,
+      "counter_bracket_required": true,
+      "phase": "c1-count",
+      "request_ids": [
+        "c1-count-score-03"
+      ],
+      "window_id": "c1-count-score-03"
+    },
+    {
+      "concurrent": false,
+      "counter_bracket_required": false,
+      "phase": "legacy-control",
+      "request_ids": [
+        "legacy-count-cap400-control"
+      ],
+      "window_id": "legacy-count-cap400-control"
+    },
+    {
+      "concurrent": true,
+      "counter_bracket_required": true,
+      "phase": "c3",
+      "request_ids": [
+        "c3-wave-01-prose",
+        "c3-wave-01-code",
+        "c3-wave-01-tool"
+      ],
+      "window_id": "c3-wave-01"
+    },
+    {
+      "concurrent": true,
+      "counter_bracket_required": true,
+      "phase": "c6",
+      "request_ids": [
+        "c6-wave-01-set1-prose",
+        "c6-wave-01-set1-code",
+        "c6-wave-01-set1-tool",
+        "c6-wave-01-set2-prose",
+        "c6-wave-01-set2-code",
+        "c6-wave-01-set2-tool"
+      ],
+      "window_id": "c6-wave-01"
+    }
+  ]
+}

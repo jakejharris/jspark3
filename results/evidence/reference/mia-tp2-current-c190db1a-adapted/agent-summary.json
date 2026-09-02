@@ -1,0 +1,14 @@
+{
+  "arm": "mia-tp2-current-c190db1a-adapted",
+  "browser_qa": "partial and waived, not a full pass",
+  "decode_seconds": 3095.308912,
+  "decode_tok_s": 24.728,
+  "estimator": "exclusive idle-to-idle server-counter delta over the agent trajectory",
+  "evidence_class": "local_reproduction",
+  "fidelity": "compatibility-adapted",
+  "generation_tokens": 76540,
+  "mean_ttft_seconds": 2.413,
+  "note": "same agent prompt as the historical reproduction, independent trajectory; a product run, not an engine-rate comparison",
+  "task_requests": 24,
+  "thinking_sampling": "high-effort thinking, provider default sampling"
+}

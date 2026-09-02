@@ -1,0 +1,208 @@
+{
+  "hca": {
+    "rank0": {
+      "roceP2p1s0f0": {
+        "port_rcv_data": 0,
+        "port_rcv_packets": 0,
+        "port_xmit_data": 0,
+        "port_xmit_packets": 0
+      },
+      "roceP2p1s0f1": {
+        "port_rcv_data": 0,
+        "port_rcv_packets": 0,
+        "port_xmit_data": 0,
+        "port_xmit_packets": 0
+      },
+      "rocep1s0f0": {
+        "port_rcv_data": 734590605,
+        "port_rcv_packets": 1359844,
+        "port_xmit_data": 22971258,
+        "port_xmit_packets": 832835
+      },
+      "rocep1s0f1": {
+        "port_rcv_data": 21887100,
+        "port_rcv_packets": 800127,
+        "port_xmit_data": 732618113,
+        "port_xmit_packets": 1325884
+      }
+    },
+    "rank1": {
+      "roceP2p1s0f0": {
+        "port_rcv_data": 0,
+        "port_rcv_packets": 0,
+        "port_xmit_data": 0,
+        "port_xmit_packets": 0
+      },
+      "roceP2p1s0f1": {
+        "port_rcv_data": 0,
+        "port_rcv_packets": 0,
+        "port_xmit_data": 0,
+        "port_xmit_packets": 0
+      },
+      "rocep1s0f0": {
+        "port_rcv_data": 732618113,
+        "port_rcv_packets": 1325884,
+        "port_xmit_data": 21887100,
+        "port_xmit_packets": 800127
+      },
+      "rocep1s0f1": {
+        "port_rcv_data": 22157806,
+        "port_rcv_packets": 810498,
+        "port_xmit_data": 733697282,
+        "port_xmit_packets": 1332354
+      }
+    },
+    "rank2": {
+      "roceP2p1s0f0": {
+        "port_rcv_data": 0,
+        "port_rcv_packets": 0,
+        "port_xmit_data": 0,
+        "port_xmit_packets": 0
+      },
+      "roceP2p1s0f1": {
+        "port_rcv_data": 0,
+        "port_rcv_packets": 0,
+        "port_xmit_data": 0,
+        "port_xmit_packets": 0
+      },
+      "rocep1s0f0": {
+        "port_rcv_data": 733697282,
+        "port_rcv_packets": 1332354,
+        "port_xmit_data": 22157806,
+        "port_xmit_packets": 810498
+      },
+      "rocep1s0f1": {
+        "port_rcv_data": 22971258,
+        "port_rcv_packets": 832835,
+        "port_xmit_data": 734590605,
+        "port_xmit_packets": 1359844
+      }
+    }
+  },
+  "memory": {
+    "rank0": {
+      "host_vmstat": {
+        "pgmajfault": 6,
+        "pswpin": 6,
+        "pswpout": 0
+      },
+      "labels": {},
+      "memory_current": 708608,
+      "memory_events": {
+        "high": 0,
+        "low": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_group_kill": 0,
+        "oom_kill": 0
+      },
+      "memory_peak": 0,
+      "memory_stat": {
+        "active_anon": 20480,
+        "active_file": 0,
+        "anon": 28672,
+        "file": 0,
+        "file_dirty": -4096,
+        "file_mapped": -65536,
+        "file_writeback": 0,
+        "inactive_anon": 0,
+        "inactive_file": 0,
+        "pgfault": 8,
+        "pgmajfault": 0,
+        "shmem": 0,
+        "swapcached": 0
+      },
+      "swap_current": 0
+    },
+    "rank1": {
+      "host_vmstat": {
+        "pgmajfault": 53,
+        "pswpin": 46,
+        "pswpout": 0
+      },
+      "labels": {},
+      "memory_current": -159744,
+      "memory_events": {
+        "high": 0,
+        "low": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_group_kill": 0,
+        "oom_kill": 0
+      },
+      "memory_peak": 0,
+      "memory_stat": {
+        "active_anon": 8192,
+        "active_file": 0,
+        "anon": 12288,
+        "file": 0,
+        "file_dirty": 0,
+        "file_mapped": 65536,
+        "file_writeback": 0,
+        "inactive_anon": 0,
+        "inactive_file": 0,
+        "pgfault": 4,
+        "pgmajfault": 0,
+        "shmem": 0,
+        "swapcached": 0
+      },
+      "swap_current": 0
+    },
+    "rank2": {
+      "host_vmstat": {
+        "pgmajfault": 225,
+        "pswpin": 223,
+        "pswpout": 0
+      },
+      "labels": {},
+      "memory_current": -245760,
+      "memory_events": {
+        "high": 0,
+        "low": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_group_kill": 0,
+        "oom_kill": 0
+      },
+      "memory_peak": 0,
+      "memory_stat": {
+        "active_anon": 16384,
+        "active_file": 0,
+        "anon": 16384,
+        "file": 0,
+        "file_dirty": 0,
+        "file_mapped": 0,
+        "file_writeback": 0,
+        "inactive_anon": 0,
+        "inactive_file": 0,
+        "pgfault": 4,
+        "pgmajfault": 0,
+        "shmem": 0,
+        "swapcached": 0
+      },
+      "swap_current": 0
+    }
+  },
+  "metrics": {
+    "engine": {
+      "accepted_per_position": {
+        "0": 95.0,
+        "1": 68.0,
+        "2": 42.0,
+        "3": 26.0,
+        "4": 16.0,
+        "5": 12.0,
+        "6": 10.0
+      },
+      "accepted_tokens": 269.0,
+      "draft_iterations": 132.0,
+      "draft_tokens": 924.0
+    },
+    "gauges": {
+      "vllm:num_requests_running": 0.0,
+      "vllm:num_requests_waiting": 0.0,
+      "vllm:num_requests_waiting_by_reason": 0.0
+    },
+    "selected_metric_row_count": 0
+  }
+}

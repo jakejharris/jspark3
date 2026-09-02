@@ -1,0 +1,164 @@
+{
+  "schema": "glm53-exl3-sm120-runtime-publication.v1",
+  "created_at": "2026-08-27T19:08:00-04:00",
+  "model": "brandonmusic/GLM-5.3-Flash-EXL3-4bpw",
+  "hardware": "2x RTX PRO 6000 Blackwell, SM120",
+  "image": {
+    "versioned": "verdictai/glm53-flash-exl3-k4:r19-sm120-tp2-v44",
+    "daily_tag": "verdictai/glm53-flash-exl3-k4:daily-driver-sm120-tp2",
+    "oci_index": "sha256:15192e3930b4ae5558271ebe7d1a5a02da6dcc5a6c292c44e79a3fb8c883b5e1",
+    "amd64_manifest": "sha256:0c35421c2c773743ee74b17592d5bd32143546a2bbfe32fc8f32b97ca74167bf",
+    "attestation_manifest": "sha256:fa19cab01fc3304137b8dae75ba1d1162b6373d2ad177424861c63e2eaca6af9"
+  },
+  "source": {
+    "vllm_base_commit": "df684ff47dcbf088b41311494fd20347a702e56a",
+    "b12x_commit": "30aafad96b7a78064651c4a5ac177791e7bdee30",
+    "checkpoint_layout": "global unsliced K4 routed experts, intermediate_size=2048",
+    "runtime_layout": "stream-loaded TP2 rank-local K4 slabs, intermediate_size=1024",
+    "moe_path": "fused EXL3 Trellis/B12X"
+  },
+  "profiles": {
+    "daily": {
+      "kv_cache": "fp8_ds_mla",
+      "attention_backend": "FLASHINFER_MLA_SPARSE_SM120",
+      "dcp": 2,
+      "mtp_tokens": 3,
+      "cuda_graph": true,
+      "max_model_len": 435456,
+      "max_num_batched_tokens": 2048,
+      "max_num_seqs": 1,
+      "gpu_memory_utilization": 0.986
+    },
+    "long500k": {
+      "kv_cache": "nvfp4_ds_mla",
+      "attention_backend": "B12X_MLA_SPARSE",
+      "dcp": 2,
+      "mtp_tokens": 3,
+      "cuda_graph": true,
+      "max_model_len": 499968,
+      "max_num_batched_tokens": 1024,
+      "max_num_seqs": 1,
+      "gpu_memory_utilization": 0.985
+    }
+  },
+  "kld": {
+    "authoritative_regime": "v43 rootfs, TP2, DCP1, eager, no MTP, FP8 MLA KV",
+    "run_count": 5,
+    "tokens": 2048,
+    "prediction_positions_per_run": 2047,
+    "run_means": [
+      0.024566116963587743,
+      0.02484955747693601,
+      0.02488293126922237,
+      0.024016412383556018,
+      0.024827864888926656
+    ],
+    "mean": 0.02462857659644576,
+    "population_stddev": 0.0003261566807242095,
+    "mean_top1_agreement": 0.9379579872984856,
+    "quality_gate": "mean KLD < 0.06",
+    "all_runs_pass": true,
+    "teacher_payload_sha256": "9f49af1b1b1a6ac88a00f5feaa89c25232597306d73d7c0cd30bb7e9c775cfb6",
+    "receipt_sha256": "8302e72a523189af1fe5a5e2530d45f9532c0efca8f7b4e43eb5cdc3dfd0e1e",
+    "first64_mean": 0.19186695,
+    "remaining1983_mean": 0.01923107,
+    "first64_fraction_of_total": 0.243613,
+    "nvfp4_five_run_mean": 0.06053485053836315,
+    "nvfp4_gate_pass": false
+  },
+  "performance": {
+    "nvfp4_dcp2_mtp3_steady_prefill_tok_s": {
+      "8192": 3819.0,
+      "16384": 4112.0,
+      "32768": 4149.0,
+      "65536": 4174.0,
+      "131072": 4145.0
+    },
+    "nvfp4_dcp2_mtp3_c1_decode_tok_s": {
+      "0": 98.85495572331693,
+      "16384": 106.5414194469794,
+      "32768": 101.15099399633722,
+      "65536": 107.15700851940537,
+      "131072": 112.37636035493242
+    },
+    "nvfp4_prefill_receipt_sha256": "276b30f965082c8ea82f5ad8212106a2baf3958577883a4fbd51e51a73a66f83",
+    "nvfp4_decode_receipt_sha256": "f5184875558e5dfe2e8f51f40a6657ea32ce5466e58b50d958225767790880d8",
+    "public_fp8_prefill_receipt_sha256": "c4fcefea0fe11be2197a4e23dadf35a1f5d82ba98168373f013b6537703fd2a8",
+    "public_fp8_decode_receipt_sha256": "e43039cf541b36cd8c66f678e7c7f6d11af2ab00250000745ad86c4f31eaf427"
+  },
+  "quality": {
+    "sampling": {
+      "temperature": 1.0,
+      "top_p": 0.95
+    },
+    "estonia": {
+      "regime": "NVFP4, DCP2, graph, MTP3",
+      "correct": 10,
+      "total": 10,
+      "cap_hits": 0,
+      "errors": 0,
+      "mean_generation_tok_s": 129.08494771802967,
+      "receipt_sha256": "2b202a67daca1eafc66758ee3019d49161fa6ea87d8455bc3080620562a4788a"
+    },
+    "lavd_low": {
+      "regime": "FP8, DCP2, graph, MTP3, reasoning_effort=low",
+      "raw_exact": 0,
+      "raw_near": 6,
+      "raw_fail": 4,
+      "audited_exact": 1,
+      "audited_near": 9,
+      "audited_fail": 0,
+      "audited_accepted": 10,
+      "total": 10,
+      "cap_hits": 0,
+      "errors": 0,
+      "mean_generation_tok_s": 160.04339599723795,
+      "raw_receipt_sha256": "bb8b6dad760ba36a102caf22442e6540c28aea871c6fcfb609d9ae199f65869e",
+      "audit_receipt_sha256": "20c595f24116e0bdf4c47c38cb9ff045387bdb637706ee96b5e14059eb8b1de8"
+    },
+    "lavd_normal_reasoning_scout": {
+      "regime": "FP8, DCP2, graph, MTP3, default reasoning",
+      "audited_exact": 2,
+      "audited_near": 0,
+      "audited_fail": 1,
+      "total": 3,
+      "cap_hits": 1,
+      "raw_receipt_sha256": "ea6214f4b02f44d2b2d98535a322a09aa1121d117e12b5b14a82763cb102b30c",
+      "audit_receipt_sha256": "360f4905751af1f478543a664e30b1decd825fd3579369d1914ec5c1b62dbb7f"
+    },
+    "hotel": {
+      "status": "not_run_by_owner_instruction"
+    }
+  },
+  "needle": {
+    "regime": "NVFP4, DCP2, graph, MTP3, max_model_len=499968",
+    "raw_passed": 17,
+    "raw_total": 18,
+    "raw_receipt_sha256": "baa77d044d553732b4c2beec66292fdb4977eafbce6e8d8ca8a72841a24c3fc1",
+    "targeted_retry_prompt_tokens": 498368,
+    "targeted_retry_depth": 0.9,
+    "targeted_retry_reasoning_effort": "low",
+    "targeted_retry_completion_tokens": 7,
+    "targeted_retry_exact": true,
+    "targeted_retry_seconds": 147.939,
+    "targeted_retry_receipt_sha256": "bc81617e23e2b0f337f5a7252127741301175d8bc071480ce87b9c29bc9a0ef5"
+  },
+  "kernel_tuning": {
+    "scheduler_1024": "block_m=32 selected for the GLM53 TP2 1024-wide expert specialization",
+    "scheduler_2048": "block_m=64 retained because end-to-end prefill is faster at the daily 2048-token cap",
+    "steady_prefill_conclusion": "approximately 4.1K tok/s; no measured 10K path on this host"
+  },
+  "live_handoff": {
+    "verified_at": "2026-08-27T19:13:00-04:00",
+    "container": "glm53-flash-exl3-k4-daily",
+    "health_ready": true,
+    "served_model": "GLM-5.3-Flash-EXL3-4bpw",
+    "reported_max_model_len": 435456,
+    "reported_kv_cache_tokens": 578698,
+    "cuda_graphs_captured": true,
+    "smoke_prompt": "What is the capital of Kentucky? Answer in one short sentence.",
+    "smoke_content": "The capital of Kentucky is Frankfort.",
+    "smoke_finish_reason": "stop",
+    "smoke_completion_tokens": 10
+  }
+}

@@ -1,0 +1,65 @@
+cff-version: 1.2.0
+message: "If you use JSpark3 v1, cite it together with the upstream work it composes."
+title: "JSpark3 v1: a reproducible three-DGX-Spark serving recipe for GLM-5.3 Flash"
+type: software
+version: 1.0.0
+date-released: 2026-09-02
+url: "https://github.com/jakejharris/jspark3/releases/tag/v1.0.0"
+license: Apache-2.0
+repository-code: "https://github.com/jakejharris/jspark3"
+authors:
+  - name: "JSpark3 authors"
+keywords:
+  - DGX Spark
+  - GLM-5.3 Flash
+  - tensor parallelism
+  - expert parallelism
+  - EXL3
+  - speculative decoding
+  - vLLM
+references:
+  - type: software
+    title: "GLM-5.3-Flash"
+    authors: [{name: "Z.AI"}]
+    url: "https://huggingface.co/zai-org/GLM-5.3-Flash"
+  - type: software
+    title: "GLM-5.3-Flash EXL3/TR3 4 bpw checkpoint (ShapleyMcg)"
+    authors: [{family-names: "Music", given-names: "Brandon M."}]
+    url: "https://huggingface.co/Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw"
+  - type: software
+    title: "ShapleyMcg"
+    authors: [{family-names: "Music", given-names: "Brandon M."}]
+    url: "https://github.com/brandonmmusic-max/shapleymcg"
+  - type: software
+    title: "GLM-5.3-Flash-DFlash2 draft model"
+    authors: [{name: "Inco AI"}]
+    url: "https://huggingface.co/incoai/GLM-5.3-Flash-DFlash2"
+  - type: software
+    title: "DFlash"
+    url: "https://github.com/z-lab/dflash"
+  - type: software
+    title: "vLLM"
+    url: "https://github.com/vllm-project/vllm"
+  - type: software
+    title: "ExLlamaV3"
+    url: "https://github.com/turboderp-org/exllamav3"
+  - type: software
+    title: "GLM-5.3-Flash EXL3 on two DGX Sparks (image and recipe)"
+    authors: [{name: "MiaAI-Lab"}]
+    url: "https://github.com/MiaAI-Lab/GLM-5.3-Flash-EXL3-2x-DGX-Sparks"
+  - type: software
+    title: "GLM-5.3-Flash EXL3 on three DGX Sparks"
+    authors: [{name: "FlyCockpit"}]
+    url: "https://github.com/FlyCockpit/GLM-5.3-Flash-EXL3-3x-DGX-Sparks"
+  - type: software
+    title: "GLM-5.3-Flash NVFP4 with DFlash2 on two DGX Sparks"
+    authors: [{name: "tonyd2wild"}]
+    url: "https://github.com/tonyd2wild/GLM-5.3-Flash-NVFP4-DFlash2-2x-DGX-Spark"
+  - type: software
+    title: "GLM-5.3-Flash EXL3 K2 DGX Spark recipe"
+    authors: [{name: "vcruz305"}]
+    url: "https://github.com/vcruz305/GLM-5.3-Flash-EXL3-K2-DGX-Spark-recipe"
+  - type: software
+    title: "GLM-5.3-Flash NVFP4 vLLM on two DGX Sparks"
+    authors: [{name: "sfxnz"}]
+    url: "https://github.com/sfxnz/GLM-5.3-Flash-NVFP4-vLLM-2x-DGX-Spark"

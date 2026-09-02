@@ -1,0 +1,780 @@
+{
+  "all_scored_rates_valid": true,
+  "arm": "mia-tp2-current-c190db1a-adapted",
+  "counter_brackets_all_pass": true,
+  "fatal_error": null,
+  "first_rate_scope": false,
+  "functional_scored_checks_all_pass": false,
+  "grade": "ENGINEERING-EVIDENCE",
+  "matrix_rate_receipt_eligible": false,
+  "publication_eligible": false,
+  "quality": {
+    "all_pass": false,
+    "corruption_battery_clearance_eligible_by_design": false,
+    "corruption_battery_cleared": false,
+    "fail_count": 0,
+    "hold_count": 0,
+    "max_tokens": 1024,
+    "missing_quality_rows": [
+      "8k/32k/128k/382k prefill and context ladder",
+      "needle ladder",
+      "seven-probe and 23-turn tool battery",
+      "designated >=700-token long-output battery",
+      "same-boot fidelity replay"
+    ],
+    "note": "This harness can clear its three-repeat corruption component only; omitted synthesis rows keep overall quality HOLD.",
+    "overall_quality_clearance_eligible_by_design": false,
+    "pass_count": 0,
+    "quality_cleared": false,
+    "repeats": 1,
+    "request_count": 0
+  },
+  "rate_claim_eligible_engineering": false,
+  "rate_measurement_complete": true,
+  "rate_phases": {
+    "c1-code": {
+      "expected_observations": 3,
+      "individual_rates": [
+        45.49279919998788,
+        44.12497741583573,
+        44.56255225859717
+      ],
+      "mean_rate": 44.72677629147359,
+      "median_rate": 44.56255225859717,
+      "valid_rate_observations": 3
+    },
+    "c1-count": {
+      "expected_observations": 3,
+      "individual_rates": [
+        55.73836084786636,
+        60.585736872570955,
+        57.969781898461285
+      ],
+      "mean_rate": 58.0979598729662,
+      "median_rate": 57.969781898461285,
+      "valid_rate_observations": 3
+    },
+    "c1-prose": {
+      "expected_observations": 4,
+      "individual_rates": [
+        21.18538701858953,
+        17.27875223450383,
+        20.400222421078865,
+        19.676929971677612
+      ],
+      "mean_rate": 19.63532291146246,
+      "median_rate": 20.038576196378237,
+      "valid_rate_observations": 4
+    },
+    "c3": {
+      "expected_observations": 3,
+      "individual_rates": [
+        17.005018781460215,
+        31.36276731078659,
+        87.07413859454486
+      ],
+      "mean_rate": 45.147308228930555,
+      "median_rate": 31.36276731078659,
+      "valid_rate_observations": 3
+    },
+    "c6": {
+      "expected_observations": 6,
+      "individual_rates": [
+        18.275068722361947,
+        31.214763713905505,
+        58.3843331098381,
+        18.31972561600196,
+        44.755674281703314,
+        58.4627110027529
+      ],
+      "mean_rate": 38.23537940776062,
+      "median_rate": 37.98521899780441,
+      "valid_rate_observations": 6
+    }
+  },
+  "request_count_completed": 24,
+  "run_id": "fresh-r2",
+  "schema_version": 2,
+  "windows": [
+    {
+      "aggregate_decode_tokens_n_minus_1": 399,
+      "completion_wall_p50_seconds": 19.886280623,
+      "completion_wall_p90_seconds": 19.886280623,
+      "counter_required": false,
+      "dp_rank_assignment": null,
+      "dp_rank_provenance": "NOT_AVAILABLE_FROM_OPENAI_API; counter hook may supply it",
+      "error_count": 0,
+      "fairness_slowest_divided_by_fastest": 1.0,
+      "legacy_visible_aggregate_decode_tokens_per_second": 20.354132222406605,
+      "legacy_visible_aggregate_interval_seconds": 19.602899089,
+      "per_stream_rate_max": 20.354132222406605,
+      "per_stream_rate_min": 20.354132222406605,
+      "per_stream_rates": {
+        "c1-prose-warm-01": 20.354132222406605
+      },
+      "phase": "warmup",
+      "primary_estimator": "sum(completion_tokens-1)/(latest_request_end-earliest_request_start)",
+      "queue_time_provenance": "NOT_AVAILABLE_FROM_OPENAI_API; counter hook may supply it",
+      "queue_time_seconds": null,
+      "request_ids": [
+        "c1-prose-warm-01"
+      ],
+      "result_count": 1,
+      "service_decode_tokens_per_second": 20.064083755236062,
+      "service_request_window_seconds": 19.886280623,
+      "ttft_p50_seconds": 0.282364473,
+      "ttft_p90_seconds": 0.282364473,
+      "window_id": "c1-prose-warm-01"
+    },
+    {
+      "aggregate_decode_tokens_n_minus_1": 399,
+      "completion_wall_p50_seconds": 23.055725891,
+      "completion_wall_p90_seconds": 23.055725891,
+      "counter_required": false,
+      "dp_rank_assignment": null,
+      "dp_rank_provenance": "NOT_AVAILABLE_FROM_OPENAI_API; counter hook may supply it",
+      "error_count": 0,
+      "fairness_slowest_divided_by_fastest": 1.0,
+      "legacy_visible_aggregate_decode_tokens_per_second": 17.516157807426552,
+      "legacy_visible_aggregate_interval_seconds": 22.778968104,
+      "per_stream_rate_max": 17.516157807426552,
+      "per_stream_rate_min": 17.516157807426552,
+      "per_stream_rates": {
+        "c1-prose-warm-02": 17.516157807426552
+      },
+      "phase": "warmup",
+      "primary_estimator": "sum(completion_tokens-1)/(latest_request_end-earliest_request_start)",
+      "queue_time_provenance": "NOT_AVAILABLE_FROM_OPENAI_API; counter hook may supply it",
+      "queue_time_seconds": null,
+      "request_ids": [
+        "c1-prose-warm-02"
+      ],
+      "result_count": 1,
+      "service_decode_tokens_per_second": 17.305896239673505,
+      "service_request_window_seconds": 23.055725891,
+      "ttft_p50_seconds": 0.275493241,
+      "ttft_p90_seconds": 0.275493241,
+      "window_id": "c1-prose-warm-02"
+    },
+    {
+      "acceptance_receipts": [
+        {
+          "accepted_divided_by_drafted": 0.23651844843897823,
+          "accepted_tokens_delta": 250.0,
+          "draft_tokens_delta": 1057.0,
+          "provenance": "counter_hook_window_delta",
+          "scope": "metrics.engine"
+        }
+      ],
+      "aggregate_decode_tokens_n_minus_1": 399,
+      "completion_wall_p50_seconds": 19.096847508,
+      "completion_wall_p90_seconds": 19.096847508,
+      "counter_after_path": "counters/c1-prose-score-01.after.json",
+      "counter_before_path": "counters/c1-prose-score-01.before.json",
+      "counter_delta_path": "counters/c1-prose-score-01.delta.json",
+      "counter_required": true,
+      "counter_verdict": "PASS",
+      "dp_rank_assignment": null,
+      "dp_rank_provenance": "NOT_AVAILABLE_FROM_OPENAI_API; counter hook may supply it",
+      "error_count": 0,
+      "fairness_slowest_divided_by_fastest": 1.0,
+      "legacy_visible_aggregate_decode_tokens_per_second": 21.18538701858953,
+      "legacy_visible_aggregate_interval_seconds": 18.833736653,
+      "per_stream_rate_max": 21.18538701858953,
+      "per_stream_rate_min": 21.18538701858953,
+      "per_stream_rates": {
+        "c1-prose-score-01": 21.18538701858953
+      },
+      "phase": "c1-prose",
+      "primary_estimator": "sum(completion_tokens-1)/(latest_request_end-earliest_request_start)",
+      "queue_time_provenance": "NOT_AVAILABLE_FROM_OPENAI_API; counter hook may supply it",
+      "queue_time_seconds": null,
+      "request_ids": [
+        "c1-prose-score-01"
+      ],
+      "result_count": 1,
+      "service_decode_tokens_per_second": 20.89350086881366,
+      "service_request_window_seconds": 19.096847508,
+      "ttft_p50_seconds": 0.261774638,
+      "ttft_p90_seconds": 0.261774638,
+      "window_id": "c1-prose-score-01"
+    },
+    {
+      "acceptance_receipts": [
+        {
+          "accepted_divided_by_drafted": 0.1669254658385093,
+          "accepted_tokens_delta": 215.0,
+          "draft_tokens_delta": 1288.0,
+          "provenance": "counter_hook_window_delta",
+          "scope": "metrics.engine"
+        }
+      ],
+      "aggregate_decode_tokens_n_minus_1": 399,
+      "completion_wall_p50_seconds": 23.364669022,
+      "completion_wall_p90_seconds": 23.364669022,
+      "counter_after_path": "counters/c1-prose-score-02.after.json",
+      "counter_before_path": "counters/c1-prose-score-02.before.json",
+      "counter_delta_path": "counters/c1-prose-score-02.delta.json",
+      "counter_required": true,
+      "counter_verdict": "PASS",
+      "dp_rank_assignment": null,
+      "dp_rank_provenance": "NOT_AVAILABLE_FROM_OPENAI_API; counter hook may supply it",
+      "error_count": 0,
+      "fairness_slowest_divided_by_fastest": 1.0,
+      "legacy_visible_aggregate_decode_tokens_per_second": 17.27875223450383,
+      "legacy_visible_aggregate_interval_seconds": 23.091945216,
+      "per_stream_rate_max": 17.27875223450383,
+      "per_stream_rate_min": 17.27875223450383,
+      "per_stream_rates": {
+        "c1-prose-score-02": 17.27875223450383
+      },
+      "phase": "c1-prose",
+      "primary_estimator": "sum(completion_tokens-1)/(latest_request_end-earliest_request_start)",
+      "queue_time_provenance": "NOT_AVAILABLE_FROM_OPENAI_API; counter hook may supply it",
+      "queue_time_seconds": null,
+      "request_ids": [
+        "c1-prose-score-02"
+      ],
+      "result_count": 1,
+      "service_decode_tokens_per_second": 17.07706621584515,
+      "service_request_window_seconds": 23.364669022,
+      "ttft_p50_seconds": 0.271499241,
+      "ttft_p90_seconds": 0.271499241,
+      "window_id": "c1-prose-score-02"
+    },
+    {
+      "acceptance_receipts": [
+        {
+          "accepted_divided_by_drafted": 0.22344322344322345,
+          "accepted_tokens_delta": 244.0,
+          "draft_tokens_delta": 1092.0,
+          "provenance": "counter_hook_window_delta",
+          "scope": "metrics.engine"
+        }
+      ],
+      "aggregate_decode_tokens_n_minus_1": 399,
+      "completion_wall_p50_seconds": 19.824006732,
+      "completion_wall_p90_seconds": 19.824006732,
+      "counter_after_path": "counters/c1-prose-score-03.after.json",
+      "counter_before_path": "counters/c1-prose-score-03.before.json",
+      "counter_delta_path": "counters/c1-prose-score-03.delta.json",
+      "counter_required": true,
+      "counter_verdict": "PASS",
+      "dp_rank_assignment": null,
+      "dp_rank_provenance": "NOT_AVAILABLE_FROM_OPENAI_API; counter hook may supply it",
+      "error_count": 0,
+      "fairness_slowest_divided_by_fastest": 1.0,
+      "legacy_visible_aggregate_decode_tokens_per_second": 20.400222421078865,
+      "legacy_visible_aggregate_interval_seconds": 19.558610282,
+      "per_stream_rate_max": 20.400222421078865,
+      "per_stream_rate_min": 20.400222421078865,
+      "per_stream_rates": {
+        "c1-prose-score-03": 20.400222421078865
+      },
+      "phase": "c1-prose",
+      "primary_estimator": "sum(completion_tokens-1)/(latest_request_end-earliest_request_start)",
+      "queue_time_provenance": "NOT_AVAILABLE_FROM_OPENAI_API; counter hook may supply it",
+      "queue_time_seconds": null,
+      "request_ids": [
+        "c1-prose-score-03"
+      ],
+      "result_count": 1,
+      "service_decode_tokens_per_second": 20.127111809134547,
+      "service_request_window_seconds": 19.824006732,
+      "ttft_p50_seconds": 0.264265458,
+      "ttft_p90_seconds": 0.264265458,
+      "window_id": "c1-prose-score-03"
+    },
+    {
+      "acceptance_receipts": [
+        {
+          "accepted_divided_by_drafted": 0.20432900432900433,
+          "accepted_tokens_delta": 236.0,
+          "draft_tokens_delta": 1155.0,
+          "provenance": "counter_hook_window_delta",
+          "scope": "metrics.engine"
+        }
+      ],
+      "aggregate_decode_tokens_n_minus_1": 399,
+      "completion_wall_p50_seconds": 20.567027084,
+      "completion_wall_p90_seconds": 20.567027084,
+      "counter_after_path": "counters/c1-prose-score-04.after.json",
+      "counter_before_path": "counters/c1-prose-score-04.before.json",
+      "counter_delta_path": "counters/c1-prose-score-04.delta.json",
+      "counter_required": true,
+      "counter_verdict": "PASS",
+      "dp_rank_assignment": null,
+      "dp_rank_provenance": "NOT_AVAILABLE_FROM_OPENAI_API; counter hook may supply it",
+      "error_count": 0,
+      "fairness_slowest_divided_by_fastest": 1.0,
+      "legacy_visible_aggregate_decode_tokens_per_second": 19.676929971677612,
+      "legacy_visible_aggregate_interval_seconds": 20.277553489,
+      "per_stream_rate_max": 19.676929971677612,
+      "per_stream_rate_min": 19.676929971677612,
+      "per_stream_rates": {
+        "c1-prose-score-04": 19.676929971677612
+      },
+      "phase": "c1-prose",
+      "primary_estimator": "sum(completion_tokens-1)/(latest_request_end-earliest_request_start)",
+      "queue_time_provenance": "NOT_AVAILABLE_FROM_OPENAI_API; counter hook may supply it",
+      "queue_time_seconds": null,
+      "request_ids": [
+        "c1-prose-score-04"
+      ],
+      "result_count": 1,
+      "service_decode_tokens_per_second": 19.399984177120075,
+      "service_request_window_seconds": 20.567027084,
+      "ttft_p50_seconds": 0.288212739,
+      "ttft_p90_seconds": 0.288212739,
+      "window_id": "c1-prose-score-04"
+    },
+    {
+      "aggregate_decode_tokens_n_minus_1": 387,
+      "completion_wall_p50_seconds": 8.78097056,
+      "completion_wall_p90_seconds": 8.78097056,
+      "counter_required": false,
+      "dp_rank_assignment": null,
+      "dp_rank_provenance": "NOT_AVAILABLE_FROM_OPENAI_API; counter hook may supply it",
+      "error_count": 0,
+      "fairness_slowest_divided_by_fastest": 1.0,
+      "legacy_visible_aggregate_decode_tokens_per_second": 46.03569727445354,
+      "legacy_visible_aggregate_interval_seconds": 8.406519786,
+      "per_stream_rate_max": 46.03569727445354,
+      "per_stream_rate_min": 46.03569727445354,
+      "per_stream_rates": {
+        "c1-code-warm-01": 46.03569727445354
+      },
+      "phase": "warmup",
+      "primary_estimator": "sum(completion_tokens-1)/(latest_request_end-earliest_request_start)",
+      "queue_time_provenance": "NOT_AVAILABLE_FROM_OPENAI_API; counter hook may supply it",
+      "queue_time_seconds": null,
+      "request_ids": [
+        "c1-code-warm-01"
+      ],
+      "result_count": 1,
+      "service_decode_tokens_per_second": 44.07257687013587,
+      "service_request_window_seconds": 8.78097056,
+      "ttft_p50_seconds": 0.259415012,
+      "ttft_p90_seconds": 0.259415012,
+      "window_id": "c1-code-warm-01"
+    },
+    {
+      "acceptance_receipts": [
+        {
+          "accepted_divided_by_drafted": 0.6780383795309168,
+          "accepted_tokens_delta": 318.0,
+          "draft_tokens_delta": 469.0,
+          "provenance": "counter_hook_window_delta",
+          "scope": "metrics.engine"
+        }
+      ],
+      "aggregate_decode_tokens_n_minus_1": 385,
+      "completion_wall_p50_seconds": 8.720661572,
+      "completion_wall_p90_seconds": 8.720661572,
+      "counter_after_path": "counters/c1-code-score-01.after.json",
+      "counter_before_path": "counters/c1-code-score-01.before.json",
+      "counter_delta_path": "counters/c1-code-score-01.delta.json",
+      "counter_required": true,
+      "counter_verdict": "PASS",
+      "dp_rank_assignment": null,
+      "dp_rank_provenance": "NOT_AVAILABLE_FROM_OPENAI_API; counter hook may supply it",
+      "error_count": 0,
+      "fairness_slowest_divided_by_fastest": 1.0,
+      "legacy_visible_aggregate_decode_tokens_per_second": 45.49279919998788,
+      "legacy_visible_aggregate_interval_seconds": 8.462877791,
+      "per_stream_rate_max": 45.49279919998788,
+      "per_stream_rate_min": 45.49279919998788,
+      "per_stream_rates": {
+        "c1-code-score-01": 45.49279919998788
+      },
+      "phase": "c1-code",
+      "primary_estimator": "sum(completion_tokens-1)/(latest_request_end-earliest_request_start)",
+      "queue_time_provenance": "NOT_AVAILABLE_FROM_OPENAI_API; counter hook may supply it",
+      "queue_time_seconds": null,
+      "request_ids": [
+        "c1-code-score-01"
+      ],
+      "result_count": 1,
+      "service_decode_tokens_per_second": 44.14802670890759,
+      "service_request_window_seconds": 8.720661572,
+      "ttft_p50_seconds": 0.257300902,
+      "ttft_p90_seconds": 0.257300902,
+      "window_id": "c1-code-score-01"
+    },
+    {
+      "acceptance_receipts": [
+        {
+          "accepted_divided_by_drafted": 0.670020120724346,
+          "accepted_tokens_delta": 333.0,
+          "draft_tokens_delta": 497.0,
+          "provenance": "counter_hook_window_delta",
+          "scope": "metrics.engine"
+        }
+      ],
+      "aggregate_decode_tokens_n_minus_1": 399,
+      "completion_wall_p50_seconds": 9.296232202,
+      "completion_wall_p90_seconds": 9.296232202,
+      "counter_after_path": "counters/c1-code-score-02.after.json",
+      "counter_before_path": "counters/c1-code-score-02.before.json",
+      "counter_delta_path": "counters/c1-code-score-02.delta.json",
+      "counter_required": true,
+      "counter_verdict": "PASS",
+      "dp_rank_assignment": null,
+      "dp_rank_provenance": "NOT_AVAILABLE_FROM_OPENAI_API; counter hook may supply it",
+      "error_count": 0,
+      "fairness_slowest_divided_by_fastest": 1.0,
+      "legacy_visible_aggregate_decode_tokens_per_second": 44.12497741583573,
+      "legacy_visible_aggregate_interval_seconds": 9.042497546,
+      "per_stream_rate_max": 44.12497741583573,
+      "per_stream_rate_min": 44.12497741583573,
+      "per_stream_rates": {
+        "c1-code-score-02": 44.12497741583573
+      },
+      "phase": "c1-code",
+      "primary_estimator": "sum(completion_tokens-1)/(latest_request_end-earliest_request_start)",
+      "queue_time_provenance": "NOT_AVAILABLE_FROM_OPENAI_API; counter hook may supply it",
+      "queue_time_seconds": null,
+      "request_ids": [
+        "c1-code-score-02"
+      ],
+      "result_count": 1,
+      "service_decode_tokens_per_second": 42.92061464580873,
+      "service_request_window_seconds": 9.296232202,
+      "ttft_p50_seconds": 0.253106333,
+      "ttft_p90_seconds": 0.253106333,
+      "window_id": "c1-code-score-02"
+    },
+    {
+      "acceptance_receipts": [
+        {
+          "accepted_divided_by_drafted": 0.6832298136645962,
+          "accepted_tokens_delta": 330.0,
+          "draft_tokens_delta": 483.0,
+          "provenance": "counter_hook_window_delta",
+          "scope": "metrics.engine"
+        }
+      ],
+      "aggregate_decode_tokens_n_minus_1": 399,
+      "completion_wall_p50_seconds": 9.209803436,
+      "completion_wall_p90_seconds": 9.209803436,
+      "counter_after_path": "counters/c1-code-score-03.after.json",
+      "counter_before_path": "counters/c1-code-score-03.before.json",
+      "counter_delta_path": "counters/c1-code-score-03.delta.json",
+      "counter_required": true,
+      "counter_verdict": "PASS",
+      "dp_rank_assignment": null,
+      "dp_rank_provenance": "NOT_AVAILABLE_FROM_OPENAI_API; counter hook may supply it",
+      "error_count": 0,
+      "fairness_slowest_divided_by_fastest": 1.0,
+      "legacy_visible_aggregate_decode_tokens_per_second": 44.56255225859717,
+      "legacy_visible_aggregate_interval_seconds": 8.95370619,
+      "per_stream_rate_max": 44.56255225859717,
+      "per_stream_rate_min": 44.56255225859717,
+      "per_stream_rates": {
+        "c1-code-score-03": 44.56255225859717
+      },
+      "phase": "c1-code",
+      "primary_estimator": "sum(completion_tokens-1)/(latest_request_end-earliest_request_start)",
+      "queue_time_provenance": "NOT_AVAILABLE_FROM_OPENAI_API; counter hook may supply it",
+      "queue_time_seconds": null,
+      "request_ids": [
+        "c1-code-score-03"
+      ],
+      "result_count": 1,
+      "service_decode_tokens_per_second": 43.323400197702114,
+      "service_request_window_seconds": 9.209803436,
+      "ttft_p50_seconds": 0.255535525,
+      "ttft_p90_seconds": 0.255535525,
+      "window_id": "c1-code-score-03"
+    },
+    {
+      "aggregate_decode_tokens_n_minus_1": 406,
+      "completion_wall_p50_seconds": 6.858871441,
+      "completion_wall_p90_seconds": 6.858871441,
+      "counter_required": false,
+      "dp_rank_assignment": null,
+      "dp_rank_provenance": "NOT_AVAILABLE_FROM_OPENAI_API; counter hook may supply it",
+      "error_count": 0,
+      "fairness_slowest_divided_by_fastest": 1.0,
+      "legacy_visible_aggregate_decode_tokens_per_second": 61.53505616653477,
+      "legacy_visible_aggregate_interval_seconds": 6.597865108,
+      "per_stream_rate_max": 61.53505616653477,
+      "per_stream_rate_min": 61.53505616653477,
+      "per_stream_rates": {
+        "c1-count-warm-01": 61.53505616653477
+      },
+      "phase": "warmup",
+      "primary_estimator": "sum(completion_tokens-1)/(latest_request_end-earliest_request_start)",
+      "queue_time_provenance": "NOT_AVAILABLE_FROM_OPENAI_API; counter hook may supply it",
+      "queue_time_seconds": null,
+      "request_ids": [
+        "c1-count-warm-01"
+      ],
+      "result_count": 1,
+      "service_decode_tokens_per_second": 59.19341155354949,
+      "service_request_window_seconds": 6.858871441,
+      "ttft_p50_seconds": 0.260588845,
+      "ttft_p90_seconds": 0.260588845,
+      "window_id": "c1-count-warm-01"
+    },
+    {
+      "acceptance_receipts": [
+        {
+          "accepted_divided_by_drafted": 0.8225108225108225,
+          "accepted_tokens_delta": 380.0,
+          "draft_tokens_delta": 462.0,
+          "provenance": "counter_hook_window_delta",
+          "scope": "metrics.engine"
+        }
+      ],
+      "aggregate_decode_tokens_n_minus_1": 446,
+      "completion_wall_p50_seconds": 8.251769935,
+      "completion_wall_p90_seconds": 8.251769935,
+      "counter_after_path": "counters/c1-count-score-01.after.json",
+      "counter_before_path": "counters/c1-count-score-01.before.json",
+      "counter_delta_path": "counters/c1-count-score-01.delta.json",
+      "counter_required": true,
+      "counter_verdict": "PASS",
+      "dp_rank_assignment": null,
+      "dp_rank_provenance": "NOT_AVAILABLE_FROM_OPENAI_API; counter hook may supply it",
+      "error_count": 0,
+      "fairness_slowest_divided_by_fastest": 1.0,
+      "legacy_visible_aggregate_decode_tokens_per_second": 55.73836084786636,
+      "legacy_visible_aggregate_interval_seconds": 8.001670541,
+      "per_stream_rate_max": 55.73836084786636,
+      "per_stream_rate_min": 55.73836084786636,
+      "per_stream_rates": {
+        "c1-count-score-01": 55.73836084786636
+      },
+      "phase": "c1-count",
+      "primary_estimator": "sum(completion_tokens-1)/(latest_request_end-earliest_request_start)",
+      "queue_time_provenance": "NOT_AVAILABLE_FROM_OPENAI_API; counter hook may supply it",
+      "queue_time_seconds": null,
+      "request_ids": [
+        "c1-count-score-01"
+      ],
+      "result_count": 1,
+      "service_decode_tokens_per_second": 54.04901051691766,
+      "service_request_window_seconds": 8.251769935,
+      "ttft_p50_seconds": 0.249544393,
+      "ttft_p90_seconds": 0.249544393,
+      "window_id": "c1-count-score-01"
+    },
+    {
+      "acceptance_receipts": [
+        {
+          "accepted_divided_by_drafted": 0.9232804232804233,
+          "accepted_tokens_delta": 349.0,
+          "draft_tokens_delta": 378.0,
+          "provenance": "counter_hook_window_delta",
+          "scope": "metrics.engine"
+        }
+      ],
+      "aggregate_decode_tokens_n_minus_1": 403,
+      "completion_wall_p50_seconds": 6.911288472,
+      "completion_wall_p90_seconds": 6.911288472,
+      "counter_after_path": "counters/c1-count-score-02.after.json",
+      "counter_before_path": "counters/c1-count-score-02.before.json",
+      "counter_delta_path": "counters/c1-count-score-02.delta.json",
+      "counter_required": true,
+      "counter_verdict": "PASS",
+      "dp_rank_assignment": null,
+      "dp_rank_provenance": "NOT_AVAILABLE_FROM_OPENAI_API; counter hook may supply it",
+      "error_count": 0,
+      "fairness_slowest_divided_by_fastest": 1.0,
+      "legacy_visible_aggregate_decode_tokens_per_second": 60.585736872570955,
+      "legacy_visible_aggregate_interval_seconds": 6.651730602,
+      "per_stream_rate_max": 60.585736872570955,
+      "per_stream_rate_min": 60.585736872570955,
+      "per_stream_rates": {
+        "c1-count-score-02": 60.585736872570955
+      },
+      "phase": "c1-count",
+      "primary_estimator": "sum(completion_tokens-1)/(latest_request_end-earliest_request_start)",
+      "queue_time_provenance": "NOT_AVAILABLE_FROM_OPENAI_API; counter hook may supply it",
+      "queue_time_seconds": null,
+      "request_ids": [
+        "c1-count-score-02"
+      ],
+      "result_count": 1,
+      "service_decode_tokens_per_second": 58.31040067748456,
+      "service_request_window_seconds": 6.911288472,
+      "ttft_p50_seconds": 0.25904791,
+      "ttft_p90_seconds": 0.25904791,
+      "window_id": "c1-count-score-02"
+    },
+    {
+      "acceptance_receipts": [
+        {
+          "accepted_divided_by_drafted": 0.9064935064935065,
+          "accepted_tokens_delta": 349.0,
+          "draft_tokens_delta": 385.0,
+          "provenance": "counter_hook_window_delta",
+          "scope": "metrics.engine"
+        }
+      ],
+      "aggregate_decode_tokens_n_minus_1": 403,
+      "completion_wall_p50_seconds": 7.20905045,
+      "completion_wall_p90_seconds": 7.20905045,
+      "counter_after_path": "counters/c1-count-score-03.after.json",
+      "counter_before_path": "counters/c1-count-score-03.before.json",
+      "counter_delta_path": "counters/c1-count-score-03.delta.json",
+      "counter_required": true,
+      "counter_verdict": "PASS",
+      "dp_rank_assignment": null,
+      "dp_rank_provenance": "NOT_AVAILABLE_FROM_OPENAI_API; counter hook may supply it",
+      "error_count": 0,
+      "fairness_slowest_divided_by_fastest": 1.0,
+      "legacy_visible_aggregate_decode_tokens_per_second": 57.969781898461285,
+      "legacy_visible_aggregate_interval_seconds": 6.951897813,
+      "per_stream_rate_max": 57.969781898461285,
+      "per_stream_rate_min": 57.969781898461285,
+      "per_stream_rates": {
+        "c1-count-score-03": 57.969781898461285
+      },
+      "phase": "c1-count",
+      "primary_estimator": "sum(completion_tokens-1)/(latest_request_end-earliest_request_start)",
+      "queue_time_provenance": "NOT_AVAILABLE_FROM_OPENAI_API; counter hook may supply it",
+      "queue_time_seconds": null,
+      "request_ids": [
+        "c1-count-score-03"
+      ],
+      "result_count": 1,
+      "service_decode_tokens_per_second": 55.90195307899392,
+      "service_request_window_seconds": 7.20905045,
+      "ttft_p50_seconds": 0.256715338,
+      "ttft_p90_seconds": 0.256715338,
+      "window_id": "c1-count-score-03"
+    },
+    {
+      "aggregate_decode_tokens_n_minus_1": 399,
+      "completion_wall_p50_seconds": 6.826078499,
+      "completion_wall_p90_seconds": 6.826078499,
+      "counter_required": false,
+      "dp_rank_assignment": null,
+      "dp_rank_provenance": "NOT_AVAILABLE_FROM_OPENAI_API; counter hook may supply it",
+      "error_count": 0,
+      "fairness_slowest_divided_by_fastest": 1.0,
+      "legacy_visible_aggregate_decode_tokens_per_second": 60.80276422105776,
+      "legacy_visible_aggregate_interval_seconds": 6.562201655,
+      "per_stream_rate_max": 60.80276422105776,
+      "per_stream_rate_min": 60.80276422105776,
+      "per_stream_rates": {
+        "legacy-count-cap400-control": 60.80276422105776
+      },
+      "phase": "legacy-control",
+      "primary_estimator": "sum(completion_tokens-1)/(latest_request_end-earliest_request_start)",
+      "queue_time_provenance": "NOT_AVAILABLE_FROM_OPENAI_API; counter hook may supply it",
+      "queue_time_seconds": null,
+      "request_ids": [
+        "legacy-count-cap400-control"
+      ],
+      "result_count": 1,
+      "service_decode_tokens_per_second": 58.45230172176489,
+      "service_request_window_seconds": 6.826078499,
+      "ttft_p50_seconds": 0.263411244,
+      "ttft_p90_seconds": 0.263411244,
+      "window_id": "legacy-count-cap400-control"
+    },
+    {
+      "acceptance_receipts": [
+        {
+          "accepted_divided_by_drafted": 0.37468513853904284,
+          "accepted_tokens_delta": 595.0,
+          "draft_tokens_delta": 1588.0,
+          "provenance": "counter_hook_window_delta",
+          "scope": "metrics.engine"
+        }
+      ],
+      "aggregate_decode_tokens_n_minus_1": 820,
+      "completion_wall_p50_seconds": 30.946652195,
+      "completion_wall_p90_seconds": 32.049940099,
+      "counter_after_path": "counters/c3-wave-01.after.json",
+      "counter_before_path": "counters/c3-wave-01.before.json",
+      "counter_delta_path": "counters/c3-wave-01.delta.json",
+      "counter_required": true,
+      "counter_verdict": "PASS",
+      "dp_rank_assignment": null,
+      "dp_rank_provenance": "NOT_AVAILABLE_FROM_OPENAI_API; counter hook may supply it",
+      "error_count": 0,
+      "fairness_slowest_divided_by_fastest": 0.1952935631168629,
+      "legacy_visible_aggregate_decode_tokens_per_second": 33.00703970242307,
+      "legacy_visible_aggregate_interval_seconds": 24.843185193,
+      "per_stream_rate_max": 87.07413859454486,
+      "per_stream_rate_min": 17.005018781460215,
+      "per_stream_rates": {
+        "c3-wave-01-code": 31.36276731078659,
+        "c3-wave-01-prose": 17.005018781460215,
+        "c3-wave-01-tool": 87.07413859454486
+      },
+      "phase": "c3",
+      "primary_estimator": "sum(completion_tokens-1)/(latest_request_end-earliest_request_start)",
+      "queue_time_provenance": "NOT_AVAILABLE_FROM_OPENAI_API; counter hook may supply it",
+      "queue_time_seconds": null,
+      "request_ids": [
+        "c3-wave-01-prose",
+        "c3-wave-01-code",
+        "c3-wave-01-tool"
+      ],
+      "result_count": 3,
+      "service_decode_tokens_per_second": 25.36676469057381,
+      "service_request_window_seconds": 32.325762075,
+      "ttft_p50_seconds": 7.481966348,
+      "ttft_p90_seconds": 27.154657056,
+      "window_id": "c3-wave-01"
+    },
+    {
+      "acceptance_receipts": [
+        {
+          "accepted_divided_by_drafted": 0.36496124031007754,
+          "accepted_tokens_delta": 1177.0,
+          "draft_tokens_delta": 3225.0,
+          "provenance": "counter_hook_window_delta",
+          "scope": "metrics.engine"
+        }
+      ],
+      "aggregate_decode_tokens_n_minus_1": 1625,
+      "completion_wall_p50_seconds": 36.117975469,
+      "completion_wall_p90_seconds": 50.331105158499994,
+      "counter_after_path": "counters/c6-wave-01.after.json",
+      "counter_before_path": "counters/c6-wave-01.before.json",
+      "counter_delta_path": "counters/c6-wave-01.delta.json",
+      "counter_required": true,
+      "counter_verdict": "PASS",
+      "dp_rank_assignment": null,
+      "dp_rank_provenance": "NOT_AVAILABLE_FROM_OPENAI_API; counter hook may supply it",
+      "error_count": 0,
+      "fairness_slowest_divided_by_fastest": 0.3125935901518732,
+      "legacy_visible_aggregate_decode_tokens_per_second": 26.783475058285546,
+      "legacy_visible_aggregate_interval_seconds": 60.671738692,
+      "per_stream_rate_max": 58.4627110027529,
+      "per_stream_rate_min": 18.275068722361947,
+      "per_stream_rates": {
+        "c6-wave-01-set1-code": 31.214763713905505,
+        "c6-wave-01-set1-prose": 18.275068722361947,
+        "c6-wave-01-set1-tool": 58.3843331098381,
+        "c6-wave-01-set2-code": 44.755674281703314,
+        "c6-wave-01-set2-prose": 18.31972561600196,
+        "c6-wave-01-set2-tool": 58.4627110027529
+      },
+      "phase": "c6",
+      "primary_estimator": "sum(completion_tokens-1)/(latest_request_end-earliest_request_start)",
+      "queue_time_provenance": "NOT_AVAILABLE_FROM_OPENAI_API; counter hook may supply it",
+      "queue_time_seconds": null,
+      "request_ids": [
+        "c6-wave-01-set1-prose",
+        "c6-wave-01-set1-code",
+        "c6-wave-01-set1-tool",
+        "c6-wave-01-set2-prose",
+        "c6-wave-01-set2-code",
+        "c6-wave-01-set2-tool"
+      ],
+      "result_count": 6,
+      "service_decode_tokens_per_second": 26.6652686998888,
+      "service_request_window_seconds": 60.94069474,
+      "ttft_p50_seconds": 24.919674569999998,
+      "ttft_p90_seconds": 39.345081542,
+      "window_id": "c6-wave-01"
+    }
+  ]
+}

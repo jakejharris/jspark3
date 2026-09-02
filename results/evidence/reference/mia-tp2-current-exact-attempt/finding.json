@@ -1,0 +1,9 @@
+{
+  "arm": "mia-tp2-current-exact-attempt",
+  "benchmark_result": null,
+  "evidence_class": "compatibility_finding",
+  "note": "no throughput, time-to-first-token, prefill, quality, or agent number may be attributed to this attempt; it exists to explain why the adapted run is not an exact reproduction",
+  "outcome": "the exact current source did not reach HTTP under this safety envelope and no request was sent",
+  "rate_claim_eligible": false,
+  "source_commit": "c190db1ae17ba8dff20129ed1f308d10c63cf37d"
+}

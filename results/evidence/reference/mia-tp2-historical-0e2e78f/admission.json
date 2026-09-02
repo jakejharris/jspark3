@@ -1,0 +1,43 @@
+{
+  "admission_script_sha256": "3ebd54320d15cf63548eb6a0f2e4ce2c4eb8339affa8ac1fa1851b3bd64b3e1b",
+  "arithmetic_http": 200,
+  "arm": "mia-tp2-historical-0e2e78f",
+  "construction_manifest_sha256": "291298c8f5cd4dacd0125f0103dba94c9802289d7f7fe3bc543c3c75d9e3d3c1",
+  "counter_after_verdict": "PASS",
+  "counter_before_status": "OK",
+  "health_http": 200,
+  "models_http": 200,
+  "ranks": {
+    "rank0": {
+      "memory_events": {
+        "high": 0,
+        "low": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_group_kill": 0,
+        "oom_kill": 0
+      },
+      "memory_limit_bytes": 68719476736,
+      "oom_killed": false,
+      "restart_count": 0,
+      "running": true,
+      "swap_current_bytes": 0
+    },
+    "rank1": {
+      "memory_events": {
+        "high": 0,
+        "low": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_group_kill": 0,
+        "oom_kill": 0
+      },
+      "memory_limit_bytes": 68719476736,
+      "oom_killed": false,
+      "restart_count": 0,
+      "running": true,
+      "swap_current_bytes": 0
+    }
+  },
+  "status": "ADMISSION_PASS"
+}

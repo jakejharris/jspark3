@@ -1,0 +1,10 @@
+{
+  "mirror_of": "brandonmusic/GLM-5.3-Flash-tr3-4bpw",
+  "upstream_revision": "5ab363a8dcf6405955fd5f99671e01a1c9fb124b",
+  "purpose": "Durable fetch target for MiaAI-Lab/GLM-5.3-Flash-EXL3-2x-DGX-Sparks",
+  "quant_author": "Brandon M. Music",
+  "license": "ShapleyMCG License 1.0",
+  "canonical_shapleymcg": "https://github.com/brandonmmusic-max/shapleymcg",
+  "note": "Byte-identical redistribution. Not an original quantization.",
+  "this_repo": "Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw"
+}

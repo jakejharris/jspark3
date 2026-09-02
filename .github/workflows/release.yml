@@ -1,0 +1,40 @@
+name: release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+  id-token: write
+  attestations: write
+
+jobs:
+  assets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install validator dependency
+        run: python3 -m pip install "pyyaml>=6"
+      - name: Validate release tree
+        run: python3 tools/validate_release.py . --report validation.json
+      - name: Build release assets
+        run: ./tools/build_release_assets.sh dist
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: |
+            dist/*.tar.gz
+            dist/*.json
+      - name: Create draft release
+        uses: softprops/action-gh-release@v2
+        with:
+          draft: true
+          name: JSpark3 ${{ github.ref_name }}
+          body_path: release/RELEASE-NOTES.md
+          files: |
+            dist/*
+            validation.json

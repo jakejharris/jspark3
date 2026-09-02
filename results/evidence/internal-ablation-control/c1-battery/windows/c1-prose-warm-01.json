@@ -1,0 +1,30 @@
+{
+  "aggregate_decode_tokens_n_minus_1": 399,
+  "completion_wall_p50_seconds": 15.395778886,
+  "completion_wall_p90_seconds": 15.395778886,
+  "counter_required": false,
+  "dp_rank_assignment": null,
+  "dp_rank_provenance": "NOT_AVAILABLE_FROM_OPENAI_API; counter hook may supply it",
+  "error_count": 0,
+  "fairness_slowest_divided_by_fastest": 1.0,
+  "legacy_visible_aggregate_decode_tokens_per_second": 26.353717839301115,
+  "legacy_visible_aggregate_interval_seconds": 15.140178795,
+  "per_stream_rate_max": 26.353717839301115,
+  "per_stream_rate_min": 26.353717839301115,
+  "per_stream_rates": {
+    "c1-prose-warm-01": 26.353717839301115
+  },
+  "phase": "warmup",
+  "primary_estimator": "sum(completion_tokens-1)/(latest_request_end-earliest_request_start)",
+  "queue_time_provenance": "NOT_AVAILABLE_FROM_OPENAI_API; counter hook may supply it",
+  "queue_time_seconds": null,
+  "request_ids": [
+    "c1-prose-warm-01"
+  ],
+  "result_count": 1,
+  "service_decode_tokens_per_second": 25.91619449424717,
+  "service_request_window_seconds": 15.395778886,
+  "ttft_p50_seconds": 0.254376474,
+  "ttft_p90_seconds": 0.254376474,
+  "window_id": "c1-prose-warm-01"
+}

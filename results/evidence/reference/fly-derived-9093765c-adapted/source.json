@@ -1,0 +1,18 @@
+{
+  "adaptation_boundary": "lineage and code reuse with local correctness and safety repairs, not a reproduction of the published performance",
+  "adaptations": [
+    "mandatory immutable checkpoint views",
+    "TP3 geometry corrections",
+    "sparse-prefill and K-pool repairs",
+    "corrected drafter slot sharing",
+    "explicit draft attention",
+    "the exact fail-closed lifecycle",
+    "64 GiB memory envelope with swap disabled"
+  ],
+  "arm": "fly-derived-9093765c-adapted",
+  "mesh_plugin_commit": "19924dcc7c571d6e260953724d394ae50bad82cf",
+  "nodes": 3,
+  "source_commit": "9093765c757bd1976372196e44af84a67cf86bad",
+  "source_repository": "https://github.com/FlyCockpit/GLM-5.3-Flash-EXL3-3x-DGX-Sparks",
+  "tensor_parallel": 3
+}

@@ -1,0 +1,15 @@
+{
+  "arm": "fly-derived-9093765c-adapted",
+  "decode_tok_s": 29.042,
+  "effective_prompt_tok_s": 9962,
+  "estimator": "exclusive idle-to-idle server-counter delta over the agent trajectory",
+  "evidence_class": "local_reproduction",
+  "fidelity": "minimal-correctness/safety-adapted",
+  "generation_tokens": 130971,
+  "mean_ttft_seconds": 9.444,
+  "note": "not a literal reproduction of the published launcher; the agent trajectory differs from every other arm, so this is product evidence only",
+  "task_requests": 58,
+  "thinking_sampling": "high-effort thinking, provider default sampling",
+  "uncached_prompt_compute_tok_s": 478,
+  "wall_time": "1h29m28.464s"
+}

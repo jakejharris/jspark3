@@ -1,0 +1,1 @@
+Build a polished interactive voxel island in one index.html. Include procedural terrain, animated water, trees, clouds, day/night lighting, orbit controls, keyboard movement, and a clean HUD. Write the file, launch a local server, test it, diagnose any errors, and iterate until it works. Do not stop at a mockup.

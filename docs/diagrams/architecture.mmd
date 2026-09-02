@@ -1,0 +1,12 @@
+flowchart TB
+    client[Client<br/>OpenAI-compatible HTTP<br/>model: glm-5.3-flash] -->|API :8000 over management network| r0
+    subgraph fleet[Three NVIDIA DGX Sparks · TP3 + EP3 · one endpoint]
+        r0[Rank 0 · API head<br/>GB10 · TP shard 1/3 · 96/288 experts<br/>DFlash2 draft · FP8 KV · W8A16 overlay]
+        r1[Rank 1 · headless<br/>GB10 · TP shard 2/3 · 96/288 experts<br/>DFlash2 draft · FP8 KV · W8A16 overlay]
+        r2[Rank 2 · headless<br/>GB10 · TP shard 3/3 · 96/288 experts<br/>DFlash2 draft · FP8 KV · W8A16 overlay]
+        r0 <-->|RoCE-v2 leg A · MTU 9000| r1
+        r0 <-->|RoCE-v2 leg B · MTU 9000| r2
+        r1 <-->|RoCE-v2 leg C · MTU 9000| r2
+    end
+    ctl[Lifecycle controller<br/>preflight → start 2,1,0 → health → verify<br/>hash-bound manifest and receipts] -.->|SSH, management network| fleet
+    models[(Pinned checkpoints<br/>read-only bind mounts<br/>not in this repository)] -.-> fleet

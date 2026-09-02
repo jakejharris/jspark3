@@ -1,0 +1,12 @@
+data: {"id":"chatcmpl-96f6cff840c5a99a","object":"chat.completion.chunk","created":1788330550,"model":"glm-5.3-flash","choices":[{"index":0,"delta":{"role":"assistant","content":""},"logprobs":null,"finish_reason":null}],"prompt_token_ids":null,"prompt_text":null}
+
+data: {"id":"chatcmpl-96f6cff840c5a99a","object":"chat.completion.chunk","created":1788330550,"model":"glm-5.3-flash","choices":[{"index":0,"delta":{"tool_calls":[{"id":"chatcmpl-tool-b31e5ed7c6723a53","type":"function","index":0,"function":{"name":"record_trip","arguments":"{\"city\": \"Austin"}}]},"logprobs":null,"finish_reason":null,"token_ids":null}]}
+
+data: {"id":"chatcmpl-96f6cff840c5a99a","object":"chat.completion.chunk","created":1788330550,"model":"glm-5.3-flash","choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"function":{"arguments":"\", \"country\": \"USA"}}]},"logprobs":null,"finish_reason":null,"token_ids":null}]}
+
+data: {"id":"chatcmpl-96f6cff840c5a99a","object":"chat.completion.chunk","created":1788330550,"model":"glm-5.3-flash","choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"function":{"arguments":"\", \"note\": \"baseline\"}"}}]},"logprobs":null,"finish_reason":"stop","stop_reason":154829,"token_ids":null}]}
+
+data: {"id":"chatcmpl-96f6cff840c5a99a","object":"chat.completion.chunk","created":1788330550,"model":"glm-5.3-flash","choices":[],"usage":{"prompt_tokens":197,"total_tokens":220,"completion_tokens":23},"system_fingerprint":"vllm-0.1.dev20051+g487ecf187-tp3-ep-ded8abdb"}
+
+data: [DONE]
+

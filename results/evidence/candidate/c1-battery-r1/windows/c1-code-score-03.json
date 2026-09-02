@@ -1,0 +1,43 @@
+{
+  "acceptance_receipts": [
+    {
+      "accepted_divided_by_drafted": 0.7607142857142857,
+      "accepted_tokens_delta": 213.0,
+      "draft_tokens_delta": 280.0,
+      "provenance": "counter_hook_window_delta",
+      "scope": "metrics.engine"
+    }
+  ],
+  "aggregate_decode_tokens_n_minus_1": 253,
+  "completion_wall_p50_seconds": 3.997153551,
+  "completion_wall_p90_seconds": 3.997153551,
+  "counter_after_path": "counters/c1-code-score-03.after.json",
+  "counter_before_path": "counters/c1-code-score-03.before.json",
+  "counter_delta_path": "counters/c1-code-score-03.delta.json",
+  "counter_required": true,
+  "counter_verdict": "PASS",
+  "dp_rank_assignment": null,
+  "dp_rank_provenance": "NOT_AVAILABLE_FROM_OPENAI_API; counter hook may supply it",
+  "error_count": 0,
+  "fairness_slowest_divided_by_fastest": 1.0,
+  "legacy_visible_aggregate_decode_tokens_per_second": 65.79286187288469,
+  "legacy_visible_aggregate_interval_seconds": 3.84540196,
+  "per_stream_rate_max": 65.79286187288469,
+  "per_stream_rate_min": 65.79286187288469,
+  "per_stream_rates": {
+    "c1-code-score-03": 65.79286187288469
+  },
+  "phase": "c1-code",
+  "primary_estimator": "sum(completion_tokens-1)/(latest_request_end-earliest_request_start)",
+  "queue_time_provenance": "NOT_AVAILABLE_FROM_OPENAI_API; counter hook may supply it",
+  "queue_time_seconds": null,
+  "request_ids": [
+    "c1-code-score-03"
+  ],
+  "result_count": 1,
+  "service_decode_tokens_per_second": 63.295041526914815,
+  "service_request_window_seconds": 3.997153551,
+  "ttft_p50_seconds": 0.151317005,
+  "ttft_p90_seconds": 0.151317005,
+  "window_id": "c1-code-score-03"
+}

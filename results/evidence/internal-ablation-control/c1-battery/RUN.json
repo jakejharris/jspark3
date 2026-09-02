@@ -1,0 +1,19 @@
+{
+  "arm": "internal-ablation-control",
+  "automatic_retries": 0,
+  "corruption_battery_cleared": false,
+  "ended_utc": "2026-08-31T23:56:03.439486+00:00",
+  "fatal_error": null,
+  "first_rate_scope": false,
+  "grade": "ENGINEERING-EVIDENCE",
+  "matrix_path": "MATRIX.json",
+  "matrix_rate_receipt_eligible": true,
+  "publication_eligible": false,
+  "quality_cleared": false,
+  "rate_claim_eligible_engineering": false,
+  "requests_completed": 24,
+  "run_id": "product-rapid-r1",
+  "schema_version": 2,
+  "started_utc": "2026-08-31T23:51:52.658112+00:00",
+  "status": "COMPLETE"
+}

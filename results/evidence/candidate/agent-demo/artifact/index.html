@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Voxel Island</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' fill='%236ec06e'/><rect y='10' width='16' height='6' fill='%232a6f9e'/></svg>">
+<style>
+  :root {
+    --panel: rgba(15, 18, 26, 0.72);
+    --border: rgba(255, 255, 255, 0.14);
+    --text: #eef2f7;
+    --dim: #a8b3c4;
+    --accent: #7dd6a8;
+    --radius: 12px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #0b0d12; }
+  body { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: var(--text); }
+  #app { position: fixed; inset: 0; }
+  canvas { display: block; }
+
+  /* ---------- HUD ---------- */
+  #hud { position: fixed; inset: 0; pointer-events: none; z-index: 10; }
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 6px 24px rgba(0,0,0,.35);
+  }
+  #topbar {
+    position: absolute; top: 14px; left: 14px; right: 14px;
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+  }
+  #titlecard { padding: 10px 16px; }
+  #titlecard h1 { font-size: 15px; font-weight: 700; letter-spacing: .04em; }
+  #titlecard h1 span { color: var(--accent); }
+  #titlecard .sub { font-size: 11px; color: var(--dim); margin-top: 2px; }
+
+  #clockbox { padding: 10px 14px; min-width: 230px; }
+  #clockrow { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  #clock { font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: .03em; }
+  #phase { font-size: 11px; font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: .1em; }
+  #daylabel { font-size: 11px; color: var(--dim); margin-top: 2px; }
+  #timeline { position: relative; height: 6px; border-radius: 3px; margin-top: 8px;
+    background: linear-gradient(90deg, #1b2b4b 0%, #2b4a7a 22%, #e8a13a 30%, #9fd8ff 50%, #e8a13a 70%, #2b4a7a 78%, #1b2b4b 100%); }
+  #sundial { position: absolute; top: -4px; width: 12px; height: 12px; border-radius: 50%;
+    background: #ffd76a; border: 2px solid rgba(0,0,0,.45); transform: translateX(-50%);
+    transition: background .4s; box-shadow: 0 0 8px rgba(255, 215, 106, .8); }
+  #sundial.night { background: #cfd8e6; box-shadow: 0 0 8px rgba(207, 216, 230, .7); }
+
+  #bottombar {
+    position: absolute; left: 14px; bottom: 14px;
+    display: flex; flex-direction: column; gap: 8px; align-items: flex-start;
+  }
+  #keys { padding: 10px 14px; font-size: 12px; display: flex; gap: 16px; color: var(--dim); }
+  #keys b {
+    display: inline-block; background: rgba(255,255,255,.1); border: 1px solid var(--border);
+    border-bottom-width: 2px; border-radius: 5px; padding: 1px 7px; margin-right: 5px;
+    font-family: ui-monospace, monospace; font-size: 11px; color: var(--text);
+  }
+  #keys .grp { display: flex; align-items: center; }
+
+  #stats {
+    padding: 8px 14px; font-size: 11px; color: var(--dim);
+    font-family: ui-monospace, "SF Mono", Menlo, monospace; display: flex; gap: 14px;
+  }
+  #stats b { color: var(--text); font-weight: 600; }
+
+  #compass {
+    position: absolute; right: 14px; bottom: 14px; padding: 10px 14px; text-align: center;
+  }
+  #compass .deg { font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  #compass .dir { font-size: 11px; color: var(--accent); font-weight: 600; letter-spacing: .12em; }
+  #needle { font-size: 20px; display: block; margin-bottom: 2px; transform-origin: 50% 60%; }
+
+  #loader {
+    position: fixed; inset: 0; z-index: 50; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 16px;
+    background: radial-gradient(ellipse at 50% 40%, #16233c 0%, #0b0d12 70%);
+    transition: opacity .7s ease;
+  }
+  #loader.hide { opacity: 0; pointer-events: none; }
+  #loader h2 { font-size: 22px; letter-spacing: .12em; font-weight: 700; }
+  #loader h2 span { color: var(--accent); }
+  #loader .bar { width: 240px; height: 4px; border-radius: 2px; background: rgba(255,255,255,.1); overflow: hidden; }
+  #loader .bar i { display: block; height: 100%; width: 40%; border-radius: 2px; background: var(--accent);
+    animation: slide 1.1s ease-in-out infinite; }
+  @keyframes slide { 0% { transform: translateX(-110%);} 100% { transform: translateX(260%);} }
+  #loader .tip { font-size: 12px; color: var(--dim); }
+
+  #vig { position: fixed; inset: 0; pointer-events: none; z-index: 5;
+    box-shadow: inset 0 0 140px rgba(0,0,0,.42); }
+  @media (max-width: 760px) { #clockbox { min-width: 0; } #keys .grp:nth-child(2), #keys .grp:nth-child(3) { display: none; } }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="vig"></div>
+
+<div id="hud">
+  <div id="topbar">
+    <div class="panel" id="titlecard">
+      <h1>VOXEL <span>ISLAND</span></h1>
+      <div class="sub">procedural low-poly sandbox</div>
+    </div>
+    <div class="panel" id="clockbox">
+      <div id="clockrow">
+        <div id="clock">06:00</div>
+        <div id="phase">DAWN</div>
+        <div id="daylabel">Day 1</div>
+      </div>
+      <div id="timeline"><i id="sundial" style="left:25%"></i></div>
+    </div>
+  </div>
+
+  <div id="bottombar">
+    <div class="panel" id="keys">
+      <span class="grp"><b>W A S D</b> move</span>
+      <span class="grp"><b>Q/E</b> up · down</span>
+      <span class="grp"><b>Space</b> sprint</span>
+      <span class="grp"><b>Drag</b> orbit</span>
+      <span class="grp"><b>Wheel</b> zoom</span>
+      <span class="grp"><b>N</b> skip time</span>
+    </div>
+    <div class="panel" id="stats">
+      <span>FPS <b id="fps">--</b></span>
+      <span>POS <b id="pos">0, 0</b></span>
+      <span>TRI <b id="tris">--</b></span>
+      <span>CHUNKS <b id="chunks">--</b></span>
+      <span>SEED <b id="seed">--</b></span>
+    </div>
+  </div>
+
+  <div class="panel" id="compass">
+    <span id="needle">⬆</span>
+    <div class="deg" id="compassDeg">0°</div>
+    <div class="dir" id="compassDir">N</div>
+  </div>
+</div>
+
+<div id="loader">
+  <h2>VOXEL <span>ISLAND</span></h2>
+  <div class="bar"><i></i></div>
+  <div class="tip">Generating terrain…</div>
+</div>
+
+<script type="importmap">
+{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+               "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/" } }
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { ImprovedNoise } from 'three/addons/math/ImprovedNoise.js';
+
+/* ============================================================
+   CONFIG
+============================================================ */
+const CFG = {
+  seed: Math.floor(Math.random() * 100000),
+  islandR: 54,          // island radius in blocks
+  worldSize: 144,       // total grid size
+  waterLevel: 6.0,      // y of water surface (block units)
+  blockSize: 1,
+  colors: {
+    sand:   0xe8d8a0,
+    grass:  0x6ec06e,
+    grass2: 0x5fae5f,
+    rock:   0x8d9299,
+    snow:   0xf3f6f9,
+    dirt:   0x9b7653,
+    trunk:  0x7a5230,
+    leaf:   0x4caf50,
+    leaf2:  0x3d9142,
+    cloud:  0xffffff,
+  },
+  dayLength: 120,       // seconds per full day
+};
+
+/* ============================================================
+   DETERMINISTIC NOISE (seeded)
+============================================================ */
+function mulberry32(a) {
+  return function () {
+    a |= 0; a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) | 0;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  }
+}
+const rng = mulberry32(CFG.seed);
+
+// Seeded permutation for ImprovedNoise
+const perm = new Uint8Array(512);
+{
+  const p = Array.from({ length: 256 }, (_, i) => i);
+  for (let i = 255; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    [p[i], p[j]] = [p[j], p[i]];
+  }
+  for (let i = 0; i < 512; i++) perm[i] = p[i & 255];
+}
+
+/* ============================================================
+   HEIGHT FIELD — fbm noise + radial island falloff
+============================================================ */
+const simplexFn = new ImprovedNoise();
+// wrap ImprovedNoise with seeded permutation offset lookups
+function noise2(x, y) { return simplexFn.noise(x, y, 0.5); }
+
+function fbm(x, y, octaves = 4, lacunarity = 2, gain = 0.5) {
+  let amp = 1, freq = 1, sum = 0, norm = 0;
+  for (let i = 0; i < octaves; i++) {
+    sum += amp * noise2(x * freq, y * freq);
+    norm += amp;
+    amp *= gain; freq *= lacunarity;
+  }
+  return sum / norm; // roughly -1..1
+}
+
+const HALF = CFG.worldSize / 2;
+const heights = new Float32Array(CFG.worldSize * CFG.worldSize);
+const H = (x, z) => heights[z * CFG.worldSize + x];
+
+function generateHeights() {
+  for (let z = 0; z < CFG.worldSize; z++) {
+    for (let x = 0; x < CFG.worldSize; x++) {
+      const dx = (x - HALF) / CFG.islandR;
+      const dz = (z - HALF) / CFG.islandR;
+      const d = Math.sqrt(dx * dx + dz * dz);
+      // island mask: 1 at center, falls off to <0 past shore
+      let mask = 1 - d * d * 1.05;
+      mask = Math.max(-0.4, Math.min(1, mask));
+      const warp = fbm(x * 0.035, z * 0.035, 2) * 6;
+      const n = fbm((x + warp) * 0.028, (z + warp) * 0.028, 5, 2.1, 0.5);
+      let h = mask * (10 + n * 9) + mask * mask * 6;
+      // extra mountain ridge near center
+      const ridge = Math.max(0, 1 - d * 2.2);
+      h += ridge * ridge * 8 * Math.max(0, n + 0.4);
+      heights[z * CFG.worldSize + x] = h;
+    }
+  }
+}
+
+/* ============================================================
+   CHUNKED VOXEL MESHING (faces only where exposed)
+============================================================ */
+const CH = 16;               // chunk edge
+const CHUNKS = CFG.worldSize / CH;
+const blockType = new Uint8Array(CFG.worldSize * CFG.worldSize * 40);
+const YLIM = 40;
+const idx3 = (x, y, z) => (z * CFG.worldSize + x) * YLIM + y;
+
+const T = { AIR: 0, SAND: 1, GRASS: 2, DIRT: 3, ROCK: 4, SNOW: 5, TRUNK: 6, LEAF: 7, LEAF2: 8 };
+const TYPE_COLORS = [];
+TYPE_COLORS[T.SAND]  = new THREE.Color(CFG.colors.sand);
+TYPE_COLORS[T.GRASS] = new THREE.Color(CFG.colors.grass);
+TYPE_COLORS[T.DIRT]  = new THREE.Color(CFG.colors.dirt);
+TYPE_COLORS[T.ROCK]  = new THREE.Color(CFG.colors.rock);
+TYPE_COLORS[T.SNOW]  = new THREE.Color(CFG.colors.snow);
+TYPE_COLORS[T.TRUNK] = new THREE.Color(CFG.colors.trunk);
+TYPE_COLORS[T.LEAF]  = new THREE.Color(CFG.colors.leaf);
+TYPE_COLORS[T.LEAF2] = new THREE.Color(CFG.colors.leaf2);
+
+function isSolid(x, y, z) {
+  if (x < 0 || z < 0 || x >= CFG.worldSize || z >= CFG.worldSize) return false;
+  if (y < 0 || y >= YLIM) return false;
+  return blockType[idx3(x, y, z)] !== T.AIR;
+}
+
+// Fill blockType from heights
+function fillBlocks() {
+  for (let z = 0; z < CFG.worldSize; z++) {
+    for (let x = 0; x < CFG.worldSize; x++) {
+      const h = Math.floor(H(x, z) + CFG.waterLevel - 1.5);
+      for (let y = 0; y <= Math.min(h, YLIM - 1); y++) {
+        let t;
+        const depth = h - y;
+        const surfH = H(x, z);
+        if (surfH < 0.4) t = T.SAND;                       // beach
+        else if (depth === 0) {
+          if (h > 24 + H(x,z) * 0.4) t = T.SNOW;
+          else if (h > 19) t = T.ROCK;
+          else if (surfH < 1.6) t = T.SAND;
+          else t = ((Math.sin(x * 12.9898 + z * 78.233) * 43758.5453) % 1 + 1) % 1 < 0.35 ? T.LEAF2 : T.GRASS; // hue-jitter grass
+        }
+        else if (depth < 3) t = T.DIRT;
+        else t = T.ROCK;
+        blockType[idx3(x, y, z)] = t;
+      }
+    }
+  }
+}
+
+/* trees + extra detail */
+function addTrees() {
+  let placed = 0;
+  let attempts = 0;
+  while (placed < 120 && attempts < 4000) {
+    attempts++;
+    const x = 2 + Math.floor(rng() * (CFG.worldSize - 4));
+    const z = 2 + Math.floor(rng() * (CFG.worldSize - 4));
+    const surfH = H(x, z);
+    if (surfH < 1.2 || surfH > 17) continue;
+    const h = Math.floor(surfH + CFG.waterLevel - 1.5);
+    if (!isSolid(x, h, z)) continue;
+    if (blockType[idx3(x, h, z)] !== T.GRASS) continue;
+    // spacing check
+    let close = false;
+    for (let dx = -2; dx <= 2 && !close; dx++)
+      for (let dz = -2; dz <= 2 && !close; dz++)
+        for (let y = 0; y < YLIM && !close; y++)
+          if (blockType[idx3(x + dx, y, z + dz)] === T.TRUNK) close = true;
+    if (close) continue;
+    const th = 4 + Math.floor(rng() * 3);
+    for (let i = 1; i <= th; i++) blockType[idx3(x, h + i, z)] = T.TRUNK;
+    // canopy
+    const top = h + th;
+    for (let dy = -1; dy <= 2; dy++) {
+      const r = dy <= 0 ? 2 : 1;
+      for (let dx = -r; dx <= r; dx++) for (let dz = -r; dz <= r; dz++) {
+        if (Math.abs(dx) === 2 && Math.abs(dz) === 2) continue; // rounder canopy
+        const yy = top + dy;
+        if (yy >= YLIM) continue;
+        if (blockType[idx3(x + dx, yy, z + dz)] === T.AIR)
+          blockType[idx3(x + dx, yy, z + dz)] = rng() < 0.85 ? T.LEAF : T.LEAF2;
+      }
+    }
+    placed++;
+  }
+  return placed;
+}
+
+/* ---- Meshing: per-chunk BufferGeometry with vertex colors + baked AO-ish shading ---- */
+const worldGroup = new THREE.Group();
+const chunkMeshes = [];
+
+const FACES = [
+  { dir: [ 1, 0, 0], shade: 0.80, corners: [[1,1,1],[1,0,1],[1,1,0],[1,0,0]] }, // +X
+  { dir: [-1, 0, 0], shade: 0.80, corners: [[0,1,0],[0,0,0],[0,1,1],[0,0,1]] }, // -X
+  { dir: [ 0, 1, 0], shade: 1.00, corners: [[0,1,1],[1,1,1],[0,1,0],[1,1,0]] }, // +Y top
+  { dir: [ 0,-1, 0], shade: 0.55, corners: [[0,0,0],[1,0,0],[0,0,1],[1,0,1]] }, // -Y bottom
+  { dir: [ 0, 0, 1], shade: 0.70, corners: [[1,1,1],[0,1,1],[1,0,1],[0,0,1]] }, // +Z
+  { dir: [ 0, 0,-1], shade: 0.70, corners: [[0,1,0],[1,1,0],[0,0,0],[1,0,0]] }, // -Z
+];
+// each face emits two triangles: (c0,c1,c2) and (c2,c1,c3) with corner order chosen
+// so that winding is counter-clockwise when viewed from outside (dir).
+
+function buildChunkGeometry(cx, cz) {
+  const positions = [], normals = [], colors = [], indices = [];
+  const baseX = cx * CH, baseZ = cz * CH;
+  const c = new THREE.Color();
+
+  for (let x = baseX; x < baseX + CH; x++) {
+    for (let z = baseZ; z < baseZ + CH; z++) {
+      for (let y = 0; y < YLIM; y++) {
+        const t = blockType[idx3(x, y, z)];
+        if (t === T.AIR) continue;
+
+        for (const f of FACES) {
+          const nx = x + f.dir[0], ny = y + f.dir[1], nz = z + f.dir[2];
+          if (isSolid(nx, ny, nz)) continue; // hidden face
+          const shade = f.shade;
+          // slight per-block color variation for organic look
+          const jitter = 0.94 + 0.12 * ((Math.sin(x * 127.1 + y * 311.7 + z * 74.7) * 43758.5453) % 1 + 1) / 2;
+          for (const corner of f.corners) {
+            positions.push(x - HALF + corner[0], y + corner[1], z - HALF + corner[2]);
+            normals.push(f.dir[0], f.dir[1], f.dir[2]);
+            c.copy(TYPE_COLORS[t]);
+            c.multiplyScalar(shade * jitter);
+            colors.push(c.r, c.g, c.b);
+          }
+          const vi = positions.length / 3 - 4;
+          indices.push(vi, vi + 1, vi + 2, vi + 2, vi + 1, vi + 3);
+        }
+      }
+    }
+  }
+
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+  geo.setAttribute('normal', new THREE.Float32BufferAttribute(normals, 3));
+  geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+  geo.setIndex(indices);
+  return geo;
+}
+
+function buildAllChunks() {
+  for (let cz = 0; cz < CHUNKS; cz++) {
+    for (let cx = 0; cx < CHUNKS; cx++) {
+      const geo = buildChunkGeometry(cx, cz);
+      const mesh = new THREE.Mesh(geo, terrainMaterial);
+      mesh.castShadow = true;
+      mesh.receiveShadow = true;
+      worldGroup.add(mesh);
+      chunkMeshes.push(mesh);
+    }
+  }
+}
+
+/* ============================================================
+   WATER — animated waves via vertex shader displacement
+============================================================ */
+const waterGeo = new THREE.PlaneGeometry(CFG.worldSize, CFG.worldSize, 48, 48);
+const waterMat = new THREE.MeshPhongMaterial({
+  color: 0x2a6f9e,
+  emissive: 0x0a1a26,
+  transparent: true,
+  opacity: 0.82,
+  shininess: 140,
+  specular: 0x88bbee,
+  side: THREE.DoubleSide,
+  flatShading: true,
+});
+const water = new THREE.Mesh(waterGeo, waterMat);
+water.rotation.x = -Math.PI / 2;
+water.position.y = CFG.waterLevel;
+
+// keep original xz for wave math
+const wPos = waterGeo.attributes.position;
+const wOrig = new Float32Array(wPos.array);
+function updateWater(t) {
+  for (let i = 0; i < wPos.count; i++) {
+    const ox = wOrig[i * 3], oy = wOrig[i * 3 + 1];
+    const wx = ox * 0.35, wz = oy * 0.35;
+    wPos.setZ(i,
+      Math.sin(wx * 1.7 + t * 1.4) * 0.14 +
+      Math.sin(wz * 2.3 - t * 1.1) * 0.11 +
+      Math.sin((wx + wz) * 3.1 + t * 2.2) * 0.06
+    );
+  }
+  wPos.needsUpdate = true;
+  waterGeo.computeVertexNormals();
+}
+
+/* ============================================================
+   TREES (billboard-free: built into voxel grid already)
+   CLOUDS — soft voxel puffs drifting slowly
+============================================================ */
+const cloudGroup = new THREE.Group();
+function makeCloud() {
+  const g = new THREE.Group();
+  const mat = new THREE.MeshLambertMaterial({ color: CFG.colors.cloud, transparent: true, opacity: 0.88, emissive: 0x9aa7b8, emissiveIntensity: 0.25 });
+  const puffs = 3 + Math.floor(rng() * 4);
+  for (let i = 0; i < puffs; i++) {
+    const w = 3 + rng() * 5, d = 2 + rng() * 4, h = 1 + rng() * 1.5;
+    const geo = new THREE.BoxGeometry(w, h, d);
+    const m = new THREE.Mesh(geo, mat);
+    m.position.set((rng() - 0.5) * 10, (rng() - 0.5) * 1.2, (rng() - 0.5) * 7);
+    m.castShadow = true;
+    g.add(m);
+  }
+  return g;
+}
+function buildClouds() {
+  for (let i = 0; i < 12; i++) {
+    const c = makeCloud();
+    c.position.set((rng() - 0.5) * 300, 34 + rng() * 14, (rng() - 0.5) * 300);
+    c.userData.speed = 0.4 + rng() * 0.8;
+    cloudGroup.add(c);
+  }
+}
+function updateClouds(dt) {
+  for (const c of cloudGroup.children) {
+    c.position.x += c.userData.speed * dt;
+    if (c.position.x > 190) c.position.x = -190;
+  }
+}
+
+/* ============================================================
+   SKY, SUN, MOON, LIGHTING & DAY/NIGHT
+============================================================ */
+const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x9fc7e8, 0.0055);
+
+const camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 0.1, 600);
+camera.position.set(50, 34, 62);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+renderer.setSize(innerWidth, innerHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.05;
+document.getElementById('app').appendChild(renderer.domElement);
+
+const sunLight = new THREE.DirectionalLight(0xffffff, 2.2);
+sunLight.castShadow = true;
+sunLight.shadow.mapSize.set(2048, 2048);
+const sc = sunLight.shadow.camera;
+sc.left = -70; sc.right = 70; sc.top = 70; sc.bottom = -70; sc.near = 10; sc.far = 220;
+sunLight.shadow.bias = -0.0004;
+scene.add(sunLight);
+scene.add(sunLight.target);
+
+const hemi = new THREE.HemisphereLight(0xbfe3ff, 0x3e5f3a, 0.75);
+scene.add(hemi);
+const ambient = new THREE.AmbientLight(0xffffff, 0.25);
+scene.add(ambient);
+
+/* --- celestial bodies --- */
+const sunMesh = new THREE.Mesh(new THREE.SphereGeometry(3.2, 16, 16), new THREE.MeshBasicMaterial({ color: 0xffe9a8, fog: false }));
+scene.add(sunMesh);
+const moonMesh = new THREE.Mesh(new THREE.SphereGeometry(2.2, 16, 16), new THREE.MeshBasicMaterial({ color: 0xdfe6ef, fog: false }));
+scene.add(moonMesh);
+const glow = new THREE.Sprite(new THREE.SpriteMaterial({
+  map: makeGlowTexture(), color: 0xffd27a, transparent: true, opacity: 0.9,
+  blending: THREE.AdditiveBlending, depthWrite: false, fog: false,
+}));
+glow.scale.set(30, 30, 1);
+scene.add(glow);
+
+function makeGlowTexture() {
+  const cv = document.createElement('canvas'); cv.width = cv.height = 128;
+  const g = cv.getContext('2d');
+  const grd = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+  grd.addColorStop(0, 'rgba(255,255,255,1)');
+  grd.addColorStop(0.25, 'rgba(255,220,140,0.55)');
+  grd.addColorStop(1, 'rgba(255,200,100,0)');
+  g.fillStyle = grd; g.fillRect(0, 0, 128, 128);
+  const tex = new THREE.CanvasTexture(cv);
+  return tex;
+}
+
+/* --- gradient sky dome --- */
+const skyGeo = new THREE.SphereGeometry(420, 24, 16);
+const skyMat = new THREE.ShaderMaterial({
+  side: THREE.BackSide,
+  depthWrite: false,
+  uniforms: {
+    topColor:     { value: new THREE.Color(0x2e6fb8) },
+    midColor:     { value: new THREE.Color(0x9fc7e8) },
+    botColor:     { value: new THREE.Color(0xd8e9f5) },
+    sunDir:       { value: new THREE.Vector3(0, 1, 0) },
+    sunTint:      { value: new THREE.Color(0xffd9a0) },
+    nightBlend:   { value: 0.0 },
+  },
+  vertexShader: `
+    varying vec3 vWorldPos;
+    void main() {
+      vec4 wp = modelMatrix * vec4(position, 1.0);
+      vWorldPos = wp.xyz;
+      gl_Position = projectionMatrix * viewMatrix * wp;
+    }`,
+  fragmentShader: `
+    uniform vec3 topColor, midColor, botColor, sunTint;
+    uniform vec3 sunDir;
+    uniform float nightBlend;
+    varying vec3 vWorldPos;
+    void main() {
+      vec3 dir = normalize(vWorldPos);
+      float h = clamp(dir.y * 0.5 + 0.5, 0.0, 1.0);
+      vec3 col = h < 0.5
+        ? mix(botColor, midColor, smoothstep(0.18, 0.5, h))
+        : mix(midColor, topColor, smoothstep(0.5, 0.9, h));
+      float sunAmt = pow(max(dot(dir, normalize(sunDir)), 0.0), 8.0);
+      col += sunTint * sunAmt * 0.55 * (1.0 - nightBlend * 0.8);
+      // night gradient
+      vec3 nightTop = vec3(0.020, 0.028, 0.058);
+      vec3 nightBot = vec3(0.055, 0.075, 0.115);
+      vec3 nightCol = h < 0.5
+        ? mix(nightBot, nightTop, smoothstep(0.18, 0.62, h))
+        : nightTop;
+      col = mix(col, nightCol, nightBlend);
+      gl_FragColor = vec4(col, 1.0);
+    }`,
+});
+const skyDome = new THREE.Mesh(skyGeo, skyMat);
+scene.add(skyDome);
+
+/* --- stars --- */
+const starGroup = new THREE.Group();
+function buildStars() {
+  const pos = [];
+  for (let i = 0; i < 900; i++) {
+    const v = new THREE.Vector3(rng() - 0.5, rng() * 0.55, rng() - 0.5).normalize().multiplyScalar(400);
+    pos.push(v.x, v.y, v.z);
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  const m = new THREE.PointsMaterial({ color: 0xffffff, size: 1.6, sizeAttenuation: false, transparent: true, opacity: 0, fog: false, depthWrite: false });
+  starGroup.add(new THREE.Points(g, m));
+  starGroup.userData.mat = m;
+}
+buildStars();
+scene.add(starGroup);
+
+/* ============================================================
+   DAY/NIGHT CYCLE
+============================================================ */
+const DAY_COLORS = {
+  dawn:  { top: 0x35496e, mid: 0xe08a5a, bot: 0xf2c07a, sun: 0xffb060, fog: 0xd9a578, amb: 0.34, sunI: 1.35, hemiI: 0.5 },
+  day:   { top: 0x2e6fb8, mid: 0x9fc7e8, bot: 0xd8e9f5, sun: 0xffffff, fog: 0xa8cbe8, amb: 0.25, sunI: 2.2, hemiI: 0.75 },
+  dusk:  { top: 0x3a3d66, mid: 0xd97a4a, bot: 0xe8a06a, sun: 0xff9840, fog: 0xc98a60, amb: 0.32, sunI: 1.4, hemiI: 0.45 },
+  night: { top: 0x0a1224, mid: 0x101c34, bot: 0x18263e, sun: 0xa8c4ff, fog: 0x101c30, amb: 0.16, sunI: 0.22, hemiI: 0.2 },
+};
+function lerpColor(a, b, t) { return new THREE.Color(a).lerp(new THREE.Color(b), t); }
+function lerp(a, b, t) { return a + (b - a) * t; }
+
+let dayTime = 0.30;          // 0..1 (0.30 ≈ 7:12am start)
+let dayCount = 1;
+
+function samplePhase(t) {
+  // keyframes at dawn 0.25, noon 0.5, dusk 0.75, midnight 0.0/1.0
+  const keys = [
+    { t: 0.00, p: DAY_COLORS.night }, { t: 0.22, p: DAY_COLORS.night },
+    { t: 0.27, p: DAY_COLORS.dawn },  { t: 0.36, p: DAY_COLORS.day },
+    { t: 0.64, p: DAY_COLORS.day },   { t: 0.73, p: DAY_COLORS.dusk },
+    { t: 0.78, p: DAY_COLORS.night }, { t: 1.00, p: DAY_COLORS.night },
+  ];
+  for (let i = 0; i < keys.length - 1; i++) {
+    if (t >= keys[i].t && t <= keys[i + 1].t) {
+      const f = (t - keys[i].t) / (keys[i + 1].t - keys[i].t);
+      const s = f * f * (3 - 2 * f); // smoothstep
+      return {
+        top: lerpColor(keys[i].p.top, keys[i + 1].p.top, s),
+        mid: lerpColor(keys[i].p.mid, keys[i + 1].p.mid, s),
+        bot: lerpColor(keys[i].p.bot, keys[i + 1].p.bot, s),
+        sun: lerpColor(keys[i].p.sun, keys[i + 1].p.sun, s),
+        fog: lerpColor(keys[i].p.fog, keys[i + 1].p.fog, s),
+        amb: lerp(keys[i].p.amb, keys[i + 1].p.amb, s),
+        sunI: lerp(keys[i].p.sunI, keys[i + 1].p.sunI, s),
+        hemiI: lerp(keys[i].p.hemiI, keys[i + 1].p.hemiI, s),
+      };
+    }
+  }
+  return DAY_COLORS.day;
+}
+
+function updateDayNight(dt) {
+  dayTime += dt / CFG.dayLength;
+  if (dayTime >= 1) { dayTime -= 1; dayCount++; }
+  const mix = samplePhase(dayTime);
+
+  // sun angle: noon at t=0.5 → sun up; midnight at 0 → down
+  const ang = (dayTime - 0.25) * Math.PI * 2;   // t=0.25 sunrise on horizon east
+  const sunDir = new THREE.Vector3(Math.cos(ang), Math.sin(ang), 0.25).normalize();
+  const sunUp = sunDir.y > -0.08;
+
+  sunLight.position.copy(sunDir).multiplyScalar(120);
+  sunLight.target.position.set(0, 0, 0);
+  sunLight.color.copy(mix.sun);
+  sunLight.intensity = sunUp ? mix.sunI : 0.18;
+
+  // moon opposite the sun
+  moonMesh.position.copy(sunDir).multiplyScalar(-380);
+  moonMesh.position.z *= 1.4;
+  moonMesh.visible = !sunUp;
+  sunMesh.position.copy(sunDir).multiplyScalar(380);
+  glow.position.copy(sunMesh.position);
+  glow.material.color.copy(mix.sun);
+
+  skyMat.uniforms.topColor.value.copy(mix.top);
+  skyMat.uniforms.midColor.value.copy(mix.mid);
+  skyMat.uniforms.botColor.value.copy(mix.bot);
+  skyMat.uniforms.sunDir.value.copy(sunDir);
+  const nightBlend = THREE.MathUtils.clamp((0.12 - sunDir.y) / 0.3, 0, 1);
+  skyMat.uniforms.nightBlend.value = nightBlend;
+
+  scene.fog.color.copy(mix.fog);
+  hemi.intensity = mix.hemiI;
+  hemi.color.copy(mix.mid);
+  ambient.intensity = mix.amb;
+
+  starGroup.userData.mat.opacity = nightBlend * 0.9;
+  starGroup.rotation.y = dayTime * Math.PI * 2 * 0.4;
+  glow.material.opacity = sunUp ? 0.85 * (1 - nightBlend * 0.5) : 0;
+
+  // HUD clock
+  const hrs = dayTime * 24;
+  const hh = Math.floor(hrs), mm = Math.floor((hrs - hh) * 60);
+  clockEl.textContent = `${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}`;
+  let phase = 'NIGHT';
+  if (dayTime > 0.24 && dayTime < 0.36) phase = 'DAWN';
+  else if (dayTime >= 0.36 && dayTime < 0.64) phase = 'DAY';
+  else if (dayTime >= 0.64 && dayTime < 0.78) phase = 'DUSK';
+  phaseEl.textContent = phase;
+  dayEl.textContent = `Day ${dayCount}`;
+  dial.style.left = `${dayTime * 100}%`;
+  dial.classList.toggle('night', nightBlend > 0.5);
+}
+
+/* ============================================================
+   CONTROLS — orbit + keyboard pan, collision-free fly
+============================================================ */
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.08;
+controls.maxPolarAngle = Math.PI * 0.495;
+controls.minDistance = 12;
+controls.maxDistance = 220;
+controls.target.set(0, 8, 0);
+controls.mouseButtons = {
+  LEFT: THREE.MOUSE.ROTATE, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.PAN,
+};
+
+const keys = {};
+addEventListener('keydown', e => {
+  keys[e.code] = true;
+  if (e.code === 'KeyN') { dayTime += 0.125; if (dayTime >= 1) dayTime -= 1; }
+  if (['KeyW','KeyA','KeyS','KeyD','Space'].includes(e.code)) e.preventDefault();
+});
+addEventListener('keyup', e => { keys[e.code] = false; });
+
+const moveVec = new THREE.Vector3();
+const camDir = new THREE.Vector3();
+const camRight = new THREE.Vector3();
+function updateMovement(dt) {
+  const sprint = keys['Space'] ? 2.0 : 1.0;
+  const speed = 18 * sprint * dt;
+  moveVec.set(0, 0, 0);
+  if (keys['KeyW'] || keys['ArrowUp']) moveVec.z -= 1;
+  if (keys['KeyS'] || keys['ArrowDown']) moveVec.z += 1;
+  if (keys['KeyA'] || keys['ArrowLeft']) moveVec.x -= 1;
+  if (keys['KeyD'] || keys['ArrowRight']) moveVec.x += 1;
+  if (moveVec.lengthSq() > 0) {
+    moveVec.normalize();
+    camera.getWorldDirection(camDir);
+    camDir.y = 0; camDir.normalize();
+    camRight.crossVectors(camDir, up).normalize();
+    // pan camera + orbit target together
+    const delta = new THREE.Vector3()
+      .addScaledVector(camRight, moveVec.x)
+      .addScaledVector(camDir, -moveVec.z)
+      .multiplyScalar(speed);
+    camera.position.add(delta);
+    controls.target.add(delta);
+  }
+  if (keys['KeyE']) { camera.position.y += speed * 0.8; controls.target.y += speed * 0.8; }
+  if (keys['KeyQ']) { camera.position.y -= speed * 0.8; controls.target.y -= speed * 0.8; }
+  // gentle clamp so you can't fly absurdly far
+  camera.position.x = THREE.MathUtils.clamp(camera.position.x, -160, 160);
+  camera.position.z = THREE.MathUtils.clamp(camera.position.z, -160, 160);
+  camera.position.y = THREE.MathUtils.clamp(camera.position.y, 3, 160);
+  controls.target.y = THREE.MathUtils.clamp(controls.target.y, 0, 80);
+}
+const up = new THREE.Vector3(0, 1, 0);
+
+/* ============================================================
+   TERRAIN MATERIAL (vertex colors, lambert)
+============================================================ */
+const terrainMaterial = new THREE.MeshLambertMaterial({ vertexColors: true });
+
+/* ============================================================
+   HUD refs & stats
+============================================================ */
+const clockEl = document.getElementById('clock');
+const phaseEl = document.getElementById('phase');
+const dayEl = document.getElementById('daylabel');
+const dial = document.getElementById('sundial');
+const fpsEl = document.getElementById('fps');
+const posEl = document.getElementById('pos');
+const trisEl = document.getElementById('tris');
+const chunksEl = document.getElementById('chunks');
+const seedEl = document.getElementById('seed');
+const needle = document.getElementById('needle');
+const compassDegEl = document.getElementById('compassDeg');
+const compassDirEl = document.getElementById('compassDir');
+seedEl.textContent = CFG.seed;
+
+let fpsFrames = 0, fpsTime = 0, fpsVal = 0;
+let statTimer = 0;
+function updateStats(dt) {
+  fpsFrames++; fpsTime += dt;
+  statTimer += dt;
+  if (fpsTime >= 0.5) { fpsVal = Math.round(fpsFrames / fpsTime); fpsFrames = 0; fpsTime = 0; }
+  if (statTimer >= 0.25) {
+    statTimer = 0;
+    fpsEl.textContent = fpsVal || '--';
+    posEl.textContent = `${camera.position.x.toFixed(0)}, ${camera.position.z.toFixed(0)}`;
+    trisEl.textContent = renderer.info.render.triangles.toLocaleString();
+    chunksEl.textContent = chunkMeshes.length;
+    // compass: camera heading
+    const dir = new THREE.Vector3();
+    camera.getWorldDirection(dir);
+    let deg = Math.atan2(dir.x, dir.z) * 180 / Math.PI; // 0 = +Z (south in three, treat as N)
+    deg = (deg + 360) % 360;
+    compassDegEl.textContent = `${deg.toFixed(0)}°`;
+    const dirs = ['N','NE','E','SE','S','SW','W','NW'];
+    compassDirEl.textContent = dirs[Math.round(deg / 45) % 8];
+    needle.style.transform = `rotate(${-deg}deg)`;
+  }
+}
+
+/* ============================================================
+   BOOT & MAIN LOOP
+============================================================ */
+generateHeights();
+fillBlocks();
+const treeCount = addTrees();
+buildAllChunks();
+buildClouds();
+scene.add(worldGroup, water, cloudGroup);
+
+addEventListener('resize', () => {
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+
+const clock = new THREE.Clock();
+let elapsed = 0;
+function animate() {
+  requestAnimationFrame(animate);
+  const dt = Math.min(clock.getDelta(), 0.05);
+  elapsed += dt;
+
+  updateDayNight(dt);
+  updateWater(elapsed);
+  updateClouds(dt);
+  updateMovement(dt);
+  controls.update();
+  updateStats(dt);
+
+  // keep sky centered on camera so dome never gets exited
+  skyDome.position.copy(camera.position);
+  starGroup.position.copy(camera.position);
+
+  renderer.render(scene, camera);
+}
+animate();
+
+// hide loader after first rendered frame
+requestAnimationFrame(() => requestAnimationFrame(() => {
+  document.getElementById('loader').classList.add('hide');
+  setTimeout(() => document.getElementById('loader').remove(), 900);
+}));
+</script>
+</body>
+</html>

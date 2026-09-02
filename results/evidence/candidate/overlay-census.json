@@ -1,0 +1,16 @@
+{
+  "base_loader_before_sha256": "a7e925f232ad3eebbee7ab37d3aba724c24465c3078da29489da0438664c6b08",
+  "excluded_kda_fg_runtime_modules": 34,
+  "group_policy": [
+    128,
+    64,
+    32
+  ],
+  "k704_group": 64,
+  "logical_tensors": 225,
+  "measured_base_loader_after_sha256": "34d6004771c27b202355f80a998a9aa7b6f2004859db19067ad6bc70719f35bf",
+  "measured_overlay_sha256": "737e80417d925da6759e48fef471e35309122acf0b6c289cba11956b874e4437",
+  "net_bytes_freed_per_rank": 1595392320,
+  "public_overlay_sha256": "5aeff0cf92e715094d737faded2bf35000f7ce586213c495431b5a4805f7307d",
+  "runtime_modules": 169
+}

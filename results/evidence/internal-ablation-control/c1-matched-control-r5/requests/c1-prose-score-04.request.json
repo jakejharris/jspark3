@@ -1,0 +1,20 @@
+{
+  "chat_template_kwargs": {
+    "enable_thinking": false
+  },
+  "max_tokens": 400,
+  "messages": [
+    {
+      "content": "Develop a rigorous checklist for validating a multi-node language-model serving system. Include configuration identity, rank participation, request accounting, timing methodology, failure handling, and reporting caveats.",
+      "role": "user"
+    }
+  ],
+  "model": "glm-5.3-flash",
+  "seed": 20260830,
+  "stream": true,
+  "stream_options": {
+    "include_usage": true
+  },
+  "temperature": 0,
+  "top_p": 1
+}

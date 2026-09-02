@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "policy": "No checkpoint, tokenizer, model configuration, container layer, or patched vLLM tree is redistributed. Operators fetch the exact revisions and digests below; the recipe refuses anything else.",
+  "target_checkpoint": {
+    "repository": "Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw",
+    "revision": "25a44fdbf16862a46b7cc9921142c6c81350af2f",
+    "declared_byte_identical_source": "brandonmusic/GLM-5.3-Flash-tr3-4bpw@5ab363a8dcf6405955fd5f99671e01a1c9fb124b",
+    "quantization": "EXL3/TR3, approximately 4 bits per weight",
+    "native_config_sha256": "4f5341e048984459471bfb9c894e6bf87e69b9c67402672af901631d1349f265",
+    "runtime_config_sha256": "55201c73ed092c5a77f9b87ce40298edb450790ad864c1256cb6ca3a182683bd",
+    "model_index_sha256": "2f64d21c67c90bbafeb36c4e9b2f06f54063ed439e9f7cf95962d425a1d8515d",
+    "tokenizer_sha256": "19e773648cb4e65de8660ea6365e10acca112d42a854923df93db4a6f333a82d",
+    "tokenizer_config_sha256": "98b1271574f41abf89427ae2dda030d94dc9478f0edc5a8bd240db213c6fd5fc",
+    "indexed_shards": 120,
+    "indexed_tensor_bytes": 175622979576,
+    "physical_safetensors_bytes": 175642157752,
+    "license": "ShapleyMcg License v1.0 (attribution-required; see REQUIRED_ATTRIBUTION.md)",
+    "redistributed_here": false,
+    "mirror": {
+      "status": "authorized, transfer in progress on a separate review branch; not merged",
+      "repository": "Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw",
+      "revision": "25a44fdbf16862a46b7cc9921142c6c81350af2f",
+      "intended_mirror": "https://huggingface.co/jakejharris/jspark3",
+      "relationship": "exact hash-verifiable mirror; no weight byte is modified",
+      "files": 144,
+      "bytes": 175715854754,
+      "upload_files": 123,
+      "upload_bytes": 175715659341,
+      "destination_policy": "existing Hugging Face pull-request revision only; never main",
+      "transfer_client": "hf upload-large-folder",
+      "resume_cache": ".cache/huggingface",
+      "completion_receipt": "jspark3/MIRROR-COMPLETION.json",
+      "merge_policy": "manual only after exact remote verification",
+      "manifest": "huggingface/jspark3/WEIGHTS-MANIFEST.json",
+      "gate": null
+    }
+  },
+  "draft_checkpoint": {
+    "repository": "incoai/GLM-5.3-Flash-DFlash2",
+    "revision": "dc77ff1c99eeb2df044ee3d4f0094eb033fee410",
+    "native_config_sha256": "c4aeac0101196a6e26705b34c45230bcd0c7c68ee2d2d1efdb242087f3712573",
+    "runtime_config_sha256": "c9f0c3a6c41f8a226fb31a1fb7817cea274d1f4b7b0d2e4d787d38c0f508283f",
+    "model_sha256": "b33c03475ba7322cf398828f2d8d1be376df30dc05c6b40c28c8ea8da23e410b",
+    "model_bytes": 2342169800,
+    "speculative_tokens": 7,
+    "license": "CC BY-NC-ND 4.0; research and evaluation use; commercial use requires separate permission from Inco AI",
+    "redistributed_here": false
+  },
+  "container_image": {
+    "reference": "ghcr.io/miaai-lab/glm-5.3-flash-2x-dgx-sparks@sha256:9bb1557a4234fce63d59599e44d10747eabd742beb337eebf9e7070be8a0fd58",
+    "manifest_digest": "sha256:9bb1557a4234fce63d59599e44d10747eabd742beb337eebf9e7070be8a0fd58",
+    "config_digest": "sha256:ad0cdd86d1ddd15ee758f519d16da15ac237f7f0648a5c52fbc20f9554944263",
+    "architecture": "arm64",
+    "observed_server_fingerprint": "vllm-0.1.dev20051+g487ecf187-tp3-ep-ded8abdb",
+    "publisher": "MiaAI-Lab",
+    "redistributed_here": false
+  },
+  "source_revisions": {
+    "flycockpit": {
+      "repository": "https://github.com/FlyCockpit/GLM-5.3-Flash-EXL3-3x-DGX-Sparks",
+      "commit": "9093765c757bd1976372196e44af84a67cf86bad",
+      "role": "pinned TP3/EP3 technique sources and patch data reconstructed by recipe/scripts/apply_tp3_overlay.py and apply_image_glm_dflash.py; mounted read-only at launch"
+    },
+    "vcruz305": {
+      "repository": "https://github.com/vcruz305/GLM-5.3-Flash-EXL3-K2-DGX-Spark-recipe",
+      "commit": "622cb878d66f703c597bd6baaa2423caa1786f99",
+      "role": "K-pool hybrid-position and persistent tail-slot correction reconstructed by recipe/scripts/apply_kpool_tail.py"
+    },
+    "sfxnz": {
+      "repository": "https://github.com/sfxnz/GLM-5.3-Flash-NVFP4-vLLM-2x-DGX-Spark",
+      "commit": "f59cb7cc41c3ee32146782900d87133f538b5d30",
+      "role": "referenced DGX Spark serving context"
+    },
+    "tony_scheduler_context": {
+      "repository": "https://github.com/tonyd2wild/GLM-5.3-Flash-NVFP4-DFlash2-2x-DGX-Spark",
+      "commit": "3eef46632c45ffb6c397de0716c23b3d2d594798",
+      "role": "scheduler and concurrency benchmarking context"
+    },
+    "vllm": {
+      "pinned_build": "487ecf187 as shipped inside the pinned container image",
+      "role": "serving engine; five hash-gated runtime transforms are applied inside the container at start"
+    }
+  },
+  "owned_runtime_image": {
+    "intended_reference": null,
+    "digest": null,
+    "published": false,
+    "redistributed_here": false,
+    "runtime_reference": "ghcr.io/miaai-lab/glm-5.3-flash-2x-dgx-sparks@sha256:9bb1557a4234fce63d59599e44d10747eabd742beb337eebf9e7070be8a0fd58",
+    "publication_policy": "NO-GO for v1.0.0",
+    "status": "not published and not a v1.0.0 deliverable; docker/ is retained for local reproducibility only. Do not redistribute a local build without independently satisfying NVIDIA and upstream terms."
+  }
+}

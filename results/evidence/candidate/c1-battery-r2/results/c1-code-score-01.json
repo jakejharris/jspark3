@@ -1,0 +1,273 @@
+{
+  "analysis": {
+    "cjk": {
+      "counts": {
+        "han": 0,
+        "hangul": 0,
+        "hiragana": 0,
+        "katakana": 0
+      },
+      "expected_scripts": [],
+      "pass": true,
+      "unexpected_counts": {}
+    },
+    "failures": [],
+    "finish_reason": "stop",
+    "holds": [],
+    "loops": {
+      "text_reasoning_content_32cp_x4": {
+        "fired": false,
+        "minimum_period_codepoints": 32,
+        "repetitions": 4
+      },
+      "text_tool_arguments_32cp_x4": {
+        "fired": false,
+        "minimum_period_codepoints": 32,
+        "repetitions": 4
+      },
+      "token_block_8x4": {
+        "block_size": 8,
+        "fired": false,
+        "repetitions": 4
+      }
+    },
+    "message": {
+      "content": "def is_prime(n):\n    if n < 2:\n        return False\n    if n < 4:\n        return True\n    if n % 2 == 0:\n        return False\n    i = 3\n    while i * i <= n:\n        if n % i == 0:\n            return False\n        i += 2\n    return True\n\n\ndef run_tests():\n    test_cases = [\n        (-7, False),\n        (-1, False),\n        (0, False),\n        (1, False),\n        (2, True),\n        (3, True),\n        (4, False),\n        (5, True),\n        (9, False),\n        (11, True),\n        (25, False),\n        (29, True),\n        (97, True),\n        (100, False),\n        (7919, True),\n        (7920, False),\n        (2147483647, True),\n    ]\n    for n, expected in test_cases:\n        result = is_prime(n)\n        assert result == expected, f\"is_prime({n}) returned {result}, expected {expected}\"\n    print(\"All tests passed.\")\n\n\nif __name__ == \"__main__\":\n    run_tests()",
+      "reasoning": "",
+      "role": "assistant"
+    },
+    "offline_decode": {
+      "reason": "server returned no output token IDs",
+      "verdict": "HOLD"
+    },
+    "output_token_id_count": null,
+    "output_token_ids_present": false,
+    "rendered": {
+      "anomalous_controls": [],
+      "content_codepoints": 866,
+      "content_sha256": "92cbf772c9b94d87464d1a70de45f3c60dd61c384048479fb1952a0b088c91cb",
+      "reasoning_codepoints": 0,
+      "reasoning_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tool_argument_codepoints": 0,
+      "tool_arguments_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "u_fffd_count": 0,
+      "u_fffd_fields_anywhere_in_response": []
+    },
+    "semantic": {
+      "compiled": true,
+      "function_names": [
+        "is_prime",
+        "run_tests"
+      ],
+      "has_test_expression": true,
+      "verdict": "PASS"
+    },
+    "token_ids_match_completion_usage": false,
+    "usage": {
+      "completion_tokens": 257,
+      "prompt_tokens": 21,
+      "total_tokens": 278
+    },
+    "verdict": "PASS"
+  },
+  "decode_interval_seconds": 3.711126662,
+  "decode_tokens_n_minus_1": 256,
+  "decode_tokens_per_second_n_minus_1": 68.98174686984046,
+  "end_monotonic_ns": 388706240126422,
+  "ended_utc": "2026-09-02T06:27:48.431937+00:00",
+  "first_visible_monotonic_ns": 388702528558393,
+  "http_status": 200,
+  "last_visible_monotonic_ns": 388706239685055,
+  "phase": "c1-code",
+  "rate_valid": true,
+  "raw_bytes": 10330,
+  "raw_path": "raw/c1-code-score-01.sse",
+  "raw_sha256": "417efd0b46b3853c3ef58069cdb97d7fd7165a622350cedf49025fab12dfbfa1",
+  "request_id": "c1-code-score-01",
+  "request_sha256": "681a284f6d441734ccaade4d7b7c4731c736e7fb7ce87cabff1312326c5187a7",
+  "response_headers": {
+    "connection": "close",
+    "content-type": "text/event-stream; charset=utf-8",
+    "date": "Wed, 02 Sep 2026 06:27:44 GMT",
+    "server": "uvicorn",
+    "transfer-encoding": "chunked"
+  },
+  "scored": true,
+  "sent_utc": "2026-09-02T06:27:44.565648+00:00",
+  "sse_event_receipts": [
+    {
+      "data_sha256": "4d6b03052aeae43fb154fe9e335901253a8c4474eaa81e8ac5f6924611da794a",
+      "timestamp_ns": 388702528535563
+    },
+    {
+      "data_sha256": "5555a784e04d375652a2ed3edc91fe6db62309d7924c673422cbecd4a05021a7",
+      "timestamp_ns": 388702528558393
+    },
+    {
+      "data_sha256": "42561525157d549c9d31eb0d271fee70556b6034ab9ac687e3f77ff0ae94f4ff",
+      "timestamp_ns": 388702618347784
+    },
+    {
+      "data_sha256": "6fd4c6cd8837133473e59f2b242cd8dae59a013214e94c1360d5f4fc7a56b0d1",
+      "timestamp_ns": 388702719057108
+    },
+    {
+      "data_sha256": "79429c3f409fa200839c75c4e2ece8b20a75aec7df68979c072becd0c2e6431f",
+      "timestamp_ns": 388702823775675
+    },
+    {
+      "data_sha256": "c0cab3d834b75caeb234da6fa880594941f467eb9434966404cfa2574079936c",
+      "timestamp_ns": 388702912474037
+    },
+    {
+      "data_sha256": "a5f9e5d09107eb9a524fdf500876ff55aaf0ea53d17ee95e36a0ab6f7f00b7b4",
+      "timestamp_ns": 388703021320092
+    },
+    {
+      "data_sha256": "6c9e042f0785a13eb07258e9e79744d3755a20bb212c437b958d050897afd6d7",
+      "timestamp_ns": 388703111754170
+    },
+    {
+      "data_sha256": "ec77fc1c8318e849f5fdbfa1c3f191482eef1dd9562ed36141e38bf539c0539e",
+      "timestamp_ns": 388703209689067
+    },
+    {
+      "data_sha256": "562d09680552ed81261dc4ea93314b738acd3c76036e02cdc1297620c6e1ef3e",
+      "timestamp_ns": 388703309286979
+    },
+    {
+      "data_sha256": "7737275376e1b869377fa7ff7643501549c59d2072b26e7d4a5331142fc1dc17",
+      "timestamp_ns": 388703407928095
+    },
+    {
+      "data_sha256": "5afd4f96b6f76b2f8f7ef60ce3fd3d38c7b798be121deb2d579de8311f4d4051",
+      "timestamp_ns": 388703507360974
+    },
+    {
+      "data_sha256": "5555a784e04d375652a2ed3edc91fe6db62309d7924c673422cbecd4a05021a7",
+      "timestamp_ns": 388703597263989
+    },
+    {
+      "data_sha256": "54d866ea4ffd9001b384a5e2d274260200db4fe905e4b5b026e0501e84ee949b",
+      "timestamp_ns": 388703690737396
+    },
+    {
+      "data_sha256": "57ad1e76de6342a9120bb519adb10e17c6b6325021bce470c914418130c8f294",
+      "timestamp_ns": 388703789232510
+    },
+    {
+      "data_sha256": "0cb17551d6ce4623afc6138cf7c4509cf858de28ded6bd83a2addc033834e777",
+      "timestamp_ns": 388703880965557
+    },
+    {
+      "data_sha256": "2cd5a2de31f2ed40e59e1cf0f024d60ee1e7c6d4b9fcdfa490692e25aa3162b1",
+      "timestamp_ns": 388703977528884
+    },
+    {
+      "data_sha256": "74b86fe4af567ff56b9123db37aaa4f0e15840b1c0c933dd1cd0625296624bca",
+      "timestamp_ns": 388704072497207
+    },
+    {
+      "data_sha256": "50caa336b814b408552b40c49bd615cc6fb71291811dff57fab7487b3e473674",
+      "timestamp_ns": 388704169059205
+    },
+    {
+      "data_sha256": "4ab4a5127620a7e7949ebc1f72cc9fee3d2e65947cac38202dd9ef630a5cd688",
+      "timestamp_ns": 388704265278166
+    },
+    {
+      "data_sha256": "32c7a88d40d9ce1fcd8fa03292697875e1f29ef0ee30d093cde3c91d7d17a040",
+      "timestamp_ns": 388704360886249
+    },
+    {
+      "data_sha256": "346928d493577b8bf94379fafc0a591b56ebbe90656fba867833c1066d31838f",
+      "timestamp_ns": 388704456513472
+    },
+    {
+      "data_sha256": "82b8b1fa85a554877665d507d2dfd696a715736173f5fedb60f00fac8b1c75cb",
+      "timestamp_ns": 388704550026575
+    },
+    {
+      "data_sha256": "412cbb63f6250ed773e90e62c7e4f7f186a23fcb789ac45712c0107156b3e1a5",
+      "timestamp_ns": 388704643185342
+    },
+    {
+      "data_sha256": "ea866b0501c5cd0ccbb9a9f5e0d0e7060750e58ee88180e2ee162b963a1db68d",
+      "timestamp_ns": 388704740654353
+    },
+    {
+      "data_sha256": "4876076b0ed2f7c5eb3c04ab0d7c73f37169fda983a16795d0830b52614c16b8",
+      "timestamp_ns": 388704830933858
+    },
+    {
+      "data_sha256": "a902f620f5798b47b207cf1fb45f0e9e6d8dd903358a1a9d9b56714dc7040432",
+      "timestamp_ns": 388704924087781
+    },
+    {
+      "data_sha256": "6e0266eb4a8ac1896d9ec62a92ea6eb4d33bcb5599f4c18ed18e44d8ed3e43b9",
+      "timestamp_ns": 388705015340792
+    },
+    {
+      "data_sha256": "2f5080b26bff40ead0121422bcbbde9c6ce93bd71e6c14d9e955bdcacd03d0f0",
+      "timestamp_ns": 388705108125652
+    },
+    {
+      "data_sha256": "35c31c1ac74cccdd075d8b27610beecb82cd5e499e385653c5df8be6eef1c3c9",
+      "timestamp_ns": 388705200054930
+    },
+    {
+      "data_sha256": "21148ae7d3c7287dbf929134d964ef573405688b5114ef3bab3ebeb4c088f2fc",
+      "timestamp_ns": 388705294484625
+    },
+    {
+      "data_sha256": "eac699933d5e36506c6b52d69dd45341de2a35160398a43a219e31e22c6695b0",
+      "timestamp_ns": 388705390099197
+    },
+    {
+      "data_sha256": "7390ce2f88eb21073ce9b9ac824026ad582f3797d0117a91ac8e23016bcb37f5",
+      "timestamp_ns": 388705482536784
+    },
+    {
+      "data_sha256": "0c3008a30c352a80772a219e8a0d98d75de0840a94c5e28dd3344dfcdedd01df",
+      "timestamp_ns": 388705583190848
+    },
+    {
+      "data_sha256": "6bfd06dce9ae195f9c6e9737593b9ffff18aac5efa65390d0fbc2e9023806686",
+      "timestamp_ns": 388705676845090
+    },
+    {
+      "data_sha256": "f8c76298ce4e865177d63d3e256eeefe095da19312b8a1e58369e1b98337c723",
+      "timestamp_ns": 388705772935149
+    },
+    {
+      "data_sha256": "9d922eef6dabb55eadda6710ec8a0eaf986d2a6834306e2821de451d13c7cad6",
+      "timestamp_ns": 388705865219293
+    },
+    {
+      "data_sha256": "79a7fe7a23d5083395dcb5c7d86b612f3c628daef1c27501a00d2f7752c35c31",
+      "timestamp_ns": 388705963447483
+    },
+    {
+      "data_sha256": "21ed8def7c7a4c6fa41151b06f25374b3cfc430cecfc597d5b8832a2fdabf626",
+      "timestamp_ns": 388706056155104
+    },
+    {
+      "data_sha256": "9c37abbbb9c9190d32c95cb44e5e9d9447b99f35b94d78b16dccdfd076c779ac",
+      "timestamp_ns": 388706151212247
+    },
+    {
+      "data_sha256": "c055b86c61aaf68805917bf5a5f67ca432f3dec3378dbf392f39aaa12c7c2a86",
+      "timestamp_ns": 388706239685055
+    },
+    {
+      "data_sha256": "effcdd5767f26c7e136ae2ba406dd1792a27983d6df331ea2e552a4c0860fb7b",
+      "timestamp_ns": 388706239707776
+    }
+  ],
+  "start_monotonic_ns": 388702373834826,
+  "ttft_seconds": 0.154723567,
+  "verdict": "PASS",
+  "visible_events": 40,
+  "wall_seconds": 3.866291596,
+  "workload": "code"
+}
