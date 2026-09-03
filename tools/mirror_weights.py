@@ -39,9 +39,10 @@ LOCK_NAME = "jspark3-transfer.lock"
 PR_REF_RE = re.compile(r"refs/pr/([1-9][0-9]*)")
 COMPLETION_PATH = "jspark3/MIRROR-COMPLETION.json"
 UPLOAD_AUTHORIZED_STATUS = "authorized, transfer not started"
+UPLOAD_IN_PROGRESS_STATUS = "authorized, transfer in progress on a separate review branch; not merged"
 TERMINAL_MIRROR_STATUS = "published and remotely verified on public main"
 TERMINAL_HF_REVISION = "e7c34dba923916754cfcb0bdf6c2c75a9b7ff1fc"
-AUTHORIZED_MIRROR_STATUSES = frozenset({UPLOAD_AUTHORIZED_STATUS})
+AUTHORIZED_MIRROR_STATUSES = frozenset({UPLOAD_AUTHORIZED_STATUS, UPLOAD_IN_PROGRESS_STATUS})
 
 
 def repo_root() -> Path:
@@ -511,7 +512,7 @@ def cmd_self_test(_args: argparse.Namespace) -> int:
         problems.append("current terminal release manifest has an invalid publication gate")
     if not publication_problems(release):
         problems.append("terminal release state was incorrectly accepted by the pre-merge upload gate")
-    for status in AUTHORIZED_MIRROR_STATUSES:
+    for status in (UPLOAD_AUTHORIZED_STATUS, UPLOAD_IN_PROGRESS_STATUS):
         candidate = {**release, "publication_authorized": True,
                      "weights_mirror": {**release.get("weights_mirror", {}),
                                         "status": status, "gate": None}}
