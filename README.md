@@ -1,15 +1,78 @@
 # JSpark3 v1
 
-**JSpark3 turns three NVIDIA DGX Sparks into one fast GLM-5.3 Flash server,
-with a reproducible TP3 recipe and public benchmarks.**
+**JSpark3 turns three NVIDIA DGX Sparks into one OpenAI-compatible GLM-5.3
+Flash endpoint, with a reproducible TP3 recipe and public benchmarks.**
 
-> **License and weight provenance:** JSpark3's original recipe code and
-> documentation are Apache-2.0. The Hugging Face weights are Brandon M.
-> Music's exact EXL3/TR3 quantization, re-hosted byte-for-byte by Mia-AiLab
-> and mirrored by JSpark3 without changing a weight byte. They remain under
-> the attribution-required, source-available ShapleyMcg License v1.0,
-> including its named exclusion; Z.AI's base model remains MIT. DFlash2 is
-> not mirrored and remains a separate CC BY-NC-ND 4.0 dependency.
+> **Weights and licenses:** Brandon M. Music created the
+> [ShapleyMcg](https://github.com/brandonmmusic-max/shapleymcg) quantization.
+> Its license requires [attribution](#attribution) and includes
+> a named exclusion. DFlash2 is a separate non-commercial dependency. Read
+> the [license boundaries](#license) before serving.
+
+## Results
+
+| Measured result | JSpark3 v1 |
+|---|---:|
+| Paired single-stream code decode | **66.257 tok/s**, +7.27% |
+| Paired single-stream structured decode | **81.962 tok/s**, +6.63% |
+| Agent demonstration aggregate decode | **44.583 tok/s** |
+| Configured context | **1,000,000 tokens** |
+
+The paired rows compare the same recipe on the same three-Spark fleet with
+the trunk overlay disabled, an unreleased internal control rather than a
+market comparison. The agent run is product evidence, not a controlled
+comparison. See the [machine-readable results](results/results.json) and
+[benchmark methods and caveats](docs/BENCHMARKS.md).
+
+## Prerequisites
+
+- Three DGX Sparks with two RoCE-v2 interfaces each, cabled as a triangle with
+  a management network and non-interactive SSH. Each direct leg needs its own
+  IPv4 network at MTU 9000.
+- Docker with the NVIDIA runtime, cgroup v2, and `rdma-core` on every Spark,
+  plus at least 72 GiB of available host memory, 8 GiB of free work and model
+  filesystem space, and about 180 GB for the model tree on each rank.
+- A Linux or macOS controller with Python 3.9 or newer, `ssh`, `rsync`, and
+  `sha256sum`.
+
+## Quick start
+
+From a fresh clone on the controller, copy the checked recipe to the same path
+on every rank:
+
+```bash
+git clone --branch v1.0.0 https://github.com/jakejharris/jspark3.git
+cd jspark3
+(cd recipe && sha256sum -c SHA256SUMS)
+for host in rank0 rank1 rank2; do
+  rsync -a --delete recipe/ "$host":/srv/jspark3-recipe/
+done
+```
+
+Next, stage the pinned image, checkpoints, FlyCockpit source, TP3 runtime
+views, and fabric settings on every rank by following
+[installation steps 3 through 5](docs/INSTALL.md#3-fetch-the-pinned-inputs-on-every-rank).
+Those steps contain the required large downloads and host-specific interface
+values. Then fill in the fleet values and run the fail-closed lifecycle:
+
+```bash
+cd recipe
+cp .env.example .env
+# Replace every placeholder in .env before continuing.
+./scripts/clean-room-setup.sh --env-file .env --output preflight.json
+preflight_sha=$(sha256sum preflight.json | cut -d' ' -f1)
+./scripts/start.sh --env-file .env --preflight preflight.json \
+  --preflight-sha256 "$preflight_sha" --confirm START-JSPARK3
+./scripts/health.sh --env-file .env --manifest jspark3-release-manifest.json
+./scripts/verify.sh --env-file .env --manifest jspark3-release-manifest.json \
+  --output verify.json --log-output verify-rank0.log
+```
+
+The endpoint is OpenAI-compatible on rank 0, model name `glm-5.3-flash`,
+thinking off by default and switchable per request. The full setup from bare
+hosts is in [docs/INSTALL.md](docs/INSTALL.md).
+
+## What JSpark3 is
 
 JSpark3 v1 is a reproducible serving and runtime recipe. It runs the
 EXL3/TR3 4-bpw GLM-5.3 Flash checkpoint with tensor parallel 3 and expert
@@ -28,6 +91,14 @@ verified before maintainer merge into public main at
 `e7c34dba923916754cfcb0bdf6c2c75a9b7ff1fc`. The recipe verifies every serving
 byte and then builds the same runtime the evidence in this repository was
 measured on.
+
+> **License and weight provenance:** JSpark3's original recipe code and
+> documentation are Apache-2.0. The Hugging Face weights are Brandon M.
+> Music's exact EXL3/TR3 quantization, re-hosted byte-for-byte by Mia-AiLab
+> and mirrored by JSpark3 without changing a weight byte. They remain under
+> the attribution-required, source-available ShapleyMcg License v1.0,
+> including its named exclusion; Z.AI's base model remains MIT. DFlash2 is
+> not mirrored and remains a separate CC BY-NC-ND 4.0 dependency.
 
 > **Release status: [v1.0.0](https://github.com/jakejharris/jspark3/releases/tag/v1.0.0), released 2026-09-02; attributed Hugging Face target mirror public.**
 > The immutable terminal Hub main revision is
@@ -116,25 +187,6 @@ Full tables, estimators, and receipts:
 | [`docker/`](docker/README.md) | Local-only reproducibility definition for inspecting the labeled derivative; v1.0.0 publishes no JSpark3 container image and runs the upstream digest. |
 | [`tools/`](tools/validate_release.py) | Release validator, release-asset and SBOM builders, and the pacing and stream analyzers used for the evidence. |
 | [`release/`](release/RELEASE-NOTES.md) | Release notes and announcement drafts. |
-
-## Quick start
-
-Three DGX Sparks, cabled as a two-leg RoCE-v2 triangle, with Docker and
-`rdma-core`. Full walk-through: [docs/INSTALL.md](docs/INSTALL.md).
-
-```bash
-cd recipe
-cp .env.example .env                                  # fill in hosts, legs, roots
-./scripts/clean-room-setup.sh --env-file .env --output preflight.json
-preflight_sha=$(sha256sum preflight.json | cut -d' ' -f1)
-./scripts/start.sh --env-file .env --preflight preflight.json \
-  --preflight-sha256 "$preflight_sha" --confirm START-JSPARK3
-./scripts/verify.sh --env-file .env --manifest jspark3-release-manifest.json \
-  --output verify.json --log-output verify-rank0.log
-```
-
-The endpoint is OpenAI-compatible on rank 0, model name `glm-5.3-flash`,
-thinking off by default and switchable per request.
 
 ## How it works, briefly
 
