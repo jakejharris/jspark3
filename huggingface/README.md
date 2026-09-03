@@ -26,6 +26,42 @@ tags:
 
 # JSpark3 v1
 
+**Three DGX Sparks, one OpenAI-compatible GLM-5.3 Flash endpoint, with the
+recipe and evidence to rebuild it.**
+
+JSpark3 is the measured three-Spark path for the EXL3/TR3 checkpoint in this
+repository. It combines the exact mirrored weights with a pinned serving
+stack and a fail-closed fleet controller.
+
+## Results
+
+| Measured result | JSpark3 v1 |
+|---|---:|
+| Single-stream code decode | **1.49x faster**, 66.3 vs 44.6 tok/s on the two-Spark recipe |
+| sparkDash clamp-code time to first token | **391 ms**, down from 719 ms on two Sparks |
+| Four-stream aggregate decode | **251 tok/s**, up from 146.5 tok/s on two Sparks |
+| Same agent task and prompt | **1.8x the throughput**, 44.6 vs 24.7 tok/s on two Sparks |
+| Configured context | **1,000,000 tokens** |
+
+The code-screen comparison and agent task were run on the JSpark3 fleet
+against the compatibility-adapted current Mia two-Spark recipe. sparkDash
+used the same pinned author protocol as Mia's published figures, on separate
+fleets and dates. See the
+[machine-readable results](https://github.com/jakejharris/jspark3/blob/main/results/results.json)
+and [exact figures, receipts, and caveats](https://github.com/jakejharris/jspark3/blob/main/docs/BENCHMARKS.md#headline-comparisons).
+
+## What you get
+
+- An exact, hash-verifiable mirror of Brandon M. Music's
+  [ShapleyMcg](https://github.com/brandonmmusic-max/shapleymcg) EXL3/TR3
+  quantization, as re-hosted by Mia-AiLab, with its provenance intact.
+- A TP3 and EP3 serving recipe with DFlash2, FP8 KV cache, prefix caching, and
+  a selective W8A16 trunk overlay.
+- A fail-closed preflight, start, health, and verification path.
+- Public measurements with the regressions and missed gates left in.
+
+**[Install and run it with the GitHub recipe](https://github.com/jakejharris/jspark3#quick-start).**
+
 > **License and weight provenance:** JSpark3's original recipe code and
 > documentation are Apache-2.0. The weights here are Brandon M. Music's exact
 > EXL3/TR3 quantization, re-hosted byte-for-byte by Mia-AiLab and mirrored by
@@ -97,9 +133,11 @@ publicly available before this release. The reference rows below are
 **author-reported**: measured by each recipe's own author, on that author's
 hardware, with that author's harness. The JSpark3 v1 row is our own local
 measurement, and the Basis column states the conditions of every row.
-**No percentage, delta, or ranking is computed between any two rows**: node
-counts, quantization lanes, speculation, context, clocking, safety envelope,
-and estimators all differ.
+Rows without a matched local protocol remain context because node counts,
+quantization lanes, speculation, context, clocking, safety envelope, and
+estimators differ. The headline exceptions use the same frozen screen, the
+same sparkDash author protocol, or the same agent task and prompt, with each
+remaining mismatch stated in the linked benchmark page.
 
 | Recipe | Nodes | Lane | Context | Decode (tok/s) | Basis |
 |---|---:|---|---:|---|---|
@@ -111,16 +149,21 @@ and estimators all differ.
 
 Three of those recipes were also run on this fleet, each with a pinned source
 revision and every adaptation disclosed. None is an exact reproduction and
-none replays a source's own harness, so these are separate evidence rather
-than a restatement of the rows above. They are same-prompt agent runs with
-independent trajectories, which makes them product evidence, not engine-rate
-comparisons.
+none replays a source's own published harness, so these are separate evidence
+rather than a restatement of the rows above. Their same-task agent runs used
+independent trajectories, so the rates compare achieved product throughput
+rather than isolate an engine-only effect.
 
-| Local reproduction | Fidelity | Nodes | Agent aggregate decode (tok/s) |
+| Same agent task | Fidelity | Nodes | Agent aggregate decode (tok/s) |
 |---|---|---:|---:|
+| **JSpark3 v1** | this release | 3 | **44.583** |
 | `mia-tp2-historical-0e2e78f` | site/safety-adapted | 2 | 24.913 |
 | `mia-tp2-current-c190db1a-adapted` | compatibility-adapted | 2 | 24.728 |
 | `fly-derived-9093765c-adapted` | minimal-correctness/safety-adapted | 3 | 29.042 |
+
+On this task, JSpark3 delivered 1.8x the aggregate decode throughput of the
+current adapted two-Spark run, 44.583 versus 24.728 tok/s. The agents followed
+independent trajectories.
 
 No literal FlyCockpit run and no jetnet run exists here; jetnet was studied
 statically and never run on this fleet.
@@ -186,10 +229,12 @@ mirror of someone else's quantization.
 
 Exactly three DGX Sparks; every input pinned; prefill slower than the matched
 control; three-stream waves variable; long time to first token at 48 streams;
-single-fleet evidence with small sample sizes; no literal FlyCockpit or jetnet
-reproduction and no jetnet run at all; no public accuracy benchmark for this
-release; no authentication on the endpoint. The full list is in the GitHub
-repository's `docs/LIMITATIONS.md`.
+single-fleet evidence with small sample sizes; the sparkDash comparison uses
+the same author protocol but separate fleets and dates; the agent comparison
+uses independent trajectories; no literal FlyCockpit or jetnet reproduction
+and no jetnet run at all; no public accuracy benchmark for this release; no
+authentication on the endpoint. The full list is in the GitHub repository's
+`docs/LIMITATIONS.md`.
 
 ## Licenses
 

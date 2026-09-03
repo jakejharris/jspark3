@@ -1,0 +1,31 @@
+{
+  "schema_version": 2,
+  "mia_recipe": {
+    "commit": "c190db1ae17ba8dff20129ed1f308d10c63cf37d",
+    "bench_decode_original_sha256": "039b429f32c1823fc23c26ad2860990a856e57573240fa789d953b8d7ffcc15a",
+    "bench_decode_adapted_sha256": "ecbfb6e81b2b603a2b8c7c950cecc9327d08b65325eb09acbb8ed6be73fb2f06",
+    "adaptation_diff_sha256": "88bfb2182eeeb7f5e1136343557b724f9229e8e3b49ffd6126ff54d1d87cd0a7"
+  },
+  "mia_sparkdash": {
+    "commit": "e93fc87d54c8699e98b63a764ab260bf9d446c52",
+    "commit_date": "2026-08-28T11:22:49+03:00",
+    "selection_basis": "Last author commit before the dated Mia README official measurement; release 1.8.5.",
+    "DecodeBench_js_sha256": "f0d5bd60c2710dc3f96ae622060a0e91e3ccca57aa8cb871ed5c7a7e1a61a40a",
+    "LlmStreaming_js_sha256": "27f7f80fd833c9bd11e3c1d27b1f0db0d6a889513a8b104da0f54a90a713e479",
+    "llmPrompts_js_sha256": "a4a5b300411779de2c2f12a5b652d4702a3b2d6fdeca88421f26d8c7f0c23749",
+    "author_files_modified": false
+  },
+  "flycockpit": {
+    "commit": "9093765c757bd1976372196e44af84a67cf86bad",
+    "measure_tps_py_sha256": "9559ccc37d17d1ff02f231da7360857681911d24ac2c9d91c70c2fa4aac0100f",
+    "author_file_modified": false
+  },
+  "executed_support_scripts_sha256": {
+    "preflight_identity.py": "b15c1269b5ea76da58edb3a691a436a546cd01333643c65dd72195316f1462d2",
+    "idle_gate.py": "27bd43ecfb5b0fe664a2101e6ffadc245f6ddba5639f02c3f955ab988db077de",
+    "capture_proxy.mjs": "1f9118cbe968ded9a571253f0481b1ed0314e9f8382af80d7bc4bcf9b7a6e990",
+    "sparkdash_runner.mjs": "fe1b26f0f08097ba732a279c553945f9c6a3b42594b1dd8c1845d6541eebc45f",
+    "spark_counter_hook.py": "728273b28ec944ce7c1c63eea5eef62d48a68cbe7dace36837b38b08ebabb934",
+    "validate_results.py": "3fc10c42d7e8594eec815cc2f9115d78758f0def26acb229378f07b6973b7300"
+  }
+}

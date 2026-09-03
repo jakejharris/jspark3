@@ -169,5 +169,5 @@
       "workload": "official sparkDash Decode protocol (warm, empty KV, 400 tokens, graphs, fused EXL3 MoE; structured count 1-200 and clamp code are high-accept prompt types) and the lab tests/bench_decode.py harness"
     }
   },
-  "rule": "no percentage, delta, or ranking is computed between this release and any row"
+  "rule": "published values remain author-reported; a comparison is made only where this release has a matching pinned author protocol, with separate fleet and date disclosed"
 }

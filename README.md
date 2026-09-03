@@ -13,16 +13,17 @@ Flash endpoint, with a reproducible TP3 recipe and public benchmarks.**
 
 | Measured result | JSpark3 v1 |
 |---|---:|
-| Paired single-stream code decode | **66.257 tok/s**, +7.27% |
-| Paired single-stream structured decode | **81.962 tok/s**, +6.63% |
-| Agent demonstration aggregate decode | **44.583 tok/s** |
+| Single-stream code decode | **1.49x faster**, 66.3 vs 44.6 tok/s on the two-Spark recipe |
+| sparkDash clamp-code time to first token | **391 ms**, down from 719 ms on two Sparks |
+| Four-stream aggregate decode | **251 tok/s**, up from 146.5 tok/s on two Sparks |
+| Same agent task and prompt | **1.8x the throughput**, 44.6 vs 24.7 tok/s on two Sparks |
 | Configured context | **1,000,000 tokens** |
 
-The paired rows compare the same recipe on the same three-Spark fleet with
-the trunk overlay disabled, an unreleased internal control rather than a
-market comparison. The agent run is product evidence, not a controlled
-comparison. See the [machine-readable results](results/results.json) and
-[benchmark methods and caveats](docs/BENCHMARKS.md).
+The code-screen comparison and agent task were run on this fleet against the
+compatibility-adapted current Mia two-Spark recipe. sparkDash used the same
+pinned author protocol as Mia's published figures, on separate fleets and
+dates. See the [exact figures, receipts, and caveats](docs/BENCHMARKS.md#headline-comparisons)
+and [machine-readable results](results/results.json).
 
 ## Prerequisites
 
@@ -118,10 +119,11 @@ publicly, and where this recipe sits beside that. The reference rows below are
 **author-reported**: measured by each recipe's own author, on that author's
 hardware, with that author's harness. The JSpark3 v1 row is our own local
 measurement, and the Basis column states the conditions of every row.
-**No percentage, delta, or ranking is computed between any two rows**, because
-prompts, quantization lanes, speculation, context, clocking, safety envelope,
-and estimators all differ. Read the rows as five separate measurements that
-happen to share a page, not as a scoreboard.
+Rows without a matched local protocol remain context, because prompts,
+quantization lanes, speculation, context, clocking, safety envelope, and
+estimators differ. The headline exceptions are documented separately: the
+same frozen screen, the same sparkDash author protocol, and the same agent
+task and prompt, each with its remaining mismatch stated.
 
 | Recipe | Nodes | Lane | Context | Decode (tok/s) | Basis |
 |---|---:|---|---:|---|---|
@@ -132,19 +134,20 @@ happen to share a page, not as a scoreboard.
 | jetnet TP3 `bfc820ec` | 3 | NVFP4 with Marlin W4A16, MTP-4 | 512K | 35.2; DFlash2 lane, thinking on, 47.2 | author-reported |
 
 Three of those recipes were also run on this fleet, each with its pinned
-source and every adaptation listed. None is an exact reproduction and none
-replays a source's own harness, so these are separate evidence, not a
-restatement of the row above:
+source and every adaptation listed. None is an exact reproduction. Their
+same-task agent runs followed independent trajectories, so the rates compare
+achieved product throughput rather than isolate an engine-only effect:
 
-| Local reproduction | Fidelity | Nodes | Agent aggregate decode (tok/s) |
+| Same agent task | Fidelity | Nodes | Agent aggregate decode (tok/s) |
 |---|---|---:|---:|
+| **JSpark3 v1** | this release | 3 | **44.583** |
 | `mia-tp2-historical-0e2e78f` | site/safety-adapted | 2 | 24.913 |
 | `mia-tp2-current-c190db1a-adapted` | compatibility-adapted | 2 | 24.728 |
 | `fly-derived-9093765c-adapted` | minimal-correctness/safety-adapted | 3 | 29.042 |
 
-Those three are same-prompt agent runs with independent trajectories, so they
-describe what each run did rather than which recipe is faster. Conditions,
-minimum fields, sources, and caveats for every row above:
+On this task, JSpark3 delivered 1.8x the aggregate decode throughput of the
+current adapted two-Spark run, 44.583 versus 24.728 tok/s. Conditions,
+minimum fields, sources, exact sparkDash receipts, and caveats for every row:
 [docs/BENCHMARKS.md](docs/BENCHMARKS.md).
 
 ## What the overlay changed, internally
@@ -181,7 +184,7 @@ Full tables, estimators, and receipts:
 |---|---|
 | [`recipe/`](recipe/README.md) | The runnable recipe: lifecycle controller, preflight, entrypoint, five hash-gated runtime transforms, the W8A16 overlay, checkpoint validation, `SHA256SUMS`. |
 | [`docs/`](docs/ARCHITECTURE.md) | Architecture, technical report, benchmarks, install, operations, limitations, reproducibility, licensing. |
-| [`results/`](results/SUMMARY.md) | Machine-readable results (`results.json`) and the sanitized evidence they derive from: batteries, matched controls, scheduler and prefill receipts, demonstration receipts, analyzer method. |
+| [`results/`](results/SUMMARY.md) | Machine-readable results (`results.json`) and the sanitized evidence they derive from: batteries, the sparkDash author-protocol receipt, matched controls, scheduler and prefill receipts, demonstration receipts, analyzer method. |
 | [`manifests/`](manifests/dependencies.json) | Pinned dependencies, release metadata, the public-derivation record, and a CycloneDX SBOM. |
 | [`huggingface/`](huggingface/README.md) | The Hugging Face repository metadata, results, licenses, provenance, target-mirror contract, and exact completion receipt; the verified target payload is public at the immutable terminal main revision. |
 | [`docker/`](docker/README.md) | Local-only reproducibility definition for inspecting the labeled derivative; v1.0.0 publishes no JSpark3 container image and runs the upstream digest. |
