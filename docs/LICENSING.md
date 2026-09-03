@@ -25,20 +25,18 @@ recipe depends on.
 - No patched copy of vLLM. The five runtime transforms are programs that
   reconstruct pinned upstream changes inside a disposable container at start.
 
-## What the Hugging Face repository will redistribute
+## What the Hugging Face repository redistributes
 
-The Hugging Face side of this release is prepared to mirror the target
-checkpoint: an exact, hash-verifiable copy of
+The Hugging Face side of this release publicly mirrors the target checkpoint:
+an exact, hash-verifiable copy of
 `Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw` at its pinned revision, which is itself
 a byte-identical re-host of the quantization author's repository. The mirror
 carries the checkpoint's own `LICENSE`, its notices, and its provenance files
 unmodified, and JSpark3's Apache-2.0 set sits beside them under
-`huggingface/jspark3/`. The exact 29-file metadata allowlist is public at
-`e9cbbafaf9ae4ab64f385c2f68e7fe2f06d78676`. The attributed target-weight
-transfer is in progress on a separate review branch and is not merged into
-the public Hub main revision. Until remote verification and maintainer merge
-complete, main consists of metadata, a manifest, a provenance record, and a
-tool.
+`huggingface/jspark3/`. All 123 allowlisted Git LFS payloads and the exact
+completion receipt were remotely verified before maintainer merge into public
+Hub main at immutable revision
+`e7c34dba923916754cfcb0bdf6c2c75a9b7ff1fc`.
 
 Operators fetch the pinned upstream revisions themselves. Their terms apply to
 that fetch and to serving.

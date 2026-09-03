@@ -29,11 +29,10 @@ hash-verifiable copy of `Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw` at its pinned
 revision, itself a byte-identical re-host of the quantization author's own
 repository. Mirroring is not authorship: no weight byte is modified, the
 checkpoint's own license and attribution travel with it, and the DFlash2 draft
-is left where it is as a separately pinned dependency. The exact 29-file
-metadata allowlist is public at
-`e9cbbafaf9ae4ab64f385c2f68e7fe2f06d78676`; the attributed target-weight
-transfer is in progress on a separate review branch and is not merged into
-the public Hub main revision.
+is left where it is as a separately pinned dependency. All 123 allowlisted Git
+LFS payloads and the exact completion receipt were remotely verified before
+maintainer merge into public Hub main at immutable revision
+`e7c34dba923916754cfcb0bdf6c2c75a9b7ff1fc`.
 
 ## 2. The problem with three
 

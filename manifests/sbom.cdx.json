@@ -64,7 +64,7 @@
         },
         {
           "name": "jspark3:mirror_status",
-          "value": "authorized, transfer in progress on a separate review branch; not merged"
+          "value": "published and remotely verified on public main"
         },
         {
           "name": "jspark3:mirror_repository",
@@ -77,6 +77,22 @@
         {
           "name": "jspark3:mirror_intended_destination",
           "value": "https://huggingface.co/jakejharris/jspark3"
+        },
+        {
+          "name": "jspark3:mirror_terminal_revision",
+          "value": "e7c34dba923916754cfcb0bdf6c2c75a9b7ff1fc"
+        },
+        {
+          "name": "jspark3:mirror_repository_public",
+          "value": "true"
+        },
+        {
+          "name": "jspark3:mirror_repository_gated",
+          "value": "false"
+        },
+        {
+          "name": "jspark3:mirror_repository_enabled",
+          "value": "true"
         },
         {
           "name": "jspark3:mirror_files",
@@ -111,6 +127,10 @@
           "value": "jspark3/MIRROR-COMPLETION.json"
         },
         {
+          "name": "jspark3:mirror_completion_receipt_sha256",
+          "value": "97c4ff5d715cd30186de7f092ee50d0ccbaeb560a720a88dc5d3d49f2412c8a9"
+        },
+        {
           "name": "jspark3:mirror_merge_policy",
           "value": "manual only after exact remote verification"
         },
@@ -120,7 +140,7 @@
         },
         {
           "name": "jspark3:redistributed_here",
-          "value": "authorized, transfer in progress on a separate review branch; not merged"
+          "value": "false"
         }
       ],
       "purl": "pkg:huggingface/Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw@25a44fdbf16862a46b7cc9921142c6c81350af2f",
@@ -223,7 +243,7 @@
   "metadata": {
     "component": {
       "bom-ref": "pkg:github/jakejharris/jspark3@v1.0.0",
-      "description": "reproducible three-DGX-Spark serving and runtime recipe for GLM-5.3 Flash; the original JSpark3 recipe is not a weights redistribution and is paired with an authorized, attributed, byte-identical Hugging Face mirror of the pinned target checkpoint",
+      "description": "reproducible three-DGX-Spark serving and runtime recipe for GLM-5.3 Flash; the GitHub recipe is not a weights redistribution and is paired with a public, attributed, byte-identical Hugging Face mirror of the pinned target checkpoint",
       "licenses": [
         {
           "license": {
@@ -239,11 +259,11 @@
     "properties": [
       {
         "name": "jspark3:policy",
-        "value": "No checkpoint, tokenizer, model configuration, container layer, or patched vLLM tree is redistributed. Operators fetch the exact revisions and digests below; the recipe refuses anything else."
+        "value": "The GitHub source package redistributes no checkpoint payload, container layer, or patched vLLM tree. The public Hugging Face repository carries the attributed target mirror at the immutable revision below. Operators fetch the exact revisions and digests; the recipe refuses anything else."
       },
       {
         "name": "jspark3:release_status",
-        "value": "v1.0.0-released-hf-metadata-live-weights-review-pending"
+        "value": "v1.0.0-released-hf-public"
       },
       {
         "name": "jspark3:release_date",
@@ -254,12 +274,12 @@
         "value": "https://github.com/jakejharris/jspark3/releases/tag/v1.0.0"
       },
       {
-        "name": "jspark3:hf_metadata_revision",
-        "value": "e9cbbafaf9ae4ab64f385c2f68e7fe2f06d78676"
+        "name": "jspark3:hf_main_revision",
+        "value": "e7c34dba923916754cfcb0bdf6c2c75a9b7ff1fc"
       },
       {
         "name": "jspark3:hf_weight_mirror_status",
-        "value": "authorized, transfer in progress on a separate review branch; not merged"
+        "value": "published and remotely verified on public main"
       },
       {
         "name": "jspark3:owned_image_status",
@@ -285,7 +305,7 @@
       }
     ]
   },
-  "serialNumber": "urn:uuid:f023ec38-ef28-574a-86b2-37c34d4b11f2",
+  "serialNumber": "urn:uuid:5645ebdf-cd91-5f64-8647-826c6067256b",
   "specVersion": "1.5",
   "version": 1
 }

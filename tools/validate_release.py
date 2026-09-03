@@ -51,6 +51,7 @@ REQUIRED = [
     "huggingface/MANIFEST.json", "huggingface/MIRROR.json", "huggingface/PROVENANCE.md",
     "huggingface/ORIGINAL_MODEL_CARD.md", "huggingface/SHA256SUMS", "huggingface/config.json",
     "huggingface/jspark3/PROVENANCE.md", "huggingface/jspark3/WEIGHTS-MANIFEST.json",
+    "huggingface/jspark3/MIRROR-COMPLETION.json",
     "huggingface/jspark3/RECIPE-LICENSE", "huggingface/jspark3/UPLOAD.md",
     "huggingface/jspark3/THIRD_PARTY_NOTICES.md", "huggingface/jspark3/REQUIRED_ATTRIBUTION.md",
     "results/results.json", "results/SUMMARY.md",
@@ -132,11 +133,14 @@ MIRROR_FILES = 144
 MIRROR_BYTES = 175715854754
 MIRROR_SHARDS = 120
 MIRROR_LICENSE_SHA256 = "9a354667162e40201fa556e29ae7a327cdb112eacaa8ef100106e6063635e28a"
-HF_METADATA_REVISION = "e9cbbafaf9ae4ab64f385c2f68e7fe2f06d78676"
-RELEASE_STATUS = "v1.0.0-released-hf-metadata-live-weights-review-pending"
+HF_MAIN_REVISION = "e7c34dba923916754cfcb0bdf6c2c75a9b7ff1fc"
+HF_METADATA_PARENT_REVISION = "e9cbbafaf9ae4ab64f385c2f68e7fe2f06d78676"
+RELEASE_STATUS = "v1.0.0-released-hf-public"
 RELEASE_DATE = "2026-09-02"
 RELEASE_URL = "https://github.com/jakejharris/jspark3/releases/tag/v1.0.0"
-MIRROR_STATUS = "authorized, transfer in progress on a separate review branch; not merged"
+MIRROR_STATUS = "published and remotely verified on public main"
+MIRROR_RECEIPT_SHA256 = "97c4ff5d715cd30186de7f092ee50d0ccbaeb560a720a88dc5d3d49f2412c8a9"
+MIRROR_MANIFEST_SHA256 = "ef4cc59538e7c4056cd7f0b8228561987ab8bd94c51e0efeadf6ca4fd0e20b59"
 
 NUMBER_TOKEN = re.compile(r"(?<![\w.])[+-]?\d{1,3}(?:,\d{3})+(?:\.\d+)?%?|(?<![\w.,])[+-]?\d+\.\d+%?|(?<![\w.,])[+-]?\d+%")
 # The comparison taxonomy: the bare word is banned because it collapses three different
@@ -616,8 +620,8 @@ def check_weights_mirror(root: Path, report: Report) -> None:
                         if line.startswith("This work includes")), "")
     if not attribution or attribution not in (root / "huggingface/README.md").read_text(encoding="utf-8"):
         problems.append("the card lacks the verbatim attribution notice the checkpoint license requires")
-    # Release metadata: publication authorized, review-branch transfer in progress,
-    # not merged into main, and no gate outstanding.
+    # Release metadata: the remotely verified mirror and exact receipt are
+    # published on an immutable, public, ungated, enabled main revision.
     release = json.loads((root / "manifests/release.json").read_text(encoding="utf-8"))
     mirror = release.get("weights_mirror", {})
     for field, value in (("upstream_repository", MIRROR_UPSTREAM), ("upstream_revision", MIRROR_REVISION),
@@ -629,11 +633,15 @@ def check_weights_mirror(root: Path, report: Report) -> None:
     if release.get("publication_authorized") is not True:
         problems.append("the mirror publication authorization must be recorded")
     if mirror.get("status") != MIRROR_STATUS:
-        problems.append("the mirror must record the authorized review-branch transfer as in progress and not merged")
-    if mirror.get("hf_revision") != HF_METADATA_REVISION:
-        problems.append("the mirror must record the exact live Hugging Face metadata revision")
+        problems.append("the mirror must record verified publication on public main")
+    if mirror.get("hf_revision") != HF_MAIN_REVISION:
+        problems.append("the mirror must record the immutable terminal Hugging Face main revision")
+    for field, value in (("repository_public", True), ("repository_gated", False),
+                         ("repository_enabled", True)):
+        if mirror.get(field) is not value:
+            problems.append(f"release manifest weights_mirror.{field} differs from terminal Hub state")
     if mirror.get("gate") is not None:
-        problems.append("the authorized mirror must not retain an outstanding gate")
+        problems.append("the published mirror must not retain an outstanding gate")
     transfer_contract = {
         "upload_files": 123,
         "upload_bytes": 175715659341,
@@ -641,6 +649,7 @@ def check_weights_mirror(root: Path, report: Report) -> None:
         "transfer_client": "hf upload-large-folder",
         "resume_cache": ".cache/huggingface",
         "completion_receipt": "jspark3/MIRROR-COMPLETION.json",
+        "completion_receipt_sha256": MIRROR_RECEIPT_SHA256,
         "merge_policy": "manual only after exact remote verification",
     }
     for field, value in transfer_contract.items():
@@ -652,9 +661,39 @@ def check_weights_mirror(root: Path, report: Report) -> None:
         problems.append("dependencies.json target_checkpoint.mirror differs from the pinned value")
     if dep_mirror.get("status") != mirror.get("status") or dep_mirror.get("gate") is not None:
         problems.append("dependencies.json mirror publication state differs from release.json")
+    for field, value in (("hf_revision", HF_MAIN_REVISION), ("repository_public", True),
+                         ("repository_gated", False), ("repository_enabled", True)):
+        if dep_mirror.get(field) != value:
+            problems.append(f"dependencies.json mirror.{field} differs from terminal Hub state")
     for field, value in transfer_contract.items():
         if dep_mirror.get(field) != value:
             problems.append(f"dependencies.json mirror.{field} differs from the safe-transfer contract")
+    receipt_path = root / "huggingface/jspark3/MIRROR-COMPLETION.json"
+    expected_receipt = {
+        "lfs_bytes": 175715659341,
+        "lfs_files": 123,
+        "metadata_parent_revision": HF_METADATA_PARENT_REVISION,
+        "pull_request_ref": "refs/pr/1",
+        "schema_version": 1,
+        "status": "remote-weight-pr-verified",
+        "target_repository": "jakejharris/jspark3",
+        "upstream_repository": MIRROR_UPSTREAM,
+        "upstream_revision": MIRROR_REVISION,
+        "verified_at": "2026-09-03T02:02:55+00:00",
+        "weights_manifest_sha256": MIRROR_MANIFEST_SHA256,
+    }
+    if not receipt_path.is_file():
+        problems.append("the exact mirror completion receipt is missing")
+    elif sha256(receipt_path) != MIRROR_RECEIPT_SHA256:
+        problems.append("the mirror completion receipt bytes differ from the verified receipt")
+    else:
+        try:
+            receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            problems.append(f"the mirror completion receipt is invalid: {exc}")
+        else:
+            if receipt != expected_receipt:
+                problems.append("the mirror completion receipt fields differ from the verified receipt")
     mirror_tool = root / "tools/mirror_weights.py"
     tool_text = mirror_tool.read_text(encoding="utf-8")
     for forbidden in ("huggingface-cli",):
@@ -674,7 +713,7 @@ def check_weights_mirror(root: Path, report: Report) -> None:
         report.ok("weights-mirror",
                   f"{MIRROR_FILES} files, {MIRROR_BYTES} bytes, {MIRROR_SHARDS} shards; "
                   f"{hashed} in-tree files hash to the manifest, no shard committed, draft not mirrored, "
-                  f"{mirror.get('status')}")
+                  f"exact receipt and public main {HF_MAIN_REVISION} verified")
 
 
 def check_release_manifest(root: Path, report: Report) -> None:
@@ -691,7 +730,7 @@ def check_release_manifest(root: Path, report: Report) -> None:
     if release.get("publication_authorized") is not True:
         problems.append("publication_authorized must record the maintainer's approval")
     if release.get("status") != RELEASE_STATUS:
-        problems.append("status must record the terminal v1.0.0 release and independently pending Hub weights")
+        problems.append("status must record the terminal v1.0.0 release and public Hub mirror")
     if release.get("date_released") != RELEASE_DATE:
         problems.append("date_released must record the v1.0.0 release date")
     if live.get("github") != expected["github"]:
@@ -745,6 +784,11 @@ def check_release_manifest(root: Path, report: Report) -> None:
         "transfer is authorized but has not started": "Hub weight transfer still described as unstarted",
         "transfer remains separate and unstarted": "Hub weight transfer still described as unstarted",
         "mirror is prepared but not uploaded yet": "Hub mirror still described as pre-transfer",
+        "weight mirror not merged": "Hub mirror still described as unmerged",
+        "transfer in progress on a separate review branch": "Hub mirror still described as in progress",
+        "not merged into the public hub main revision": "Hub mirror still described as unmerged",
+        "not merged into main": "Hub mirror still described as unmerged",
+        "weight transfer is pending": "Hub mirror still described as pending",
     }
     for relative in state_files:
         lowered = (root / relative).read_text(encoding="utf-8").lower()
@@ -754,7 +798,7 @@ def check_release_manifest(root: Path, report: Report) -> None:
     if problems:
         report.fail("release-manifest", "; ".join(problems))
     else:
-        report.ok("release-manifest", "v1.0.0 release URL and date frozen; Hub metadata live with review-branch weights not merged; GHCR excluded")
+        report.ok("release-manifest", "v1.0.0 release URL and date frozen; verified mirror on immutable public Hub main; GHCR excluded")
 
 
 def fmt_rate(value: float) -> str:

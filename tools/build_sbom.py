@@ -51,7 +51,7 @@ def component_model(key: str, model: dict, role: str) -> dict:
         "licenses": [{"license": {"name": model["license"]}}],
         "properties": hashes + mirror_properties(model) + [
             {"name": "jspark3:redistributed_here",
-             "value": model.get("mirror", {}).get("status", "false")},
+             "value": str(model.get("redistributed_here", False)).lower()},
         ],
     }
 
@@ -72,6 +72,10 @@ def mirror_properties(model: dict) -> list[dict]:
         {"name": "jspark3:mirror_repository", "value": mirror["repository"]},
         {"name": "jspark3:mirror_revision", "value": mirror["revision"]},
         {"name": "jspark3:mirror_intended_destination", "value": mirror["intended_mirror"]},
+        {"name": "jspark3:mirror_terminal_revision", "value": mirror["hf_revision"]},
+        {"name": "jspark3:mirror_repository_public", "value": str(mirror["repository_public"]).lower()},
+        {"name": "jspark3:mirror_repository_gated", "value": str(mirror["repository_gated"]).lower()},
+        {"name": "jspark3:mirror_repository_enabled", "value": str(mirror["repository_enabled"]).lower()},
         {"name": "jspark3:mirror_files", "value": str(mirror["files"])},
         {"name": "jspark3:mirror_bytes", "value": str(mirror["bytes"])},
         {"name": "jspark3:mirror_upload_files", "value": str(mirror["upload_files"])},
@@ -80,6 +84,7 @@ def mirror_properties(model: dict) -> list[dict]:
         {"name": "jspark3:mirror_transfer_client", "value": mirror["transfer_client"]},
         {"name": "jspark3:mirror_resume_cache", "value": mirror["resume_cache"]},
         {"name": "jspark3:mirror_completion_receipt", "value": mirror["completion_receipt"]},
+        {"name": "jspark3:mirror_completion_receipt_sha256", "value": mirror["completion_receipt_sha256"]},
         {"name": "jspark3:mirror_merge_policy", "value": mirror["merge_policy"]},
         {"name": "jspark3:mirror_manifest", "value": mirror["manifest"]},
     ]
@@ -149,7 +154,7 @@ def main() -> int:
                 {"name": "jspark3:release_status", "value": release["status"]},
                 {"name": "jspark3:release_date", "value": release["date_released"]},
                 {"name": "jspark3:release_url", "value": release["live_links"]["release_page"]},
-                {"name": "jspark3:hf_metadata_revision", "value": release["weights_mirror"]["hf_revision"]},
+                {"name": "jspark3:hf_main_revision", "value": release["weights_mirror"]["hf_revision"]},
                 {"name": "jspark3:hf_weight_mirror_status", "value": release["weights_mirror"]["status"]},
                 {"name": "jspark3:owned_image_status", "value": deps["owned_runtime_image"]["status"]},
                 {"name": "jspark3:owned_image_publication_policy", "value": deps["owned_runtime_image"]["publication_policy"]},

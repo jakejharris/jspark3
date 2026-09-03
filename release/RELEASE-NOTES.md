@@ -14,12 +14,11 @@ overlay for the model trunk that frees 1,595,392,320 bytes per rank.
 
 The GitHub tree and release assets contain the recipe, documentation, evidence,
 and checksums—not checkpoint weight objects. The separate public Hugging Face
-repository has the exact 29-file metadata allowlist at
-`e9cbbafaf9ae4ab64f385c2f68e7fe2f06d78676` and is authorized to mirror the
-pinned target checkpoint with attribution and no byte changes; that
-175,715,854,754-byte transfer is in progress on a separate review branch and
-is not merged into the public Hub main revision. Every serving input is pinned
-by revision, digest, or hash and verified before the fleet starts.
+repository carries the attributed, byte-identical target mirror. Its exact
+123-file LFS payload and completion receipt were remotely verified before
+maintainer merge into immutable public main revision
+`e7c34dba923916754cfcb0bdf6c2c75a9b7ff1fc`. Every serving input is pinned by
+revision, digest, or hash and verified before the fleet starts.
 
 ## How it compares with what was already public
 
@@ -81,9 +80,8 @@ Conditions, estimators, minimum fields, and receipts: `docs/BENCHMARKS.md` and
 - `results/`: machine-readable results and sanitized evidence.
 - `manifests/`: pinned dependencies, release metadata, derivation record,
   CycloneDX SBOM.
-- `huggingface/`: the exact metadata, attribution, provenance, and verified
-  target-mirror plan; target weight transfer is in progress on a separate
-  review branch and not merged into main.
+- `huggingface/`: the exact metadata, attribution, provenance, target-mirror
+  contract, and completion receipt for the remotely verified public mirror.
 - `docker/`, `.github/workflows/`: local-only image reproducibility definition
   and CI validation. No JSpark3 GHCR image is published for v1.0.0; the recipe
   uses the exact upstream image by digest.

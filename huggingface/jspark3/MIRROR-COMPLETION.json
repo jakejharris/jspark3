@@ -1,0 +1,13 @@
+{
+  "lfs_bytes": 175715659341,
+  "lfs_files": 123,
+  "metadata_parent_revision": "e9cbbafaf9ae4ab64f385c2f68e7fe2f06d78676",
+  "pull_request_ref": "refs/pr/1",
+  "schema_version": 1,
+  "status": "remote-weight-pr-verified",
+  "target_repository": "jakejharris/jspark3",
+  "upstream_repository": "Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw",
+  "upstream_revision": "25a44fdbf16862a46b7cc9921142c6c81350af2f",
+  "verified_at": "2026-09-03T02:02:55+00:00",
+  "weights_manifest_sha256": "ef4cc59538e7c4056cd7f0b8228561987ab8bd94c51e0efeadf6ca4fd0e20b59"
+}

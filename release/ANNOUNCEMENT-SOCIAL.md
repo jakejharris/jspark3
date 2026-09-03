@@ -30,9 +30,9 @@ missed. All of it is in the benchmarks page with estimators and receipts,
 because a number you cannot trace is not a result.
 
 The GitHub recipe/assets contain no checkpoint weights and no patched vLLM.
-The attributed, byte-identical Hugging Face target mirror is authorized;
-metadata is live, while its weight transfer is in progress on a separate
-review branch and not merged. Every serving input is pinned and verified.
+The attributed, byte-identical Hugging Face target mirror is public and
+remotely verified at immutable main revision
+`e7c34dba923916754cfcb0bdf6c2c75a9b7ff1fc`. Every serving input is pinned and verified.
 Apache-2.0 for our code; the checkpoint is
 attribution-required and the draft is non-commercial, so this is not
 commercial-ready.
@@ -46,9 +46,8 @@ JSpark3 v1: GLM-5.3 Flash on three DGX Sparks as one endpoint. TP3+EP3, EXL3
 own numbers, and we quote them without deltas; our own three adapted local
 reproductions and the internal overlay A/B are published separately, with the
 prefill regression and two missed gates left in. GitHub ships recipe/assets;
-the attributed unchanged Hugging Face target mirror is authorized and its
-weight transfer is pending. Everything is pinned. Apache-2.0 code; upstream
-terms apply.
+the attributed unchanged Hugging Face target mirror is public and remotely
+verified. Everything is pinned. Apache-2.0 code; upstream terms apply.
 github.com/jakejharris/jspark3
 
 ## Thread follow-ups

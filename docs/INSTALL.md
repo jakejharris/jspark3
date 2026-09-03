@@ -6,12 +6,12 @@ when an input differs from the pinned one, so read the refusal text rather
 than forcing past it.
 
 Status: [v1.0.0](https://github.com/jakejharris/jspark3/releases/tag/v1.0.0)
-was released 2026-09-02. The exact 29-file Hugging Face metadata allowlist is
-public at `e9cbbafaf9ae4ab64f385c2f68e7fe2f06d78676`; the authorized target-weight
-transfer is in progress on a separate review branch and is not merged into
-main. No JSpark3 GHCR image is published for v1.0.0. The recipe uses the exact
-upstream serving image by digest shown below. Obtain the recipe directory from
-the public GitHub tree or release asset; the commands below do not change.
+was released 2026-09-02. The attributed target mirror is public at
+<https://huggingface.co/jakejharris/jspark3> and remotely verified at immutable
+main revision `e7c34dba923916754cfcb0bdf6c2c75a9b7ff1fc`. No JSpark3 GHCR image is
+published for v1.0.0. The recipe uses the exact upstream serving image by
+digest shown below. Obtain the recipe directory from the public GitHub tree or
+release asset; the commands below do not change.
 
 ## 1. Requirements
 
@@ -86,6 +86,7 @@ either source produces byte-identical serving files:
 ```bash
 mirror=https://huggingface.co/jakejharris/jspark3
 huggingface-cli download "${mirror#https://huggingface.co/}" \
+  --revision e7c34dba923916754cfcb0bdf6c2c75a9b7ff1fc \
   --local-dir "$JSPARK_MODEL_ROOT/Mia-AiLab--GLM-5.3-Flash-EXL3-TR3-4bpw-25a44fdb"
 ```
 
@@ -94,8 +95,8 @@ against the pinned contract regardless of where you downloaded it from, so a
 mirror that differs by one byte fails exactly as an altered upstream would. The
 mirror is described file by file in `huggingface/jspark3/WEIGHTS-MANIFEST.json`
 and can be checked directly with `python3 tools/mirror_weights.py verify <dir>`.
-The mirror's review-branch transfer is not merged into main yet; until it is,
-use the upstream repository above.
+The immutable main revision above contains the remotely verified target mirror;
+the pinned upstream repository remains an equivalent source.
 
 The downloaded files must be regular files, not symlinks into a cache; the
 checkpoint validator refuses symlinked serving files. The target repository

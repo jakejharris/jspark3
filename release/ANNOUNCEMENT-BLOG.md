@@ -92,10 +92,10 @@ to manufacture a number.
 ## What it does not claim
 
 JSpark3 v1 is not a model. The GitHub recipe and release assets contain no
-checkpoint weight objects; the separate Hugging Face release is authorized to
-carry an attributed, byte-identical target mirror. Its public main revision
-still contains only the 29-file metadata allowlist while the weight transfer
-is in progress on a separate review branch and not merged.
+checkpoint weight objects; the separate public Hugging Face release carries an
+attributed, byte-identical target mirror. Its exact payload and completion
+receipt were remotely verified before maintainer merge into immutable public
+main revision `e7c34dba923916754cfcb0bdf6c2c75a9b7ff1fc`.
 The checkpoint is Brandon M. Music's ShapleyMcg EXL3/TR3 quantization
 published by Mia-AiLab, attribution-required; the draft is Inco AI's DFlash2,
 CC BY-NC-ND 4.0 for research and evaluation use. The assembled endpoint is

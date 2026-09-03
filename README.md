@@ -13,20 +13,22 @@ controller refuses to start anything that differs from the measured
 construction.
 
 It is not a new model. The GitHub recipe and release assets contain no
-checkpoint weight objects. The separate Hugging Face repository carries the
-metadata now and is authorized to mirror the pinned target checkpoint
-byte-identically. That transfer is in progress on a separate review branch but
-is not merged into the public Hub main revision, so operators currently fetch
-the pinned upstream checkpoints. The recipe verifies every serving byte and
-then builds the same runtime the evidence in this repository was measured on.
+checkpoint weight objects. The separate public Hugging Face repository carries
+an attributed, byte-identical mirror of the pinned target checkpoint. All 123
+allowlisted Git LFS payloads and the exact completion receipt were remotely
+verified before maintainer merge into public main at
+`e7c34dba923916754cfcb0bdf6c2c75a9b7ff1fc`. The recipe verifies every serving
+byte and then builds the same runtime the evidence in this repository was
+measured on.
 
-> **Release status: [v1.0.0](https://github.com/jakejharris/jspark3/releases/tag/v1.0.0), released 2026-09-02; Hugging Face metadata live, weight mirror not merged.**
-> The exact 29-file metadata allowlist is public at
-> [`e9cbbafaf9ae4ab64f385c2f68e7fe2f06d78676`](https://huggingface.co/jakejharris/jspark3/commit/e9cbbafaf9ae4ab64f385c2f68e7fe2f06d78676),
-> while the authorized weight transfer remains in progress on a separate
-> review branch and is not merged into main. No JSpark3 GHCR image is
-> published for v1.0.0; the release uses the exact upstream image by digest.
-> See [RELEASE-GATE.md](RELEASE-GATE.md) for the remaining independent Hub work.
+> **Release status: [v1.0.0](https://github.com/jakejharris/jspark3/releases/tag/v1.0.0), released 2026-09-02; attributed Hugging Face target mirror public.**
+> The immutable terminal Hub main revision is
+> [`e7c34dba923916754cfcb0bdf6c2c75a9b7ff1fc`](https://huggingface.co/jakejharris/jspark3/commit/e7c34dba923916754cfcb0bdf6c2c75a9b7ff1fc),
+> with the verified receipt at
+> [`huggingface/jspark3/MIRROR-COMPLETION.json`](huggingface/jspark3/MIRROR-COMPLETION.json).
+> No JSpark3 GHCR image is published for v1.0.0; the release uses the exact
+> upstream image by digest. See [RELEASE-GATE.md](RELEASE-GATE.md) for the
+> terminal publication record.
 
 ![JSpark3 v1 architecture](docs/diagrams/architecture.svg)
 
@@ -102,7 +104,7 @@ Full tables, estimators, and receipts:
 | [`docs/`](docs/ARCHITECTURE.md) | Architecture, technical report, benchmarks, install, operations, limitations, reproducibility, licensing. |
 | [`results/`](results/SUMMARY.md) | Machine-readable results (`results.json`) and the sanitized evidence they derive from: batteries, matched controls, scheduler and prefill receipts, demonstration receipts, analyzer method. |
 | [`manifests/`](manifests/dependencies.json) | Pinned dependencies, release metadata, the public-derivation record, and a CycloneDX SBOM. |
-| [`huggingface/`](huggingface/README.md) | The Hugging Face repository payload: live metadata, results, licenses, provenance, and the authorized byte-identical target-mirror plan; transfer is in progress on a separate review branch and not merged into main. |
+| [`huggingface/`](huggingface/README.md) | The Hugging Face repository metadata, results, licenses, provenance, target-mirror contract, and exact completion receipt; the verified target payload is public at the immutable terminal main revision. |
 | [`docker/`](docker/README.md) | Local-only reproducibility definition for inspecting the labeled derivative; v1.0.0 publishes no JSpark3 container image and runs the upstream digest. |
 | [`tools/`](tools/validate_release.py) | Release validator, release-asset and SBOM builders, and the pacing and stream analyzers used for the evidence. |
 | [`release/`](release/RELEASE-NOTES.md) | Release notes and announcement drafts. |
@@ -168,9 +170,8 @@ Everything is listed with hashes in
 ## Weights
 
 The GitHub recipe and release assets contain no checkpoint weight objects. The
-public Hugging Face release home carries the exact 29-file metadata allowlist
-and is authorized to mirror the target checkpoint so that operators can fetch
-it from one place: an exact, hash-verifiable copy of
+public Hugging Face release home carries the target checkpoint so that
+operators can fetch it from one place: an exact, hash-verifiable copy of
 `Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw` at revision
 `25a44fdbf16862a46b7cc9921142c6c81350af2f`, which is itself a byte-identical
 re-host of `brandonmusic/GLM-5.3-Flash-tr3-4bpw` at
@@ -188,9 +189,9 @@ verification; its
 upload path is a dry run by default. The DFlash2 draft is a separately pinned
 dependency under its own license and is not mirrored.
 
-> **Hub status: metadata live at [`e9cbbafaf9ae4ab64f385c2f68e7fe2f06d78676`](https://huggingface.co/jakejharris/jspark3/commit/e9cbbafaf9ae4ab64f385c2f68e7fe2f06d78676); authorized weight transfer in progress on a separate review branch and not merged.**
-> The public main revision remains the exact 29-file metadata allowlist; see
-> [`huggingface/jspark3/UPLOAD.md`](huggingface/jspark3/UPLOAD.md) and
+> **Hub status: attributed target mirror public and remotely verified at immutable main revision [`e7c34dba923916754cfcb0bdf6c2c75a9b7ff1fc`](https://huggingface.co/jakejharris/jspark3/commit/e7c34dba923916754cfcb0bdf6c2c75a9b7ff1fc).**
+> See [`huggingface/jspark3/MIRROR-COMPLETION.json`](huggingface/jspark3/MIRROR-COMPLETION.json),
+> [`huggingface/jspark3/UPLOAD.md`](huggingface/jspark3/UPLOAD.md), and
 > [RELEASE-GATE.md](RELEASE-GATE.md).
 
 ## Credits

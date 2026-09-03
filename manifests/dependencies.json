@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "policy": "No checkpoint, tokenizer, model configuration, container layer, or patched vLLM tree is redistributed. Operators fetch the exact revisions and digests below; the recipe refuses anything else.",
+  "policy": "The GitHub source package redistributes no checkpoint payload, container layer, or patched vLLM tree. The public Hugging Face repository carries the attributed target mirror at the immutable revision below. Operators fetch the exact revisions and digests; the recipe refuses anything else.",
   "target_checkpoint": {
     "repository": "Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw",
     "revision": "25a44fdbf16862a46b7cc9921142c6c81350af2f",
@@ -17,10 +17,14 @@
     "license": "ShapleyMcg License v1.0 (attribution-required; see REQUIRED_ATTRIBUTION.md)",
     "redistributed_here": false,
     "mirror": {
-      "status": "authorized, transfer in progress on a separate review branch; not merged",
+      "status": "published and remotely verified on public main",
       "repository": "Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw",
       "revision": "25a44fdbf16862a46b7cc9921142c6c81350af2f",
       "intended_mirror": "https://huggingface.co/jakejharris/jspark3",
+      "hf_revision": "e7c34dba923916754cfcb0bdf6c2c75a9b7ff1fc",
+      "repository_public": true,
+      "repository_gated": false,
+      "repository_enabled": true,
       "relationship": "exact hash-verifiable mirror; no weight byte is modified",
       "files": 144,
       "bytes": 175715854754,
@@ -30,6 +34,7 @@
       "transfer_client": "hf upload-large-folder",
       "resume_cache": ".cache/huggingface",
       "completion_receipt": "jspark3/MIRROR-COMPLETION.json",
+      "completion_receipt_sha256": "97c4ff5d715cd30186de7f092ee50d0ccbaeb560a720a88dc5d3d49f2412c8a9",
       "merge_policy": "manual only after exact remote verification",
       "manifest": "huggingface/jspark3/WEIGHTS-MANIFEST.json",
       "gate": null

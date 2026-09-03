@@ -103,5 +103,6 @@ card, verbatim, as the license requires. JSpark3's own recipe, tooling, and
 documentation are Apache-2.0 and are covered by
 [`RECIPE-LICENSE`](RECIPE-LICENSE); that license covers none of the weights.
 
-The maintainer authorized the attributed mirror. Its verified transfer has not
-started, so the public repository contains no model bytes yet.
+The maintainer authorized the attributed mirror. Before merge into the public
+main revision, all 123 LFS payloads were remotely verified against the pinned
+manifest and the completion receipt was verified byte for byte.

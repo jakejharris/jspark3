@@ -38,10 +38,10 @@ CACHE_PREFIX = (".cache", "huggingface")
 LOCK_NAME = "jspark3-transfer.lock"
 PR_REF_RE = re.compile(r"refs/pr/([1-9][0-9]*)")
 COMPLETION_PATH = "jspark3/MIRROR-COMPLETION.json"
-AUTHORIZED_MIRROR_STATUSES = frozenset({
-    "authorized, transfer not started",
-    "authorized, transfer in progress on a separate review branch; not merged",
-})
+UPLOAD_AUTHORIZED_STATUS = "authorized, transfer not started"
+TERMINAL_MIRROR_STATUS = "published and remotely verified on public main"
+TERMINAL_HF_REVISION = "e7c34dba923916754cfcb0bdf6c2c75a9b7ff1fc"
+AUTHORIZED_MIRROR_STATUSES = frozenset({UPLOAD_AUTHORIZED_STATUS})
 
 
 def repo_root() -> Path:
@@ -502,8 +502,15 @@ def cmd_self_test(_args: argparse.Namespace) -> int:
     manifest = load_manifest(root)
     problems = manifest_contract(manifest)
     release = load_release(root)
-    if current_problems := publication_problems(release):
-        problems.append("current release manifest fails publication gate: " + "; ".join(current_problems))
+    mirror = release.get("weights_mirror", {})
+    if mirror.get("status") != TERMINAL_MIRROR_STATUS:
+        problems.append("current release manifest does not record terminal mirror publication")
+    if mirror.get("hf_revision") != TERMINAL_HF_REVISION:
+        problems.append("current release manifest does not pin the terminal Hub main revision")
+    if release.get("publication_authorized") is not True or mirror.get("gate") is not None:
+        problems.append("current terminal release manifest has an invalid publication gate")
+    if not publication_problems(release):
+        problems.append("terminal release state was incorrectly accepted by the pre-merge upload gate")
     for status in AUTHORIZED_MIRROR_STATUSES:
         candidate = {**release, "publication_authorized": True,
                      "weights_mirror": {**release.get("weights_mirror", {}),
@@ -511,7 +518,7 @@ def cmd_self_test(_args: argparse.Namespace) -> int:
         if publication_problems(candidate):
             problems.append(f"authorized pre-merge status was rejected: {status}")
     for status in (None, "", "authorized, transfer not started ",
-                   "authorized, transfer complete"):
+                   "authorized, transfer complete", TERMINAL_MIRROR_STATUS):
         candidate = {**release, "publication_authorized": True,
                      "weights_mirror": {**release.get("weights_mirror", {}),
                                         "status": status, "gate": None}}
@@ -520,13 +527,13 @@ def cmd_self_test(_args: argparse.Namespace) -> int:
     for authorization in (False, None, 1):
         candidate = {**release, "publication_authorized": authorization,
                      "weights_mirror": {**release.get("weights_mirror", {}),
-                                        "status": "authorized, transfer not started", "gate": None}}
+                                        "status": UPLOAD_AUTHORIZED_STATUS, "gate": None}}
         if not publication_problems(candidate):
             problems.append(f"non-true publication authorization was accepted: {authorization!r}")
     for gate in ("license review", "", False, 0):
         candidate = {**release, "publication_authorized": True,
                      "weights_mirror": {**release.get("weights_mirror", {}),
-                                        "status": "authorized, transfer not started", "gate": gate}}
+                                        "status": UPLOAD_AUTHORIZED_STATUS, "gate": gate}}
         if not publication_problems(candidate):
             problems.append(f"non-null mirror gate was accepted: {gate!r}")
     command = upload_command("owner/repo", Path("/large/mirror"), "refs/pr/7", manifest, 4)
@@ -549,7 +556,7 @@ def cmd_self_test(_args: argparse.Namespace) -> int:
             problems.append("outside-cache symlink was not rejected")
     if problems:
         return report_problems("SELF-TEST", problems)
-    print("SELF-TEST PASS manifest-contract publication-gate exact-allowlist cache-boundary symlink-rejection")
+    print("SELF-TEST PASS manifest-contract terminal-state pre-merge-upload-gate exact-allowlist cache-boundary symlink-rejection")
     return 0
 
 

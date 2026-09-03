@@ -34,15 +34,17 @@ target weights, a DFlash2 k=7 draft, FP8 KV cache, prefix caching, a
 overlay for the model trunk.
 
 This public repository is the release home for the card, results, license set,
-and attributed target-weight mirror. The verified weight transfer is in
-progress on a separate review branch and is not merged into the public main
-revision. The recipe, documentation, and evidence are in the
+and attributed target-weight mirror. All 123 allowlisted Git LFS payloads were
+verified by size and SHA-256 against the pinned manifest, and
+[`jspark3/MIRROR-COMPLETION.json`](jspark3/MIRROR-COMPLETION.json) was verified
+byte for byte before merge into the public main revision. The recipe,
+documentation, and evidence are in the
 [`v1.0.0` GitHub release](https://github.com/jakejharris/jspark3/releases/tag/v1.0.0),
 released 2026-09-02.
 
 ## Weights
 
-**These weights are not ours.** The authorized transfer will be an exact,
+**These weights are not ours.** This repository carries an exact,
 hash-verifiable mirror of
 [`Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw`](https://huggingface.co/Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw)
 at revision `25a44fdbf16862a46b7cc9921142c6c81350af2f`, which is itself a
@@ -59,17 +61,17 @@ chain, the verification method, and one recorded discrepancy in the upstream
 checksum file are in [`jspark3/PROVENANCE.md`](jspark3/PROVENANCE.md). The
 upstream card is preserved verbatim as
 [`UPSTREAM_MODEL_CARD.md`](UPSTREAM_MODEL_CARD.md), and every other upstream
-file keeps its exact upstream path so that, after transfer, a checkpoint
-contract validating a download from this mirror validates exactly as it does
-upstream.
+file keeps its exact upstream path so that a checkpoint contract validating a
+download from this mirror validates exactly as it does upstream.
 
 The DFlash2 speculative draft is a separate checkpoint from Inco AI under
 CC BY-NC-ND 4.0. It is **not** mirrored here; operators fetch it from its own
 repository at its own pinned revision.
 
-> **Hub status: metadata live at [`e9cbbafaf9ae4ab64f385c2f68e7fe2f06d78676`](https://huggingface.co/jakejharris/jspark3/commit/e9cbbafaf9ae4ab64f385c2f68e7fe2f06d78676); authorized weight transfer in progress on a separate review branch and not merged.**
-> The public main revision remains the exact 29-file metadata allowlist. See
-> [`jspark3/UPLOAD.md`](jspark3/UPLOAD.md).
+> **Hub status: all 123 allowlisted Git LFS payloads and
+> [`jspark3/MIRROR-COMPLETION.json`](jspark3/MIRROR-COMPLETION.json) were remotely
+> verified before merge into the public main revision.** See
+> [`jspark3/UPLOAD.md`](jspark3/UPLOAD.md) for the recorded procedure.
 
 ## Pinned inputs
 

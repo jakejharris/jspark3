@@ -1,12 +1,13 @@
-# Resumable weight-mirror procedure
+# Weight-mirror upload record and resumable procedure
 
-The public model repository currently contains the 29-file JSpark3 metadata
-tree at revision `e9cbbafaf9ae4ab64f385c2f68e7fe2f06d78676`. It contains no mirrored
-weight bytes. The authorized transfer is the exact 123-file LFS subset of
+The public model repository contains the exact 123-file Git LFS subset of
 `Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw` at
 `25a44fdbf16862a46b7cc9921142c6c81350af2f`: 120 safetensors shards plus
 `model.safetensors.index.json`, `quantization_config.json`, and
-`tokenizer.json`, totaling 175,715,659,341 bytes.
+`tokenizer.json`, totaling 175,715,659,341 bytes. The payloads on `refs/pr/1`
+were remotely verified by path, size, and LFS SHA-256 against the pinned
+manifest. `jspark3/MIRROR-COMPLETION.json` was then added to that same PR and
+verified byte for byte before maintainer merge into public main.
 
 The 21 non-LFS files in the upstream manifest are verification inputs, not
 upload inputs. DFlash2 is a separate dependency and must never enter this
