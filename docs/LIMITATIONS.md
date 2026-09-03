@@ -55,17 +55,22 @@ the benchmarks, not after.
   reproduction on this fleet, and jetnet was never run here at all; it was
   read and studied statically. Its numbers appear only as author-reported
   context.
-- **Published reference numbers are not comparable to ours.** They come from
-  their authors' own hardware and harnesses, with different node counts,
-  quantization lanes, speculation, contexts, clocking, and estimators, which
-  is why this release computes no percentage, delta, or ranking against any
-  of them.
-- **The adapted current-Mia rapid screen is not a rate claim.** Its own plan
-  omits the broader quality battery and marks rate-claim eligibility false; it
-  appears only in the technical report, labelled as such.
-- **The agent reproductions are product evidence.** They share a prompt but
-  not a trajectory, so their aggregate decode rates describe individual runs
-  and must not be read as a ranking between recipes.
+- **Most published reference numbers are context, not direct comparisons.**
+  They come from their authors' own hardware and harnesses, with different
+  node counts, quantization lanes, speculation, contexts, clocking, and
+  estimators. The sparkDash comparison is narrower: JSpark3 ran the same
+  pinned author protocol, but on a separate fleet and date, so it is not a
+  same-day head-to-head.
+- **The adapted current-Mia rapid screen has one battery.** Its original plan
+  omits the broader publication-quality battery and marks rate-claim
+  eligibility false. That historical flag remains. The maintainer approved
+  publishing the 66.257 versus 44.562552 tok/s same-screen comparison with
+  the single-battery limitation stated.
+- **The agent reproductions are product evidence.** They share the same task
+  and prompt but not a trajectory. The 44.583 versus 24.728 tok/s comparison
+  reports achieved aggregate decode throughput for those two runs; it does
+  not isolate an engine-only effect or predict identical speedups on another
+  agent path.
 
 ## Evidence limits
 
@@ -77,11 +82,13 @@ the benchmarks, not after.
   fleet operated by the project. No third-party or clean-room reproduction has
   been performed; that is an open release gate.
 - **Sample sizes are small.** Three candidate batteries, three matched
-  controls, one earlier control battery, one wave per concurrency level, one
-  scored prefill prompt, one demonstration run per arm.
-- **The demonstration is not a benchmark.** The two agent runs shared a
-  prompt but not a trajectory. Their decode rates (47.377 and 44.583 tok/s)
-  must not be read as a ranking.
+  controls, one earlier control battery, one sparkDash block, one wave per
+  concurrency level, one scored prefill prompt, one demonstration run per
+  arm.
+- **The internal-control demonstration is not a causal benchmark.** The two
+  agent runs shared a prompt but not a trajectory. Their decode rates (47.377
+  and 44.583 tok/s) describe those runs but do not isolate the overlay's
+  effect.
 - **Semantic correctness of scheduler-wave outputs was not evaluated.** The
   wave harness checked HTTP status, stream completeness, and non-empty
   output only.

@@ -1,0 +1,1684 @@
+{
+  "schema_version": 1,
+  "source": "sparkDash@e93fc87d54c8699e98b63a764ab260bf9d446c52/server/collectors/DecodeBench.js",
+  "base_url_adaptation": "http://127.0.0.1:18000",
+  "model_adaptation": "glm-5.3-flash",
+  "prompt_type_order": [
+    "structured",
+    "prose",
+    "code",
+    "json"
+  ],
+  "concurrencies": [
+    1,
+    2,
+    4
+  ],
+  "max_tokens": 400,
+  "jobs": [
+    {
+      "benchId": "fd40f2e7-d318-4794-83c5-b66604209f92",
+      "sparkId": "release",
+      "status": "completed",
+      "startedAt": 1788385694411,
+      "completedAt": 1788385719068,
+      "config": {
+        "port": 18000,
+        "modelId": "glm-5.3-flash",
+        "concurrencies": [
+          1,
+          2,
+          4
+        ],
+        "maxTokens": 400,
+        "promptType": "structured",
+        "debug": true
+      },
+      "progress": {
+        "currentConcurrency": null,
+        "completedLevels": 3,
+        "totalLevels": 3,
+        "message": "Done"
+      },
+      "results": [
+        {
+          "concurrency": 1,
+          "streamsOk": 1,
+          "streamsFailed": 0,
+          "meanDecodeTps": 86.56,
+          "medianDecodeTps": 86.56,
+          "minDecodeTps": 86.56,
+          "maxDecodeTps": 86.56,
+          "meanTtftMs": 461.22,
+          "medianTtftMs": 461.22,
+          "aggregateDecodeTps": 86.56,
+          "meanPrefillTps": 58.54,
+          "medianPrefillTps": 58.54,
+          "aggregatePrefillTps": 58.54,
+          "totalPrefillTokens": 27,
+          "totalDecodeTokens": 399,
+          "totalCompletionTokens": 400,
+          "durationMs": 5071.53,
+          "error": null,
+          "streams": [
+            {
+              "index": 0,
+              "ttftContentMs": 461.22,
+              "reasoningChunks": 0,
+              "ttftMs": 461.22,
+              "decodeTps": 86.56,
+              "decodeTokens": 399,
+              "completionTokens": 400,
+              "prefillTps": 58.54,
+              "prefillTokens": 27,
+              "totalMs": 5071.09,
+              "error": null,
+              "prompt": "Count from 1 to 200. Output only the numbers, separated by spaces. No other text.",
+              "http": {
+                "url": "http://127.0.0.1:18000/v1/chat/completions",
+                "status": 200,
+                "headers": {
+                  "content-type": "text/event-stream; charset=utf-8",
+                  "date": "Wed, 02 Sep 2026 21:48:14 GMT",
+                  "server": "uvicorn"
+                },
+                "completionId": "chatcmpl-8449751cf3b01fc3",
+                "finishReason": "length",
+                "sseEventCount": 56,
+                "firstSseDataPreview": "{\"id\":\"chatcmpl-8449751cf3b01fc3\",\"object\":\"chat.completion.chunk\",\"created\":1788385695,\"model\":\"glm-5.3-flash\",\"choices\":[{\"index\":0,\"delta\":{\"role\":\"assistant\",\"content\":\"\"},\"logprobs\":null,\"finish_reason\":null}],\"prompt_token_ids\":null,\"",
+                "request": {
+                  "model": "glm-5.3-flash",
+                  "maxTokens": 400,
+                  "temperature": 0,
+                  "stream": true,
+                  "promptChars": 81
+                }
+              },
+              "usage": {
+                "promptTokens": 27,
+                "completionTokens": 400,
+                "totalTokens": 427
+              },
+              "contentPreview": {
+                "first": "1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 5",
+                "last": "159 160 161 162 163 164 165 166 167 168 169 170 171 172 173 174 175 176 177 178 179 180 181 182 183 184 185 186 187 188 189 190 191 192 193 194 195 196 197 198 ",
+                "chars": 684
+              },
+              "decodeMs": 4609.7
+            }
+          ],
+          "model": "glm-5.3-flash",
+          "hardwareSamples": []
+        },
+        {
+          "concurrency": 2,
+          "streamsOk": 2,
+          "streamsFailed": 0,
+          "meanDecodeTps": 79.26,
+          "medianDecodeTps": 79.26,
+          "minDecodeTps": 73.7,
+          "maxDecodeTps": 84.82,
+          "meanTtftMs": 3021.92,
+          "medianTtftMs": 3021.92,
+          "aggregateDecodeTps": 76.95,
+          "meanPrefillTps": 92.9,
+          "medianPrefillTps": 92.9,
+          "aggregatePrefillTps": 11.61,
+          "totalPrefillTokens": 68,
+          "totalDecodeTokens": 798,
+          "totalCompletionTokens": 800,
+          "durationMs": 10559.93,
+          "error": null,
+          "streams": [
+            {
+              "index": 0,
+              "ttftContentMs": 188.91,
+              "reasoningChunks": 0,
+              "ttftMs": 188.91,
+              "decodeTps": 73.7,
+              "decodeTokens": 399,
+              "completionTokens": 400,
+              "prefillTps": 179.98,
+              "prefillTokens": 34,
+              "totalMs": 5602.65,
+              "error": null,
+              "prompt": "Count from 1 to 200. Output only the numbers, separated by spaces. No other text. (stream 1/2)",
+              "http": {
+                "url": "http://127.0.0.1:18000/v1/chat/completions",
+                "status": 200,
+                "headers": {
+                  "content-type": "text/event-stream; charset=utf-8",
+                  "date": "Wed, 02 Sep 2026 21:48:19 GMT",
+                  "server": "uvicorn"
+                },
+                "completionId": "chatcmpl-97ce6a6de7273390",
+                "finishReason": "length",
+                "sseEventCount": 57,
+                "firstSseDataPreview": "{\"id\":\"chatcmpl-97ce6a6de7273390\",\"object\":\"chat.completion.chunk\",\"created\":1788385700,\"model\":\"glm-5.3-flash\",\"choices\":[{\"index\":0,\"delta\":{\"role\":\"assistant\",\"content\":\"\"},\"logprobs\":null,\"finish_reason\":null}],\"prompt_token_ids\":null,\"",
+                "request": {
+                  "model": "glm-5.3-flash",
+                  "maxTokens": 400,
+                  "temperature": 0,
+                  "stream": true,
+                  "promptChars": 94
+                }
+              },
+              "usage": {
+                "promptTokens": 34,
+                "completionTokens": 400,
+                "totalTokens": 434
+              },
+              "contentPreview": {
+                "first": "1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 5",
+                "last": "159 160 161 162 163 164 165 166 167 168 169 170 171 172 173 174 175 176 177 178 179 180 181 182 183 184 185 186 187 188 189 190 191 192 193 194 195 196 197 198 ",
+                "chars": 684
+              },
+              "decodeMs": 5413.55
+            },
+            {
+              "index": 1,
+              "ttftContentMs": 5854.92,
+              "reasoningChunks": 0,
+              "ttftMs": 5854.92,
+              "decodeTps": 84.82,
+              "decodeTokens": 399,
+              "completionTokens": 400,
+              "prefillTps": 5.81,
+              "prefillTokens": 34,
+              "totalMs": 10559.09,
+              "error": null,
+              "prompt": "Count from 1 to 200. Output only the numbers, separated by spaces. No other text. (stream 2/2)",
+              "http": {
+                "url": "http://127.0.0.1:18000/v1/chat/completions",
+                "status": 200,
+                "headers": {
+                  "content-type": "text/event-stream; charset=utf-8",
+                  "date": "Wed, 02 Sep 2026 21:48:19 GMT",
+                  "server": "uvicorn"
+                },
+                "completionId": "chatcmpl-b606446e36be5017",
+                "finishReason": "length",
+                "sseEventCount": 55,
+                "firstSseDataPreview": "{\"id\":\"chatcmpl-b606446e36be5017\",\"object\":\"chat.completion.chunk\",\"created\":1788385700,\"model\":\"glm-5.3-flash\",\"choices\":[{\"index\":0,\"delta\":{\"role\":\"assistant\",\"content\":\"\"},\"logprobs\":null,\"finish_reason\":null}],\"prompt_token_ids\":null,\"",
+                "request": {
+                  "model": "glm-5.3-flash",
+                  "maxTokens": 400,
+                  "temperature": 0,
+                  "stream": true,
+                  "promptChars": 94
+                }
+              },
+              "usage": {
+                "promptTokens": 34,
+                "completionTokens": 400,
+                "totalTokens": 434
+              },
+              "contentPreview": {
+                "first": "1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 5",
+                "last": "159 160 161 162 163 164 165 166 167 168 169 170 171 172 173 174 175 176 177 178 179 180 181 182 183 184 185 186 187 188 189 190 191 192 193 194 195 196 197 198 ",
+                "chars": 684
+              },
+              "decodeMs": 4703.95
+            }
+          ],
+          "model": "glm-5.3-flash",
+          "hardwareSamples": []
+        },
+        {
+          "concurrency": 4,
+          "streamsOk": 4,
+          "streamsFailed": 0,
+          "meanDecodeTps": 50.08,
+          "medianDecodeTps": 50.08,
+          "minDecodeTps": 50.08,
+          "maxDecodeTps": 50.09,
+          "meanTtftMs": 385.42,
+          "medianTtftMs": 385.65,
+          "aggregateDecodeTps": 200.29,
+          "meanPrefillTps": 88.21,
+          "medianPrefillTps": 88.16,
+          "aggregatePrefillTps": 351.72,
+          "totalPrefillTokens": 136,
+          "totalDecodeTokens": 1596,
+          "totalCompletionTokens": 1600,
+          "durationMs": 8354.4,
+          "error": null,
+          "streams": [
+            {
+              "index": 0,
+              "ttftContentMs": 386.08,
+              "reasoningChunks": 0,
+              "ttftMs": 386.08,
+              "decodeTps": 50.08,
+              "decodeTokens": 399,
+              "completionTokens": 400,
+              "prefillTps": 88.06,
+              "prefillTokens": 34,
+              "totalMs": 8352.8,
+              "error": null,
+              "prompt": "Count from 1 to 200. Output only the numbers, separated by spaces. No other text. (stream 1/4)",
+              "http": {
+                "url": "http://127.0.0.1:18000/v1/chat/completions",
+                "status": 200,
+                "headers": {
+                  "content-type": "text/event-stream; charset=utf-8",
+                  "date": "Wed, 02 Sep 2026 21:48:30 GMT",
+                  "server": "uvicorn"
+                },
+                "completionId": "chatcmpl-81c1c1e36eb0af7e",
+                "finishReason": "length",
+                "sseEventCount": 56,
+                "firstSseDataPreview": "{\"id\":\"chatcmpl-81c1c1e36eb0af7e\",\"object\":\"chat.completion.chunk\",\"created\":1788385710,\"model\":\"glm-5.3-flash\",\"choices\":[{\"index\":0,\"delta\":{\"role\":\"assistant\",\"content\":\"\"},\"logprobs\":null,\"finish_reason\":null}],\"prompt_token_ids\":null,\"",
+                "request": {
+                  "model": "glm-5.3-flash",
+                  "maxTokens": 400,
+                  "temperature": 0,
+                  "stream": true,
+                  "promptChars": 94
+                }
+              },
+              "usage": {
+                "promptTokens": 34,
+                "completionTokens": 400,
+                "totalTokens": 434
+              },
+              "contentPreview": {
+                "first": "1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 5",
+                "last": "159 160 161 162 163 164 165 166 167 168 169 170 171 172 173 174 175 176 177 178 179 180 181 182 183 184 185 186 187 188 189 190 191 192 193 194 195 196 197 198 ",
+                "chars": 684
+              },
+              "decodeMs": 7966.59
+            },
+            {
+              "index": 1,
+              "ttftContentMs": 385.96,
+              "reasoningChunks": 0,
+              "ttftMs": 385.96,
+              "decodeTps": 50.08,
+              "decodeTokens": 399,
+              "completionTokens": 400,
+              "prefillTps": 88.09,
+              "prefillTokens": 34,
+              "totalMs": 8353.56,
+              "error": null,
+              "prompt": "Count from 1 to 200. Output only the numbers, separated by spaces. No other text. (stream 2/4)",
+              "http": {
+                "url": "http://127.0.0.1:18000/v1/chat/completions",
+                "status": 200,
+                "headers": {
+                  "content-type": "text/event-stream; charset=utf-8",
+                  "date": "Wed, 02 Sep 2026 21:48:30 GMT",
+                  "server": "uvicorn"
+                },
+                "completionId": "chatcmpl-b64922d007064d27",
+                "finishReason": "length",
+                "sseEventCount": 56,
+                "firstSseDataPreview": "{\"id\":\"chatcmpl-b64922d007064d27\",\"object\":\"chat.completion.chunk\",\"created\":1788385710,\"model\":\"glm-5.3-flash\",\"choices\":[{\"index\":0,\"delta\":{\"role\":\"assistant\",\"content\":\"\"},\"logprobs\":null,\"finish_reason\":null}],\"prompt_token_ids\":null,\"",
+                "request": {
+                  "model": "glm-5.3-flash",
+                  "maxTokens": 400,
+                  "temperature": 0,
+                  "stream": true,
+                  "promptChars": 94
+                }
+              },
+              "usage": {
+                "promptTokens": 34,
+                "completionTokens": 400,
+                "totalTokens": 434
+              },
+              "contentPreview": {
+                "first": "1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 5",
+                "last": "159 160 161 162 163 164 165 166 167 168 169 170 171 172 173 174 175 176 177 178 179 180 181 182 183 184 185 186 187 188 189 190 191 192 193 194 195 196 197 198 ",
+                "chars": 684
+              },
+              "decodeMs": 7967.52
+            },
+            {
+              "index": 2,
+              "ttftContentMs": 385.34,
+              "reasoningChunks": 0,
+              "ttftMs": 385.34,
+              "decodeTps": 50.09,
+              "decodeTokens": 399,
+              "completionTokens": 400,
+              "prefillTps": 88.23,
+              "prefillTokens": 34,
+              "totalMs": 8350.76,
+              "error": null,
+              "prompt": "Count from 1 to 200. Output only the numbers, separated by spaces. No other text. (stream 3/4)",
+              "http": {
+                "url": "http://127.0.0.1:18000/v1/chat/completions",
+                "status": 200,
+                "headers": {
+                  "content-type": "text/event-stream; charset=utf-8",
+                  "date": "Wed, 02 Sep 2026 21:48:30 GMT",
+                  "server": "uvicorn"
+                },
+                "completionId": "chatcmpl-b11dac82a8c7db7c",
+                "finishReason": "length",
+                "sseEventCount": 56,
+                "firstSseDataPreview": "{\"id\":\"chatcmpl-b11dac82a8c7db7c\",\"object\":\"chat.completion.chunk\",\"created\":1788385710,\"model\":\"glm-5.3-flash\",\"choices\":[{\"index\":0,\"delta\":{\"role\":\"assistant\",\"content\":\"\"},\"logprobs\":null,\"finish_reason\":null}],\"prompt_token_ids\":null,\"",
+                "request": {
+                  "model": "glm-5.3-flash",
+                  "maxTokens": 400,
+                  "temperature": 0,
+                  "stream": true,
+                  "promptChars": 94
+                }
+              },
+              "usage": {
+                "promptTokens": 34,
+                "completionTokens": 400,
+                "totalTokens": 434
+              },
+              "contentPreview": {
+                "first": "1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 5",
+                "last": "159 160 161 162 163 164 165 166 167 168 169 170 171 172 173 174 175 176 177 178 179 180 181 182 183 184 185 186 187 188 189 190 191 192 193 194 195 196 197 198 ",
+                "chars": 684
+              },
+              "decodeMs": 7965.2
+            },
+            {
+              "index": 3,
+              "ttftContentMs": 384.31,
+              "reasoningChunks": 0,
+              "ttftMs": 384.31,
+              "decodeTps": 50.08,
+              "decodeTokens": 399,
+              "completionTokens": 400,
+              "prefillTps": 88.47,
+              "prefillTokens": 34,
+              "totalMs": 8352.09,
+              "error": null,
+              "prompt": "Count from 1 to 200. Output only the numbers, separated by spaces. No other text. (stream 4/4)",
+              "http": {
+                "url": "http://127.0.0.1:18000/v1/chat/completions",
+                "status": 200,
+                "headers": {
+                  "content-type": "text/event-stream; charset=utf-8",
+                  "date": "Wed, 02 Sep 2026 21:48:30 GMT",
+                  "server": "uvicorn"
+                },
+                "completionId": "chatcmpl-8a53e2119226332e",
+                "finishReason": "length",
+                "sseEventCount": 56,
+                "firstSseDataPreview": "{\"id\":\"chatcmpl-8a53e2119226332e\",\"object\":\"chat.completion.chunk\",\"created\":1788385710,\"model\":\"glm-5.3-flash\",\"choices\":[{\"index\":0,\"delta\":{\"role\":\"assistant\",\"content\":\"\"},\"logprobs\":null,\"finish_reason\":null}],\"prompt_token_ids\":null,\"",
+                "request": {
+                  "model": "glm-5.3-flash",
+                  "maxTokens": 400,
+                  "temperature": 0,
+                  "stream": true,
+                  "promptChars": 94
+                }
+              },
+              "usage": {
+                "promptTokens": 34,
+                "completionTokens": 400,
+                "totalTokens": 434
+              },
+              "contentPreview": {
+                "first": "1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 5",
+                "last": "159 160 161 162 163 164 165 166 167 168 169 170 171 172 173 174 175 176 177 178 179 180 181 182 183 184 185 186 187 188 189 190 191 192 193 194 195 196 197 198 ",
+                "chars": 684
+              },
+              "decodeMs": 7967.69
+            }
+          ],
+          "model": "glm-5.3-flash",
+          "hardwareSamples": []
+        }
+      ],
+      "error": null,
+      "durationMs": 24657
+    },
+    {
+      "benchId": "c198665a-5d7b-40ce-98e2-0e5b23662b30",
+      "sparkId": "release",
+      "status": "completed",
+      "startedAt": 1788385719202,
+      "completedAt": 1788385777075,
+      "config": {
+        "port": 18000,
+        "modelId": "glm-5.3-flash",
+        "concurrencies": [
+          1,
+          2,
+          4
+        ],
+        "maxTokens": 400,
+        "promptType": "prose",
+        "debug": true
+      },
+      "progress": {
+        "currentConcurrency": null,
+        "completedLevels": 3,
+        "totalLevels": 3,
+        "message": "Done"
+      },
+      "results": [
+        {
+          "concurrency": 1,
+          "streamsOk": 1,
+          "streamsFailed": 0,
+          "meanDecodeTps": 37.95,
+          "medianDecodeTps": 37.95,
+          "minDecodeTps": 37.95,
+          "maxDecodeTps": 37.95,
+          "meanTtftMs": 253.25,
+          "medianTtftMs": 253.25,
+          "aggregateDecodeTps": 37.95,
+          "meanPrefillTps": 130.31,
+          "medianPrefillTps": 130.31,
+          "aggregatePrefillTps": 130.31,
+          "totalPrefillTokens": 33,
+          "totalDecodeTokens": 399,
+          "totalCompletionTokens": 400,
+          "durationMs": 10767,
+          "error": null,
+          "streams": [
+            {
+              "index": 0,
+              "ttftContentMs": 253.25,
+              "reasoningChunks": 0,
+              "ttftMs": 253.25,
+              "decodeTps": 37.95,
+              "decodeTokens": 399,
+              "completionTokens": 400,
+              "prefillTps": 130.31,
+              "prefillTokens": 33,
+              "totalMs": 10766.83,
+              "error": null,
+              "prompt": "Write a detailed step-by-step explanation of how a hash map works, including collision handling, resizing, and time complexity. Be thorough.",
+              "http": {
+                "url": "http://127.0.0.1:18000/v1/chat/completions",
+                "status": 200,
+                "headers": {
+                  "content-type": "text/event-stream; charset=utf-8",
+                  "date": "Wed, 02 Sep 2026 21:48:39 GMT",
+                  "server": "uvicorn"
+                },
+                "completionId": "chatcmpl-b2230397bc246c4f",
+                "finishReason": "length",
+                "sseEventCount": 120,
+                "firstSseDataPreview": "{\"id\":\"chatcmpl-b2230397bc246c4f\",\"object\":\"chat.completion.chunk\",\"created\":1788385719,\"model\":\"glm-5.3-flash\",\"choices\":[{\"index\":0,\"delta\":{\"role\":\"assistant\",\"content\":\"\"},\"logprobs\":null,\"finish_reason\":null}],\"prompt_token_ids\":null,\"",
+                "request": {
+                  "model": "glm-5.3-flash",
+                  "maxTokens": 400,
+                  "temperature": 0,
+                  "stream": true,
+                  "promptChars": 140
+                }
+              },
+              "usage": {
+                "promptTokens": 33,
+                "completionTokens": 400,
+                "totalTokens": 433
+              },
+              "contentPreview": {
+                "first": "# How a Hash Map Works: A Complete Guide\n\nA hash map (also called a hash table or dictionary) is a data structure that stores key-value pairs and provides near-",
+                "last": "t**: A tiny change in the input drastically changes the output.\n\nExamples of hash functions:\n- **FNV-1a**: Fast, simple, good distribution for strings.\n- **Murm",
+                "chars": 1575
+              },
+              "decodeMs": 10513.41
+            }
+          ],
+          "model": "glm-5.3-flash",
+          "hardwareSamples": []
+        },
+        {
+          "concurrency": 2,
+          "streamsOk": 2,
+          "streamsFailed": 0,
+          "meanDecodeTps": 33.41,
+          "medianDecodeTps": 33.41,
+          "minDecodeTps": 30.49,
+          "maxDecodeTps": 36.32,
+          "meanTtftMs": 6825.33,
+          "medianTtftMs": 6825.33,
+          "aggregateDecodeTps": 32.9,
+          "meanPrefillTps": 105.76,
+          "medianPrefillTps": 105.76,
+          "aggregatePrefillTps": 5.94,
+          "totalPrefillTokens": 80,
+          "totalDecodeTokens": 798,
+          "totalCompletionTokens": 800,
+          "durationMs": 24445.54,
+          "error": null,
+          "streams": [
+            {
+              "index": 0,
+              "ttftContentMs": 191.8,
+              "reasoningChunks": 0,
+              "ttftMs": 191.8,
+              "decodeTps": 30.49,
+              "decodeTokens": 399,
+              "completionTokens": 400,
+              "prefillTps": 208.55,
+              "prefillTokens": 40,
+              "totalMs": 13278.95,
+              "error": null,
+              "prompt": "Write a detailed step-by-step explanation of how a hash map works, including collision handling, resizing, and time complexity. Be thorough. (stream 1/2)",
+              "http": {
+                "url": "http://127.0.0.1:18000/v1/chat/completions",
+                "status": 200,
+                "headers": {
+                  "content-type": "text/event-stream; charset=utf-8",
+                  "date": "Wed, 02 Sep 2026 21:48:50 GMT",
+                  "server": "uvicorn"
+                },
+                "completionId": "chatcmpl-ab1b92bb39f310f1",
+                "finishReason": "length",
+                "sseEventCount": 134,
+                "firstSseDataPreview": "{\"id\":\"chatcmpl-ab1b92bb39f310f1\",\"object\":\"chat.completion.chunk\",\"created\":1788385730,\"model\":\"glm-5.3-flash\",\"choices\":[{\"index\":0,\"delta\":{\"role\":\"assistant\",\"content\":\"\"},\"logprobs\":null,\"finish_reason\":null}],\"prompt_token_ids\":null,\"",
+                "request": {
+                  "model": "glm-5.3-flash",
+                  "maxTokens": 400,
+                  "temperature": 0,
+                  "stream": true,
+                  "promptChars": 153
+                }
+              },
+              "usage": {
+                "promptTokens": 40,
+                "completionTokens": 400,
+                "totalTokens": 440
+              },
+              "contentPreview": {
+                "first": "# Hash Maps: A Complete Explanation\n\n## 1. What Is a Hash Map?\n\nA hash map (also called a hash table or dictionary) is a data structure that stores key-value pa",
+                "last": "ynomial rolling:\n  ```\n  hash = 0\n  for each character c:\n      hash = hash * 31 + c\n  ```\n  The prime 31 gives good distribution and is cheap to compute (`hash",
+                "chars": 1720
+              },
+              "decodeMs": 13087.02
+            },
+            {
+              "index": 1,
+              "ttftContentMs": 13458.86,
+              "reasoningChunks": 0,
+              "ttftMs": 13458.86,
+              "decodeTps": 36.32,
+              "decodeTokens": 399,
+              "completionTokens": 400,
+              "prefillTps": 2.97,
+              "prefillTokens": 40,
+              "totalMs": 24445.02,
+              "error": null,
+              "prompt": "Write a detailed step-by-step explanation of how a hash map works, including collision handling, resizing, and time complexity. Be thorough. (stream 2/2)",
+              "http": {
+                "url": "http://127.0.0.1:18000/v1/chat/completions",
+                "status": 200,
+                "headers": {
+                  "content-type": "text/event-stream; charset=utf-8",
+                  "date": "Wed, 02 Sep 2026 21:48:50 GMT",
+                  "server": "uvicorn"
+                },
+                "completionId": "chatcmpl-ab6fc52765800a29",
+                "finishReason": "length",
+                "sseEventCount": 111,
+                "firstSseDataPreview": "{\"id\":\"chatcmpl-ab6fc52765800a29\",\"object\":\"chat.completion.chunk\",\"created\":1788385730,\"model\":\"glm-5.3-flash\",\"choices\":[{\"index\":0,\"delta\":{\"role\":\"assistant\",\"content\":\"\"},\"logprobs\":null,\"finish_reason\":null}],\"prompt_token_ids\":null,\"",
+                "request": {
+                  "model": "glm-5.3-flash",
+                  "maxTokens": 400,
+                  "temperature": 0,
+                  "stream": true,
+                  "promptChars": 153
+                }
+              },
+              "usage": {
+                "promptTokens": 40,
+                "completionTokens": 400,
+                "totalTokens": 440
+              },
+              "contentPreview": {
+                "first": "# Hash Maps: A Complete Technical Explanation\n\n## 1. The Core Concept\n\nA hash map (also called a hash table or dictionary) is a data structure that stores key-v",
+                "last": "ay_size - 1)\n```\n\nThis is why many implementations (Java's `HashMap`, Go's maps) always keep capacity as a power of two.\n\n### Properties of a good hash function",
+                "chars": 1658
+              },
+              "decodeMs": 10986.04
+            }
+          ],
+          "model": "glm-5.3-flash",
+          "hardwareSamples": []
+        },
+        {
+          "concurrency": 4,
+          "streamsOk": 4,
+          "streamsFailed": 0,
+          "meanDecodeTps": 20.24,
+          "medianDecodeTps": 19.17,
+          "minDecodeTps": 18.77,
+          "maxDecodeTps": 23.84,
+          "meanTtftMs": 639.21,
+          "medianTtftMs": 639.14,
+          "aggregateDecodeTps": 75.08,
+          "meanPrefillTps": 62.58,
+          "medianPrefillTps": 62.59,
+          "aggregatePrefillTps": 250.13,
+          "totalPrefillTokens": 160,
+          "totalDecodeTokens": 1596,
+          "totalCompletionTokens": 1600,
+          "durationMs": 21897.64,
+          "error": null,
+          "streams": [
+            {
+              "index": 0,
+              "ttftContentMs": 639.67,
+              "reasoningChunks": 0,
+              "ttftMs": 639.67,
+              "decodeTps": 19.3,
+              "decodeTokens": 399,
+              "completionTokens": 400,
+              "prefillTps": 62.53,
+              "prefillTokens": 40,
+              "totalMs": 21313.02,
+              "error": null,
+              "prompt": "Write a detailed step-by-step explanation of how a hash map works, including collision handling, resizing, and time complexity. Be thorough. (stream 1/4)",
+              "http": {
+                "url": "http://127.0.0.1:18000/v1/chat/completions",
+                "status": 200,
+                "headers": {
+                  "content-type": "text/event-stream; charset=utf-8",
+                  "date": "Wed, 02 Sep 2026 21:49:14 GMT",
+                  "server": "uvicorn"
+                },
+                "completionId": "chatcmpl-8045072e6a959dcb",
+                "finishReason": "length",
+                "sseEventCount": 120,
+                "firstSseDataPreview": "{\"id\":\"chatcmpl-8045072e6a959dcb\",\"object\":\"chat.completion.chunk\",\"created\":1788385755,\"model\":\"glm-5.3-flash\",\"choices\":[{\"index\":0,\"delta\":{\"role\":\"assistant\",\"content\":\"\"},\"logprobs\":null,\"finish_reason\":null}],\"prompt_token_ids\":null,\"",
+                "request": {
+                  "model": "glm-5.3-flash",
+                  "maxTokens": 400,
+                  "temperature": 0,
+                  "stream": true,
+                  "promptChars": 153
+                }
+              },
+              "usage": {
+                "promptTokens": 40,
+                "completionTokens": 400,
+                "totalTokens": 440
+              },
+              "contentPreview": {
+                "first": "# Hash Maps: A Complete Explanation\n\n## 1. What Is a Hash Map?\n\nA hash map (also called a hash table or dictionary) is a data structure that stores key-value pa",
+                "last": " spread evenly across buckets\n3. **Avalanche effect** — small key changes produce drastically different hashes (so `\"cat\"` and `\"bat\"` land in unrelated buckets",
+                "chars": 1690
+              },
+              "decodeMs": 20673.3
+            },
+            {
+              "index": 1,
+              "ttftContentMs": 639.17,
+              "reasoningChunks": 0,
+              "ttftMs": 639.17,
+              "decodeTps": 19.04,
+              "decodeTokens": 399,
+              "completionTokens": 400,
+              "prefillTps": 62.58,
+              "prefillTokens": 40,
+              "totalMs": 21597.77,
+              "error": null,
+              "prompt": "Write a detailed step-by-step explanation of how a hash map works, including collision handling, resizing, and time complexity. Be thorough. (stream 2/4)",
+              "http": {
+                "url": "http://127.0.0.1:18000/v1/chat/completions",
+                "status": 200,
+                "headers": {
+                  "content-type": "text/event-stream; charset=utf-8",
+                  "date": "Wed, 02 Sep 2026 21:49:14 GMT",
+                  "server": "uvicorn"
+                },
+                "completionId": "chatcmpl-a3a406c08f465eda",
+                "finishReason": "length",
+                "sseEventCount": 122,
+                "firstSseDataPreview": "{\"id\":\"chatcmpl-a3a406c08f465eda\",\"object\":\"chat.completion.chunk\",\"created\":1788385755,\"model\":\"glm-5.3-flash\",\"choices\":[{\"index\":0,\"delta\":{\"role\":\"assistant\",\"content\":\"\"},\"logprobs\":null,\"finish_reason\":null}],\"prompt_token_ids\":null,\"",
+                "request": {
+                  "model": "glm-5.3-flash",
+                  "maxTokens": 400,
+                  "temperature": 0,
+                  "stream": true,
+                  "promptChars": 153
+                }
+              },
+              "usage": {
+                "promptTokens": 40,
+                "completionTokens": 400,
+                "totalTokens": 440
+              },
+              "contentPreview": {
+                "first": "# Hash Maps: A Complete Explanation\n\n## 1. The Core Concept\n\nA hash map (also called a hash table or dictionary) is a data structure that stores key-value pairs",
+                "last": "How String Hashing Typically Works\n\nA common approach (similar to Java's `String.hashCode()`):\n\n```\nhash = 0\nfor each character c in string:\n    hash = (hash * ",
+                "chars": 1638
+              },
+              "decodeMs": 20958.56
+            },
+            {
+              "index": 2,
+              "ttftContentMs": 638.89,
+              "reasoningChunks": 0,
+              "ttftMs": 638.89,
+              "decodeTps": 23.84,
+              "decodeTokens": 399,
+              "completionTokens": 400,
+              "prefillTps": 62.61,
+              "prefillTokens": 40,
+              "totalMs": 17374.87,
+              "error": null,
+              "prompt": "Write a detailed step-by-step explanation of how a hash map works, including collision handling, resizing, and time complexity. Be thorough. (stream 3/4)",
+              "http": {
+                "url": "http://127.0.0.1:18000/v1/chat/completions",
+                "status": 200,
+                "headers": {
+                  "content-type": "text/event-stream; charset=utf-8",
+                  "date": "Wed, 02 Sep 2026 21:49:14 GMT",
+                  "server": "uvicorn"
+                },
+                "completionId": "chatcmpl-84705b2eeb85f847",
+                "finishReason": "length",
+                "sseEventCount": 102,
+                "firstSseDataPreview": "{\"id\":\"chatcmpl-84705b2eeb85f847\",\"object\":\"chat.completion.chunk\",\"created\":1788385755,\"model\":\"glm-5.3-flash\",\"choices\":[{\"index\":0,\"delta\":{\"role\":\"assistant\",\"content\":\"\"},\"logprobs\":null,\"finish_reason\":null}],\"prompt_token_ids\":null,\"",
+                "request": {
+                  "model": "glm-5.3-flash",
+                  "maxTokens": 400,
+                  "temperature": 0,
+                  "stream": true,
+                  "promptChars": 153
+                }
+              },
+              "usage": {
+                "promptTokens": 40,
+                "completionTokens": 400,
+                "totalTokens": 440
+              },
+              "contentPreview": {
+                "first": "# Hash Maps: A Complete Explanation\n\n## 1. What Is a Hash Map?\n\nA hash map (also called a hash table or dictionary) is a data structure that stores key-value pa",
+                "last": "y a huge number, so we compress it into the array's range using the modulo operation:\n\n```\nindex = hash % array_size\n```\n\nIf the array has 16 buckets: `193,488,",
+                "chars": 1407
+              },
+              "decodeMs": 16735.94
+            },
+            {
+              "index": 3,
+              "ttftContentMs": 639.11,
+              "reasoningChunks": 0,
+              "ttftMs": 639.11,
+              "decodeTps": 18.77,
+              "decodeTokens": 399,
+              "completionTokens": 400,
+              "prefillTps": 62.59,
+              "prefillTokens": 40,
+              "totalMs": 21897.08,
+              "error": null,
+              "prompt": "Write a detailed step-by-step explanation of how a hash map works, including collision handling, resizing, and time complexity. Be thorough. (stream 4/4)",
+              "http": {
+                "url": "http://127.0.0.1:18000/v1/chat/completions",
+                "status": 200,
+                "headers": {
+                  "content-type": "text/event-stream; charset=utf-8",
+                  "date": "Wed, 02 Sep 2026 21:49:14 GMT",
+                  "server": "uvicorn"
+                },
+                "completionId": "chatcmpl-b370d61586aa75cd",
+                "finishReason": "length",
+                "sseEventCount": 125,
+                "firstSseDataPreview": "{\"id\":\"chatcmpl-b370d61586aa75cd\",\"object\":\"chat.completion.chunk\",\"created\":1788385755,\"model\":\"glm-5.3-flash\",\"choices\":[{\"index\":0,\"delta\":{\"role\":\"assistant\",\"content\":\"\"},\"logprobs\":null,\"finish_reason\":null}],\"prompt_token_ids\":null,\"",
+                "request": {
+                  "model": "glm-5.3-flash",
+                  "maxTokens": 400,
+                  "temperature": 0,
+                  "stream": true,
+                  "promptChars": 153
+                }
+              },
+              "usage": {
+                "promptTokens": 40,
+                "completionTokens": 400,
+                "totalTokens": 440
+              },
+              "contentPreview": {
+                "first": "# Hash Maps: A Complete Technical Explanation\n\n## 1. The Core Concept\n\nA hash map (also called a hash table or dictionary) is a data structure that stores key-v",
+                "last": "tive) integer. It must be compressed into a valid array index:\n\n```\nindex = hash_code mod capacity\n```\n\nA common optimization when capacity is a power of two:\n\n",
+                "chars": 1719
+              },
+              "decodeMs": 21257.86
+            }
+          ],
+          "model": "glm-5.3-flash",
+          "hardwareSamples": []
+        }
+      ],
+      "error": null,
+      "durationMs": 57873
+    },
+    {
+      "benchId": "7251ff47-a8a6-46e2-942e-61844ea83da9",
+      "sparkId": "release",
+      "status": "completed",
+      "startedAt": 1788385777250,
+      "completedAt": 1788385802129,
+      "config": {
+        "port": 18000,
+        "modelId": "glm-5.3-flash",
+        "concurrencies": [
+          1,
+          2,
+          4
+        ],
+        "maxTokens": 400,
+        "promptType": "code",
+        "debug": true
+      },
+      "progress": {
+        "currentConcurrency": null,
+        "completedLevels": 3,
+        "totalLevels": 3,
+        "message": "Done"
+      },
+      "results": [
+        {
+          "concurrency": 1,
+          "streamsOk": 1,
+          "streamsFailed": 0,
+          "meanDecodeTps": 84.47,
+          "medianDecodeTps": 84.47,
+          "minDecodeTps": 84.47,
+          "maxDecodeTps": 84.47,
+          "meanTtftMs": 391.33,
+          "medianTtftMs": 391.33,
+          "aggregateDecodeTps": 84.47,
+          "meanPrefillTps": 260.65,
+          "medianPrefillTps": 260.65,
+          "aggregatePrefillTps": 260.65,
+          "totalPrefillTokens": 102,
+          "totalDecodeTokens": 399,
+          "totalCompletionTokens": 400,
+          "durationMs": 5115.37,
+          "error": null,
+          "streams": [
+            {
+              "index": 0,
+              "ttftContentMs": 391.33,
+              "reasoningChunks": 0,
+              "ttftMs": 391.33,
+              "decodeTps": 84.47,
+              "decodeTokens": 399,
+              "completionTokens": 400,
+              "prefillTps": 260.65,
+              "prefillTokens": 102,
+              "totalMs": 5115.22,
+              "error": null,
+              "prompt": "Output only Python source code. No comments, no docstrings, no markdown fences. Write functions clamp_00 through clamp_49. Each function is exactly:\ndef clamp_NN(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\nChange only the function name suffix (00, 01, … 49). One blank line between functions. No other text.",
+              "http": {
+                "url": "http://127.0.0.1:18000/v1/chat/completions",
+                "status": 200,
+                "headers": {
+                  "content-type": "text/event-stream; charset=utf-8",
+                  "date": "Wed, 02 Sep 2026 21:49:37 GMT",
+                  "server": "uvicorn"
+                },
+                "completionId": "chatcmpl-ab2121743035c655",
+                "finishReason": "length",
+                "sseEventCount": 53,
+                "firstSseDataPreview": "{\"id\":\"chatcmpl-ab2121743035c655\",\"object\":\"chat.completion.chunk\",\"created\":1788385777,\"model\":\"glm-5.3-flash\",\"choices\":[{\"index\":0,\"delta\":{\"role\":\"assistant\",\"content\":\"\"},\"logprobs\":null,\"finish_reason\":null}],\"prompt_token_ids\":null,\"",
+                "request": {
+                  "model": "glm-5.3-flash",
+                  "maxTokens": 400,
+                  "temperature": 0,
+                  "stream": true,
+                  "promptChars": 358
+                }
+              },
+              "usage": {
+                "promptTokens": 102,
+                "completionTokens": 400,
+                "totalTokens": 502
+              },
+              "contentPreview": {
+                "first": "def clamp_00(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_01(x, lo=0, hi=1):\n    if x < lo:\n       ",
+                "last": "urn x\n\ndef clamp_09(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_10(x, lo=0, hi=1):\n    if x < lo:\n",
+                "chars": 1134
+              },
+              "decodeMs": 4723.77
+            }
+          ],
+          "model": "glm-5.3-flash",
+          "hardwareSamples": []
+        },
+        {
+          "concurrency": 2,
+          "streamsOk": 2,
+          "streamsFailed": 0,
+          "meanDecodeTps": 70.56,
+          "medianDecodeTps": 70.56,
+          "minDecodeTps": 69.88,
+          "maxDecodeTps": 71.23,
+          "meanTtftMs": 554.82,
+          "medianTtftMs": 554.82,
+          "aggregateDecodeTps": 139.77,
+          "meanPrefillTps": 196.46,
+          "medianPrefillTps": 196.46,
+          "aggregatePrefillTps": 392.77,
+          "totalPrefillTokens": 218,
+          "totalDecodeTokens": 798,
+          "totalCompletionTokens": 800,
+          "durationMs": 6264.65,
+          "error": null,
+          "streams": [
+            {
+              "index": 0,
+              "ttftContentMs": 555.03,
+              "reasoningChunks": 0,
+              "ttftMs": 555.03,
+              "decodeTps": 71.23,
+              "decodeTokens": 399,
+              "completionTokens": 400,
+              "prefillTps": 196.38,
+              "prefillTokens": 109,
+              "totalMs": 6156.45,
+              "error": null,
+              "prompt": "Output only Python source code. No comments, no docstrings, no markdown fences. Write functions clamp_00 through clamp_49. Each function is exactly:\ndef clamp_NN(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\nChange only the function name suffix (00, 01, … 49). One blank line between functions. No other text. (stream 1/2)",
+              "http": {
+                "url": "http://127.0.0.1:18000/v1/chat/completions",
+                "status": 200,
+                "headers": {
+                  "content-type": "text/event-stream; charset=utf-8",
+                  "date": "Wed, 02 Sep 2026 21:49:42 GMT",
+                  "server": "uvicorn"
+                },
+                "completionId": "chatcmpl-a9852936c89f7d29",
+                "finishReason": "length",
+                "sseEventCount": 53,
+                "firstSseDataPreview": "{\"id\":\"chatcmpl-a9852936c89f7d29\",\"object\":\"chat.completion.chunk\",\"created\":1788385783,\"model\":\"glm-5.3-flash\",\"choices\":[{\"index\":0,\"delta\":{\"role\":\"assistant\",\"content\":\"\"},\"logprobs\":null,\"finish_reason\":null}],\"prompt_token_ids\":null,\"",
+                "request": {
+                  "model": "glm-5.3-flash",
+                  "maxTokens": 400,
+                  "temperature": 0,
+                  "stream": true,
+                  "promptChars": 371
+                }
+              },
+              "usage": {
+                "promptTokens": 109,
+                "completionTokens": 400,
+                "totalTokens": 509
+              },
+              "contentPreview": {
+                "first": "def clamp_00(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_01(x, lo=0, hi=1):\n    if x < lo:\n       ",
+                "last": "urn x\n\ndef clamp_09(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_10(x, lo=0, hi=1):\n    if x < lo:\n",
+                "chars": 1134
+              },
+              "decodeMs": 5601.37
+            },
+            {
+              "index": 1,
+              "ttftContentMs": 554.6,
+              "reasoningChunks": 0,
+              "ttftMs": 554.6,
+              "decodeTps": 69.88,
+              "decodeTokens": 399,
+              "completionTokens": 400,
+              "prefillTps": 196.54,
+              "prefillTokens": 109,
+              "totalMs": 6264.23,
+              "error": null,
+              "prompt": "Output only Python source code. No comments, no docstrings, no markdown fences. Write functions clamp_00 through clamp_49. Each function is exactly:\ndef clamp_NN(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\nChange only the function name suffix (00, 01, … 49). One blank line between functions. No other text. (stream 2/2)",
+              "http": {
+                "url": "http://127.0.0.1:18000/v1/chat/completions",
+                "status": 200,
+                "headers": {
+                  "content-type": "text/event-stream; charset=utf-8",
+                  "date": "Wed, 02 Sep 2026 21:49:42 GMT",
+                  "server": "uvicorn"
+                },
+                "completionId": "chatcmpl-9391186466024874",
+                "finishReason": "length",
+                "sseEventCount": 54,
+                "firstSseDataPreview": "{\"id\":\"chatcmpl-9391186466024874\",\"object\":\"chat.completion.chunk\",\"created\":1788385783,\"model\":\"glm-5.3-flash\",\"choices\":[{\"index\":0,\"delta\":{\"role\":\"assistant\",\"content\":\"\"},\"logprobs\":null,\"finish_reason\":null}],\"prompt_token_ids\":null,\"",
+                "request": {
+                  "model": "glm-5.3-flash",
+                  "maxTokens": 400,
+                  "temperature": 0,
+                  "stream": true,
+                  "promptChars": 371
+                }
+              },
+              "usage": {
+                "promptTokens": 109,
+                "completionTokens": 400,
+                "totalTokens": 509
+              },
+              "contentPreview": {
+                "first": "def clamp_00(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_01(x, lo=0, hi=1):\n    if x < lo:\n       ",
+                "last": "urn x\n\ndef clamp_09(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_10(x, lo=0, hi=1):\n    if x < lo:\n",
+                "chars": 1134
+              },
+              "decodeMs": 5709.51
+            }
+          ],
+          "model": "glm-5.3-flash",
+          "hardwareSamples": []
+        },
+        {
+          "concurrency": 4,
+          "streamsOk": 4,
+          "streamsFailed": 0,
+          "meanDecodeTps": 62.8,
+          "medianDecodeTps": 62.8,
+          "minDecodeTps": 62.79,
+          "maxDecodeTps": 62.8,
+          "meanTtftMs": 6441.67,
+          "medianTtftMs": 6441.78,
+          "aggregateDecodeTps": 251.13,
+          "meanPrefillTps": 16.92,
+          "medianPrefillTps": 16.92,
+          "aggregatePrefillTps": 67.68,
+          "totalPrefillTokens": 436,
+          "totalDecodeTokens": 1596,
+          "totalCompletionTokens": 1600,
+          "durationMs": 12797.26,
+          "error": null,
+          "streams": [
+            {
+              "index": 0,
+              "ttftContentMs": 6441.86,
+              "reasoningChunks": 0,
+              "ttftMs": 6441.86,
+              "decodeTps": 62.8,
+              "decodeTokens": 399,
+              "completionTokens": 400,
+              "prefillTps": 16.92,
+              "prefillTokens": 109,
+              "totalMs": 12795.83,
+              "error": null,
+              "prompt": "Output only Python source code. No comments, no docstrings, no markdown fences. Write functions clamp_00 through clamp_49. Each function is exactly:\ndef clamp_NN(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\nChange only the function name suffix (00, 01, … 49). One blank line between functions. No other text. (stream 1/4)",
+              "http": {
+                "url": "http://127.0.0.1:18000/v1/chat/completions",
+                "status": 200,
+                "headers": {
+                  "content-type": "text/event-stream; charset=utf-8",
+                  "date": "Wed, 02 Sep 2026 21:49:48 GMT",
+                  "server": "uvicorn"
+                },
+                "completionId": "chatcmpl-8eb20f0164376232",
+                "finishReason": "length",
+                "sseEventCount": 53,
+                "firstSseDataPreview": "{\"id\":\"chatcmpl-8eb20f0164376232\",\"object\":\"chat.completion.chunk\",\"created\":1788385789,\"model\":\"glm-5.3-flash\",\"choices\":[{\"index\":0,\"delta\":{\"role\":\"assistant\",\"content\":\"\"},\"logprobs\":null,\"finish_reason\":null}],\"prompt_token_ids\":null,\"",
+                "request": {
+                  "model": "glm-5.3-flash",
+                  "maxTokens": 400,
+                  "temperature": 0,
+                  "stream": true,
+                  "promptChars": 371
+                }
+              },
+              "usage": {
+                "promptTokens": 109,
+                "completionTokens": 400,
+                "totalTokens": 509
+              },
+              "contentPreview": {
+                "first": "def clamp_00(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_01(x, lo=0, hi=1):\n    if x < lo:\n       ",
+                "last": "urn x\n\ndef clamp_09(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_10(x, lo=0, hi=1):\n    if x < lo:\n",
+                "chars": 1134
+              },
+              "decodeMs": 6353.91
+            },
+            {
+              "index": 1,
+              "ttftContentMs": 6441.93,
+              "reasoningChunks": 0,
+              "ttftMs": 6441.93,
+              "decodeTps": 62.79,
+              "decodeTokens": 399,
+              "completionTokens": 400,
+              "prefillTps": 16.92,
+              "prefillTokens": 109,
+              "totalMs": 12796.86,
+              "error": null,
+              "prompt": "Output only Python source code. No comments, no docstrings, no markdown fences. Write functions clamp_00 through clamp_49. Each function is exactly:\ndef clamp_NN(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\nChange only the function name suffix (00, 01, … 49). One blank line between functions. No other text. (stream 2/4)",
+              "http": {
+                "url": "http://127.0.0.1:18000/v1/chat/completions",
+                "status": 200,
+                "headers": {
+                  "content-type": "text/event-stream; charset=utf-8",
+                  "date": "Wed, 02 Sep 2026 21:49:48 GMT",
+                  "server": "uvicorn"
+                },
+                "completionId": "chatcmpl-bc54c6a67106f43c",
+                "finishReason": "length",
+                "sseEventCount": 53,
+                "firstSseDataPreview": "{\"id\":\"chatcmpl-bc54c6a67106f43c\",\"object\":\"chat.completion.chunk\",\"created\":1788385789,\"model\":\"glm-5.3-flash\",\"choices\":[{\"index\":0,\"delta\":{\"role\":\"assistant\",\"content\":\"\"},\"logprobs\":null,\"finish_reason\":null}],\"prompt_token_ids\":null,\"",
+                "request": {
+                  "model": "glm-5.3-flash",
+                  "maxTokens": 400,
+                  "temperature": 0,
+                  "stream": true,
+                  "promptChars": 371
+                }
+              },
+              "usage": {
+                "promptTokens": 109,
+                "completionTokens": 400,
+                "totalTokens": 509
+              },
+              "contentPreview": {
+                "first": "def clamp_00(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_01(x, lo=0, hi=1):\n    if x < lo:\n       ",
+                "last": "urn x\n\ndef clamp_09(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_10(x, lo=0, hi=1):\n    if x < lo:\n",
+                "chars": 1134
+              },
+              "decodeMs": 6354.86
+            },
+            {
+              "index": 2,
+              "ttftContentMs": 6441.69,
+              "reasoningChunks": 0,
+              "ttftMs": 6441.69,
+              "decodeTps": 62.79,
+              "decodeTokens": 399,
+              "completionTokens": 400,
+              "prefillTps": 16.92,
+              "prefillTokens": 109,
+              "totalMs": 12796.23,
+              "error": null,
+              "prompt": "Output only Python source code. No comments, no docstrings, no markdown fences. Write functions clamp_00 through clamp_49. Each function is exactly:\ndef clamp_NN(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\nChange only the function name suffix (00, 01, … 49). One blank line between functions. No other text. (stream 3/4)",
+              "http": {
+                "url": "http://127.0.0.1:18000/v1/chat/completions",
+                "status": 200,
+                "headers": {
+                  "content-type": "text/event-stream; charset=utf-8",
+                  "date": "Wed, 02 Sep 2026 21:49:48 GMT",
+                  "server": "uvicorn"
+                },
+                "completionId": "chatcmpl-a444f88164011bc4",
+                "finishReason": "length",
+                "sseEventCount": 53,
+                "firstSseDataPreview": "{\"id\":\"chatcmpl-a444f88164011bc4\",\"object\":\"chat.completion.chunk\",\"created\":1788385789,\"model\":\"glm-5.3-flash\",\"choices\":[{\"index\":0,\"delta\":{\"role\":\"assistant\",\"content\":\"\"},\"logprobs\":null,\"finish_reason\":null}],\"prompt_token_ids\":null,\"",
+                "request": {
+                  "model": "glm-5.3-flash",
+                  "maxTokens": 400,
+                  "temperature": 0,
+                  "stream": true,
+                  "promptChars": 371
+                }
+              },
+              "usage": {
+                "promptTokens": 109,
+                "completionTokens": 400,
+                "totalTokens": 509
+              },
+              "contentPreview": {
+                "first": "def clamp_00(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_01(x, lo=0, hi=1):\n    if x < lo:\n       ",
+                "last": "urn x\n\ndef clamp_09(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_10(x, lo=0, hi=1):\n    if x < lo:\n",
+                "chars": 1134
+              },
+              "decodeMs": 6354.44
+            },
+            {
+              "index": 3,
+              "ttftContentMs": 6441.19,
+              "reasoningChunks": 0,
+              "ttftMs": 6441.19,
+              "decodeTps": 62.8,
+              "decodeTokens": 399,
+              "completionTokens": 400,
+              "prefillTps": 16.92,
+              "prefillTokens": 109,
+              "totalMs": 12794.72,
+              "error": null,
+              "prompt": "Output only Python source code. No comments, no docstrings, no markdown fences. Write functions clamp_00 through clamp_49. Each function is exactly:\ndef clamp_NN(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\nChange only the function name suffix (00, 01, … 49). One blank line between functions. No other text. (stream 4/4)",
+              "http": {
+                "url": "http://127.0.0.1:18000/v1/chat/completions",
+                "status": 200,
+                "headers": {
+                  "content-type": "text/event-stream; charset=utf-8",
+                  "date": "Wed, 02 Sep 2026 21:49:48 GMT",
+                  "server": "uvicorn"
+                },
+                "completionId": "chatcmpl-84b5fa04c86ce6f4",
+                "finishReason": "length",
+                "sseEventCount": 53,
+                "firstSseDataPreview": "{\"id\":\"chatcmpl-84b5fa04c86ce6f4\",\"object\":\"chat.completion.chunk\",\"created\":1788385789,\"model\":\"glm-5.3-flash\",\"choices\":[{\"index\":0,\"delta\":{\"role\":\"assistant\",\"content\":\"\"},\"logprobs\":null,\"finish_reason\":null}],\"prompt_token_ids\":null,\"",
+                "request": {
+                  "model": "glm-5.3-flash",
+                  "maxTokens": 400,
+                  "temperature": 0,
+                  "stream": true,
+                  "promptChars": 371
+                }
+              },
+              "usage": {
+                "promptTokens": 109,
+                "completionTokens": 400,
+                "totalTokens": 509
+              },
+              "contentPreview": {
+                "first": "def clamp_00(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_01(x, lo=0, hi=1):\n    if x < lo:\n       ",
+                "last": "urn x\n\ndef clamp_09(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_10(x, lo=0, hi=1):\n    if x < lo:\n",
+                "chars": 1134
+              },
+              "decodeMs": 6353.42
+            }
+          ],
+          "model": "glm-5.3-flash",
+          "hardwareSamples": []
+        }
+      ],
+      "error": null,
+      "durationMs": 24879
+    },
+    {
+      "benchId": "8e71f847-0fd7-4b88-88b2-96c87bbbea7d",
+      "sparkId": "release",
+      "status": "completed",
+      "startedAt": 1788385802271,
+      "completedAt": 1788385837728,
+      "config": {
+        "port": 18000,
+        "modelId": "glm-5.3-flash",
+        "concurrencies": [
+          1,
+          2,
+          4
+        ],
+        "maxTokens": 400,
+        "promptType": "json",
+        "debug": true
+      },
+      "progress": {
+        "currentConcurrency": null,
+        "completedLevels": 3,
+        "totalLevels": 3,
+        "message": "Done"
+      },
+      "results": [
+        {
+          "concurrency": 1,
+          "streamsOk": 1,
+          "streamsFailed": 0,
+          "meanDecodeTps": 64.11,
+          "medianDecodeTps": 64.11,
+          "minDecodeTps": 64.11,
+          "maxDecodeTps": 64.11,
+          "meanTtftMs": 304.64,
+          "medianTtftMs": 304.64,
+          "aggregateDecodeTps": 64.11,
+          "meanPrefillTps": 170.69,
+          "medianPrefillTps": 170.69,
+          "aggregatePrefillTps": 170.69,
+          "totalPrefillTokens": 52,
+          "totalDecodeTokens": 399,
+          "totalCompletionTokens": 400,
+          "durationMs": 6528.13,
+          "error": null,
+          "streams": [
+            {
+              "index": 0,
+              "ttftContentMs": 304.64,
+              "reasoningChunks": 0,
+              "ttftMs": 304.64,
+              "decodeTps": 64.11,
+              "decodeTokens": 399,
+              "completionTokens": 400,
+              "prefillTps": 170.69,
+              "prefillTokens": 52,
+              "totalMs": 6527.95,
+              "error": null,
+              "prompt": "Emit only a JSON array of fake GPU metrics rows. Each object needs host, gpuIndex, utilPct, tempC, powerW, memUsedMb. Invent many rows. No markdown. Keep expanding the array.",
+              "http": {
+                "url": "http://127.0.0.1:18000/v1/chat/completions",
+                "status": 200,
+                "headers": {
+                  "content-type": "text/event-stream; charset=utf-8",
+                  "date": "Wed, 02 Sep 2026 21:50:03 GMT",
+                  "server": "uvicorn"
+                },
+                "completionId": "chatcmpl-a56158cd4d523854",
+                "finishReason": "length",
+                "sseEventCount": 68,
+                "firstSseDataPreview": "{\"id\":\"chatcmpl-a56158cd4d523854\",\"object\":\"chat.completion.chunk\",\"created\":1788385803,\"model\":\"glm-5.3-flash\",\"choices\":[{\"index\":0,\"delta\":{\"role\":\"assistant\",\"content\":\"\"},\"logprobs\":null,\"finish_reason\":null}],\"prompt_token_ids\":null,\"",
+                "request": {
+                  "model": "glm-5.3-flash",
+                  "maxTokens": 400,
+                  "temperature": 0,
+                  "stream": true,
+                  "promptChars": 174
+                }
+              },
+              "usage": {
+                "promptTokens": 52,
+                "completionTokens": 400,
+                "totalTokens": 452
+              },
+              "contentPreview": {
+                "first": "[\n  {\"host\":\"gpu-node-01\",\"gpuIndex\":0,\"utilPct\":97,\"tempC\":74,\"powerW\":298,\"memUsedMb\":22800},\n  {\"host\":\"gpu-node-01\",\"gpuIndex\":1,\"utilPct\":92,\"tempC\":71,\"po",
+                "last": "sedMb\":24500},\n  {\"host\":\"gpu-node-02\",\"gpuIndex\":1,\"utilPct\":76,\"tempC\":65,\"powerW\":250,\"memUsedMb\":17200},\n  {\"host\":\"gpu-node-02\",\"gpuIndex\":2,\"utilPct\":64,\"",
+                "chars": 991
+              },
+              "decodeMs": 6223.2
+            }
+          ],
+          "model": "glm-5.3-flash",
+          "hardwareSamples": []
+        },
+        {
+          "concurrency": 2,
+          "streamsOk": 2,
+          "streamsFailed": 0,
+          "meanDecodeTps": 61.08,
+          "medianDecodeTps": 61.08,
+          "minDecodeTps": 60.77,
+          "maxDecodeTps": 61.38,
+          "meanTtftMs": 3813.53,
+          "medianTtftMs": 3813.53,
+          "aggregateDecodeTps": 59.26,
+          "meanPrefillTps": 93.34,
+          "medianPrefillTps": 93.34,
+          "aggregatePrefillTps": 16.17,
+          "totalPrefillTokens": 118,
+          "totalDecodeTokens": 798,
+          "totalCompletionTokens": 800,
+          "durationMs": 13797.35,
+          "error": null,
+          "streams": [
+            {
+              "index": 0,
+              "ttftContentMs": 330.38,
+              "reasoningChunks": 0,
+              "ttftMs": 330.38,
+              "decodeTps": 60.77,
+              "decodeTokens": 399,
+              "completionTokens": 400,
+              "prefillTps": 178.58,
+              "prefillTokens": 59,
+              "totalMs": 6896.15,
+              "error": null,
+              "prompt": "Emit only a JSON array of fake GPU metrics rows. Each object needs host, gpuIndex, utilPct, tempC, powerW, memUsedMb. Invent many rows. No markdown. Keep expanding the array. (stream 1/2)",
+              "http": {
+                "url": "http://127.0.0.1:18000/v1/chat/completions",
+                "status": 200,
+                "headers": {
+                  "content-type": "text/event-stream; charset=utf-8",
+                  "date": "Wed, 02 Sep 2026 21:50:09 GMT",
+                  "server": "uvicorn"
+                },
+                "completionId": "chatcmpl-96c617594ffa69a0",
+                "finishReason": "length",
+                "sseEventCount": 74,
+                "firstSseDataPreview": "{\"id\":\"chatcmpl-96c617594ffa69a0\",\"object\":\"chat.completion.chunk\",\"created\":1788385809,\"model\":\"glm-5.3-flash\",\"choices\":[{\"index\":0,\"delta\":{\"role\":\"assistant\",\"content\":\"\"},\"logprobs\":null,\"finish_reason\":null}],\"prompt_token_ids\":null,\"",
+                "request": {
+                  "model": "glm-5.3-flash",
+                  "maxTokens": 400,
+                  "temperature": 0,
+                  "stream": true,
+                  "promptChars": 187
+                }
+              },
+              "usage": {
+                "promptTokens": 59,
+                "completionTokens": 400,
+                "totalTokens": 459
+              },
+              "contentPreview": {
+                "first": "[{\"host\":\"gpu-node-01\",\"gpuIndex\":0,\"utilPct\":87,\"tempC\":71,\"powerW\":295,\"memUsedMb\":21430},{\"host\":\"gpu-node-01\",\"gpuIndex\":1,\"utilPct\":92,\"tempC\":74,\"powerW\":",
+                "last": "lPct\":98,\"tempC\":79,\"powerW\":312,\"memUsedMb\":24110},{\"host\":\"gpu-node-02\",\"gpuIndex\":2,\"utilPct\":33,\"tempC\":52,\"powerW\":150,\"memUsedMb\":6780},{\"host\":\"gpu-node-",
+                "chars": 1013
+              },
+              "decodeMs": 6565.66
+            },
+            {
+              "index": 1,
+              "ttftContentMs": 7296.67,
+              "reasoningChunks": 0,
+              "ttftMs": 7296.67,
+              "decodeTps": 61.38,
+              "decodeTokens": 399,
+              "completionTokens": 400,
+              "prefillTps": 8.09,
+              "prefillTokens": 59,
+              "totalMs": 13797.01,
+              "error": null,
+              "prompt": "Emit only a JSON array of fake GPU metrics rows. Each object needs host, gpuIndex, utilPct, tempC, powerW, memUsedMb. Invent many rows. No markdown. Keep expanding the array. (stream 2/2)",
+              "http": {
+                "url": "http://127.0.0.1:18000/v1/chat/completions",
+                "status": 200,
+                "headers": {
+                  "content-type": "text/event-stream; charset=utf-8",
+                  "date": "Wed, 02 Sep 2026 21:50:09 GMT",
+                  "server": "uvicorn"
+                },
+                "completionId": "chatcmpl-8d4f478988913292",
+                "finishReason": "length",
+                "sseEventCount": 73,
+                "firstSseDataPreview": "{\"id\":\"chatcmpl-8d4f478988913292\",\"object\":\"chat.completion.chunk\",\"created\":1788385809,\"model\":\"glm-5.3-flash\",\"choices\":[{\"index\":0,\"delta\":{\"role\":\"assistant\",\"content\":\"\"},\"logprobs\":null,\"finish_reason\":null}],\"prompt_token_ids\":null,\"",
+                "request": {
+                  "model": "glm-5.3-flash",
+                  "maxTokens": 400,
+                  "temperature": 0,
+                  "stream": true,
+                  "promptChars": 187
+                }
+              },
+              "usage": {
+                "promptTokens": 59,
+                "completionTokens": 400,
+                "totalTokens": 459
+              },
+              "contentPreview": {
+                "first": "[{\"host\":\"gpu-node-01\",\"gpuIndex\":0,\"utilPct\":87,\"tempC\":71,\"powerW\":295,\"memUsedMb\":21450},{\"host\":\"gpu-node-01\",\"gpuIndex\":1,\"utilPct\":92,\"tempC\":74,\"powerW\":",
+                "last": "ct\":88,\"tempC\":72,\"powerW\":298,\"memUsedMb\":21900},{\"host\":\"gpu-node-02\",\"gpuIndex\":2,\"utilPct\":5,\"tempC\":38,\"powerW\":42,\"memUsedMb\":600},{\"host\":\"gpu-node-02\",\"",
+                "chars": 1017
+              },
+              "decodeMs": 6500.24
+            }
+          ],
+          "model": "glm-5.3-flash",
+          "hardwareSamples": []
+        },
+        {
+          "concurrency": 4,
+          "streamsOk": 4,
+          "streamsFailed": 0,
+          "meanDecodeTps": 35.61,
+          "medianDecodeTps": 36.26,
+          "minDecodeTps": 29.64,
+          "maxDecodeTps": 40.28,
+          "meanTtftMs": 784.37,
+          "medianTtftMs": 742.12,
+          "aggregateDecodeTps": 118.57,
+          "meanPrefillTps": 75.82,
+          "medianPrefillTps": 79.5,
+          "aggregatePrefillTps": 258.96,
+          "totalPrefillTokens": 236,
+          "totalDecodeTokens": 1596,
+          "totalCompletionTokens": 1600,
+          "durationMs": 14202.27,
+          "error": null,
+          "streams": [
+            {
+              "index": 0,
+              "ttftContentMs": 911.35,
+              "reasoningChunks": 0,
+              "ttftMs": 911.35,
+              "decodeTps": 36.15,
+              "decodeTokens": 399,
+              "completionTokens": 400,
+              "prefillTps": 64.74,
+              "prefillTokens": 59,
+              "totalMs": 11947.74,
+              "error": null,
+              "prompt": "Emit only a JSON array of fake GPU metrics rows. Each object needs host, gpuIndex, utilPct, tempC, powerW, memUsedMb. Invent many rows. No markdown. Keep expanding the array. (stream 1/4)",
+              "http": {
+                "url": "http://127.0.0.1:18000/v1/chat/completions",
+                "status": 200,
+                "headers": {
+                  "content-type": "text/event-stream; charset=utf-8",
+                  "date": "Wed, 02 Sep 2026 21:50:23 GMT",
+                  "server": "uvicorn"
+                },
+                "completionId": "chatcmpl-bec53a3bd9fb70b1",
+                "finishReason": "length",
+                "sseEventCount": 74,
+                "firstSseDataPreview": "{\"id\":\"chatcmpl-bec53a3bd9fb70b1\",\"object\":\"chat.completion.chunk\",\"created\":1788385823,\"model\":\"glm-5.3-flash\",\"choices\":[{\"index\":0,\"delta\":{\"role\":\"assistant\",\"content\":\"\"},\"logprobs\":null,\"finish_reason\":null}],\"prompt_token_ids\":null,\"",
+                "request": {
+                  "model": "glm-5.3-flash",
+                  "maxTokens": 400,
+                  "temperature": 0,
+                  "stream": true,
+                  "promptChars": 187
+                }
+              },
+              "usage": {
+                "promptTokens": 59,
+                "completionTokens": 400,
+                "totalTokens": 459
+              },
+              "contentPreview": {
+                "first": "[{\"host\":\"gpu-node-01\",\"gpuIndex\":0,\"utilPct\":87,\"tempC\":71,\"powerW\":295,\"memUsedMb\":21540},{\"host\":\"gpu-node-01\",\"gpuIndex\":1,\"utilPct\":92,\"tempC\":74,\"powerW\":",
+                "last": "Pct\":88,\"tempC\":72,\"powerW\":298,\"memUsedMb\":21100},{\"host\":\"gpu-node-02\",\"gpuIndex\":2,\"utilPct\":12,\"tempC\":44,\"powerW\":88,\"memUsedMb\":2400},{\"host\":\"gpu-node-02",
+                "chars": 1014
+              },
+              "decodeMs": 11036.28
+            },
+            {
+              "index": 1,
+              "ttftContentMs": 741.88,
+              "reasoningChunks": 0,
+              "ttftMs": 741.88,
+              "decodeTps": 40.28,
+              "decodeTokens": 399,
+              "completionTokens": 400,
+              "prefillTps": 79.53,
+              "prefillTokens": 59,
+              "totalMs": 10648.07,
+              "error": null,
+              "prompt": "Emit only a JSON array of fake GPU metrics rows. Each object needs host, gpuIndex, utilPct, tempC, powerW, memUsedMb. Invent many rows. No markdown. Keep expanding the array. (stream 2/4)",
+              "http": {
+                "url": "http://127.0.0.1:18000/v1/chat/completions",
+                "status": 200,
+                "headers": {
+                  "content-type": "text/event-stream; charset=utf-8",
+                  "date": "Wed, 02 Sep 2026 21:50:23 GMT",
+                  "server": "uvicorn"
+                },
+                "completionId": "chatcmpl-8ce5c0420c2b689e",
+                "finishReason": "length",
+                "sseEventCount": 65,
+                "firstSseDataPreview": "{\"id\":\"chatcmpl-8ce5c0420c2b689e\",\"object\":\"chat.completion.chunk\",\"created\":1788385823,\"model\":\"glm-5.3-flash\",\"choices\":[{\"index\":0,\"delta\":{\"role\":\"assistant\",\"content\":\"\"},\"logprobs\":null,\"finish_reason\":null}],\"prompt_token_ids\":null,\"",
+                "request": {
+                  "model": "glm-5.3-flash",
+                  "maxTokens": 400,
+                  "temperature": 0,
+                  "stream": true,
+                  "promptChars": 187
+                }
+              },
+              "usage": {
+                "promptTokens": 59,
+                "completionTokens": 400,
+                "totalTokens": 459
+              },
+              "contentPreview": {
+                "first": "[\"[\", \"{\\\"host\\\": \\\"gpu-node-01\\\", \\\"gpuIndex\\\": 0, \\\"utilPct\\\": 87, \\\"tempC\\\": 71, \\\"powerW\\\": 295, \\\"memUsedMb\\\": 22410},\", \"{\\\"host\\\": \\\"gpu-node-01\\\", \\\"gpu",
+                "last": "b\\\": 15600},\", \"{\\\"host\\\": \\\"gpu-node-02\\\", \\\"gpuIndex\\\": 3, \\\"utilPct\\\": 88, \\\"tempC\\\": 72, \\\"powerW\\\": 300, \\\"memUsedMb\\\": 22100},\", \"{\\\"host\\\": \\\"gpu-node-03",
+                "chars": 989
+              },
+              "decodeMs": 9906.13
+            },
+            {
+              "index": 2,
+              "ttftContentMs": 742.04,
+              "reasoningChunks": 0,
+              "ttftMs": 742.04,
+              "decodeTps": 36.37,
+              "decodeTokens": 399,
+              "completionTokens": 400,
+              "prefillTps": 79.51,
+              "prefillTokens": 59,
+              "totalMs": 11712.23,
+              "error": null,
+              "prompt": "Emit only a JSON array of fake GPU metrics rows. Each object needs host, gpuIndex, utilPct, tempC, powerW, memUsedMb. Invent many rows. No markdown. Keep expanding the array. (stream 3/4)",
+              "http": {
+                "url": "http://127.0.0.1:18000/v1/chat/completions",
+                "status": 200,
+                "headers": {
+                  "content-type": "text/event-stream; charset=utf-8",
+                  "date": "Wed, 02 Sep 2026 21:50:23 GMT",
+                  "server": "uvicorn"
+                },
+                "completionId": "chatcmpl-bab1c66cf2360c55",
+                "finishReason": "length",
+                "sseEventCount": 73,
+                "firstSseDataPreview": "{\"id\":\"chatcmpl-bab1c66cf2360c55\",\"object\":\"chat.completion.chunk\",\"created\":1788385823,\"model\":\"glm-5.3-flash\",\"choices\":[{\"index\":0,\"delta\":{\"role\":\"assistant\",\"content\":\"\"},\"logprobs\":null,\"finish_reason\":null}],\"prompt_token_ids\":null,\"",
+                "request": {
+                  "model": "glm-5.3-flash",
+                  "maxTokens": 400,
+                  "temperature": 0,
+                  "stream": true,
+                  "promptChars": 187
+                }
+              },
+              "usage": {
+                "promptTokens": 59,
+                "completionTokens": 400,
+                "totalTokens": 459
+              },
+              "contentPreview": {
+                "first": "[\"host\":\"gpu-node-01\",\"gpuIndex\":0,\"utilPct\":87,\"tempC\":71,\"powerW\":295,\"memUsedMb\":22100},{\"host\":\"gpu-node-01\",\"gpuIndex\":1,\"utilPct\":92,\"tempC\":74,\"powerW\":3",
+                "last": "lPct\":97,\"tempC\":79,\"powerW\":315,\"memUsedMb\":25100},{\"host\":\"gpu-node-03\",\"gpuIndex\":2,\"utilPct\":91,\"tempC\":75,\"powerW\":305,\"memUsedMb\":23900},{\"host\":\"gpu-node",
+                "chars": 1015
+              },
+              "decodeMs": 10970.15
+            },
+            {
+              "index": 3,
+              "ttftContentMs": 742.2,
+              "reasoningChunks": 0,
+              "ttftMs": 742.2,
+              "decodeTps": 29.64,
+              "decodeTokens": 399,
+              "completionTokens": 400,
+              "prefillTps": 79.49,
+              "prefillTokens": 59,
+              "totalMs": 14201.73,
+              "error": null,
+              "prompt": "Emit only a JSON array of fake GPU metrics rows. Each object needs host, gpuIndex, utilPct, tempC, powerW, memUsedMb. Invent many rows. No markdown. Keep expanding the array. (stream 4/4)",
+              "http": {
+                "url": "http://127.0.0.1:18000/v1/chat/completions",
+                "status": 200,
+                "headers": {
+                  "content-type": "text/event-stream; charset=utf-8",
+                  "date": "Wed, 02 Sep 2026 21:50:23 GMT",
+                  "server": "uvicorn"
+                },
+                "completionId": "chatcmpl-b12deca4afc329c3",
+                "finishReason": "length",
+                "sseEventCount": 100,
+                "firstSseDataPreview": "{\"id\":\"chatcmpl-b12deca4afc329c3\",\"object\":\"chat.completion.chunk\",\"created\":1788385823,\"model\":\"glm-5.3-flash\",\"choices\":[{\"index\":0,\"delta\":{\"role\":\"assistant\",\"content\":\"\"},\"logprobs\":null,\"finish_reason\":null}],\"prompt_token_ids\":null,\"",
+                "request": {
+                  "model": "glm-5.3-flash",
+                  "maxTokens": 400,
+                  "temperature": 0,
+                  "stream": true,
+                  "promptChars": 187
+                }
+              },
+              "usage": {
+                "promptTokens": 59,
+                "completionTokens": 400,
+                "totalTokens": 459
+              },
+              "contentPreview": {
+                "first": "[\"hostA\", 0, 12, 41, 65, 2048], [\"hostA\", 1, 88, 72, 295, 14200], [\"hostA\", 2, 45, 58, 180, 8100], [\"hostA\", 3, 3, 39, 42, 1024], [\"hostB\", 0, 97, 81, 340, 2200",
+                "last": "7400], [\"hostD\", 3, 8, 40, 50, 1500], [\"hostE\", 0, 99, 84, 350, 23500], [\"hostE\", 1, 71, 68, 255, 13200], [\"hostE\", 2, 29, 49, 105, 5100], [\"hostE\", 3, 66, 64, ",
+                "chars": 646
+              },
+              "decodeMs": 13459.4
+            }
+          ],
+          "model": "glm-5.3-flash",
+          "hardwareSamples": []
+        }
+      ],
+      "error": null,
+      "durationMs": 35457
+    }
+  ]
+}

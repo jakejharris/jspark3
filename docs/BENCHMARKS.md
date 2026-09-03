@@ -2,22 +2,40 @@
 
 Every number on this page is taken from `results/results.json` and is
 reconciled against it by the release validator. Each table states its
-workload, estimator, sample size, and conditions, because rates measured
-under different conventions are not comparable, and most of the differences
-below are exactly that kind.
+workload, estimator, sample size, and conditions. The headline comparisons
+use either the same screen, the same author protocol, or the same agent task;
+the limitations beside each one state what was not controlled.
 
-The evidence is kept in three classes, and they are never merged into one
-table, one delta, or one ranking:
+The evidence is kept in four classes. A comparison can cross classes only
+when its shared basis and limitations are stated:
 
 | Class | What it is | What may be said about it |
 |---|---|---|
-| **Published reference recipes** | Recipes a DGX Spark owner could obtain publicly before this release, with the numbers their authors reported | Quoted with their conditions and sources; no delta or rank against JSpark3 v1 |
-| **Local reproduction of a published recipe** | A published recipe run on this fleet, with its pinned source identity and every adaptation listed | Reported with its fidelity qualifier; never described as exact unless the source's own harness was replayed |
+| **Published reference recipes** | Recipes a DGX Spark owner could obtain publicly before this release, with the numbers their authors reported | Quoted with their conditions and sources; compared with a local result only when the protocol matches and the separate fleet and date are explicit |
+| **Local author-protocol measurement** | The JSpark3 release build measured with a pinned public author's harness | Reported with the author commit, local conditions, and exact receipt |
+| **Local reproduction of a published recipe** | A published recipe run on this fleet, with its pinned source identity and every adaptation listed | Reported with its fidelity qualifier; same-task throughput may be compared when independent trajectories are explicit |
 | **Internal ablation** | The matched three-Spark control: the identical recipe with the overlay disabled, an unreleased internal development build | The project's causal A/B for the overlay; not a market comparison and not a competitor |
 
 Grade of all locally measured evidence: `ENGINEERING-EVIDENCE`. It was
 produced by the project's own campaign on its own fleet. No third-party
 reproduction exists yet.
+
+## Headline comparisons
+
+| Claim | JSpark3 v1 | Two-Spark recipe | Basis and exact receipts |
+|---|---:|---:|---|
+| Single-stream code decode | 66.257 tok/s | 44.562552 tok/s | 1.49x as fast on the same frozen screen. JSpark3 is the median of three batteries under `results/evidence/candidate/c1-battery-r1/` through `c1-battery-r3/`; the compatibility-adapted Mia run is one battery under `results/evidence/reference/mia-tp2-current-c190db1a-adapted/rapid-screen/`. |
+| sparkDash clamp-code time to first token | 391.33 ms | 719 ms | Same sparkDash author protocol, but not a same-day head-to-head. The JSpark3 receipt is `results/evidence/candidate/sparkdash/SPARKDASH-RESULT.json`; the Mia value is author-reported in `results/evidence/reference/published-references.json`. |
+| sparkDash clamp-code aggregate decode at four streams | 251.13 tok/s, 62.80 per stream | 146.5 tok/s | Same sparkDash author protocol, but separate fleets and publication dates. Receipts are the same two paths as the preceding row. |
+| Same agent task and prompt | 44.583 tok/s | 24.728 tok/s | 1.8x the aggregate decode throughput. Receipts: `results/evidence/candidate/agent-demo/RESULT.json` and `results/evidence/reference/mia-tp2-current-c190db1a-adapted/agent-summary.json`. The agents followed independent trajectories. |
+
+The original rapid-screen plan behind the first row remains marked
+`rate_claim_eligible: false` because it omits the broader publication-quality
+battery and the adapted Mia arm has one screen battery. The maintainer
+approved the measured comparison for publication with that limitation
+preserved. The two sparkDash rows come from the imported first-class evidence
+set, which records a warm server, empty KV before the block, thinking off,
+temperature 0, 400 max tokens, and no failed streams.
 
 ## Minimum fields beside every published number
 
@@ -44,10 +62,10 @@ reproduction exists yet.
 These are the strongest defensible public references available before this
 release: the closest public three-Spark recipes, plus Mia's two-Spark recipe
 with its different node count disclosed. **Every number in this section is
-author-reported from the source named in its row. None was measured on this
-fleet, and no percentage, delta, or ranking against JSpark3 v1 is computed
-from any of them**, because prompts, quantization lanes, speculation,
-context, clocking, safety envelope, and estimators all differ.
+author-reported from the source named in its row.** Most do not have a local
+protocol match, so they remain context rather than comparisons. The sparkDash
+rows are the exception: the release includes a local run of the pinned author
+instrument, compared above with the separate fleet and date disclosed.
 
 ### FlyCockpit TP3
 
@@ -131,9 +149,9 @@ the local audit.
 Runs of a published recipe on this fleet. Each carries its pinned source
 identity and a fidelity qualifier. **None of these is an exact reproduction,
 and none replays a source's own published harness**, so no row here restates
-an author-reported figure from section 1. All three agent rows are
-same-prompt product runs with independent trajectories: they describe what
-each run did, not which recipe is faster.
+an author-reported figure from section 1. The agent rows are same-task product
+runs with independent trajectories. Their achieved task throughput can be
+compared, but it does not isolate an engine-only effect.
 
 | Lineage | Fidelity | Nodes | TP | Agent aggregate decode (tok/s) | Generated tokens | Mean TTFT (s) |
 |---|---|---:|---:|---:|---:|---:|
@@ -163,8 +181,11 @@ deviation is `GLM53_INDEXER_WORKSPACE=rightsize`, which reclaimed about
 makes the full 1,000,000-token current source runnable under this safety
 envelope, which is precisely why this is an adapted local reproduction and
 not an exact one. Its 24-request rapid screen and its cold-prefill ladder are
-in [TECHNICAL-REPORT.md](TECHNICAL-REPORT.md); the screen's own plan marks
-rate-claim eligibility false, so it is reported there and nowhere else.
+in [TECHNICAL-REPORT.md](TECHNICAL-REPORT.md). The screen's original plan
+marks rate-claim eligibility false because it omits the broader quality
+battery. That flag remains in the evidence; the headline comparison publishes
+the measured code rate by maintainer decision and calls out the one-battery
+limitation.
 
 **`fly-derived-9093765c-adapted`** pinned FlyCockpit at
 `9093765c757bd1976372196e44af84a67cf86bad` and its mesh plugin, but
@@ -330,15 +351,16 @@ tokens divided by time to first visible token. Both responses were exactly
 The overlay costs prefill throughput. This is a measured regression and part
 of the trade.
 
-### Agent demonstration (not a controlled comparison)
+### Agent demonstration (independent trajectories)
 
 Both arms ran the same agent task from the same prompt (identical prompt
 hash), producing a WebGL voxel artifact through a tool-using coding agent
 with prompt caching. The trajectories were independent, so request counts,
 token counts, and cache behaviour differ; the numbers describe what each run
-did, not a ranking. The JSpark3 v1 run used high-effort thinking. The control
-figures come from a server counter delta against an attribution reference
-point.
+did and can be compared as achieved task throughput, but they do not isolate
+an engine-only or overlay-only effect. The JSpark3 v1 run used high-effort
+thinking. The control figures come from a server counter delta against an
+attribution reference point.
 
 | | Matched control run | JSpark3 v1 run |
 |---|---:|---:|
@@ -370,14 +392,15 @@ measured, with both misses preserved, rather than re-run until it passed.
 
 ## Editorial rules this page follows
 
-- The three classes above are never combined into one table or one ranking.
-- No percentage is ever computed between JSpark3 v1 and a published reference
-  or a local reproduction; the validator refuses a percentage that shares a
-  table row or a sentence with either class.
+- A cross-class comparison names its shared screen, author protocol, or task,
+  along with every material mismatch.
+- No percentage is computed between JSpark3 v1 and a published reference or a
+  local reproduction; the validator refuses a percentage that shares a table
+  row or a sentence with either class.
 - The overlay-disabled control is always named as the matched three-Spark
   control and always marked as an unreleased internal development build.
 - Same-prompt agent demonstrations are kept apart from fixed-request engine
-  screens.
+  screens and explicitly marked as independent trajectories.
 - An adapted run is never called exact, and a number that cannot be tied to a
   receipt or an immutable URL is not published at all.
 
@@ -386,6 +409,7 @@ measured, with both misses preserved, rather than re-run until it passed.
 | Table | Receipts |
 |---|---|
 | Published reference recipes | `results/evidence/reference/published-references.json` (author-reported values, sources, and minimum fields) |
+| sparkDash author protocol | `results/evidence/candidate/sparkdash/` (`SPARKDASH-RESULT.json`, source validation, pinned-source manifest, runner, validator, adaptation, and publication-redaction record) |
 | Local reproductions | `results/evidence/reference/mia-tp2-historical-0e2e78f/`, `results/evidence/reference/mia-tp2-current-c190db1a-adapted/`, `results/evidence/reference/fly-derived-9093765c-adapted/`, `results/evidence/reference/mia-tp2-current-exact-attempt/finding.json` |
 | C1 batteries | `results/evidence/candidate/c1-battery-r{1,2,3}/` (MATRIX, RUN, PLAN, REQUESTS, per-request results, windows, raw streams, counter deltas), `results/evidence/candidate/c1-campaign.json` |
 | Internal ablation control batteries | `results/evidence/internal-ablation-control/c1-battery/`, `results/evidence/internal-ablation-control/c1-matched-control-r{4,5,6}/` |

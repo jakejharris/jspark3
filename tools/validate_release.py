@@ -61,6 +61,14 @@ REQUIRED = [
     "results/evidence/reference/mia-tp2-current-c190db1a-adapted/rapid-screen/MATRIX.json",
     "results/evidence/reference/mia-tp2-current-exact-attempt/finding.json",
     "results/evidence/reference/fly-derived-9093765c-adapted/agent-summary.json",
+    "results/evidence/candidate/sparkdash/README.md",
+    "results/evidence/candidate/sparkdash/ADAPTATION.md",
+    "results/evidence/candidate/sparkdash/PUBLICATION.json",
+    "results/evidence/candidate/sparkdash/SOURCE-MANIFEST.json",
+    "results/evidence/candidate/sparkdash/SPARKDASH-RESULT.json",
+    "results/evidence/candidate/sparkdash/VALIDATION.json",
+    "results/evidence/candidate/sparkdash/sparkdash_runner.mjs",
+    "results/evidence/candidate/sparkdash/validate_results.py",
     "recipe/README.md", "recipe/SHA256SUMS", "recipe/.env.example", "recipe/.gitignore",
     "recipe/LICENSE", "recipe/THIRD_PARTY_NOTICES.md", "recipe/REQUIRED_ATTRIBUTION.md",
     "recipe/config/profile.json", "recipe/config/checkpoint-contract.json",
@@ -877,6 +885,109 @@ def check_results(root: Path, report: Report) -> dict:
     screen = local.get("mia-tp2-current-c190db1a-adapted", {}).get("rapid_screen", {})
     if screen.get("rate_claim_eligible") is not False:
         problems.append("the adapted rapid screen must stay marked rate-claim ineligible")
+    # Maintainer-approved headline comparisons preserve their underlying caveats and
+    # recompute from the canonical measurement blocks rather than trusting public prose.
+    headlines = results.get("headline_comparisons", {})
+    code = headlines.get("single_stream_code", {})
+    code_candidate = c1["candidate_campaign_medians"]["c1_code"]
+    code_mia = screen["per_stream_median_tok_s"]["c1-code"]
+    if code.get("candidate_campaign_median_tok_s") != code_candidate:
+        problems.append("headline code candidate differs from campaign median")
+    if code.get("mia_current_rapid_screen_tok_s") != code_mia:
+        problems.append("headline code reference differs from adapted Mia screen")
+    if code.get("ratio") != code_candidate / code_mia:
+        problems.append("headline code ratio drift")
+    if code.get("source_screen_rate_claim_eligible") is not False or not code.get("publication_decision"):
+        problems.append("headline code comparison must preserve the source-screen gate and publication decision")
+    if display.get("headline.code.candidate") != f"{code_candidate:.1f}":
+        problems.append("headline code candidate display drift")
+    if display.get("headline.code.mia_current") != f"{code_mia:.1f}":
+        problems.append("headline code Mia display drift")
+    if display.get("headline.code.ratio") != f"{code_candidate / code_mia:.2f}":
+        problems.append("headline code ratio display drift")
+
+    agent = headlines.get("agent_task", {})
+    agent_candidate = results["agent_demonstration"]["candidate"]["decode_tok_s"]
+    agent_mia = local["mia-tp2-current-c190db1a-adapted"]["agent_trajectory"]["decode_tok_s"]
+    if agent.get("candidate_decode_tok_s") != agent_candidate or agent.get("mia_current_decode_tok_s") != agent_mia:
+        problems.append("headline agent values differ from their measurement blocks")
+    if agent.get("ratio") != agent_candidate / agent_mia:
+        problems.append("headline agent ratio drift")
+    if display.get("headline.agent.candidate") != f"{agent_candidate:.1f}":
+        problems.append("headline agent candidate display drift")
+    if display.get("headline.agent.mia_current") != f"{agent_mia:.1f}":
+        problems.append("headline agent Mia display drift")
+    if display.get("headline.agent.ratio") != f"{agent_candidate / agent_mia:.1f}":
+        problems.append("headline agent ratio display drift")
+
+    spark_root = root / "results/evidence/candidate/sparkdash"
+    spark = json.loads((spark_root / "SPARKDASH-RESULT.json").read_text(encoding="utf-8"))
+    validation = json.loads((spark_root / "VALIDATION.json").read_text(encoding="utf-8"))
+    publication = json.loads((spark_root / "PUBLICATION.json").read_text(encoding="utf-8"))
+    source_manifest = json.loads((spark_root / "SOURCE-MANIFEST.json").read_text(encoding="utf-8"))
+    if spark.get("source") != "sparkDash@e93fc87d54c8699e98b63a764ab260bf9d446c52/server/collectors/DecodeBench.js":
+        problems.append("sparkDash receipt source identity drift")
+    jobs = {job.get("config", {}).get("promptType"): job for job in spark.get("jobs", [])}
+    if set(jobs) != {"structured", "prose", "code", "json"}:
+        problems.append("sparkDash receipt prompt set drift")
+        spark_code_rows = {}
+    else:
+        spark_code_rows = {row.get("concurrency"): row for row in jobs["code"].get("results", [])}
+        if any(job.get("status") != "completed" or job.get("error") or
+               any(row.get("streamsFailed") != 0 for row in job.get("results", []))
+               for job in jobs.values()):
+            problems.append("sparkDash receipt contains an incomplete or failed run")
+    validated_rows = {row.get("concurrency"): row for row in
+                      validation.get("results", {}).get("sparkdash", {}).get("code", [])}
+    selected = publication.get("selected_results", {})
+    measured = results.get("sparkdash_measurement", {}).get("code_results", {})
+    c1_row, c4_row = spark_code_rows.get(1, {}), spark_code_rows.get(4, {})
+    comparisons = (("c1", c1_row, validated_rows.get(1, {}), selected.get("c1", {})),
+                   ("c4", c4_row, validated_rows.get(4, {}), selected.get("c4", {})))
+    for label, receipt_row, validated_row, selected_row in comparisons:
+        if not receipt_row or any(receipt_row.get(key) != validated_row.get(key) for key in
+                                  ("meanDecodeTps", "aggregateDecodeTps", "meanTtftMs",
+                                   "streamsOk", "streamsFailed", "totalCompletionTokens")):
+            problems.append(f"sparkDash {label} receipt differs from source validation")
+        result_row = measured.get(label, {})
+        if result_row.get("aggregate_decode_tok_s") != receipt_row.get("aggregateDecodeTps") or \
+           result_row.get("mean_decode_tok_s") != receipt_row.get("meanDecodeTps") or \
+           result_row.get("mean_ttft_ms") != receipt_row.get("meanTtftMs"):
+            problems.append(f"sparkDash {label} results.json values differ from receipt")
+        selected_prefix = "mean" if label == "c1" else "aggregate"
+        selected_rate_key = selected_prefix + "_decode_tok_s"
+        receipt_rate_key = "meanDecodeTps" if label == "c1" else "aggregateDecodeTps"
+        if selected_row.get(selected_rate_key) != receipt_row.get(receipt_rate_key):
+            problems.append(f"sparkDash {label} publication selection differs from receipt")
+    spark_c1_ttft = c1_row.get("meanTtftMs")
+    spark_c4_aggregate = c4_row.get("aggregateDecodeTps")
+    spark_c4_stream = c4_row.get("meanDecodeTps")
+    if display.get("sparkdash.code.c1.mean_decode") != f"{c1_row.get('meanDecodeTps', 0):.2f}" or \
+       display.get("sparkdash.code.c1.mean_ttft_ms") != f"{spark_c1_ttft or 0:.2f}" or \
+       display.get("sparkdash.code.c1.mean_ttft_ms_rounded") != f"{spark_c1_ttft or 0:.0f}" or \
+       display.get("sparkdash.code.c4.aggregate_decode") != f"{spark_c4_aggregate or 0:.2f}" or \
+       display.get("sparkdash.code.c4.aggregate_decode_rounded") != f"{spark_c4_aggregate or 0:.0f}" or \
+       display.get("sparkdash.code.c4.mean_per_stream_decode") != f"{spark_c4_stream or 0:.2f}":
+        problems.append("sparkDash display values drift from receipt")
+    mia_reported = published["references"]["mia-tp2-c190db1a"]["reported"]
+    if display.get("ref.mia.sparkdash.c1_ttft_ms") != f"{mia_reported['sparkdash_c1_ttft_ms']:.0f}":
+        problems.append("published Mia sparkDash TTFT display drift")
+    if headlines.get("sparkdash_c1_ttft", {}).get("candidate_mean_ttft_ms") != spark_c1_ttft or \
+       headlines.get("sparkdash_c1_ttft", {}).get("mia_author_reported_ttft_ms") != mia_reported["sparkdash_c1_ttft_ms"]:
+        problems.append("headline sparkDash TTFT values drift")
+    if headlines.get("sparkdash_c4_aggregate", {}).get("candidate_aggregate_decode_tok_s") != spark_c4_aggregate or \
+       headlines.get("sparkdash_c4_aggregate", {}).get("mia_author_reported_aggregate_decode_tok_s") != mia_reported["sparkdash_c4_aggregate_tok_s"]:
+        problems.append("headline sparkDash aggregate values drift")
+    if validation.get("verdict") != "PASS" or publication.get("source_validation_verdict") != "PASS":
+        problems.append("sparkDash source validation is not PASS")
+    if source_manifest.get("mia_sparkdash", {}).get("commit") != "e93fc87d54c8699e98b63a764ab260bf9d446c52" or \
+       source_manifest.get("mia_sparkdash", {}).get("author_files_modified") is not False:
+        problems.append("sparkDash source manifest does not pin the unmodified author instrument")
+    if sha256(spark_root / "SOURCE-MANIFEST.json") != publication.get("source_receipt_sha256_before_publication_redaction", {}).get("SOURCE-MANIFEST.json") or \
+       sha256(spark_root / "validate_results.py") != publication.get("source_receipt_sha256_before_publication_redaction", {}).get("validate_results.py") or \
+       sha256(spark_root / "ADAPTATION.md") != publication.get("source_receipt_sha256_before_publication_redaction", {}).get("ADAPTATION.md") or \
+       publication.get("publication_redactions", {}).get("measurement_values_changed") is not False:
+        problems.append("sparkDash publication provenance or privacy-redaction contract drift")
     if set(results.get("display_class", {})) != set(display):
         problems.append("every display value must carry an evidence class")
     if problems:

@@ -374,6 +374,12 @@
     "gate.code_median": "66.257",
     "gate.code_miss": "0.743",
     "gate.code_miss_pct": "1.11%",
+    "headline.agent.candidate": "44.6",
+    "headline.agent.mia_current": "24.7",
+    "headline.agent.ratio": "1.8",
+    "headline.code.candidate": "66.3",
+    "headline.code.mia_current": "44.6",
+    "headline.code.ratio": "1.49",
     "local.fly.decode": "29.042",
     "local.fly.effective_prompt": "9,962",
     "local.fly.generated": "130,971",
@@ -489,6 +495,7 @@
     "ref.mia.bench.tp1_structured": "61.7",
     "ref.mia.mtp_k2": "24.6",
     "ref.mia.sparkdash.c1": "62.9",
+    "ref.mia.sparkdash.c1_ttft_ms": "719",
     "ref.mia.sparkdash.c2_aggregate": "103.3",
     "ref.mia.sparkdash.c2_stream": "51.7",
     "ref.mia.sparkdash.c2_ttft": "6.62",
@@ -518,7 +525,13 @@
     "sched.c48.delta": "+3.47%",
     "sched.c48.fairness": "0.148",
     "sched.c48.internal_ablation_control": "229.966",
-    "sched.c48.ttft_p90": "96.722"
+    "sched.c48.ttft_p90": "96.722",
+    "sparkdash.code.c1.mean_decode": "84.47",
+    "sparkdash.code.c1.mean_ttft_ms": "391.33",
+    "sparkdash.code.c1.mean_ttft_ms_rounded": "391",
+    "sparkdash.code.c4.aggregate_decode": "251.13",
+    "sparkdash.code.c4.aggregate_decode_rounded": "251",
+    "sparkdash.code.c4.mean_per_stream_decode": "62.80"
   },
   "display_class": {
     "c1.control.r4.c1-code": "internal_ablation",
@@ -588,6 +601,12 @@
     "gate.code_median": "internal_gate",
     "gate.code_miss": "internal_gate",
     "gate.code_miss_pct": "internal_gate",
+    "headline.agent.candidate": "local_measurement",
+    "headline.agent.mia_current": "local_reproduction",
+    "headline.agent.ratio": "cross_recipe_comparison",
+    "headline.code.candidate": "local_measurement",
+    "headline.code.mia_current": "local_reproduction",
+    "headline.code.ratio": "cross_recipe_comparison",
     "local.fly.decode": "local_reproduction",
     "local.fly.effective_prompt": "local_reproduction",
     "local.fly.generated": "local_reproduction",
@@ -703,6 +722,7 @@
     "ref.mia.bench.tp1_structured": "published_reference",
     "ref.mia.mtp_k2": "published_reference",
     "ref.mia.sparkdash.c1": "published_reference",
+    "ref.mia.sparkdash.c1_ttft_ms": "published_reference",
     "ref.mia.sparkdash.c2_aggregate": "published_reference",
     "ref.mia.sparkdash.c2_stream": "published_reference",
     "ref.mia.sparkdash.c2_ttft": "published_reference",
@@ -732,7 +752,13 @@
     "sched.c48.delta": "internal_ablation",
     "sched.c48.fairness": "internal_ablation",
     "sched.c48.internal_ablation_control": "internal_ablation",
-    "sched.c48.ttft_p90": "internal_ablation"
+    "sched.c48.ttft_p90": "internal_ablation",
+    "sparkdash.code.c1.mean_decode": "local_author_protocol",
+    "sparkdash.code.c1.mean_ttft_ms": "local_author_protocol",
+    "sparkdash.code.c1.mean_ttft_ms_rounded": "local_author_protocol",
+    "sparkdash.code.c4.aggregate_decode": "local_author_protocol",
+    "sparkdash.code.c4.aggregate_decode_rounded": "local_author_protocol",
+    "sparkdash.code.c4.mean_per_stream_decode": "local_author_protocol"
   },
   "evidence_grade": "ENGINEERING-EVIDENCE",
   "hardware": {
@@ -741,6 +767,45 @@
     "gpu": "NVIDIA GB10 (SM 12.1)",
     "nodes": 3,
     "system": "NVIDIA DGX Spark"
+  },
+  "headline_comparisons": {
+    "agent_task": {
+      "candidate_decode_tok_s": 44.583215765,
+      "candidate_receipt": "results/evidence/candidate/agent-demo/RESULT.json",
+      "comparison_kind": "same task and prompt, independent agent trajectories",
+      "mia_current_decode_tok_s": 24.728,
+      "mia_current_fidelity": "compatibility-adapted",
+      "mia_current_receipt": "results/evidence/reference/mia-tp2-current-c190db1a-adapted/agent-summary.json",
+      "ratio": 1.8029446685943058,
+      "statement": "JSpark3 delivered 1.8x the aggregate decode throughput of the adapted current two-Spark recipe on the same agent task and prompt; the agents followed independent trajectories"
+    },
+    "single_stream_code": {
+      "candidate_campaign_median_tok_s": 66.25737445669152,
+      "candidate_receipts": "results/evidence/candidate/c1-battery-r1/ through c1-battery-r3/",
+      "comparison_kind": "same frozen 24-request screen on the same fleet in separate campaigns",
+      "mia_current_fidelity": "compatibility-adapted",
+      "mia_current_rapid_screen_tok_s": 44.56255225859717,
+      "mia_current_receipt": "results/evidence/reference/mia-tp2-current-c190db1a-adapted/rapid-screen/",
+      "ratio": 1.4868397589123479,
+      "source_screen_rate_claim_eligible": false,
+      "statement": "JSpark3 was 1.49x as fast on single-stream code decode as the adapted current two-Spark recipe, 66.3 versus 44.6 tok/s",
+      "publication_decision": "Maintainer approved for publication with the screen's original eligibility flag and its single-battery limitation preserved"
+    },
+    "sparkdash_c1_ttft": {
+      "candidate_mean_ttft_ms": 391.33,
+      "comparison_kind": "same author protocol, separate fleets and published at different times",
+      "mia_author_reported_ttft_ms": 719,
+      "receipt": "results/evidence/candidate/sparkdash/SPARKDASH-RESULT.json",
+      "statement": "391 ms time to first token on the sparkDash clamp-code prompt, down from Mia's author-reported 719 ms on two Sparks"
+    },
+    "sparkdash_c4_aggregate": {
+      "candidate_aggregate_decode_tok_s": 251.13,
+      "candidate_mean_per_stream_decode_tok_s": 62.8,
+      "comparison_kind": "same author protocol, separate fleets and published at different times",
+      "mia_author_reported_aggregate_decode_tok_s": 146.5,
+      "receipt": "results/evidence/candidate/sparkdash/SPARKDASH-RESULT.json",
+      "statement": "251 tok/s aggregate decode at four streams on the sparkDash clamp-code prompt, up from Mia's author-reported 146.5 tok/s on two Sparks"
+    }
   },
   "internal_ablation": {
     "admission_rule": "same fleet, checkpoints, topology, base runtime and configuration, workload, estimator, and safety contract, with the intended delta named",
@@ -752,7 +817,7 @@
   "local_reproductions": {
     "admission_rule": "the external source identity is pinned and a local server and run receipt exists; every site, safety, or compatibility adaptation is listed",
     "class_label": "Local reproduction of a published recipe",
-    "editorial_rule": "an adapted reproduction is never described as exact, and a same-prompt agent run is product evidence with an independent trajectory, not an engine-rate comparison",
+    "editorial_rule": "an adapted reproduction is never described as exact; same-task rates may be compared as product evidence only when the fidelity and independent trajectories are stated",
     "fly-derived-9093765c-adapted": {
       "agent_trajectory": {
         "arm": "fly-derived-9093765c-adapted",
@@ -791,7 +856,7 @@
         "fidelity": "compatibility-adapted",
         "generation_tokens": 76540,
         "mean_ttft_seconds": 2.413,
-        "note": "same agent prompt as the historical reproduction, independent trajectory; a product run, not an engine-rate comparison",
+        "note": "same agent task and prompt as the JSpark3 demonstration, independent trajectory; comparable as product-task throughput with the trajectory limitation stated",
         "task_requests": 24,
         "thinking_sampling": "high-effort thinking, provider default sampling"
       },
@@ -810,7 +875,8 @@
           "c6": 37.98521899780441
         },
         "rate_claim_eligible": false,
-        "rate_claim_note": "the screen's own plan omits the broader publication quality battery and marks rate-claim eligibility false",
+        "publication_decision": "maintainer approved the same-screen comparison for publication with this original eligibility flag and its single-battery limitation preserved",
+        "rate_claim_note": "the screen's own plan omits the broader publication quality battery and its original record marks rate-claim eligibility false",
         "requests": 24,
         "retries": 0,
         "service_window_tok_s": {
@@ -883,7 +949,7 @@
     "admission_rule": "the recipe was publicly available before this release and the number comes from its author, not from this fleet",
     "basis": "author-reported",
     "class_label": "Published reference recipes",
-    "editorial_rule": "no percentage, delta, or ranking is computed between this release and any row; instruments differ",
+    "editorial_rule": "published values remain author-reported; comparison is permitted only for a matching pinned author protocol with separate fleet and date disclosed",
     "references": {
       "flycockpit-tp3-9093765c": {
         "basis": "author-reported",
@@ -1051,6 +1117,35 @@
         "tensor_parallel": 2,
         "thinking_sampling": "thinking off, temperature 0",
         "workload": "official sparkDash Decode protocol (warm, empty KV, 400 tokens, graphs, fused EXL3 MoE; structured count 1-200 and clamp code are high-accept prompt types) and the lab tests/bench_decode.py harness"
+      }
+    }
+  },
+  "sparkdash_measurement": {
+    "author_instrument": "sparkDash DecodeBench",
+    "basis": "locally measured with the pinned author protocol",
+    "conditions": "three NVIDIA DGX Sparks, release build, warm server, empty KV before the block, thinking off, temperature 0, 400 max tokens",
+    "prompt": "code: clamp_00 through clamp_49 Python helpers",
+    "receipt": "results/evidence/candidate/sparkdash/SPARKDASH-RESULT.json",
+    "source_commit": "e93fc87d54c8699e98b63a764ab260bf9d446c52",
+    "source_release": "1.8.5",
+    "validation_receipt": "results/evidence/candidate/sparkdash/VALIDATION.json",
+    "publication_receipt": "results/evidence/candidate/sparkdash/PUBLICATION.json",
+    "code_results": {
+      "c1": {
+        "aggregate_decode_tok_s": 84.47,
+        "mean_decode_tok_s": 84.47,
+        "mean_ttft_ms": 391.33,
+        "streams_failed": 0,
+        "streams_ok": 1,
+        "total_completion_tokens": 400
+      },
+      "c4": {
+        "aggregate_decode_tok_s": 251.13,
+        "mean_decode_tok_s": 62.8,
+        "mean_ttft_ms": 6441.67,
+        "streams_failed": 0,
+        "streams_ok": 4,
+        "total_completion_tokens": 1600
       }
     }
   },

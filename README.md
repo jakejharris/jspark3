@@ -1,15 +1,79 @@
 # JSpark3 v1
 
-**JSpark3 turns three NVIDIA DGX Sparks into one fast GLM-5.3 Flash server,
-with a reproducible TP3 recipe and public benchmarks.**
+**JSpark3 turns three NVIDIA DGX Sparks into one OpenAI-compatible GLM-5.3
+Flash endpoint, with a reproducible TP3 recipe and public benchmarks.**
 
-> **License and weight provenance:** JSpark3's original recipe code and
-> documentation are Apache-2.0. The Hugging Face weights are Brandon M.
-> Music's exact EXL3/TR3 quantization, re-hosted byte-for-byte by Mia-AiLab
-> and mirrored by JSpark3 without changing a weight byte. They remain under
-> the attribution-required, source-available ShapleyMcg License v1.0,
-> including its named exclusion; Z.AI's base model remains MIT. DFlash2 is
-> not mirrored and remains a separate CC BY-NC-ND 4.0 dependency.
+> **Weights and licenses:** Brandon M. Music created the
+> [ShapleyMcg](https://github.com/brandonmmusic-max/shapleymcg) quantization.
+> Its license requires [attribution](#attribution) and includes
+> a named exclusion. DFlash2 is a separate non-commercial dependency. Read
+> the [license boundaries](#license) before serving.
+
+## Results
+
+| Measured result | JSpark3 v1 |
+|---|---:|
+| Single-stream code decode | **1.49x faster**, 66.3 vs 44.6 tok/s on the two-Spark recipe |
+| sparkDash clamp-code time to first token | **391 ms**, down from 719 ms on two Sparks |
+| Four-stream aggregate decode | **251 tok/s**, up from 146.5 tok/s on two Sparks |
+| Same agent task and prompt | **1.8x the throughput**, 44.6 vs 24.7 tok/s on two Sparks |
+| Configured context | **1,000,000 tokens** |
+
+The code-screen comparison and agent task were run on this fleet against the
+compatibility-adapted current Mia two-Spark recipe. sparkDash used the same
+pinned author protocol as Mia's published figures, on separate fleets and
+dates. See the [exact figures, receipts, and caveats](docs/BENCHMARKS.md#headline-comparisons)
+and [machine-readable results](results/results.json).
+
+## Prerequisites
+
+- Three DGX Sparks with two RoCE-v2 interfaces each, cabled as a triangle with
+  a management network and non-interactive SSH. Each direct leg needs its own
+  IPv4 network at MTU 9000.
+- Docker with the NVIDIA runtime, cgroup v2, and `rdma-core` on every Spark,
+  plus at least 72 GiB of available host memory, 8 GiB of free work and model
+  filesystem space, and about 180 GB for the model tree on each rank.
+- A Linux or macOS controller with Python 3.9 or newer, `ssh`, `rsync`, and
+  `sha256sum`.
+
+## Quick start
+
+From a fresh clone on the controller, copy the checked recipe to the same path
+on every rank:
+
+```bash
+git clone --branch v1.0.0 https://github.com/jakejharris/jspark3.git
+cd jspark3
+(cd recipe && sha256sum -c SHA256SUMS)
+for host in rank0 rank1 rank2; do
+  rsync -a --delete recipe/ "$host":/srv/jspark3-recipe/
+done
+```
+
+Next, stage the pinned image, checkpoints, FlyCockpit source, TP3 runtime
+views, and fabric settings on every rank by following
+[installation steps 3 through 5](docs/INSTALL.md#3-fetch-the-pinned-inputs-on-every-rank).
+Those steps contain the required large downloads and host-specific interface
+values. Then fill in the fleet values and run the fail-closed lifecycle:
+
+```bash
+cd recipe
+cp .env.example .env
+# Replace every placeholder in .env before continuing.
+./scripts/clean-room-setup.sh --env-file .env --output preflight.json
+preflight_sha=$(sha256sum preflight.json | cut -d' ' -f1)
+./scripts/start.sh --env-file .env --preflight preflight.json \
+  --preflight-sha256 "$preflight_sha" --confirm START-JSPARK3
+./scripts/health.sh --env-file .env --manifest jspark3-release-manifest.json
+./scripts/verify.sh --env-file .env --manifest jspark3-release-manifest.json \
+  --output verify.json --log-output verify-rank0.log
+```
+
+The endpoint is OpenAI-compatible on rank 0, model name `glm-5.3-flash`,
+thinking off by default and switchable per request. The full setup from bare
+hosts is in [docs/INSTALL.md](docs/INSTALL.md).
+
+## What JSpark3 is
 
 JSpark3 v1 is a reproducible serving and runtime recipe. It runs the
 EXL3/TR3 4-bpw GLM-5.3 Flash checkpoint with tensor parallel 3 and expert
@@ -29,6 +93,14 @@ verified before maintainer merge into public main at
 byte and then builds the same runtime the evidence in this repository was
 measured on.
 
+> **License and weight provenance:** JSpark3's original recipe code and
+> documentation are Apache-2.0. The Hugging Face weights are Brandon M.
+> Music's exact EXL3/TR3 quantization, re-hosted byte-for-byte by Mia-AiLab
+> and mirrored by JSpark3 without changing a weight byte. They remain under
+> the attribution-required, source-available ShapleyMcg License v1.0,
+> including its named exclusion; Z.AI's base model remains MIT. DFlash2 is
+> not mirrored and remains a separate CC BY-NC-ND 4.0 dependency.
+
 > **Release status: [v1.0.0](https://github.com/jakejharris/jspark3/releases/tag/v1.0.0), released 2026-09-02; attributed Hugging Face target mirror public.**
 > The immutable terminal Hub main revision is
 > [`e7c34dba923916754cfcb0bdf6c2c75a9b7ff1fc`](https://huggingface.co/jakejharris/jspark3/commit/e7c34dba923916754cfcb0bdf6c2c75a9b7ff1fc),
@@ -47,10 +119,11 @@ publicly, and where this recipe sits beside that. The reference rows below are
 **author-reported**: measured by each recipe's own author, on that author's
 hardware, with that author's harness. The JSpark3 v1 row is our own local
 measurement, and the Basis column states the conditions of every row.
-**No percentage, delta, or ranking is computed between any two rows**, because
-prompts, quantization lanes, speculation, context, clocking, safety envelope,
-and estimators all differ. Read the rows as five separate measurements that
-happen to share a page, not as a scoreboard.
+Rows without a matched local protocol remain context, because prompts,
+quantization lanes, speculation, context, clocking, safety envelope, and
+estimators differ. The headline exceptions are documented separately: the
+same frozen screen, the same sparkDash author protocol, and the same agent
+task and prompt, each with its remaining mismatch stated.
 
 | Recipe | Nodes | Lane | Context | Decode (tok/s) | Basis |
 |---|---:|---|---:|---|---|
@@ -61,19 +134,20 @@ happen to share a page, not as a scoreboard.
 | jetnet TP3 `bfc820ec` | 3 | NVFP4 with Marlin W4A16, MTP-4 | 512K | 35.2; DFlash2 lane, thinking on, 47.2 | author-reported |
 
 Three of those recipes were also run on this fleet, each with its pinned
-source and every adaptation listed. None is an exact reproduction and none
-replays a source's own harness, so these are separate evidence, not a
-restatement of the row above:
+source and every adaptation listed. None is an exact reproduction. Their
+same-task agent runs followed independent trajectories, so the rates compare
+achieved product throughput rather than isolate an engine-only effect:
 
-| Local reproduction | Fidelity | Nodes | Agent aggregate decode (tok/s) |
+| Same agent task | Fidelity | Nodes | Agent aggregate decode (tok/s) |
 |---|---|---:|---:|
+| **JSpark3 v1** | this release | 3 | **44.583** |
 | `mia-tp2-historical-0e2e78f` | site/safety-adapted | 2 | 24.913 |
 | `mia-tp2-current-c190db1a-adapted` | compatibility-adapted | 2 | 24.728 |
 | `fly-derived-9093765c-adapted` | minimal-correctness/safety-adapted | 3 | 29.042 |
 
-Those three are same-prompt agent runs with independent trajectories, so they
-describe what each run did rather than which recipe is faster. Conditions,
-minimum fields, sources, and caveats for every row above:
+On this task, JSpark3 delivered 1.8x the aggregate decode throughput of the
+current adapted two-Spark run, 44.583 versus 24.728 tok/s. Conditions,
+minimum fields, sources, exact sparkDash receipts, and caveats for every row:
 [docs/BENCHMARKS.md](docs/BENCHMARKS.md).
 
 ## What the overlay changed, internally
@@ -110,31 +184,12 @@ Full tables, estimators, and receipts:
 |---|---|
 | [`recipe/`](recipe/README.md) | The runnable recipe: lifecycle controller, preflight, entrypoint, five hash-gated runtime transforms, the W8A16 overlay, checkpoint validation, `SHA256SUMS`. |
 | [`docs/`](docs/ARCHITECTURE.md) | Architecture, technical report, benchmarks, install, operations, limitations, reproducibility, licensing. |
-| [`results/`](results/SUMMARY.md) | Machine-readable results (`results.json`) and the sanitized evidence they derive from: batteries, matched controls, scheduler and prefill receipts, demonstration receipts, analyzer method. |
+| [`results/`](results/SUMMARY.md) | Machine-readable results (`results.json`) and the sanitized evidence they derive from: batteries, the sparkDash author-protocol receipt, matched controls, scheduler and prefill receipts, demonstration receipts, analyzer method. |
 | [`manifests/`](manifests/dependencies.json) | Pinned dependencies, release metadata, the public-derivation record, and a CycloneDX SBOM. |
 | [`huggingface/`](huggingface/README.md) | The Hugging Face repository metadata, results, licenses, provenance, target-mirror contract, and exact completion receipt; the verified target payload is public at the immutable terminal main revision. |
 | [`docker/`](docker/README.md) | Local-only reproducibility definition for inspecting the labeled derivative; v1.0.0 publishes no JSpark3 container image and runs the upstream digest. |
 | [`tools/`](tools/validate_release.py) | Release validator, release-asset and SBOM builders, and the pacing and stream analyzers used for the evidence. |
 | [`release/`](release/RELEASE-NOTES.md) | Release notes and announcement drafts. |
-
-## Quick start
-
-Three DGX Sparks, cabled as a two-leg RoCE-v2 triangle, with Docker and
-`rdma-core`. Full walk-through: [docs/INSTALL.md](docs/INSTALL.md).
-
-```bash
-cd recipe
-cp .env.example .env                                  # fill in hosts, legs, roots
-./scripts/clean-room-setup.sh --env-file .env --output preflight.json
-preflight_sha=$(sha256sum preflight.json | cut -d' ' -f1)
-./scripts/start.sh --env-file .env --preflight preflight.json \
-  --preflight-sha256 "$preflight_sha" --confirm START-JSPARK3
-./scripts/verify.sh --env-file .env --manifest jspark3-release-manifest.json \
-  --output verify.json --log-output verify-rank0.log
-```
-
-The endpoint is OpenAI-compatible on rank 0, model name `glm-5.3-flash`,
-thinking off by default and switchable per request.
 
 ## How it works, briefly
 

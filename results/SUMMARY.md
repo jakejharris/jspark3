@@ -1,15 +1,28 @@
 # JSpark3 v1 results summary
 
 Generated from `results.json`. Every value here is machine-derived from the receipts under
-`evidence/` and is reconciled by the release validator. The three evidence classes below are
-kept separate on purpose and are never combined into one table or one ranking.
+`evidence/` and is reconciled by the release validator. Comparisons cross evidence classes
+only when they share a screen, author protocol, or agent task, with the remaining limitations
+stated beside them.
+
+## Headline comparisons
+
+| Claim | JSpark3 v1 | Two-Spark recipe | Qualification |
+|---|---:|---:|---|
+| Single-stream code decode | 66.257 tok/s | 44.562552 tok/s | 1.49x as fast on the same frozen screen; separate campaigns, and the adapted Mia arm has one battery |
+| sparkDash clamp-code TTFT | 391.33 ms | 719 ms | Same pinned author protocol; separate fleets and publication dates |
+| sparkDash clamp-code C4 aggregate | 251.13 tok/s, 62.80 per stream | 146.5 tok/s | Same pinned author protocol; separate fleets and publication dates |
+| Same agent task and prompt | 44.583 tok/s | 24.728 tok/s | 1.8x the aggregate decode throughput; independent trajectories |
+
+The sparkDash receipt is `evidence/candidate/sparkdash/SPARKDASH-RESULT.json`.
+The exact source paths and methodology are in `docs/BENCHMARKS.md`.
 
 ## 1. Published reference recipes
 
 Recipes that a Spark owner could obtain publicly before this release. Every number is
-**author-reported** from the source named in the row; none was measured on this fleet, and no
-delta or ranking against JSpark3 v1 is computed from any of them. Instruments, prompts,
-quantization lanes, contexts, and estimators differ between rows.
+**author-reported** from the source named in the row; none was measured on this fleet. Most
+remain context because instruments, prompts, quantization lanes, contexts, and estimators
+differ. The sparkDash rows have a local author-protocol match, qualified above.
 
 | Recipe | Nodes | Lane | Context | Reported decode (tok/s) | Basis |
 |---|---:|---|---:|---|---|
@@ -25,8 +38,8 @@ Minimum fields, sources, and caveats for each row: `docs/BENCHMARKS.md` and the
 Runs of a published recipe on this fleet, each with its pinned source identity and its
 fidelity qualifier. None is an exact reproduction and none replays a source's own published
 harness, so no number here is a like-for-like restatement of an author-reported figure. The
-agent rows are same-prompt product runs with independent trajectories, not engine-rate
-comparisons.
+agent rows are same-task product runs with independent trajectories. Their achieved
+throughput can be compared, but the comparison does not isolate an engine-only effect.
 
 | Lineage | Fidelity | Nodes | Agent aggregate decode (tok/s) | Generated tokens | Mean TTFT (s) |
 |---|---|---:|---:|---:|---:|
@@ -85,4 +98,3 @@ market comparison and not a competitor.
 |---|---:|---:|---:|
 | Prefill proxy (tok/s) | 1277.443 | 1234.246 | -3.38% |
 | TTFT (s) | 89.169 | 92.290 | +3.50% |
-

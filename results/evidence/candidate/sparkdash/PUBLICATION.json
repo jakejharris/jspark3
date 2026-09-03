@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "evidence_class": "local_author_protocol",
+  "source_instrument": {
+    "name": "sparkDash DecodeBench",
+    "commit": "e93fc87d54c8699e98b63a764ab260bf9d446c52",
+    "release": "1.8.5",
+    "author_files_modified": false,
+    "adaptations": [
+      "base URL and port",
+      "served model name",
+      "output paths"
+    ]
+  },
+  "conditions": {
+    "hardware": "three NVIDIA DGX Sparks",
+    "server_state": "warm with empty KV before the block",
+    "thinking": "off",
+    "temperature": 0,
+    "max_tokens": 400,
+    "concurrencies": [
+      1,
+      2,
+      4
+    ],
+    "prompt_type": "code",
+    "prompt_description": "clamp_00 through clamp_49 Python helpers"
+  },
+  "selected_results": {
+    "c1": {
+      "mean_decode_tok_s": 84.47,
+      "mean_ttft_ms": 391.33,
+      "streams_ok": 1,
+      "streams_failed": 0,
+      "total_completion_tokens": 400
+    },
+    "c4": {
+      "aggregate_decode_tok_s": 251.13,
+      "mean_per_stream_decode_tok_s": 62.8,
+      "streams_ok": 4,
+      "streams_failed": 0,
+      "total_completion_tokens": 1600
+    }
+  },
+  "source_receipt_sha256_before_publication_redaction": {
+    "SPARKDASH-RESULT.json": "00036a45ee55e36df7bf6d7151ea5ac48d012878479bbb17a3bbcaa3cd539679",
+    "VALIDATION.json": "5579d2ce824a4ff50b47498db8b673c0674aef1f9b9ba7c1048b1b43b90a3ec0",
+    "SOURCE-MANIFEST.json": "acd073514f561d4fb1a610642bb4ae3595e8f1fa62abf5856ba6d6f248faf6e5",
+    "sparkdash_runner.mjs": "fe1b26f0f08097ba732a279c553945f9c6a3b42594b1dd8c1845d6541eebc45f",
+    "validate_results.py": "3fc10c42d7e8594eec815cc2f9115d78758f0def26acb229378f07b6973b7300",
+    "ADAPTATION.md": "552476a5ba5de1ed51e22c2b046088e20565c0bb6c7cac18cd52c7b1cc1f0855"
+  },
+  "publication_redactions": {
+    "SPARKDASH-RESULT.json": [
+      "private source path replaced with pinned public source identity",
+      "internal sparkId replaced with release"
+    ],
+    "VALIDATION.json": [
+      "private host labels replaced with rank0, rank1, and rank2"
+    ],
+    "sparkdash_runner.mjs": [
+      "internal sparkId replaced with release"
+    ],
+    "unchanged_files": [
+      "SOURCE-MANIFEST.json",
+      "validate_results.py",
+      "ADAPTATION.md"
+    ],
+    "measurement_values_changed": false
+  },
+  "source_validation_verdict": "PASS"
+}
