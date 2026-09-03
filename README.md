@@ -3,6 +3,14 @@
 **JSpark3 turns three NVIDIA DGX Sparks into one fast GLM-5.3 Flash server,
 with a reproducible TP3 recipe and public benchmarks.**
 
+> **License and weight provenance:** JSpark3's original recipe code and
+> documentation are Apache-2.0. The Hugging Face weights are Brandon M.
+> Music's exact EXL3/TR3 quantization, re-hosted byte-for-byte by Mia-AiLab
+> and mirrored by JSpark3 without changing a weight byte. They remain under
+> the attribution-required, source-available ShapleyMcg License v1.0,
+> including its named exclusion; Z.AI's base model remains MIT. DFlash2 is
+> not mirrored and remains a separate CC BY-NC-ND 4.0 dependency.
+
 JSpark3 v1 is a reproducible serving and runtime recipe. It runs the
 EXL3/TR3 4-bpw GLM-5.3 Flash checkpoint with tensor parallel 3 and expert
 parallel 3 over a two-leg RoCE-v2 triangle, adds a DFlash2 speculative draft,
