@@ -9,6 +9,31 @@ Flash endpoint, with a reproducible TP3 recipe and public benchmarks.**
 > a named exclusion. DFlash2 is a separate non-commercial dependency. Read
 > the [license boundaries](#license) before serving.
 
+> **Known issues in v1.0.0, fixed in v1.0.1.** Found by a community bug
+> report from [@BTCXoomer on X](https://x.com/BTCXoomer).
+>
+> 1. **Single-stream requests past 32,768 tokens of context crash the
+>    v1.0.0 recipe.** The v1.0.0 transform contract pins vLLM's
+>    `persistent_topk` kernel enabled, and on GB10 that kernel aborts with
+>    `persistent_topk would oversubscribe and the FilteredTopK fallback
+>    requires >=128KB smem per block` once a single decoding stream passes
+>    32,768 tokens. Every measured run, and every published benchmark,
+>    executed with that kernel disabled; v1.0.0 shipped without the disable.
+>    v1.0.1 carries the disable in the transform itself. Read the warning in
+>    [the install path](docs/INSTALL.md#known-issue-in-v100-single-stream-requests-past-32768-tokens)
+>    before serving long contexts on v1.0.0; the mechanism and arithmetic are
+>    in [docs/LIMITATIONS.md](docs/LIMITATIONS.md#kernel-disable-provenance-and-the-32768-token-single-stream-boundary-v100).
+> 2. **Containers launched by hand need `NCCL_IB_SUBNET_AWARE_ROUTING=1`.**
+>    The variable is new in NCCL 2.30.7 and defaults to off; with it off,
+>    NCCL pairs NICs by index and routes rank 0 to rank 2 over rank 1's leg,
+>    which breaks a switchless three-node triangle. The lifecycle controller
+>    always set it; the v1.0.0 docs never named it. It is now in
+>    [the fabric setup steps](docs/INSTALL.md#5-fabric-checks) with the rest
+>    of the controller's fabric environment.
+>
+> Weights and benchmarks are unchanged in v1.0.1: no number was remeasured,
+> and every published figure already came from the disabled-kernel path.
+
 ## Results
 
 | Measured result | JSpark3 v1 |
@@ -42,13 +67,17 @@ From a fresh clone on the controller, copy the checked recipe to the same path
 on every rank:
 
 ```bash
-git clone --branch v1.0.0 https://github.com/jakejharris/jspark3.git
+git clone --branch v1.0.1 https://github.com/jakejharris/jspark3.git
 cd jspark3
 (cd recipe && sha256sum -c SHA256SUMS)
 for host in rank0 rank1 rank2; do
   rsync -a --delete recipe/ "$host":/srv/jspark3-recipe/
 done
 ```
+
+If you must run the v1.0.0 tag instead, read the
+[known issue for single-stream requests past 32,768 tokens](docs/INSTALL.md#known-issue-in-v100-single-stream-requests-past-32768-tokens)
+before serving any long context; the v1.0.0 recipe aborts on it.
 
 Next, stage the pinned image, checkpoints, FlyCockpit source, TP3 runtime
 views, and fabric settings on every rank by following
@@ -101,7 +130,10 @@ measured on.
 > including its named exclusion; Z.AI's base model remains MIT. DFlash2 is
 > not mirrored and remains a separate CC BY-NC-ND 4.0 dependency.
 
-> **Release status: [v1.0.0](https://github.com/jakejharris/jspark3/releases/tag/v1.0.0), released 2026-09-02; attributed Hugging Face target mirror public.**
+> **Release status: [v1.0.1](https://github.com/jakejharris/jspark3/releases)
+supersedes [v1.0.0](https://github.com/jakejharris/jspark3/releases/tag/v1.0.0)
+(released 2026-09-02) with the `persistent_topk` transform fix and the fabric
+documentation fix described above; weights and benchmarks are unchanged.**
 > The immutable terminal Hub main revision is
 > [`e7c34dba923916754cfcb0bdf6c2c75a9b7ff1fc`](https://huggingface.co/jakejharris/jspark3/commit/e7c34dba923916754cfcb0bdf6c2c75a9b7ff1fc),
 > with the verified receipt at
