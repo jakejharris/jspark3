@@ -31,7 +31,10 @@ These checks prove, with no hosts, containers, or network:
   old refusal;
 - the zero-boot candidate binding: bound_manifest accepts a manifest bound to
   a declared candidate recipe SHA-256 only when it matches exactly, and the
-  default self-identity check is unchanged.
+  default self-identity check is unchanged;
+- the cadence module inventory hashes the pinned /opt/b45 source files only:
+  a real generated __pycache__ directory is skipped, and missing, tampered,
+  extra, unexpected-directory, and symlink content still refuse.
 """
 
 from __future__ import annotations
@@ -475,6 +478,133 @@ def test_candidate_recipe_binding() -> None:
     print("ok candidate-binding declared candidate recipe binds exactly; default self-identity unchanged")
 
 
+def run_b45_inventory(b45: Path, site: Path, out: Path) -> subprocess.CompletedProcess:
+    """Execute the exact docker -c snippet against a local fixture tree."""
+    code = fleetctl.b45_identity_argv("c" * 64)[-1]
+    # Rewrite only the Path() literals so error text still names /opt/b45.
+    code = (code
+            .replace("pathlib.Path('/opt/b45')", f"pathlib.Path({str(b45.resolve())!r})")
+            .replace("pathlib.Path('/usr/local/lib/python3.12/dist-packages')",
+                     f"pathlib.Path({str(site.resolve())!r})")
+            .replace("pathlib.Path('/tmp/b45')", f"pathlib.Path({str(out.resolve())!r})"))
+    return subprocess.run([sys.executable, "-S", "-c", code], text=True,
+                          stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False)
+
+
+def identity_fixture(base: Path, *, names: list[str] | None = None,
+                     tamper: str | None = None, extra_file: str | None = None,
+                     extra_dir: str | None = None, extra_symlink: str | None = None,
+                     pycache: str = "dir") -> tuple[Path, Path, Path]:
+    """Pinned /opt/b45 modules plus an optional generated cache directory."""
+    b45 = base / "opt-b45"
+    site = base / "site"
+    out = base / "tmp-b45"
+    b45.mkdir(parents=True)
+    site.mkdir()
+    (out / "graphs").mkdir(parents=True)
+    src = ROOT / "recipe" / "modules"
+    for name in (names if names is not None else sorted(fleetctl.B45_MODULES)):
+        (b45 / name).write_bytes((src / name).read_bytes())
+    if tamper is not None:
+        (b45 / tamper).write_bytes((b45 / tamper).read_bytes() + b"\n# tampered\n")
+    if extra_file is not None:
+        (b45 / extra_file).write_bytes(b"# extra\n")
+    if extra_dir is not None:
+        (b45 / extra_dir).mkdir()
+    if extra_symlink is not None:
+        (b45 / extra_symlink).symlink_to(b45 / sorted(fleetctl.B45_MODULES)[0])
+    if pycache == "dir":
+        cache = b45 / "__pycache__"
+        cache.mkdir()
+        (cache / "b45_graphs.cpython-312.pyc").write_bytes(b"pyc")
+    elif pycache == "symlink":
+        target = base / "elsewhere-cache"
+        target.mkdir()
+        (b45 / "__pycache__").symlink_to(target)
+    elif pycache == "file":
+        (b45 / "__pycache__").write_bytes(b"not a cache dir")
+    elif pycache != "absent":
+        raise AssertionError(f"unknown pycache mode {pycache!r}")
+    (site / "zzz_b45.pth").write_bytes(b"pth-bytes")
+    kda = site / "vllm" / "model_executor" / "layers" / "quantization"
+    kda.mkdir(parents=True)
+    (kda / "kda_mixed_output_blocks.py").write_bytes(b"original-kda")
+    return b45, site, out
+
+
+def test_b45_inventory_skips_generated_cache_only() -> None:
+    """Known __pycache__ must not hide missing, tampered, extra, or unexpected entries."""
+    argv = fleetctl.b45_identity_argv("c" * 64)
+    expect(tuple(argv[3:5]) == fleetctl.JSON_PYTHON, f"inventory lost python3 -S: {argv[:6]}")
+    code = argv[-1]
+    expect("__pycache__" in code and "PINNED" not in code,
+           "inventory snippet no longer embeds the pinned-name set or cache skip")
+    with tempfile.TemporaryDirectory() as raw:
+        base = Path(raw)
+        b45, site, out = identity_fixture(base / "ok")
+        process = run_b45_inventory(b45, site, out)
+        expect(process.returncode == 0, f"cache-plus-modules tree refused: {process.stderr}")
+        payload = fleetctl.strict_object(process.stdout, "b45 inventory with pycache")
+        expect(payload["modules"] == dict(fleetctl.B45_MODULES),
+               f"cache skip damaged module hashes: {payload['modules']}")
+        expect("__pycache__" not in payload["modules"], "generated cache leaked into modules dict")
+
+        missing_names = [name for name in sorted(fleetctl.B45_MODULES) if name != "b45_graphs.py"]
+        b45, site, out = identity_fixture(base / "missing", names=missing_names)
+        process = run_b45_inventory(b45, site, out)
+        expect(process.returncode == 0, f"missing module should still emit JSON: {process.stderr}")
+        missing_payload = fleetctl.strict_object(process.stdout, "b45 inventory missing module")
+        expect("b45_graphs.py" not in missing_payload["modules"] and
+               missing_payload["modules"] != dict(fleetctl.B45_MODULES),
+               "generated cache hid a missing pinned source module")
+        values = env_values()
+        binding = {"rank": 0, "container_id": "c" * 64}
+        original = fake_remote(json.dumps({**b45_payload(), "modules": missing_payload["modules"]}))
+        try:
+            expect_refusal("cadence module install drift",
+                           lambda: fleetctl.b45_identity(values, binding))
+        finally:
+            restore_remote(original)
+
+        b45, site, out = identity_fixture(base / "tamper", tamper="b45_graphs.py")
+        process = run_b45_inventory(b45, site, out)
+        expect(process.returncode == 0, f"tampered module should still emit JSON: {process.stderr}")
+        tampered = fleetctl.strict_object(process.stdout, "b45 inventory tampered")
+        expect(tampered["modules"]["b45_graphs.py"] != fleetctl.B45_MODULES["b45_graphs.py"],
+               "generated cache hid tampered source bytes")
+        original = fake_remote(json.dumps({**b45_payload(), "modules": tampered["modules"]}))
+        try:
+            expect_refusal("cadence module install drift",
+                           lambda: fleetctl.b45_identity(values, binding))
+        finally:
+            restore_remote(original)
+
+        refusals = (
+            ("extra-file", {"extra_file": "evil.py"}),
+            ("extra-dir", {"extra_dir": "not-cache"}),
+            ("extra-symlink", {"extra_symlink": "sneaky.py"}),
+            ("pycache-symlink", {"pycache": "symlink"}),
+            ("pycache-file", {"pycache": "file"}),
+        )
+        for label, kwargs in refusals:
+            b45, site, out = identity_fixture(base / label, **kwargs)
+            process = run_b45_inventory(b45, site, out)
+            expect(process.returncode == 9 and process.stdout == "",
+                   f"{label} must refuse at inventory, rc={process.returncode} "
+                   f"stdout={process.stdout!r} stderr={process.stderr!r}")
+            expect("unexpected /opt/b45 entry:" in process.stderr,
+                   f"{label} refusal lacks unexpected-entry detail: {process.stderr!r}")
+
+        original = fake_remote(json.dumps(b45_payload()))
+        try:
+            row = fleetctl.b45_identity(values, binding)
+            expect(row["modules_verified"] == len(fleetctl.B45_MODULES),
+                   f"host identity damaged after cache skip: {row}")
+        finally:
+            restore_remote(original)
+    print("ok b45-inventory real __pycache__ skipped; missing/tampered/extra/unexpected still refuse")
+
+
 def main() -> int:
     checks = (
         test_argv_builders_run_site_free,
@@ -483,6 +613,7 @@ def main() -> int:
         test_identity_channels_end_to_end,
         test_pipeline_check_on_disk_under_S,
         test_candidate_recipe_binding,
+        test_b45_inventory_skips_generated_cache_only,
     )
     for check in checks:
         check()

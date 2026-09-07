@@ -1074,25 +1074,31 @@ def collect_status(values: dict[str, str], manifest: dict) -> list[dict]:
 
 
 def b45_identity_argv(identity: str) -> list[str]:
-    code = (
-        "import hashlib,json,pathlib; "
-        "h=lambda p: hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest(); "
-        "b45=pathlib.Path('/opt/b45'); "
-        "site=pathlib.Path('/usr/local/lib/python3.12/dist-packages'); "
-        "mods=sorted(p.name for p in b45.iterdir()) if b45.is_dir() else []; "
-        "out=pathlib.Path('/tmp/b45'); "
-        "out_entries=sorted(p.relative_to(out).as_posix() for p in out.rglob('*')) if out.is_dir() else []; "
-        "graphs=out/'graphs'; "
-        "rows=[json.loads(line) for p in sorted(graphs.glob('captures-*.jsonl')) for line in p.read_text().splitlines() if line.strip()] if graphs.is_dir() else []; "
-        "dots_intact=all(isinstance(r.get('dot'),str) and (graphs/r['dot']).is_file() and h(graphs/r['dot'])==r.get('dot_sha256') for r in rows); "
-        "serving=sum(1 for p in graphs.glob('graph-serving-*.dot') if p.is_file() and p.stat().st_size>0) if graphs.is_dir() else 0; "
-        "print(json.dumps({'modules':{m:h(b45/m) for m in mods},"
-        "'pth_sha256':h(site/'zzz_b45.pth'),"
-        "'kda_original_sha256':h(site/'vllm/model_executor/layers/quantization/kda_mixed_output_blocks.py'),"
-        "'b45_out_entries':out_entries,"
-        "'capture_receipts':len(rows),'capture_dots_intact':bool(dots_intact),"
-        "'serving_graph_dumps':serving},sort_keys=True))"
-    )
+    # Inventory hashes the pinned source modules only. A real generated
+    # __pycache__ directory is skipped; any other non-file, symlink, or
+    # extra name refuses. Host still compares the modules dict to B45_MODULES.
+    pinned = "{" + ", ".join(repr(name) for name in sorted(B45_MODULES)) + "}"
+    code = """import hashlib,json,pathlib,sys
+h=lambda p: hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest()
+b45=pathlib.Path('/opt/b45')
+site=pathlib.Path('/usr/local/lib/python3.12/dist-packages')
+pinned=PINNED
+mods={}
+for p in (b45.iterdir() if b45.is_dir() else []):
+    if p.name=='__pycache__' and not p.is_symlink() and p.is_dir():
+        continue
+    if p.is_symlink() or not p.is_file() or p.name not in pinned:
+        sys.stderr.write('unexpected /opt/b45 entry: '+p.name+'\\n')
+        raise SystemExit(9)
+    mods[p.name]=h(p)
+out=pathlib.Path('/tmp/b45')
+out_entries=sorted(p.relative_to(out).as_posix() for p in out.rglob('*')) if out.is_dir() else []
+graphs=out/'graphs'
+rows=[json.loads(line) for p in sorted(graphs.glob('captures-*.jsonl')) for line in p.read_text().splitlines() if line.strip()] if graphs.is_dir() else []
+dots_intact=all(isinstance(r.get('dot'),str) and (graphs/r['dot']).is_file() and h(graphs/r['dot'])==r.get('dot_sha256') for r in rows)
+serving=sum(1 for p in graphs.glob('graph-serving-*.dot') if p.is_file() and p.stat().st_size>0) if graphs.is_dir() else 0
+print(json.dumps({'modules':mods,'pth_sha256':h(site/'zzz_b45.pth'),'kda_original_sha256':h(site/'vllm/model_executor/layers/quantization/kda_mixed_output_blocks.py'),'b45_out_entries':out_entries,'capture_receipts':len(rows),'capture_dots_intact':bool(dots_intact),'serving_graph_dumps':serving},sort_keys=True))
+""".replace("PINNED", pinned)
     return ["docker", "exec", identity, *JSON_PYTHON, "-c", code]
 
 
