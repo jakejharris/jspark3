@@ -38,11 +38,15 @@ load, memory, witness, and arithmetic gates are retained.
 
 **Pending before publication.** A live single-stream witness above 32,768
 tokens on the assembled public build has not run; the F-1-corrected verifier
-itself awaits live confirmation on hardware. No default-service decision is
-claimed: whether Cadence serves by default or remains an opt-in recipe is a
-separate maintainer choice, made only after that live proof. No global or
-cross-recipe speed ranking is claimed, and no figure on this page is
-recomputed from any post-hoc repeat.
+itself awaits live confirmation on hardware. v1.1 ships one mandatory,
+measured Cadence construction: the recipe and its verifier carry no toggle
+and no opt-in variant, because a second, never-measured path would be
+exactly the kind of unverified claim this project refuses to ship. This is a
+scoped engineering release choice — it is not a global performance or quality
+claim, and all limits above stand. Whether the maintainer's own live service
+later runs this public build is a separate decision outside this release. No
+global or cross-recipe speed ranking is claimed, and no figure on this page
+is recomputed from any post-hoc repeat.
 
 ---
 

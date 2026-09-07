@@ -116,6 +116,28 @@ Spark verification it requires.
   each; if you see any, treat the run as invalid evidence and investigate the
   host.
 
+## The serving stack is one-shot: export before any removal
+
+The v1.1 construction is strictly one-shot per container, and its evidence
+lives in places a casual cleanup destroys:
+
+- The Cadence runtime writes its execution receipts, capture receipts, and
+  CUDA-graph dumps under `/tmp/b45` inside each container's writable layer.
+  A plain `docker stop` keeps the container and that evidence; **container
+  removal (`docker rm`, directly or via any remove token) deletes it
+  irrecoverably.**
+- The installer refuses to run against a non-empty output directory, so a
+  stack is never restarted in place on the same names: stop the stack, export
+  what you need, and treat the next start as a fresh construction on names
+  verified absent. The deterministic container names must not exist before a
+  test begins.
+- Before any future removal, export the raw evidence from every rank: the
+  whole `/tmp/b45` tree (activation receipts, `captures-*.jsonl`, and all
+  `graph-*.dot` dumps) plus `docker logs` for each container, and record a
+  `sha256sum` manifest of everything exported alongside the files. Export on
+  failure paths too — a refused or failed run is exactly the evidence worth
+  keeping.
+
 ## Upgrading
 
 Watch the repository's releases. A new tag with a changed transform contract,

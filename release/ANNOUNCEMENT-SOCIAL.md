@@ -13,12 +13,13 @@ acceptance. Paired across two serving starts: prose +16.18%/+19.17%,
 structured count +7.66%/+7.61%; the code gain did not replicate; first-start
 figures are diagnostic (their sham control failed). Concurrency and
 large-context capacity: not certified. Live >32K witness on the public
-build: still pending. Default-or-opt-in: a separate maintainer decision,
-after that proof. No cross-recipe speed ranking claimed.
+build: still pending. One measured construction, no serving toggle, no
+opt-in variant — a scoped engineering release choice, not a global ranking.
+No cross-recipe speed ranking claimed.
 
-Short form: JSpark3 v1.1 "Cadence" staged: measured single-stream gains
-(prose/count), honest misses (code, quality) left in, live proof pending,
-no default switch yet.
+Short form: JSpark3 v1.1 "Cadence" staged: one measured construction (no
+serving toggle), single-stream gains (prose/count), honest misses (code,
+quality) left in, live proof pending.
 
 ## v1.0.0 drafts (historical)
 

@@ -23,11 +23,14 @@ those figures are diagnostic only. A quality battery showed candidate-only
 delivered-answer failures and is inconclusive on semantic parity.
 
 What we are not claiming: no global or cross-recipe speed ranking, no
-whole-arm causality, and no default-service switch. A live single-stream
-witness above 32,768 tokens on the assembled public build is still pending,
-and the corrected public verifier awaits live confirmation; whether Cadence
-becomes the default recipe is a separate maintainer decision made after that
-proof. The v1.0.0 announcement below is unchanged history.
+whole-arm causality. v1.1 is one measured construction — the recipe and
+verifier ship no serving toggle and no opt-in variant; a second,
+never-measured path is exactly what this project refuses to publish. A live
+single-stream witness above 32,768 tokens on the assembled public build is
+still pending, and the corrected public verifier awaits live confirmation.
+Whether the maintainer's own live service later runs this public build is a
+separate decision outside this release. The v1.0.0 announcement below is
+unchanged history.
 
 ---
 
