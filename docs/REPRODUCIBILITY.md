@@ -66,6 +66,10 @@ comparisons.
 - Per-phase C1 medians with the estimator above, and the pacing analysis.
 - Whether the run cleared the internal gates recorded in
   [LIMITATIONS.md](LIMITATIONS.md), since the measured build did not.
+- For the v1.1 recipe: the width-controller and QKV-shadow route receipts
+  from the launch audit, and — once the live witness is implemented — the
+  single-stream witness above 32,768 prompt tokens, which remains a pending
+  release-verification item for the public build.
 
 A third-party reproduction on a separate three-Spark fleet is an open release
 gate; none has been performed yet.

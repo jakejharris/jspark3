@@ -1,14 +1,28 @@
-# Release state: JSpark3 v1.0.0
+# Release state: JSpark3
 
-Status: **v1.0.0 released 2026-09-02; attributed Hugging Face target mirror
-public and remotely verified.**
+Status: **v1.1.0 (Cadence) staged for publication — not tagged, not released.
+v1.0.0 was released 2026-09-02; its record below is historical.**
+
+## Current release state: v1.1.0 (Cadence)
+
+| Item | State |
+|---|---|
+| Identity | JSpark3 v1.1, release name Cadence, machine/tag `v1.1.0`. The tag, GitHub release, and Hub push are serialized publication actions that have not happened; install references name the tag and fail until it exists. |
+| Content | The v1.0.1 construction (kernel disable in the transform; fabric documentation) plus the two measured Cadence features: the QKV decode shadow and the speculative width controller, with the stock indexer workspace, original drafter, and sampler retained. |
+| Measured evidence | Paired single-stream effects with scoped claims: prose +16.18% / +19.17% and structured count +7.66% / +7.61% across two independent serving starts; the paired code gain is not replicated; candidate-only quality losses are preserved; a short-prompt concurrency burst is explicitly not a capacity certification. See [docs/BENCHMARKS.md](docs/BENCHMARKS.md#v11-cadence-evidence). |
+| Reconstruction | A fresh three-rank build from the recipe contracts completed construction, route audits, and the frozen batteries without a serving repair, and the exact prior arm was restored and re-verified afterward — evidence that the recipe reconstructs the construction, not a new performance claim. |
+| Kernel fix | Carried in the transform contract. An independent offline construction test reproduced the expected indexer transform output byte-identically (`00e32052b781723500987a463814116634c4d00b3b61066915f8cc70780c931e`) and confirmed the already-applied check. |
+| Pending verification | (1) A live single-stream witness above 32,768 tokens on the assembled public build has not run; the fix is verified by construction, not by a live run. (2) Integrated regeneration of manifests, checksums, and release assets across recipe and docs is a serialized integration step; the in-tree inventories are intentionally stale until then. (3) Reconciliation of the v1.1 measured numbers into the machine-readable results and the validator's claim map is an integration step. |
+| Provenance correction | The v1.0.0 record below describes the recipe as derived by "identifier renames only"; that was inaccurate for v1.0.0, whose transform contract missed the start-time kernel disable. The historical record is preserved unmodified; [docs/LIMITATIONS.md](docs/LIMITATIONS.md#kernel-disable-provenance-and-the-32768-token-single-stream-boundary-v100) carries the correction. |
+
+## Historical record: v1.0.0
 
 The public GitHub release is
 <https://github.com/jakejharris/jspark3/releases/tag/v1.0.0>. The public,
 ungated, enabled Hugging Face repository is
 <https://huggingface.co/jakejharris/jspark3>. Its attributed target mirror and
 exact completion receipt were remotely verified before maintainer merge into
-the immutable terminal main revision
+the verified weights-mirror revision
 `e7c34dba923916754cfcb0bdf6c2c75a9b7ff1fc`. No JSpark3 GHCR image is
 published for v1.0.0; the recipe uses the exact upstream image by digest.
 
@@ -27,7 +41,11 @@ published for v1.0.0; the recipe uses the exact upstream image by digest.
 | Release assets | Reproducibly built into `dist/` by `tools/build_release_assets.sh`: recipe archive, results archive, CycloneDX SBOM, and checksums. |
 
 `python3 tools/validate_release.py . --report validation.json` must return
-`VERDICT PASS` with all 16 checks after any edit.
+`VERDICT PASS` with all 16 checks after any edit to the historical tree. For
+the v1.1 state, the same 16 checks attest hash-cascade, privacy, and claim
+integrity of the tree; a PASS on this branch does not attest that the v1.1.0
+release exists, and the new v1.1 numbers do not reconcile until the
+integration step extends the machine-readable results.
 
 ## Completed independent Hugging Face mirror
 

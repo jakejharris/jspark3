@@ -1,8 +1,49 @@
 # Changelog
 
-All notable changes to JSpark3 v1 are recorded here. Versions follow semantic
+All notable changes to JSpark3 are recorded here. Versions follow semantic
 versioning; the serving envelope, pinned inputs, and transform contract are
 part of the public interface.
+
+## v1.1.0 (Cadence) - Unreleased
+
+Staged for publication; the `v1.1.0` tag and release are created at
+publication and none of the items below are claimed as released before then.
+Weights, checkpoints, and image digests are unchanged; the historical v1.0.0
+benchmark results keep their existing identity and are not remeasured or
+merged with the v1.1 evidence.
+
+- **Cadence serving features.** The measured launch adds a group-128 INT8
+  shadow for the QKV projections on small-batch pure decode and a
+  request-local speculative width controller that narrows speculation from
+  seven to three tokens on high acceptance. Batches of two or more requests
+  and prefill fall back to the wide path. The stock indexer workspace, the
+  original drafter, and the sampler are retained.
+- **Measured scope.** Paired within-instance single-stream effects across two
+  independent serving starts: prose +16.18% and +19.17%, structured count
+  +7.66% and +7.61% (95% CIs exclude zero); code +9.71% then +3.23% with the
+  second interval spanning zero, so the paired code gain is not replicated.
+  A fixed quality battery showed candidate-only delivered-answer failures and
+  remains inconclusive on population-level semantic parity. A short-prompt
+  concurrency burst (183 requests, up to 24 concurrent streams, aggregate
+  263.39 tok/s, per-stream 15.38 tok/s) is finite-burst evidence and certifies
+  neither sustained service, per-stream fairness, the 32-sequence envelope,
+  nor large-context capacity.
+- **Long-context kernel fix carried.** The v1.0.1 transform-level disable of
+  vLLM's `persistent_topk` kernel is part of the v1.1 transform contract; the
+  transform emits the exact file the measured arms executed. A live
+  single-stream witness above 32,768 tokens on the assembled public build
+  remains a pending release-verification item and is not claimed as passed.
+- **Documentation corrections carried into this release:** the unverified
+  stub-`libcuda` causal claim in the v1.0.1 install notes is reworded as
+  unconfirmed; the v1.0.1 operations wording implying proven 1,000,000-token
+  reachability and whole-tree byte identity is corrected to what the evidence
+  shows (known abort removed; the indexer transform output matches the
+  measured bytes); the Hub mirror revision is described as the verified
+  weights-mirror revision; and the v1.0.0 gate page's inaccurate "identifier
+  renames only" derivation claim is explicitly corrected by a provenance note
+  while the historical record stays unmodified.
+- Recipe-side packaging (modules, manifests, checksums, verification tooling)
+  lands with the recipe lane and is reconciled at integration.
 
 ## v1.0.1 - 2026-09-06
 

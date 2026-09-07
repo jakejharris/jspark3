@@ -18,7 +18,9 @@ without losing the guarantees.
   sequences, 8,192 batched tokens, full-decode-only CUDA graphs at 8, 16, 24,
   32 and 48, GPU memory utilization 0.83, `glm47` tool parser, `glm45`
   reasoning parser, thinking disabled by default, served name
-  `glm-5.3-flash`.
+  `glm-5.3-flash`. v1.1 adds the width controller and the QKV decode shadow
+  to the measured launch; the recipe's pinned profile and launch contracts
+  are authoritative for the exact envelope.
 - No FlashInfer autotune, no `NCCL_PROTO`, `NCCL_ALGO`, or
   `NCCL_IB_ADDR_RANGE` overrides. The fabric settings the controller injects
   are not operator-tunable. Since v1.0.1 they are also documented in
@@ -57,14 +59,24 @@ consequences are worth stating plainly:
 - Long prompts are expensive on first sight. A 113,908-token prompt took
   92.290 s to first token in the matched prefill measurement. Prefix caching
   makes repeats cheap; cold prompts are not.
+- In v1.1, single-stream decode may run in the narrow speculative mode when
+  the width controller's acceptance checks pass, and silently falls back to
+  the wide path for any batch of two or more requests, prefill, or guard
+  condition. The fallback is normal behavior, not an error, and the measured
+  single-stream gains carry no promise for a busy multi-stream service.
 - Single-stream long context was a boundary in v1.0.0. The v1.0.0 recipe
   aborted on any single decoding stream past 32,768 tokens of context (the
   `persistent_topk` kernel; see the
   [install-path warning](INSTALL.md#known-issue-in-v100-single-stream-requests-past-32768-tokens)).
-  v1.0.1 disables that kernel in the transform, the same construction every
-  measured run used, so the configured 1,000,000-token envelope is actually
-  reachable. All published numbers, including the long-prefill figures
-  above, were measured with that disable applied and are unchanged.
+  v1.0.1 disables that kernel in the transform, so the known deterministic
+  single-stream abort is removed and the transform emits the exact file every
+  measured run executed. That is not a demonstration of end-to-end
+  reachability: the configured 1,000,000-token context remains a
+  configuration value, no request beyond the 113,908-token prefill proxy has
+  been served on any arm of this recipe lineage, and a live single-stream
+  witness above 32,768 tokens on the assembled public build is a pending
+  verification item. All published numbers, including the long-prefill
+  figures above, were measured with that disable applied and are unchanged.
 - High concurrency raises time to first token sharply. In the C48 wave, the
   p90 time to first token was 96.722 s even though aggregate throughput rose.
   If you serve interactive traffic, cap concurrency well below 48 or add an

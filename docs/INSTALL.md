@@ -6,9 +6,14 @@ when an input differs from the pinned one, so read the refusal text rather
 than forcing past it.
 
 Status: [v1.0.0](https://github.com/jakejharris/jspark3/releases/tag/v1.0.0)
-was released 2026-09-02. The attributed target mirror is public at
-<https://huggingface.co/jakejharris/jspark3> and remotely verified at immutable
-main revision `e7c34dba923916754cfcb0bdf6c2c75a9b7ff1fc`. No JSpark3 GHCR image is
+was released 2026-09-02. v1.1.0 (Cadence) is staged for publication: it
+carries the kernel fix in its transform contract plus the two measured
+Cadence serving features, and the `v1.1.0` tag named below is created at
+publication — the command fails until then rather than install older code.
+The attributed target mirror is public at
+<https://huggingface.co/jakejharris/jspark3> and remotely verified at the
+weights-mirror revision
+`e7c34dba923916754cfcb0bdf6c2c75a9b7ff1fc`. No JSpark3 GHCR image is
 published for v1.0.0. The recipe uses the exact upstream serving image by
 digest shown below. Obtain the recipe directory from the public GitHub tree or
 release asset; the commands below do not change.
@@ -199,8 +204,10 @@ IPv4 network per leg is for.
 
 Preloading or substituting a different NCCL build is outside the verified
 recipe. The pinned image ships stock NCCL `2.30.7+cuda13.3` and every step
-and measurement here assumes it; a host-built NCCL under `LD_PRELOAD` also
-dragged a stub `libcuda` into at least one user's launch path.
+and measurement here assumes it. A host-built NCCL brought in under
+`LD_PRELOAD` is one plausible route for a stray stub `libcuda` in the launch
+path; that specific mechanism was reported secondhand and remains unconfirmed
+without the affected user's logs.
 
 ## 6. Configure `.env` on the controller
 
@@ -285,9 +292,12 @@ every published benchmark executed with it disabled, so the crash was never
 exercised before release. `verify.sh` in v1.0.0 uses short prompts only and
 cannot catch it.
 
-Use the v1.0.1 recipe, which carries the disable in the transform itself;
-weights, benchmarks, and the serving envelope are unchanged. If you cannot
-move off v1.0.0, your options are all unsupported: keep every request's
+Use the current recipe, which carries the disable in the transform itself
+(v1.0.1 introduced this; v1.1.0 carries it forward); weights, benchmarks, and
+the serving envelope are unchanged. A live single-stream witness above 32,768
+prompt tokens on the assembled public build is a pending release-verification
+item: the fix is verified by construction, not yet by a live run on the
+public build. If you cannot move off v1.0.0, your options are all unsupported: keep every request's
 total context at or below 32,768 tokens; hand-launch `vllm serve` with
 `--max-model-len 406656` or lower (a ceiling derived from the kernel's
 CTA arithmetic, documented in

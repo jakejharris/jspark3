@@ -4,7 +4,9 @@ Every number on this page is taken from `results/results.json` and is
 reconciled against it by the release validator. Each table states its
 workload, estimator, sample size, and conditions. The headline comparisons
 use either the same screen, the same author protocol, or the same agent task;
-the limitations beside each one state what was not controlled.
+the limitations beside each one state what was not controlled. The v1.1
+(Cadence) section is the current release's own evidence; the headline
+comparisons and everything below it are the v1.0.0 historical record.
 
 The evidence is kept in four classes. A comparison can cross classes only
 when its shared basis and limitations are stated:
@@ -20,7 +22,82 @@ Grade of all locally measured evidence: `ENGINEERING-EVIDENCE`. It was
 produced by the project's own campaign on its own fleet. No third-party
 reproduction exists yet.
 
-## Headline comparisons
+## v1.1 (Cadence) evidence
+
+The v1.1 candidate is the v1-style construction — stock indexer workspace,
+original drafter and sampler — plus two serving features measured together:
+the QKV decode shadow and the speculative width controller. Two independent
+serving starts measured it with the same paired design: one container serves
+a frozen request set through the candidate route, and again through a
+within-instance reference route with both features disabled, so the pairing
+isolates the two features on identical hardware and serving state. Effects
+are crossed block/body bootstrap estimates, 10,000 draws, with 95%
+confidence intervals from a preregistered plan.
+
+| Paired effect (candidate vs disabled reference route) | First start [95% CI] | Second start [95% CI] |
+|---|---|---|
+| Prose decode | +16.18% [+11.97, +20.78] | +19.17% [+14.93, +23.11] |
+| Structured count decode | +7.66% [+5.90, +9.76] | +7.61% [+6.24, +9.14] |
+| Code decode | +9.71% [+6.79, +14.16] | +3.23% [-1.14, +9.04] |
+
+The paired code gain is not replicated: the second start's interval spans
+zero, so no universal code-speed gain is claimed. Conditional single-feature
+contrasts exist for the second start and must not be added or multiplied to
+manufacture a combined effect:
+
+| Conditional contrast (second start) | Effect [95% CI] |
+|---|---|
+| Candidate vs width-controller-disabled, prose | +7.54% [+3.17, +11.88] |
+| Candidate vs QKV-shadow-disabled, prose | +13.57% [+6.60, +22.32] |
+| Width controller, code | -1.96% [-6.99, +3.64]; the net-value interval spans zero |
+
+Absolute context, descriptive across starts and not a paired estimate: the
+frozen service batteries put the candidate at 68.56 and 68.77 tok/s (code),
+34.20 and 34.64 (prose), and 87.31 and 87.67 (structured count) across its
+two starts; a separately archived pre-Cadence arm measured 67.38 / 27.82 /
+82.42 on the same batteries. That archived arm is not the published v1.0.0
+package, so these rows are context only and must not be read as a controlled
+v1.0.0-versus-v1.1 comparison.
+
+A fresh three-rank rebuild from the recipe contracts later completed
+construction, route audits, and the same batteries without a serving repair
+(72.21 code, 33.60 prose, 87.25 count tok/s — descriptive), and the prior
+exact arm was restored and re-verified afterward. That validates the recipe's
+reconstruction; it is not a new performance result.
+
+Quality ran as a fixed 62-answer battery once per arm in the second start:
+the reference-route arms delivered 60 and 59 correct, the candidate arms 59
+and 58, with candidate-only failures — both candidate arms failed the
+Caesar-cipher coding task (one duplicating source text at the length cap, one
+with incorrect generated self-test expectations), and one also failed
+FizzBuzz the same way, while both reference arms completed both. The fixed
+small class cannot certify population-level semantic parity; the predeclared
+semantic confidence is inconclusive at every endpoint.
+
+A later zero-boot burst swept short-code requests up to 24 concurrent
+streams (183 requests): aggregate throughput reached 263.39 tok/s while
+per-stream decode fell to 15.38 tok/s, with no preemptions and
+time-to-first-token tails degrading from two streams under the unchanged
+mixed-prefill policy. This is finite-burst, short-prompt evidence. It does
+not certify sustained service, long-context concurrency, per-stream
+fairness, the 32-sequence envelope, or any large-context capacity, and the
+single-stream gains above must not be promised for a busy service.
+
+Method limits: matched device-level kernel timings were almost entirely
+absent in both starts, so these are end-to-end stream-timing effects that do
+not isolate kernel-level causality. The larger preregistered sham battery in
+the second start resolves stream-timing contrasts at the stated margins; it
+does not repair an earlier failed resolution null or qualify the device
+observer.
+
+**What this evidence does not show:** semantic parity with the reference
+route; a universal or code-specific speed gain; behavior at batches of two
+or more (the controller falls back wide by design); 32-slot fairness;
+reachability of the configured maximum context; and nothing about the
+published v1.0.0 comparisons below, which used different request sets and
+estimators.
+
+## Headline comparisons (v1.0.0 historical record)
 
 | Claim | JSpark3 v1 | Two-Spark recipe | Basis and exact receipts |
 |---|---:|---:|---|

@@ -24,10 +24,20 @@ Every benchmark and every measured run of this recipe executed with vLLM's
 one-line change the upstream launcher applies at container start. The v1.0.0
 transform contract pinned the file with the kernel still enabled, so the
 construction v1.0.0 shipped had never actually been run past 32,768 tokens
-by anyone. v1.0.1 carries the disable in the transform itself, which makes
-the shipped bytes match the measured bytes. No published number changed:
+by anyone. v1.0.1 carries the disable in the transform itself: the transform's
+emitted indexer file is byte-identical to the file every measured arm
+executed. The rest of the public construction is verified equivalent to the
+measured arms by hash contract and rename-only diffs, not byte-identical as a
+whole tree. No published number changed:
 they all came from the disabled path. Found by a community bug report from
 [@BTCXoomer on X](https://x.com/BTCXoomer).
+
+Provenance correction, recorded at v1.1.0: the v1.0.0 release gate described
+the public recipe as derived from the measured recipe by identifier renames
+only. That was inaccurate for v1.0.0 — the measured indexer file carried the
+start-time kernel disable and the v1.0.0 transform contract did not. The
+v1.0.0 release evidence and gate record are preserved unmodified as
+historical documents; this note is the correction.
 
 Mechanism, on a GB10 (48 SMs, 101,376 bytes of opt-in shared memory per
 block, so the 128 KiB fallback can never apply):
@@ -64,7 +74,36 @@ from 8192 to 7168 citing the same oversubscription on the prefill side. Our
 no evidence of a prefill-side failure in this construction; recorded so the
 next long-prefill investigation starts there.
 
-## Measured regressions and misses
+## v1.1 (Cadence) limits
+
+- **Narrow measured scope.** The paired gains are single-stream decode
+  effects on fixed request sets. Batches of two or more requests and prefill
+  fall back to the wide path by design, so a busy multi-stream service gets
+  no promised gain from the width controller.
+- **No replicated code gain.** The paired code effect was positive in the
+  first start and spanned zero in the second; no universal code-speed gain is
+  claimed.
+- **Quality contains candidate-only losses.** In the fixed 62-answer quality
+  battery, both candidate arms failed the Caesar-cipher coding task and one
+  also failed FizzBuzz, while both reference arms completed both tasks.
+  Population-level semantic parity remains inconclusive at every endpoint.
+- **Concurrency burst is not capacity certification.** The short-prompt burst
+  evidence (up to 24 concurrent streams) certifies neither sustained service,
+  per-stream fairness, the 32-sequence envelope, nor capacity near the
+  configured maximum context.
+- **Long context past 32,768 tokens is verified by construction, not yet by
+  a live run.** The public build's transform emits the measured disabled
+  bytes, and a live single-stream witness above 32,768 tokens on the assembled
+  public build is a pending release-verification item. The configured
+  1,000,000-token context is a configuration value, not a demonstrated
+  envelope: no request beyond the 113,908-token prefill proxy has been served
+  on any arm of this recipe lineage.
+- **Not included.** A separate long-context workspace-enlargement experiment
+  exists in the project's history; it is not part of this construction, and
+  none of its results transfer. The v1.1 candidate retains the stock indexer
+  workspace.
+
+## Measured regressions and misses (v1.0.0 evidence)
 
 - **Long prefill is slower.** The 113,908-token matched prefill proxy fell
   from 1277.443 to 1234.246 tok/s (-3.38%) and time to first token rose from

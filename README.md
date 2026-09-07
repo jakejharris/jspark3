@@ -1,7 +1,10 @@
-# JSpark3 v1
+# JSpark3 v1.1 (Cadence)
 
 **JSpark3 turns three NVIDIA DGX Sparks into one OpenAI-compatible GLM-5.3
 Flash endpoint, with a reproducible TP3 recipe and public benchmarks.**
+
+v1.1 — release name **Cadence** — adds a measured single-stream decode mode to
+the v1 construction and carries the proven long-context kernel fix.
 
 > **Weights and licenses:** Brandon M. Music created the
 > [ShapleyMcg](https://github.com/brandonmmusic-max/shapleymcg) quantization.
@@ -9,8 +12,8 @@ Flash endpoint, with a reproducible TP3 recipe and public benchmarks.**
 > a named exclusion. DFlash2 is a separate non-commercial dependency. Read
 > the [license boundaries](#license) before serving.
 
-> **Known issues in v1.0.0, fixed in v1.0.1.** Found by a community bug
-> report from [@BTCXoomer on X](https://x.com/BTCXoomer).
+> **Known issues in v1.0.0, fixed since v1.0.1 and carried in v1.1.0.** Found
+> by a community bug report from [@BTCXoomer on X](https://x.com/BTCXoomer).
 >
 > 1. **Single-stream requests past 32,768 tokens of context crash the
 >    v1.0.0 recipe.** The v1.0.0 transform contract pins vLLM's
@@ -33,10 +36,32 @@ Flash endpoint, with a reproducible TP3 recipe and public benchmarks.**
 >
 > Weights and benchmarks are unchanged in v1.0.1: no number was remeasured,
 > and every published figure already came from the disabled-kernel path.
+> v1.1.0 carries both fixes forward; the long-context disable is part of its
+> transform contract.
 
 ## Results
 
-| Measured result | JSpark3 v1 |
+The v1.1 effects below were measured inside the candidate against its own
+disabled reference route. They are not comparisons against the published
+v1.0.0 numbers further down, which used different request sets and estimators,
+and no number was re-measured across the two releases.
+
+### v1.1 (Cadence) — measured, single-stream, in scope
+
+| Paired effect (candidate route vs disabled reference route) | Result over two independent serving starts |
+|---|---|
+| Prose decode | **+16.18%** and **+19.17%** (95% CIs exclude zero) |
+| Structured-count decode | **+7.66%** and **+7.61%** |
+| Code decode | +9.71%, then +3.23% with the second interval spanning zero — **not a replicated gain** |
+| Scope | Single-stream decode with the width controller active; batches of two or more requests and prefill fall back to the wide path |
+
+Conditions, confidence intervals, quality results, and every caveat:
+[docs/BENCHMARKS.md](docs/BENCHMARKS.md#v11-cadence-evidence) and
+[docs/LIMITATIONS.md](docs/LIMITATIONS.md#v11-cadence-limits).
+
+### v1.0.0 — historical benchmarks, unchanged
+
+| Measured result | JSpark3 v1.0.0 (historical) |
 |---|---:|
 | Single-stream code decode | **1.49x faster**, 66.3 vs 44.6 tok/s on the two-Spark recipe |
 | sparkDash clamp-code time to first token | **391 ms**, down from 719 ms on two Sparks |
@@ -67,13 +92,18 @@ From a fresh clone on the controller, copy the checked recipe to the same path
 on every rank:
 
 ```bash
-git clone --branch v1.0.1 https://github.com/jakejharris/jspark3.git
+git clone --branch v1.1.0 https://github.com/jakejharris/jspark3.git
 cd jspark3
 (cd recipe && sha256sum -c SHA256SUMS)
 for host in rank0 rank1 rank2; do
   rsync -a --delete recipe/ "$host":/srv/jspark3-recipe/
 done
 ```
+
+The `v1.1.0` tag is created when the release is published. Until then this
+command fails by design. There is no default-branch fallback: the default
+branch is not a release surface, and silently installing older code is worse
+than a failed clone.
 
 If you must run the v1.0.0 tag instead, read the
 [known issue for single-stream requests past 32,768 tokens](docs/INSTALL.md#known-issue-in-v100-single-stream-requests-past-32768-tokens)
@@ -104,14 +134,42 @@ hosts is in [docs/INSTALL.md](docs/INSTALL.md).
 
 ## What JSpark3 is
 
-JSpark3 v1 is a reproducible serving and runtime recipe. It runs the
+JSpark3 v1.1 is a reproducible serving and runtime recipe. It runs the
 EXL3/TR3 4-bpw GLM-5.3 Flash checkpoint with tensor parallel 3 and expert
 parallel 3 over a two-leg RoCE-v2 triangle, adds a DFlash2 speculative draft,
 an FP8 KV cache, prefix caching, a 1,000,000-token configured context, and a
 selective INT8 (W8A16 Marlin) overlay for the model trunk that frees
-1,595,392,320 bytes of weight memory per rank. A fail-closed lifecycle
-controller refuses to start anything that differs from the measured
-construction.
+1,595,392,320 bytes of weight memory per rank. v1.1 adds two measured serving
+features to that construction — a group-128 INT8 shadow for the QKV
+projections on small-batch decode, and a request-local speculative width
+controller that narrows the draft when acceptance is high and falls back wide
+for batches and prefill — while keeping the stock indexer workspace, drafter,
+and sampler. A fail-closed lifecycle controller refuses to start anything that
+differs from the measured construction.
+
+The transform contract also carries the one-line disable of vLLM's
+`persistent_topk` kernel, the exact long-context fix described in the known
+issues above and in [docs/LIMITATIONS.md](docs/LIMITATIONS.md#kernel-disable-provenance-and-the-32768-token-single-stream-boundary-v100).
+A live single-stream witness above 32,768 tokens on the assembled public build
+is part of release verification and has not run yet; until then the fix is
+verified by construction, not by a live run.
+
+## What is new in v1.1 (Cadence)
+
+Two serving features, measured together and shipped together:
+
+- **QKV decode shadow.** For small-batch pure decode, an additional group-128
+  INT8 shadow of the QKV projections serves qualifying decode shapes; every
+  other shape keeps the parent path, and control rows stay BF16.
+- **Speculative width controller.** Per request, the controller watches draft
+  acceptance and narrows speculation from seven to three tokens when the
+  narrow path is winning, re-evaluating on a fixed rhythm. Any batch, prefill,
+  or guard condition falls back to the wide path.
+
+The measured launch retains the stock indexer workspace. Paired effects,
+quality results, and every limitation are in
+[docs/BENCHMARKS.md](docs/BENCHMARKS.md#v11-cadence-evidence); what the
+evidence does not show is in [docs/LIMITATIONS.md](docs/LIMITATIONS.md#v11-cadence-limits).
 
 It is not a new model. The GitHub recipe and release assets contain no
 checkpoint weight objects. The separate public Hugging Face repository carries
@@ -130,11 +188,17 @@ measured on.
 > including its named exclusion; Z.AI's base model remains MIT. DFlash2 is
 > not mirrored and remains a separate CC BY-NC-ND 4.0 dependency.
 
-> **Release status: [v1.0.1](https://github.com/jakejharris/jspark3/releases)
-supersedes [v1.0.0](https://github.com/jakejharris/jspark3/releases/tag/v1.0.0)
-(released 2026-09-02) with the `persistent_topk` transform fix and the fabric
-documentation fix described above; weights and benchmarks are unchanged.**
-> The immutable terminal Hub main revision is
+> **Release status: v1.1.0 (Cadence) is staged for publication and supersedes
+> v1.0.1 with the kernel fix carried in the transform plus the measured
+> Cadence features described above. The `v1.1.0` tag and release do not exist
+> yet; they are created at publication, and the clone command in the quick
+> start names that tag on purpose — it fails until publication rather than
+> installing older code.** Historical releases: [v1.0.1](https://github.com/jakejharris/jspark3/releases)
+> supersedes [v1.0.0](https://github.com/jakejharris/jspark3/releases/tag/v1.0.0)
+> (released 2026-09-02) with the `persistent_topk` transform fix and the
+> fabric documentation fix described above; weights and benchmarks are
+> unchanged.
+> The weights mirror has not changed; the verified weights-mirror revision is
 > [`e7c34dba923916754cfcb0bdf6c2c75a9b7ff1fc`](https://huggingface.co/jakejharris/jspark3/commit/e7c34dba923916754cfcb0bdf6c2c75a9b7ff1fc),
 > with the verified receipt at
 > [`huggingface/jspark3/MIRROR-COMPLETION.json`](huggingface/jspark3/MIRROR-COMPLETION.json).
@@ -145,6 +209,10 @@ documentation fix described above; weights and benchmarks are unchanged.**
 ![JSpark3 v1 architecture](docs/diagrams/architecture.svg)
 
 ## How it compares with what was already public
+
+This section and the two after it are the v1.0.0 historical record, preserved
+unchanged. The v1.1 Cadence effects come from different request sets and
+estimators and are never merged with these tables.
 
 The question this release answers is what a DGX Spark owner could already get
 publicly, and where this recipe sits beside that. The reference rows below are
@@ -183,6 +251,10 @@ minimum fields, sources, exact sparkDash receipts, and caveats for every row:
 [docs/BENCHMARKS.md](docs/BENCHMARKS.md).
 
 ## What the overlay changed, internally
+
+This is v1.0.0-era evidence about the trunk overlay, preserved unchanged; the
+v1.1 additions have their own paired evidence in
+[docs/BENCHMARKS.md](docs/BENCHMARKS.md#v11-cadence-evidence).
 
 Separately from the public comparison, the project ran a matched A/B against
 **the matched three-Spark control (same recipe, overlay disabled), an

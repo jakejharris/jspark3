@@ -31,8 +31,39 @@ repository. Mirroring is not authorship: no weight byte is modified, the
 checkpoint's own license and attribution travel with it, and the DFlash2 draft
 is left where it is as a separately pinned dependency. All 123 allowlisted Git
 LFS payloads and the exact completion receipt were remotely verified before
-maintainer merge into public Hub main at immutable revision
+maintainer merge into the verified weights-mirror revision
 `e7c34dba923916754cfcb0bdf6c2c75a9b7ff1fc`.
+
+## What v1.1 (Cadence) adds
+
+v1.1 keeps the construction above — including the stock indexer workspace,
+the original drafter, and the sampler — and adds two serving features
+measured together, plus one fix carried forward:
+
+- **QKV decode shadow.** An additional group-128 INT8 shadow of the QKV
+  projections serves qualifying small-batch pure-decode shapes; every other
+  shape keeps the parent path, and the control rows stay BF16.
+- **Speculative width controller.** A request-local controller watches draft
+  acceptance and narrows speculation from seven to three tokens when the
+  narrow path is winning, re-evaluating on a fixed rhythm. Any batch,
+  prefill, or guard condition falls back to the wide path.
+- **The long-context kernel fix.** The v1.0.1 transform-level disable of
+  `persistent_topk` is part of the v1.1 transform contract; the transform
+  emits the exact file the measured arms executed. A live single-stream
+  witness above 32,768 tokens on the assembled public build is a pending
+  release-verification item.
+
+The paired evidence is scoped and honestly bounded: prose and structured-
+count decode gains with confidence intervals excluding zero across two
+independent serving starts, a code gain that did not replicate,
+candidate-only quality losses, and a concurrency burst that certifies no
+operating envelope. A fresh three-rank rebuild from the recipe completed
+construction, route audits, and the frozen batteries without a serving
+repair, and the prior exact arm was restored afterward. Section 6 of this
+report and the historical tables in [BENCHMARKS.md](BENCHMARKS.md) remain the
+v1.0.0 record and are not merged with the v1.1 evidence; the v1.1 numbers
+and their conditions are in
+[BENCHMARKS.md](BENCHMARKS.md#v11-cadence-evidence).
 
 ## 2. The problem with three
 
