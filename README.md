@@ -196,14 +196,14 @@ measured on.
 > not mirrored and remains a separate CC BY-NC-ND 4.0 dependency.
 
 > **[v1.1.0 (Cadence), 2026-09-07](https://github.com/jakejharris/jspark3/releases/tag/v1.1.0):**
-> supersedes v1.0.1 with the kernel fix carried in the transform plus the
+> incorporates the v1.0.1 kernel and fabric corrections plus the
 > measured Cadence features described above. The quick start selects the
 > exact release tag. This commit is the authorized release content;
-> publication observations are recorded separately. Historical releases: [v1.0.1](https://github.com/jakejharris/jspark3/releases)
-> supersedes [v1.0.0](https://github.com/jakejharris/jspark3/releases/tag/v1.0.0)
-> (released 2026-09-02) with the `persistent_topk` transform fix and the
-> fabric documentation fix described above; weights and benchmarks are
-> unchanged.
+> publication observations are recorded separately. The historical published
+> release is [v1.0.0](https://github.com/jakejharris/jspark3/releases/tag/v1.0.0)
+> (2026-09-02). The v1.0.1 corrections prepared in [PR #2](https://github.com/jakejharris/jspark3/pull/2)
+> are incorporated into V1.1; no separate v1.0.1 release was published.
+> Weights and historical benchmarks are unchanged.
 > The weights mirror has not changed; the verified weights-mirror revision is
 > [`e7c34dba923916754cfcb0bdf6c2c75a9b7ff1fc`](https://huggingface.co/jakejharris/jspark3/commit/e7c34dba923916754cfcb0bdf6c2c75a9b7ff1fc),
 > with the verified receipt at

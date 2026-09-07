@@ -47,12 +47,15 @@ published for v1.0.0; the recipe uses the exact upstream image by digest.
 | Hugging Face | The public, ungated, enabled repository carries the remotely verified, attributed, byte-identical target mirror at `e7c34dba923916754cfcb0bdf6c2c75a9b7ff1fc`, plus the exact completion receipt. No DFlash2 byte is mirrored. |
 | Release assets | Reproducibly built into `dist/` by `tools/build_release_assets.sh`: recipe archive, results archive, CycloneDX SBOM, and checksums. |
 
-`python3 tools/validate_release.py . --report validation.json` must return
-`VERDICT PASS` with all 16 checks after any edit to the historical tree. For
-the v1.1 state, the same 16 checks attest hash-cascade, privacy, and claim
-integrity of the tree; a PASS on this branch does not attest that the v1.1.0
-release exists, and the new v1.1 numbers do not reconcile until the
-integration step extends the machine-readable results.
+The historical v1.0.0 validator reported 16 checks. The current V1.1 command,
+`python3 tools/validate_release.py . --report validation.json`, must return
+`VERDICT PASS (17 checks, 0 failed)`. Current V1.1 numbers now reconcile
+against the separate machine-readable claims and integrated live-evidence
+exports; the historical benchmark populations remain unchanged. The current
+checks cover integrity metadata, privacy, claims, and the accepted live
+evidence. An offline PASS does not itself attest that the remote V1.1 tag or
+release has been published; the publisher records those observations
+separately.
 
 ## Completed independent Hugging Face mirror
 
