@@ -144,3 +144,16 @@ public tree carries the sanitized machine-readable receipts under
 is the only source of numbers quoted in prose. `tools/validate_release.py`
 reconciles every number in the public documents against that map, so a claim
 cannot drift from its receipt without failing validation.
+
+## Repository map
+
+| Path | What it is |
+|---|---|
+| [`recipe/`](../recipe/README.md) | The runnable recipe: lifecycle controller, preflight, entrypoint, five hash-gated runtime transforms, the W8A16 overlay, checkpoint validation, `SHA256SUMS`. |
+| [`docs/`](../docs/ARCHITECTURE.md) | Architecture, technical report, benchmarks, install, operations, limitations, reproducibility, licensing. |
+| [`results/`](../results/SUMMARY.md) | Machine-readable results (`results.json`) and the sanitized evidence they derive from: batteries, the sparkDash author-protocol receipt, matched controls, scheduler and prefill receipts, demonstration receipts, analyzer method. |
+| [`manifests/`](../manifests/dependencies.json) | Pinned dependencies, release metadata, the public-derivation record, and a CycloneDX SBOM. |
+| [`huggingface/`](../huggingface/README.md) | The Hugging Face repository metadata, results, licenses, provenance, target-mirror contract, and exact completion receipt; the verified target payload is public at the immutable terminal main revision. |
+| [`docker/`](../docker/README.md) | Local-only reproducibility definition for inspecting the labeled derivative; v1.0.0 publishes no JSpark3 container image and runs the upstream digest. |
+| [`tools/`](../tools/validate_release.py) | Release validator, release-asset and SBOM builders, and the pacing and stream analyzers used for the evidence. |
+| [`release/`](../release/RELEASE-NOTES.md) | Release notes and announcement drafts. |

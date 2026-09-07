@@ -21,8 +21,9 @@ release asset; the commands below do not change.
 > **Read this before serving long contexts or launching containers by hand.**
 > The v1.0.0 recipe as published aborts on any single-stream request whose
 > context passes 32,768 tokens, and a hand launch needs one NCCL variable
-> that v1.0.0 never documented. Both are fixed in v1.0.1. If you are setting
-> up v1.0.0 anyway, read
+> that v1.0.0 never documented. Both corrections were prepared for v1.0.1
+> and shipped in v1.1.0; no separate v1.0.1 release was published. If you
+> are setting up v1.0.0 anyway, read
 > [Known issue: single-stream requests past 32,768 tokens](#known-issue-in-v100-single-stream-requests-past-32768-tokens)
 > before your first request, and set the fabric environment from
 > [step 5](#5-fabric-checks) if anything other than `start.sh` creates your
@@ -53,23 +54,28 @@ Software on each Spark
 
 Controller host
 
-- Any Linux or macOS machine with Python 3.9 or newer, `ssh`, and
+- Any Linux or macOS machine with Python 3.9 or newer, `ssh`, `rsync`, and
   `sha256sum`. Rank 0 itself works as the controller.
 
 ## 2. Get the recipe onto every rank
 
-Unpack the recipe to the same absolute path on all three Sparks. That path
+Copy the recipe to the same absolute path on all three Sparks. That path
 becomes `JSPARK_RECIPE_ROOT` in `.env`, and the preflight refuses if the three
 copies do not hash to the same recipe manifest.
 
 ```bash
 # on the controller
-tar -xzf jspark3-recipe-1.0.0.tar.gz          # produces ./recipe
+git clone --branch v1.1.0 https://github.com/jakejharris/jspark3.git
+cd jspark3
 (cd recipe && sha256sum -c SHA256SUMS)             # every line must say OK
 for host in rank0 rank1 rank2; do
   rsync -a --delete recipe/ "$host":/srv/jspark3-recipe/
 done
 ```
+
+The published `v1.1.0` tag is the install source; the default branch is not a
+release surface. Before publication, the tag-only clone intentionally failed
+rather than falling back to an older release or the default branch.
 
 The recipe directory is mounted read-only inside the containers. Never edit it
 in place on a rank; change it on the controller, re-verify, and re-sync.
@@ -358,7 +364,7 @@ Runtime errors (not refusals):
 
 | Runtime error | Cause |
 |---|---|
-| `persistent_topk would oversubscribe and the FilteredTopK fallback requires >=128KB smem per block` | v1.0.0 known issue: a single decoding stream passed 32,768 tokens of context. Use the v1.0.1 recipe; see the [known issue](#known-issue-in-v100-single-stream-requests-past-32768-tokens). |
+| `persistent_topk would oversubscribe and the FilteredTopK fallback requires >=128KB smem per block` | v1.0.0 known issue: a single decoding stream passed 32,768 tokens of context. Use the v1.1.0 recipe; see the [known issue](#known-issue-in-v100-single-stream-requests-past-32768-tokens). |
 | NCCL init stalls; rank 0 to rank 2 connects over rank 1's leg | Hand launch without `NCCL_IB_SUBNET_AWARE_ROUTING=1`. Set the full fabric environment from [step 5](#5-fabric-checks). |
 
 Every refusal exits with status 9 and leaves the fleet unchanged.
