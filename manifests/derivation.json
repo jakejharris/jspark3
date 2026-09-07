@@ -43,10 +43,10 @@
       "public_sha256": "5f39ea600fa38f2baf8a67caaf4f1a71845637d79a8eeed4afaadc1857c55210"
     },
     {
-      "changed_lines": 2,
+      "changed_lines": 16,
       "measured_sha256": "48d433151f6b98d43a46391347d7c1043749dd3472fb03a4e4c1e8699f204510",
       "public": "config/patch-contract.json",
-      "public_sha256": "b3430f6daede8f1d867621517ebd1e6b343892c1286b8c5d2baa83b0cb9f61c5"
+      "public_sha256": "e01adc58b21b77c1d598d0750d9dfad0fd5d991dff9cbd0f264c5550eaed5f44"
     },
     {
       "changed_lines": 18,
@@ -67,10 +67,10 @@
       "public_sha256": "91369e86b02e3dd8f0b02c47fd3cce1377c98ec16ed7c301493ca9bad744fc99"
     },
     {
-      "changed_lines": 0,
+      "changed_lines": 13,
       "measured_sha256": "5fa3cf9fdb19dabef3b3d1df28f2caa2a755097c2443143b6767b182b99bd5dd",
       "public": "scripts/_contracts.py",
-      "public_sha256": "5fa3cf9fdb19dabef3b3d1df28f2caa2a755097c2443143b6767b182b99bd5dd"
+      "public_sha256": "9b60e82d50304cd0692a3a0ff9477cd199e25a279e9a0041998594a9df8ed906"
     },
     {
       "changed_lines": 0,
@@ -85,10 +85,10 @@
       "public_sha256": "95d37061b18eac0f5390852c0b3ff676d82c35f160cc3ad14e31c90113103c11"
     },
     {
-      "changed_lines": 4,
+      "changed_lines": 25,
       "measured_sha256": "c504490b177af499d981888d24678286d0abc8f9b85a19909bd2947da4ca2d09",
       "public": "scripts/apply_image_glm_dflash.py",
-      "public_sha256": "44abb6a67bf41cf094b69531389b57b1e821f8918fb947a859109068dd9b1fda"
+      "public_sha256": "5ef8591274361823dde920188a5186e30d93590ed795a4d8008e9168a3f8033f"
     },
     {
       "changed_lines": 2,
@@ -220,5 +220,5 @@
     "recomputed_from_pristine": true
   },
   "schema_version": 1,
-  "statement": "The public recipe was derived from the measured engineering recipe by identifier renames only (file names and string literals) plus re-pinning the two overlay-file hashes and the loader hook's after-hash that those renames change. No control flow, contract hash, transform seam, serving argument, or environment value changed. Measured-file hashes are listed so a reviewer holding the private bundle can confirm the mapping."
+  "statement": "The public recipe was derived from the measured engineering recipe by identifier renames only (file names and string literals) plus re-pinning the two overlay-file hashes and the loader hook's after-hash that those renames change; that was the complete delta through v1.0.0, with no control flow, contract hash, transform seam, serving argument, or environment value changed. v1.0.1 adds one deliberate behavioral delta on top: the kpool transform target now applies the upstream launcher's GB10 persistent_topk disable (after-hash f48c5f93cb3c7d1b1238381761b65c142a1c032023dcef8e449a02f651fb0530 to 00e32052b781723500987a463814116634c4d00b3b61066915f8cc70780c931e), the exact file every measured arm executed. changed_lines is the unified-diff count of added plus deleted lines between the measured file and the public file. Measured-file hashes are listed so a reviewer holding the private bundle can confirm the mapping."
 }

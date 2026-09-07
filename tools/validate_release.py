@@ -130,6 +130,9 @@ STRUCTURAL_NUMBERS = {
     "2,048", "2,112", "175,622,979,576", "175,642,157,752", "175,715,854,754",
     "2,342,169,800", "9,000",
     "1.1", "0.4", "1.9",
+    # Constants of the pinned vLLM persistent_topk kernel and the GB10 device,
+    # quoted by the v1.0.1 kernel-disable documentation. Not measurements.
+    "32,768", "35,968", "49,152", "101,376", "8,472", "11,768", "24,824",
 }
 # The mirrored target weights. These are measured facts about someone else's
 # repository at a pinned revision; the validator refuses if any of them drifts.

@@ -52,8 +52,10 @@ start, verifying the hash of every file before and after and refusing on any
 drift. `apply_tp3_overlay.py` carries the padding and the EXL3 expert-map
 sharding; `apply_image_glm_dflash.py` carries MiaAI-Lab's GLM, DFlash2,
 scheduler, and reasoning integration, including DFlash2's padded KV
-slot-sharing, a decode-floor mixed-prefill policy, and a guard that
-suppresses stop sequences inside reasoning; `apply_kpool_tail.py` carries the
+slot-sharing, a decode-floor mixed-prefill policy, a guard that
+suppresses stop sequences inside reasoning, and, since v1.0.1, the GB10
+`persistent_topk` disable the upstream launcher applies at start and every
+measured arm ran (`docs/LIMITATIONS.md` has the boundary); `apply_kpool_tail.py` carries the
 K-pool hybrid-position and persistent tail-slot correction; the two KDA
 programs are ours, batching the linear-attention f/g projections and
 constructing mixed-output blocks. Together they touch 25 files with pinned
