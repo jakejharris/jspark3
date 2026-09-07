@@ -20,9 +20,9 @@ jobs:
           file: docker/Dockerfile
           platforms: linux/arm64
           push: false
-          tags: jspark3-local:1.0.0
+          tags: jspark3-local:1.1.0
           build-args: |
-            JSPARK3_VERSION=1.0.0
+            JSPARK3_VERSION=1.1.0
             JSPARK3_SOURCE_REVISION=${{ github.sha }}
           provenance: false
           sbom: false
