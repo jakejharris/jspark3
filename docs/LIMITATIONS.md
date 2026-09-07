@@ -25,17 +25,19 @@ one-line change the upstream launcher applies at container start. The v1.0.0
 transform contract pinned the file with the kernel still enabled, so the
 construction v1.0.0 shipped had never actually been run past 32,768 tokens
 by anyone. v1.0.1 carries the disable in the transform itself: the transform's
-emitted indexer file is byte-identical to the file every measured arm
-executed. The rest of the public construction is verified equivalent to the
-measured arms by hash contract and rename-only diffs, not byte-identical as a
-whole tree. No published number changed:
+emitted sparse-attention kernel file is byte-identical to the file every
+measured arm executed. That is the verified target-file transform result;
+full equivalence of the assembled public construction to the measured arms
+was not exhaustively re-proven and remains the current recipe and review
+task. No published number changed:
 they all came from the disabled path. Found by a community bug report from
 [@BTCXoomer on X](https://x.com/BTCXoomer).
 
 Provenance correction, recorded at v1.1.0: the v1.0.0 release gate described
 the public recipe as derived from the measured recipe by identifier renames
-only. That was inaccurate for v1.0.0 — the measured indexer file carried the
-start-time kernel disable and the v1.0.0 transform contract did not. The
+only. That was inaccurate for v1.0.0 — the measured sparse-attention kernel
+file carried the start-time kernel disable and the v1.0.0 transform contract
+did not. The
 v1.0.0 release evidence and gate record are preserved unmodified as
 historical documents; this note is the correction.
 
@@ -91,17 +93,15 @@ next long-prefill investigation starts there.
   evidence (up to 24 concurrent streams) certifies neither sustained service,
   per-stream fairness, the 32-sequence envelope, nor capacity near the
   configured maximum context.
-- **Long context past 32,768 tokens is verified by construction, not yet by
-  a live run.** The public build's transform emits the measured disabled
-  bytes, and a live single-stream witness above 32,768 tokens on the assembled
-  public build is a pending release-verification item. The configured
-  1,000,000-token context is a configuration value, not a demonstrated
-  envelope: no request beyond the 113,908-token prefill proxy has been served
-  on any arm of this recipe lineage.
-- **Not included.** A separate long-context workspace-enlargement experiment
-  exists in the project's history; it is not part of this construction, and
-  none of its results transfer. The v1.1 candidate retains the stock indexer
-  workspace.
+- **Long context past 32,768 tokens still awaits assembled-build live
+  validation.** The transform-level kernel-file change is pinned and its
+  output verified, but a live single-stream witness above 32,768 tokens on
+  the assembled public build is a pending release-verification item. The
+  configured 1,000,000-token context is a configuration value; it does not
+  certify this candidate's operating envelope.
+- **Not included.** Separate workspace experiments are not part of this
+  construction, and their results do not transfer. The v1.1 candidate retains
+  the stock indexer workspace.
 
 ## Measured regressions and misses (v1.0.0 evidence)
 

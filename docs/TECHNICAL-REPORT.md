@@ -49,7 +49,7 @@ measured together, plus one fix carried forward:
   prefill, or guard condition falls back to the wide path.
 - **The long-context kernel fix.** The v1.0.1 transform-level disable of
   `persistent_topk` is part of the v1.1 transform contract; the transform
-  emits the exact file the measured arms executed. A live single-stream
+  emits the exact kernel file the measured arms executed. A live single-stream
   witness above 32,768 tokens on the assembled public build is a pending
   release-verification item.
 

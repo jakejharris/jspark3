@@ -151,8 +151,9 @@ The transform contract also carries the one-line disable of vLLM's
 `persistent_topk` kernel, the exact long-context fix described in the known
 issues above and in [docs/LIMITATIONS.md](docs/LIMITATIONS.md#kernel-disable-provenance-and-the-32768-token-single-stream-boundary-v100).
 A live single-stream witness above 32,768 tokens on the assembled public build
-is part of release verification and has not run yet; until then the fix is
-verified by construction, not by a live run.
+is part of release verification and has not run yet. The transform's
+kernel-file change is pinned and verified; long-context operation past 32,768
+tokens on the assembled public build is not yet validated.
 
 ## What is new in v1.1 (Cadence)
 

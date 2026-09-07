@@ -69,14 +69,14 @@ consequences are worth stating plainly:
   `persistent_topk` kernel; see the
   [install-path warning](INSTALL.md#known-issue-in-v100-single-stream-requests-past-32768-tokens)).
   v1.0.1 disables that kernel in the transform, so the known deterministic
-  single-stream abort is removed and the transform emits the exact file every
-  measured run executed. That is not a demonstration of end-to-end
+  single-stream abort is removed and the transform emits the exact kernel
+  file every measured run executed. That is not a demonstration of end-to-end
   reachability: the configured 1,000,000-token context remains a
-  configuration value, no request beyond the 113,908-token prefill proxy has
-  been served on any arm of this recipe lineage, and a live single-stream
-  witness above 32,768 tokens on the assembled public build is a pending
-  verification item. All published numbers, including the long-prefill
-  figures above, were measured with that disable applied and are unchanged.
+  configuration value and does not certify this candidate's operating
+  envelope, and a live single-stream witness above 32,768 tokens on the
+  assembled public build is a pending verification item. All published
+  numbers, including the long-prefill figures above, were measured with that
+  disable applied and are unchanged.
 - High concurrency raises time to first token sharply. In the C48 wave, the
   p90 time to first token was 96.722 s even though aggregate throughput rose.
   If you serve interactive traffic, cap concurrency well below 48 or add an

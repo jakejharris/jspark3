@@ -30,15 +30,15 @@ merged with the v1.1 evidence.
   nor large-context capacity.
 - **Long-context kernel fix carried.** The v1.0.1 transform-level disable of
   vLLM's `persistent_topk` kernel is part of the v1.1 transform contract; the
-  transform emits the exact file the measured arms executed. A live
+  transform emits the exact kernel file the measured arms executed. A live
   single-stream witness above 32,768 tokens on the assembled public build
   remains a pending release-verification item and is not claimed as passed.
 - **Documentation corrections carried into this release:** the unverified
   stub-`libcuda` causal claim in the v1.0.1 install notes is reworded as
   unconfirmed; the v1.0.1 operations wording implying proven 1,000,000-token
   reachability and whole-tree byte identity is corrected to what the evidence
-  shows (known abort removed; the indexer transform output matches the
-  measured bytes); the Hub mirror revision is described as the verified
+  shows (known abort removed; the sparse-attention kernel transform output
+  matches the measured bytes); the Hub mirror revision is described as the verified
   weights-mirror revision; and the v1.0.0 gate page's inaccurate "identifier
   renames only" derivation claim is explicitly corrected by a provenance note
   while the historical record stays unmodified.
