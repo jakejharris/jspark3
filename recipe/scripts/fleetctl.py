@@ -20,6 +20,28 @@ import urllib.request
 
 IMAGE = "ghcr.io/miaai-lab/glm-5.3-flash-2x-dgx-sparks@sha256:9bb1557a4234fce63d59599e44d10747eabd742beb337eebf9e7070be8a0fd58"
 IMAGE_CONFIG = "sha256:ad0cdd86d1ddd15ee758f519d16da15ac237f7f0648a5c52fbc20f9554944263"
+RELEASE_LABEL = "v1.1.0"
+# The measured Cadence B4+B5 layer, pinned in config/cadence-contract.json.
+B45_ENV = {
+    "B45_COMBINED": "1",
+    "B5_PREFIX_VERIFY": "1",
+    "B5_CALIB_REPLAYS": "20",
+    "B5_T4_SEED_MS": "74.30",
+    "B5_T7_SEED_MS": "92.53",
+    "B5_OUT": "/tmp/b45",
+    "JSPARK3_KDA_QKV_SHADOW": "1",
+    "B4_CAPTURE_ORDER": '["bf16_0","int8_0"]',
+}
+B45_MODULES = {
+    "b45_bootstrap.py": "fa72748f0e7c914d6486e2c2728e1f10c6b457cc1f215081d935bc8bbede3d07",
+    "b45_graphs.py": "dce824588bba64a462cf9d2f04a80e1c39a60fe7826dd311157873cbcacaba3c",
+    "b5_controller.py": "3d4ded0f4d03b6707f7b6e6f5df0374d6350100148719c8c11c91d4a2c25d5b3",
+    "b5_prefix_verify.py": "da8ea1a779fad08459632a9ec141de540b1f21a255a5af3e522f804108dcb0a0",
+    "kda_mixed_output_blocks.py": "db6d60f0ac99d3cc23d5d0b6194a557779b82f2b34132c4dba11f28098fda61f",
+}
+B45_PTH_SHA256 = "eea018d5bfee8fdc28e6470f650b8f4adaa5ec4cc4f8ac86b3e8849368c9fdeb"
+B45_KDA_ORIGINAL_SHA256 = "01aa249dd9ed35c96cc4339f85389d43a90085b9878a52827927974b93c58cd5"
+B5_RECEIPT_MARKER = "B5_PREFIX_VERIFY_RECEIPT rank=0 T4_seed_ms=74.300 T7_seed_ms=92.530 narrow_width=3"
 MEMORY = 68719476736
 SHM = 34359738368
 TARGET_RUNTIME = "/models/Mia-AiLab--GLM-5.3-Flash-EXL3-TR3-4bpw-25a44fdb-tp3-runtime"
@@ -218,6 +240,7 @@ def rank_env(
         "JSPARK3_KDA_FG_BATCHED": "1",
         "JSPARK3_TRUNK_W8A16": "1",
         "JSPARK3_TRUNK_W8A16_K704_GROUP": "64",
+        **B45_ENV,
         "JSPARK_PREFLIGHT_SHA256": preflight_sha256,
         "JSPARK_RECIPE_MANIFEST_SHA256": recipe_manifest_sha256 or sha_file(RECIPE_ROOT / "SHA256SUMS"),
     }
@@ -254,6 +277,7 @@ def server_argv(values: dict[str, str], rank: int) -> list[str]:
         "--compilation-config", compilation,
         "--default-chat-template-kwargs", "{\"enable_thinking\":false}",
         "--chat-template", "/sources/fly/files/chat_template.jinja",
+        "--max-logprobs", "-1",
     ]
     if rank:
         argv.append("--headless")
@@ -283,8 +307,8 @@ def container_argv(
         "--mount", f"type=bind,src={work}/cache/triton,dst=/root/.triton/cache",
         "--mount", f"type=bind,src={work}/cache/tilelang,dst=/root/.tilelang/cache",
         "--label", "org.opencontainers.image.title=jspark3-recipe",
-        "--label", "jspark3.release=v1.0.0", "--label", f"jspark3.rank={rank}",
-        "--label", "jspark3.grade=engineering-evidence",
+        "--label", f"jspark3.release={RELEASE_LABEL}", "--label", f"jspark3.rank={rank}",
+        "--label", "jspark3.grade=engineering-evidence", "--label", "jspark3.b45=boot41",
     ]
     for item in rank_env(values, rank, preflight_sha256, recipe_manifest_sha256):
         argv.extend(("--env", item))
@@ -399,6 +423,7 @@ def render_dry_run(
         print("DRY-RUN controller POST arithmetic 323")
         base = f"http://{values['JSPARK_MASTER_ADDR']}:{values['JSPARK_API_PORT']}"
         print(f"DRY-RUN controller {shlex.join(focused_witness_argv(values, base))}")
+        print(f"DRY-RUN controller {shlex.join(long_context_witness_argv(values, base))}")
         return
     if command == "stop":
         for rank in (0, 1, 2):
@@ -709,8 +734,8 @@ def validate_container_contract(
     labels = config.get("Labels") or {}
     expected_labels = {
         "org.opencontainers.image.title": "jspark3-recipe",
-        "jspark3.release": "v1.0.0", "jspark3.rank": str(rank),
-        "jspark3.grade": "engineering-evidence",
+        "jspark3.release": RELEASE_LABEL, "jspark3.rank": str(rank),
+        "jspark3.grade": "engineering-evidence", "jspark3.b45": "boot41",
     }
     if any(labels.get(key) != value for key, value in expected_labels.items()):
         raise Refusal(f"rank{rank} release label drift")
@@ -771,8 +796,8 @@ def validate_bound_identity(rank: int, identity: str, item: dict) -> None:
     labels = config.get("Labels") or {}
     expected_labels = {
         "org.opencontainers.image.title": "jspark3-recipe",
-        "jspark3.release": "v1.0.0", "jspark3.rank": str(rank),
-        "jspark3.grade": "engineering-evidence",
+        "jspark3.release": RELEASE_LABEL, "jspark3.rank": str(rank),
+        "jspark3.grade": "engineering-evidence", "jspark3.b45": "boot41",
     }
     if (item.get("Id") != identity or item.get("Name") != f"/{name}" or
             item.get("Image") != IMAGE_CONFIG or config.get("Image") != IMAGE or
@@ -1026,6 +1051,41 @@ def collect_status(values: dict[str, str], manifest: dict) -> list[dict]:
     return rows
 
 
+def b45_identity_argv(identity: str) -> list[str]:
+    code = (
+        "import hashlib,json,pathlib; "
+        "h=lambda p: hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest(); "
+        "b45=pathlib.Path('/opt/b45'); "
+        "site=pathlib.Path('/usr/local/lib/python3.12/dist-packages'); "
+        "mods=sorted(p.name for p in b45.iterdir()) if b45.is_dir() else []; "
+        "out=pathlib.Path('/tmp/b45'); "
+        "out_entries=sorted(p.relative_to(out).as_posix() for p in out.rglob('*')) if out.is_dir() else []; "
+        "print(json.dumps({'modules':{m:h(b45/m) for m in mods},"
+        "'pth_sha256':h(site/'zzz_b45.pth'),"
+        "'kda_original_sha256':h(site/'vllm/model_executor/layers/quantization/kda_mixed_output_blocks.py'),"
+        "'b45_out_entries':out_entries},sort_keys=True))"
+    )
+    return ["docker", "exec", identity, "python3", "-c", code]
+
+
+def b45_identity(values: dict[str, str], binding: dict) -> dict:
+    rank = binding["rank"]
+    identity = binding["container_id"]
+    value = strict_object(remote(values, rank, b45_identity_argv(identity)).stdout,
+                          f"rank{rank} cadence module identity")
+    if (set(value) != {"modules", "pth_sha256", "kda_original_sha256", "b45_out_entries"} or
+            value["modules"] != B45_MODULES or value["pth_sha256"] != B45_PTH_SHA256 or
+            value["kda_original_sha256"] != B45_KDA_ORIGINAL_SHA256):
+        raise Refusal(f"rank{rank} cadence module install drift")
+    receipts = value["b45_out_entries"]
+    if not receipts or not any(name.startswith("activation-") for name in receipts):
+        raise Refusal(f"rank{rank} cadence execution receipts absent under B5_OUT: "
+                      "module file presence alone is not execution proof")
+    return {"modules_verified": len(value["modules"]),
+            "kda_original_untouched": True,
+            "execution_receipts": len(receipts)}
+
+
 def runtime_identity(values: dict[str, str], binding: dict, manifest: dict) -> dict:
     rank, identity = binding["rank"], binding["container_id"]
     config_argv, pipeline_argv = runtime_identity_argv(identity)
@@ -1055,9 +1115,10 @@ def runtime_identity(values: dict[str, str], binding: dict, manifest: dict) -> d
         raise Refusal(f"rank{rank} host-minted image receipt drift")
     pipeline = remote(values, rank, pipeline_argv)
     pipeline_value = strict_object(pipeline.stdout, f"rank{rank} transform pipeline")
+    cadence = b45_identity(values, binding)
     result = {**configs, "transform_pipeline_state": pipeline_value.get("state"),
               "transform_target_set_sha256": pipeline_value.get("target_set_sha256"),
-              "image_receipt_bound": True}
+              "image_receipt_bound": True, "cadence_b45": cadence}
     if (result["target_runtime_config"] != "55201c73ed092c5a77f9b87ce40298edb450790ad864c1256cb6ca3a182683bd" or
             result["draft_runtime_config"] != "c9f0c3a6c41f8a226fb31a1fb7817cea274d1f4b7b0d2e4d787d38c0f508283f" or
             result["transform_pipeline_state"] != "ALREADY_APPLIED" or
@@ -1177,6 +1238,13 @@ def focused_witness_argv(values: dict[str, str], base: str) -> list[str]:
     ]
 
 
+def long_context_witness_argv(values: dict[str, str], base: str) -> list[str]:
+    return [
+        sys.executable, str(Path(__file__).resolve().with_name("long_context_witness.py")),
+        "--base-url", base,
+    ]
+
+
 def _verify_bound(
     args: argparse.Namespace, values: dict[str, str], manifest: dict
 ) -> None:
@@ -1205,9 +1273,10 @@ def _verify_bound(
         "target_graphs_5": progress_complete(logs, "Capturing CUDA graphs (FULL)", 5),
         "draft_graphs_5": progress_complete(logs, "Capturing dflash2 CUDA graphs (FULL)", 5),
         "startup_complete": "Application startup complete." in logs,
+        "b5_controller_calibrated": B5_RECEIPT_MARKER in ANSI_RE.sub("", logs),
     }
     if not all(load.values()):
-        raise Refusal("rank0 load/graph receipt gate failed")
+        raise Refusal("rank0 load/graph/cadence receipt gate failed")
     base = f"http://{values['JSPARK_MASTER_ADDR']}:{values['JSPARK_API_PORT']}"
     with urllib.request.urlopen(base + "/health", timeout=10) as health:
         if health.status != 200:
@@ -1229,11 +1298,17 @@ def _verify_bound(
     if witness.returncode:
         raise Refusal(f"focused witness failed: {witness.stderr.strip()}")
     witness_value = strict_object(witness.stdout, "focused witness response")
+    long_context = subprocess.run(long_context_witness_argv(values, base), text=True,
+                                  stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False)
+    if long_context.returncode:
+        raise Refusal(f"long-context witness failed: {long_context.stderr.strip()}")
+    long_context_value = strict_object(long_context.stdout, "long-context witness response")
     receipt = {
         "schema_version": 1, "grade": "ENGINEERING-EVIDENCE",
         "manifest_sha256": sha_file(args.manifest), "runtime_identity": runtime, "image_and_safety": statuses,
         "load": load, "health_http": 200, "served_model": "glm-5.3-flash",
-        "arithmetic": 323, "focused_witness": witness_value, "status": "VERIFY_PASS",
+        "arithmetic": 323, "focused_witness": witness_value,
+        "long_context_witness": long_context_value, "status": "VERIFY_PASS",
     }
     receipt["payload_sha256"] = sha_bytes(canonical(receipt))
     atomic_json(args.output, receipt)

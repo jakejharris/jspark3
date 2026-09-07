@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "candidate": "JSpark3 v1.1 Cadence (B4+B5)",
+  "grade": "ENGINEERING-EVIDENCE",
+  "provenance": {
+    "measured_arms": "boots 41 and 43 of the JSPARK3 v2 run; reconstruction validated at boot 45",
+    "source_manifest": "measured release bundle module-hashes.json; every file below is copied byte-for-byte, no public sanitization",
+    "behavior": "B4 group128 QKV shadow banks plus B5 request-local width 7/3 controller on the stock workspace; B1 is absent and must stay absent; no indexer or scheduler override is permitted",
+    "bootstrap_role": "zzz_b45.pth is the single import owner; it inserts /opt/b45 on sys.path and imports b45_bootstrap, which redirects only the Python import of the KDA mixed-output module to the sealed /opt/b45 copy. The on-disk original KDA file stays untouched for launcher hash checks."
+  },
+  "modules": {
+    "b45_bootstrap.py": "fa72748f0e7c914d6486e2c2728e1f10c6b457cc1f215081d935bc8bbede3d07",
+    "b45_graphs.py": "dce824588bba64a462cf9d2f04a80e1c39a60fe7826dd311157873cbcacaba3c",
+    "b5_controller.py": "3d4ded0f4d03b6707f7b6e6f5df0374d6350100148719c8c11c91d4a2c25d5b3",
+    "b5_prefix_verify.py": "da8ea1a779fad08459632a9ec141de540b1f21a255a5af3e522f804108dcb0a0",
+    "kda_mixed_output_blocks.py": "db6d60f0ac99d3cc23d5d0b6194a557779b82f2b34132c4dba11f28098fda61f"
+  },
+  "import_owner": {
+    "file": "zzz_b45.pth",
+    "sha256": "eea018d5bfee8fdc28e6470f650b8f4adaa5ec4cc4f8ac86b3e8849368c9fdeb",
+    "site": "/usr/local/lib/python3.12/dist-packages"
+  },
+  "kda_import_target": {
+    "module": "vllm.model_executor.layers.quantization.kda_mixed_output_blocks",
+    "site_relative_path": "vllm/model_executor/layers/quantization/kda_mixed_output_blocks.py",
+    "required_sha256": "01aa249dd9ed35c96cc4339f85389d43a90085b9878a52827927974b93c58cd5",
+    "role": "on-disk bytes the bootstrap asserts before shadowing the import; equals the apply_kda_fg.py contract after-hash"
+  },
+  "environment": {
+    "B45_COMBINED": "1",
+    "B5_PREFIX_VERIFY": "1",
+    "B5_CALIB_REPLAYS": "20",
+    "B5_T4_SEED_MS": "74.30",
+    "B5_T7_SEED_MS": "92.53",
+    "B5_OUT": "/tmp/b45",
+    "JSPARK3_KDA_QKV_SHADOW": "1",
+    "B4_CAPTURE_ORDER": "[\"bf16_0\",\"int8_0\"]"
+  },
+  "label": {
+    "jspark3.b45": "boot41",
+    "meaning": "provenance of the measured launch pair; deliberately retained, not a boot counter"
+  },
+  "output": {
+    "out_dir": "/tmp/b45",
+    "graphs_dir": "/tmp/b45/graphs",
+    "start_state": "must exist and be empty before serving; receipts written during serving are the execution evidence checked by verify",
+    "restart_policy": "a stopped candidate is never restarted with stale receipts; a fresh container is required"
+  },
+  "execution_evidence": {
+    "startup_log_line": "B5_PREFIX_VERIFY_RECEIPT rank=0 T4_seed_ms=74.300 T7_seed_ms=92.530 narrow_width=3",
+    "b4_receipts": "graphs/activation-<pid>.jsonl, graphs/steps-<pid>.jsonl and graph dot dumps appear under the output directory during real graph capture and decode",
+    "b5_receipts": "b5-steps-<hostname>-<pid>.jsonl and b5-receipt-<hostname>-<pid>.json appear under the output directory during controller-driven decode"
+  }
+}
