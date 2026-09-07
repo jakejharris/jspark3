@@ -165,10 +165,17 @@ IMAGE_DFLASH = {
         target(
             "vllm/model_executor/layers/sparse_attn_indexer_kpool.py",
             "f48c5f93cb3c7d1b1238381761b65c142a1c032023dcef8e449a02f651fb0530",
-            "f48c5f93cb3c7d1b1238381761b65c142a1c032023dcef8e449a02f651fb0530",
+            "00e32052b781723500987a463814116634c4d00b3b61066915f8cc70780c931e",
             "b41f87832968a63000c9b56ac12948958ad36d1d0f93c031a2969243031aa82d",
-            [("torch.ops._C.persistent_topk(", 1)],
-            [("torch.ops._C.persistent_topk(", 1)],
+            [
+                ("torch.ops._C.persistent_topk(", 1),
+                ("if current_platform.is_cuda() and select_k in (512, 1024, 2048):", 1),
+            ],
+            [
+                ("torch.ops._C.persistent_topk(", 1),
+                ("if False and current_platform.is_cuda() and select_k in (512, 1024, 2048):  # GB10 persistent_topk smem", 1),
+            ],
+            ["if current_platform.is_cuda() and select_k in (512, 1024, 2048):"],
         ),
         target(
             "vllm/model_executor/models/qwen3_dflash2.py",

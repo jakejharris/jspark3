@@ -17,7 +17,98 @@ the benchmarks, not after.
   sequences, 8,192 batched tokens, and graph sizes are fixed by the profile
   and hash-bound. Tuning them is a new, unmeasured configuration.
 
-## Measured regressions and misses
+## Kernel disable provenance and the 32,768-token single-stream boundary (v1.0.0)
+
+Every benchmark and every measured run of this recipe executed with vLLM's
+`persistent_topk` kernel disabled in the sparse-attention indexer, via a
+one-line change the upstream launcher applies at container start. The v1.0.0
+transform contract pinned the file with the kernel still enabled, so the
+construction v1.0.0 shipped had never actually been run past 32,768 tokens
+by anyone. v1.0.1 carries the disable in the transform itself: the transform's
+emitted sparse-attention kernel file is byte-identical to the file every
+measured arm executed. That is the verified target-file transform result;
+full equivalence of the assembled public construction to the measured arms
+was not exhaustively re-proven and remains the current recipe and review
+task. No published number changed:
+they all came from the disabled path. Found by a community bug report from
+[@BTCXoomer on X](https://x.com/BTCXoomer).
+
+Provenance correction, recorded at v1.1.0: the v1.0.0 release gate described
+the public recipe as derived from the measured recipe by identifier renames
+only. That was inaccurate for v1.0.0 — the measured sparse-attention kernel
+file carried the start-time kernel disable and the v1.0.0 transform contract
+did not. The
+v1.0.0 release evidence and gate record are preserved unmodified as
+historical documents; this note is the correction.
+
+Mechanism, on a GB10 (48 SMs, 101,376 bytes of opt-in shared memory per
+block, so the 128 KiB fallback can never apply):
+
+| Decode shape (rows = batch x next_n) | Smem cap | Chunk | CTAs at max_model_len 1,000,000 | Fits 48 SMs? |
+|---|---:|---:|---:|---|
+| 1 row (speculation off) | 35,968 B | 8,472 | 119 | no, aborts |
+| 8 rows (DFlash2 k=7, one stream) | 49,152 B | 11,768 | 85 | no, aborts |
+| 16+ rows (two or more streams) | 101,376 B | 24,824 | 41 | yes |
+
+The kernel aborts when the batch's actual longest sequence exceeds 32,768
+tokens (the cooperative-launch threshold is on real sequence length) and the
+CTA count, which is sized from the configured `max_model_len`, exceeds 48.
+That is why only single-stream long context crashes: concurrency moves the
+call into the 16+ row shape, and short contexts never arm the cooperative
+path at all.
+
+Boundaries implied by the arithmetic, for anyone hand-launching the v1.0.0
+construction: `--max-model-len 406656` or lower keeps every shape at or
+below 48 CTAs, and `564864` suffices only while speculation stays on. These
+ceilings are arithmetic, not measurements; the persistent kernel at 41 to 48
+CTAs was never run or benchmarked by this project, and at the boundary the
+cooperative launch runs with zero headroom. The disable, not a ceiling, is
+the supported answer.
+
+The v1.0.0 verify witness could not have caught any of this: it sends one
+warm-up and three short-prompt requests. A release gate for this recipe
+needs a single-stream witness above 32,768 prompt tokens with real decode
+steps.
+
+Open item, not a defect shown here: upstream later reduced prefill chunks
+from 8192 to 7168 citing the same oversubscription on the prefill side. Our
+113,908-token prefill at 8192 chunks passed on the measured arm, so there is
+no evidence of a prefill-side failure in this construction; recorded so the
+next long-prefill investigation starts there.
+
+## v1.1 (Cadence) limits
+
+- **Narrow measured scope.** The paired gains are single-stream decode
+  effects on fixed request sets. Batches of two or more requests and prefill
+  fall back to the wide path by design, so a busy multi-stream service gets
+  no promised gain from the width controller.
+- **No replicated code gain.** The paired code effect was positive in the
+  first start and spanned zero in the second; no universal code-speed gain is
+  claimed.
+- **First-start figures are diagnostic.** The first serving start's sham
+  control failed its predeclared resolution margin, so only the second
+  start's predeclared-sham results are confirmatory; both are published with
+  that label rather than dropped.
+- **Quality contains candidate-only losses.** In the fixed 62-answer quality
+  battery, both candidate arms failed the Caesar-cipher coding task and one
+  also failed FizzBuzz, while both reference arms completed both tasks.
+  Population-level semantic parity remains inconclusive at every endpoint.
+- **Concurrency burst is not capacity certification.** The short-prompt burst
+  evidence (up to 24 concurrent streams) certifies neither sustained service,
+  per-stream fairness, the 32-sequence envelope, nor capacity near the
+  configured maximum context.
+- **Long-context proof is one tested request.** Integrated verification on
+  candidate `a729583` passed with 48,957 prompt tokens, 51 completion tokens,
+  and the pinned codeword. [Receipt and provenance](../results/evidence/candidate/cadence-v11/README.md#integrated-live-verification)
+  identify host verifier `456a262` separately. The configured 1,000,000-token
+  context remains unverified; this request certifies neither sustained
+  concurrency nor the full operating envelope. The final archive has not
+  been cold-boot tested. Pi slowdown remains unresolved; E3 is separate.
+- **Not included.** Separate workspace experiments are not part of this
+  construction, and their results do not transfer. The v1.1 candidate retains
+  the stock indexer workspace.
+
+## Measured regressions and misses (v1.0.0 evidence)
 
 - **Long prefill is slower.** The 113,908-token matched prefill proxy fell
   from 1277.443 to 1234.246 tok/s (-3.38%) and time to first token rose from

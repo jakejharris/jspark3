@@ -237,12 +237,12 @@
         "pkg:github/tonyd2wild/GLM-5.3-Flash-NVFP4-DFlash2-2x-DGX-Spark@3eef46632c45ffb6c397de0716c23b3d2d594798",
         "vllm@487ecf187"
       ],
-      "ref": "pkg:github/jakejharris/jspark3@v1.0.0"
+      "ref": "pkg:github/jakejharris/jspark3@v1.1.0"
     }
   ],
   "metadata": {
     "component": {
-      "bom-ref": "pkg:github/jakejharris/jspark3@v1.0.0",
+      "bom-ref": "pkg:github/jakejharris/jspark3@v1.1.0",
       "description": "reproducible three-DGX-Spark serving and runtime recipe for GLM-5.3 Flash; the GitHub recipe is not a weights redistribution and is paired with a public, attributed, byte-identical Hugging Face mirror of the pinned target checkpoint",
       "licenses": [
         {
@@ -252,9 +252,9 @@
         }
       ],
       "name": "jspark3",
-      "purl": "pkg:github/jakejharris/jspark3@v1.0.0",
+      "purl": "pkg:github/jakejharris/jspark3@v1.1.0",
       "type": "application",
-      "version": "1.0.0"
+      "version": "1.1.0"
     },
     "properties": [
       {
@@ -263,15 +263,15 @@
       },
       {
         "name": "jspark3:release_status",
-        "value": "v1.0.0-released-hf-public"
+        "value": "v1.1.0-released"
       },
       {
         "name": "jspark3:release_date",
-        "value": "2026-09-02"
+        "value": "2026-09-07"
       },
       {
         "name": "jspark3:release_url",
-        "value": "https://github.com/jakejharris/jspark3/releases/tag/v1.0.0"
+        "value": "https://github.com/jakejharris/jspark3/releases/tag/v1.1.0"
       },
       {
         "name": "jspark3:hf_main_revision",
@@ -283,11 +283,11 @@
       },
       {
         "name": "jspark3:owned_image_status",
-        "value": "not published and not a v1.0.0 deliverable; docker/ is retained for local reproducibility only. Do not redistribute a local build without independently satisfying NVIDIA and upstream terms."
+        "value": "not published and not a v1.1.0 deliverable (the v1.0.0 license audit's NO-GO carries forward unchanged); docker/ is retained for local reproducibility only. Do not redistribute a local build without independently satisfying NVIDIA and upstream terms."
       },
       {
         "name": "jspark3:owned_image_publication_policy",
-        "value": "NO-GO for v1.0.0"
+        "value": "NO-GO for v1.1.0"
       },
       {
         "name": "jspark3:runtime_image_reference",
@@ -301,11 +301,11 @@
     "tools": [
       {
         "name": "jspark3-build-sbom",
-        "version": "1.0.0"
+        "version": "1.1.0"
       }
     ]
   },
-  "serialNumber": "urn:uuid:5645ebdf-cd91-5f64-8647-826c6067256b",
+  "serialNumber": "urn:uuid:80007ad0-6b82-5925-bc54-14ad79a75fa9",
   "specVersion": "1.5",
   "version": 1
 }

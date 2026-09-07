@@ -4,6 +4,27 @@ Status: drafts, not posted. Every number must match `results/results.json`;
 the release validator checks this file. Posting remains a separate maintainer
 action.
 
+## DRAFT posts for v1.1.0 (Cadence) — 2026-09-07
+
+Long form: JSpark3 v1.1 (Cadence) is out. Two measured single-stream
+serving features: an INT8 QKV decode shadow and a speculative width
+controller that narrows the DFlash2 draft from seven to three tokens on high
+acceptance. Paired across two serving starts: prose +16.18%/+19.17%,
+structured count +7.66%/+7.61%; the code gain did not replicate; first-start
+figures are diagnostic (their sham control failed). Concurrency and
+large-context capacity: not certified. Integrated live witness: 48,957
+prompt tokens, 51 completion tokens, pinned codeword returned. Final archive
+cold-start validation remains open; the sealed candidate passed review. One measured construction, no serving toggle, no
+opt-in variant — a scoped engineering release choice, not a global ranking.
+No cross-recipe speed ranking claimed.
+
+Short form: JSpark3 v1.1 "Cadence": one measured construction (no
+serving toggle), single-stream gains (prose/count), honest misses (code,
+quality) left in; integrated long-context witness passed. Capacity and Pi
+speed claims remain unproven.
+
+## v1.0.0 drafts (historical)
+
 ## Long form (Mastodon, LinkedIn, Bluesky thread opener)
 
 JSpark3 v1: one GLM-5.3 Flash endpoint across three NVIDIA DGX Sparks. TP3 +

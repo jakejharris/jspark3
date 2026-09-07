@@ -37,6 +37,12 @@ if [[ ${JSPARK3_TRUNK_W8A16:-} != 1 || ${JSPARK3_TRUNK_W8A16_K704_GROUP:-} != 64
   echo "REFUSE: JSpark3 W8A16 environment drift" >&2
   exit 9
 fi
+if [[ ${B45_COMBINED:-} != 1 || ${B5_PREFIX_VERIFY:-} != 1 || ${B5_CALIB_REPLAYS:-} != 20 ||
+      ${B5_T4_SEED_MS:-} != 74.30 || ${B5_T7_SEED_MS:-} != 92.53 || ${B5_OUT:-} != /tmp/b45 ||
+      ${JSPARK3_KDA_QKV_SHADOW:-} != 1 || ${B4_CAPTURE_ORDER:-} != '["bf16_0","int8_0"]' ]]; then
+  echo "REFUSE: Cadence B4+B5 environment drift" >&2
+  exit 9
+fi
 
 recipe=/recipe
 vllm=/usr/local/lib/python3.12/dist-packages/vllm
@@ -81,6 +87,7 @@ python3 "$patcher" \
   echo "REFUSE: installed JSpark3 overlay hash drift" >&2
   exit 9
 }
+python3 "$recipe/scripts/install_b45_modules.py" --recipe-root "$recipe"
 printf 'JSPARK3_STARTUP_PATCH_PASS rank=%s overlay_sha256=%s group704=64 runtime_modules=169 logical_tensors=225\n' \
   "$NODE_RANK" "$expected_overlay"
 

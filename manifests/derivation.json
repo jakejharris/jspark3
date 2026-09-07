@@ -32,9 +32,10 @@
     },
     {
       "changed_lines": 15,
+      "changed_lines_scope": "measured-to-public rename-only delta through v1.0.1; v1.1.0 adds the runtime.cadence metadata block on top, which is not counted in changed_lines",
       "measured_sha256": "f4f287f93c2ac367abfeebec2bc6722cade1631f34dc896a196c839e39c40096",
       "public": "config/profile.json",
-      "public_sha256": "79e757e8da22050eadf50584501bf25e2bd09a34abf15a6942dfda0d1408bb05"
+      "public_sha256": "33cd838739dfdcbf4ccc3f0a4e416ca44deba32d4da95d3c6438d7c107bf6281"
     },
     {
       "changed_lines": 2,
@@ -43,10 +44,10 @@
       "public_sha256": "5f39ea600fa38f2baf8a67caaf4f1a71845637d79a8eeed4afaadc1857c55210"
     },
     {
-      "changed_lines": 2,
+      "changed_lines": 16,
       "measured_sha256": "48d433151f6b98d43a46391347d7c1043749dd3472fb03a4e4c1e8699f204510",
       "public": "config/patch-contract.json",
-      "public_sha256": "b3430f6daede8f1d867621517ebd1e6b343892c1286b8c5d2baa83b0cb9f61c5"
+      "public_sha256": "e01adc58b21b77c1d598d0750d9dfad0fd5d991dff9cbd0f264c5550eaed5f44"
     },
     {
       "changed_lines": 18,
@@ -62,15 +63,16 @@
     },
     {
       "changed_lines": 12,
+      "changed_lines_scope": "measured-to-public rename-only delta through v1.0.1; v1.1.0 adds the JSPARK3_RECEIPT_OUT receipt-channel support in print_receipt on top (public commit be6d9f3), which is not counted in changed_lines; the measured bundle needed to diff the combined result is unavailable, so the full current delta is unknown and no number is approximated",
       "measured_sha256": "86ba907c270fc2ecfbc39e45853c81c0337bf5c3fac74358120fcc8aee056ee5",
       "public": "scripts/_atomic.py",
-      "public_sha256": "91369e86b02e3dd8f0b02c47fd3cce1377c98ec16ed7c301493ca9bad744fc99"
+      "public_sha256": "2e5d906fb724e9b2c9ddbb3cdca3357dfc92240c69493d54b846e31a2bc38c7e"
     },
     {
-      "changed_lines": 0,
+      "changed_lines": 13,
       "measured_sha256": "5fa3cf9fdb19dabef3b3d1df28f2caa2a755097c2443143b6767b182b99bd5dd",
       "public": "scripts/_contracts.py",
-      "public_sha256": "5fa3cf9fdb19dabef3b3d1df28f2caa2a755097c2443143b6767b182b99bd5dd"
+      "public_sha256": "9b60e82d50304cd0692a3a0ff9477cd199e25a279e9a0041998594a9df8ed906"
     },
     {
       "changed_lines": 0,
@@ -80,15 +82,16 @@
     },
     {
       "changed_lines": 2,
+      "changed_lines_scope": "measured-to-public rename-only delta through v1.0.1; v1.1.0 adds the run_stage helper that collects stage receipts from the dedicated JSPARK3_RECEIPT_OUT file channel on top (public commit be6d9f3), which is not counted in changed_lines; the measured bundle needed to diff the combined result is unavailable, so the full current delta is unknown and no number is approximated",
       "measured_sha256": "558a69307552897f21f721ba0038179eeb5fc52259267e19ece42d29c722fceb",
       "public": "scripts/apply_base_pipeline.py",
-      "public_sha256": "95d37061b18eac0f5390852c0b3ff676d82c35f160cc3ad14e31c90113103c11"
+      "public_sha256": "6cdea585c7b15f16943df0df19c5490de6391b61c40323ad6d28038bc7b1e479"
     },
     {
-      "changed_lines": 4,
+      "changed_lines": 25,
       "measured_sha256": "c504490b177af499d981888d24678286d0abc8f9b85a19909bd2947da4ca2d09",
       "public": "scripts/apply_image_glm_dflash.py",
-      "public_sha256": "44abb6a67bf41cf094b69531389b57b1e821f8918fb947a859109068dd9b1fda"
+      "public_sha256": "5ef8591274361823dde920188a5186e30d93590ed795a4d8008e9168a3f8033f"
     },
     {
       "changed_lines": 2,
@@ -122,15 +125,17 @@
     },
     {
       "changed_lines": 20,
+      "changed_lines_scope": "measured-to-public rename-only delta through v1.0.1; v1.1.0 adds the Cadence entry wiring on top, which is not counted in changed_lines",
       "measured_sha256": "e1e295dd9ebd874322fec528ee1e1852a66e85bc063397c76c902fd92ee1f59b",
       "public": "scripts/container_entry.sh",
-      "public_sha256": "0902de96d7e06d5c5f31412bae5476fdcbd819288e89ae5d6b3c6c5ea5d62de7"
+      "public_sha256": "9624cd553720facf0360241c41924ea920f48d8c2e2cf6e00d9154b37b9e85a1"
     },
     {
       "changed_lines": 82,
+      "changed_lines_scope": "measured-to-public rename-only delta through v1.0.1; v1.1.0 adds the Cadence payload/identity/verify wiring on top, which is not counted in changed_lines; v1.1.0 also adds python3 -S isolation for remote JSON channels and a declared-candidate recipe binding, which is not counted in changed_lines; v1.1.0 also skips a real generated __pycache__ directory in the cadence module inventory while still refusing extra, missing, tampered, and unexpected non-file content, which is not counted in changed_lines; v1.1.0 also corrects the stale v1.0.0 transform target-set aggregate to the unchanged v1.0.1 patch contract and reports exact runtime identity mismatches, which is not counted in changed_lines; the measured bundle needed to diff the combined result is unavailable, so the full current delta is unknown and no number is approximated",
       "measured_sha256": "4b30987138b8382bb716091e8f9bf68e56a5f97ea6a8b382ec39734004f6a654",
       "public": "scripts/fleetctl.py",
-      "public_sha256": "22690003d9bcb826b826c96005d1ef97b2fb94dcafd5abca87d6612d2d0b161c"
+      "public_sha256": "5b66f5138b70ec48695235c6f9bba65deca7b5baf3e4f2cecb46b2676058ba4f"
     },
     {
       "changed_lines": 4,
@@ -164,9 +169,10 @@
     },
     {
       "changed_lines": 6,
+      "changed_lines_scope": "measured-to-public rename-only delta through v1.0.1; v1.1.0 adds the exact DMI underscore spelling NVIDIA_DGX_Spark as a validated system-product alias on top (public commit 5c529ad), which is not counted in changed_lines; the measured bundle needed to diff the combined result is unavailable, so the full current delta is unknown and no number is approximated",
       "measured_sha256": "94c1dc0b5f1c153f6132ac101d1fa9308ca3d3574f4eebb14f50d1ca906fb0ed",
       "public": "scripts/remote_preflight.py",
-      "public_sha256": "b353d0f9719589bc267e357e42b975d4b20f95bd1e890010661d38ce3926d944"
+      "public_sha256": "54b3f81599b85827c7b8561bd96eb0ea4c51afb635e2659032bd1004735f2a9d"
     },
     {
       "changed_lines": 2,
@@ -203,6 +209,69 @@
       "measured_sha256": "b3a7ee6e34f0eaad89125b6f2a3fdabe984dd3ba9491fdfd8fb73a784bd213ed",
       "public": "scripts/verify.sh",
       "public_sha256": "b3a7ee6e34f0eaad89125b6f2a3fdabe984dd3ba9491fdfd8fb73a784bd213ed"
+    },
+    {
+      "changed_lines": null,
+      "measured_sha256": null,
+      "provenance": "new public file in v1.1.0; no measured-side counterpart, so no measured hash or line delta is claimed",
+      "public": "config/cadence-contract.json",
+      "public_sha256": "630c34e7f4b59a537ab89b59556d3f981fc68f546bafd9891602ba8c8dc2f461"
+    },
+    {
+      "changed_lines": null,
+      "measured_sha256": null,
+      "provenance": "new public file in v1.1.0; no measured-side counterpart, so no measured hash or line delta is claimed",
+      "public": "scripts/install_b45_modules.py",
+      "public_sha256": "ce776b95826aa62e25d6a10b3a56b1afeac021ed6e7c2bef7af4645fd4e2e3a0"
+    },
+    {
+      "changed_lines": null,
+      "measured_sha256": null,
+      "provenance": "new public file in v1.1.0; no measured-side counterpart, so no measured hash or line delta is claimed",
+      "public": "scripts/long_context_witness.py",
+      "public_sha256": "8ab89831897e2c07b8e7f9fb8472c707d6dc096f715a8f9ffdd8e9108293c2bd"
+    },
+    {
+      "changed_lines": 0,
+      "measured_sha256": "fa72748f0e7c914d6486e2c2728e1f10c6b457cc1f215081d935bc8bbede3d07",
+      "provenance": "byte-for-byte copy of the measured release bundle file (module-hashes.json); measured and public hashes are identical because the bytes are identical",
+      "public": "modules/b45_bootstrap.py",
+      "public_sha256": "fa72748f0e7c914d6486e2c2728e1f10c6b457cc1f215081d935bc8bbede3d07"
+    },
+    {
+      "changed_lines": 0,
+      "measured_sha256": "dce824588bba64a462cf9d2f04a80e1c39a60fe7826dd311157873cbcacaba3c",
+      "provenance": "byte-for-byte copy of the measured release bundle file (module-hashes.json); measured and public hashes are identical because the bytes are identical",
+      "public": "modules/b45_graphs.py",
+      "public_sha256": "dce824588bba64a462cf9d2f04a80e1c39a60fe7826dd311157873cbcacaba3c"
+    },
+    {
+      "changed_lines": 0,
+      "measured_sha256": "3d4ded0f4d03b6707f7b6e6f5df0374d6350100148719c8c11c91d4a2c25d5b3",
+      "provenance": "byte-for-byte copy of the measured release bundle file (module-hashes.json); measured and public hashes are identical because the bytes are identical",
+      "public": "modules/b5_controller.py",
+      "public_sha256": "3d4ded0f4d03b6707f7b6e6f5df0374d6350100148719c8c11c91d4a2c25d5b3"
+    },
+    {
+      "changed_lines": 0,
+      "measured_sha256": "da8ea1a779fad08459632a9ec141de540b1f21a255a5af3e522f804108dcb0a0",
+      "provenance": "byte-for-byte copy of the measured release bundle file (module-hashes.json); measured and public hashes are identical because the bytes are identical",
+      "public": "modules/b5_prefix_verify.py",
+      "public_sha256": "da8ea1a779fad08459632a9ec141de540b1f21a255a5af3e522f804108dcb0a0"
+    },
+    {
+      "changed_lines": 0,
+      "measured_sha256": "db6d60f0ac99d3cc23d5d0b6194a557779b82f2b34132c4dba11f28098fda61f",
+      "provenance": "byte-for-byte copy of the measured release bundle file (module-hashes.json); measured and public hashes are identical because the bytes are identical",
+      "public": "modules/kda_mixed_output_blocks.py",
+      "public_sha256": "db6d60f0ac99d3cc23d5d0b6194a557779b82f2b34132c4dba11f28098fda61f"
+    },
+    {
+      "changed_lines": 0,
+      "measured_sha256": "eea018d5bfee8fdc28e6470f650b8f4adaa5ec4cc4f8ac86b3e8849368c9fdeb",
+      "provenance": "byte-for-byte copy of the measured release bundle file (module-hashes.json); measured and public hashes are identical because the bytes are identical",
+      "public": "modules/zzz_b45.pth",
+      "public_sha256": "eea018d5bfee8fdc28e6470f650b8f4adaa5ec4cc4f8ac86b3e8849368c9fdeb"
     }
   ],
   "loader_patcher": {
@@ -220,5 +289,5 @@
     "recomputed_from_pristine": true
   },
   "schema_version": 1,
-  "statement": "The public recipe was derived from the measured engineering recipe by identifier renames only (file names and string literals) plus re-pinning the two overlay-file hashes and the loader hook's after-hash that those renames change. No control flow, contract hash, transform seam, serving argument, or environment value changed. Measured-file hashes are listed so a reviewer holding the private bundle can confirm the mapping."
+  "statement": "The public recipe was derived from the measured engineering recipe by identifier renames only (file names and string literals) plus re-pinning the two overlay-file hashes and the loader hook's after-hash that those renames change; that was the complete delta through v1.0.0, with no control flow, contract hash, transform seam, serving argument, or environment value changed. v1.0.1 adds one deliberate behavioral delta on top: the kpool transform target now applies the upstream launcher's GB10 persistent_topk disable (after-hash f48c5f93cb3c7d1b1238381761b65c142a1c032023dcef8e449a02f651fb0530 to 00e32052b781723500987a463814116634c4d00b3b61066915f8cc70780c931e), the exact file every measured arm executed. changed_lines is the unified-diff count of added plus deleted lines between the measured file and the public file. Measured-file hashes are listed so a reviewer holding the private bundle can confirm the mapping. v1.1.0 adds the Cadence layer: the six measured module files ship byte-for-byte (their measured and public hashes are identical by construction, taken from the measured bundle's module-hashes.json), config/cadence-contract.json, scripts/install_b45_modules.py, and scripts/long_context_witness.py are new public files with no measured-side counterpart (measured_sha256 and changed_lines are null rather than fabricated), and scripts/fleetctl.py plus scripts/container_entry.sh gain Cadence wiring on top of the historical rename-only delta (the changed_lines value keeps its v1.0.x meaning and is scoped explicitly by changed_lines_scope). v1.1.0 also carries three deliberate public-side corrections, scoped the same way and excluded from the historical changed_lines values: scripts/remote_preflight.py admits the exact DMI underscore spelling NVIDIA_DGX_Spark as a validated system-product alias (public commit 5c529ad); scripts/apply_base_pipeline.py with scripts/_atomic.py reroute stage receipts onto a dedicated JSPARK3_RECEIPT_OUT file channel (public commit be6d9f3); and scripts/fleetctl.py runs remote JSON-producing Python with python3 -S so serving-image .pth startup banners cannot contaminate strict parsers, and accepts an operator-declared candidate recipe manifest SHA-256 that is re-proven on every rank while reporting verifier and candidate identities separately. For those rows changed_lines_scope names the exact v1.0.1 baseline, the excluded v1.1.0 additions, and the reason the full current delta is unknown: the measured bundle needed to diff the combined result is unavailable, so the historical numbers are preserved rather than approximated by summing public commit diffs. tools/test_v11_offline.py, tools/test_receipt_channel.py, and tools/test_verifier_json_channel.py are public-only test tools with no measured-side counterpart and are therefore not derivation rows (they exercise public script behavior only)."
 }

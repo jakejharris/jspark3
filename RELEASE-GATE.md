@@ -1,14 +1,35 @@
-# Release state: JSpark3 v1.0.0
+# Release state: JSpark3
 
-Status: **v1.0.0 released 2026-09-02; attributed Hugging Face target mirror
-public and remotely verified.**
+Release content: **[v1.1.0 (Cadence), 2026-09-07](https://github.com/jakejharris/jspark3/releases/tag/v1.1.0).
+v1.0.0 was released 2026-09-02; its record below is historical.**
+
+The sealed candidate passed final review and publication is authorized. This
+commit declares the release content effective at its tag/release publication;
+it is not an observation that a remote write already happened. The publisher
+records GitHub and Hugging Face completion separately.
+
+## Current release state: v1.1.0 (Cadence)
+
+| Item | State |
+|---|---|
+| Identity | JSpark3 v1.1, release name Cadence, machine/tag `v1.1.0`. The authorized release date is 2026-09-07. The publisher binds this commit to the tag and records GitHub release/assets and Hub documentation completion separately; install references select the exact tag. |
+| Content | The v1.0.1 construction (kernel disable in the transform; fabric documentation) plus the two measured Cadence features: the QKV decode shadow and the speculative width controller, with the stock indexer workspace, original drafter, and sampler retained. |
+| Measured evidence | Paired single-stream effects with scoped claims: prose +16.18% / +19.17% and structured count +7.66% / +7.61% across two independent serving starts — first-start figures are diagnostic only (their sham control failed the predeclared resolution margin), the second start's predeclared sham passes; the paired code gain is not replicated; candidate-only quality losses are preserved; a short-prompt concurrency burst is explicitly not a capacity certification. Machine-readable source of record: [results/evidence/candidate/cadence-v11/CLAIMS.json](results/evidence/candidate/cadence-v11/CLAIMS.json). See [docs/BENCHMARKS.md](docs/BENCHMARKS.md#v11-cadence-evidence). |
+| GHCR | No JSpark3 GHCR image is published for v1.1.0; the v1.0.0 license audit's NO-GO carries forward and the recipe pins the exact upstream image by digest. |
+| Reconstruction | A fresh three-rank build from the recipe contracts completed construction, route audits, and the frozen batteries without a serving repair, and the exact prior arm was restored and re-verified afterward — evidence that the recipe reconstructs the construction, not a new performance claim. |
+| Kernel fix | Carried in the transform contract. An independent offline construction test reproduced the pinned sparse-attention kernel transform's expected output byte-identically (`00e32052b781723500987a463814116634c4d00b3b61066915f8cc70780c931e`) and confirmed the already-applied check. |
+| Integrated live verification | PASS on unchanged candidate `a729583` using host verifier `456a262`: 48,957 prompt tokens, 51 completion tokens, pinned codeword returned; all-rank identity/safety/Cadence, load/health/arithmetic, and focused gates passed. [Sanitized receipt and provenance](results/evidence/candidate/cadence-v11/README.md#integrated-live-verification) record the verifier fixes and preserve prior failures. |
+| Package and remaining decisions | The final recipe has the tested host verifier bytes and the candidate's unchanged serving bytes; evidence/docs and offline checks are sealed separately. Deterministic source, recipe, results and SBOM exports are recorded with hashes in the local sealing handoff. The final archive was not cold-boot tested. The sealed candidate passed final review and publication is authorized; configured maximum context, sustained concurrency, and independent-fleet reproduction remain unverified. Pi slowdown is unresolved; E3 is separate. Historical benchmark populations are unchanged. |
+| Provenance correction | The v1.0.0 record below describes the recipe as derived by "identifier renames only"; that was inaccurate for v1.0.0, whose transform contract missed the start-time kernel disable. The historical record is preserved unmodified; [docs/LIMITATIONS.md](docs/LIMITATIONS.md#kernel-disable-provenance-and-the-32768-token-single-stream-boundary-v100) carries the correction. |
+
+## Historical record: v1.0.0
 
 The public GitHub release is
 <https://github.com/jakejharris/jspark3/releases/tag/v1.0.0>. The public,
 ungated, enabled Hugging Face repository is
 <https://huggingface.co/jakejharris/jspark3>. Its attributed target mirror and
 exact completion receipt were remotely verified before maintainer merge into
-the immutable terminal main revision
+the verified weights-mirror revision
 `e7c34dba923916754cfcb0bdf6c2c75a9b7ff1fc`. No JSpark3 GHCR image is
 published for v1.0.0; the recipe uses the exact upstream image by digest.
 
@@ -26,8 +47,15 @@ published for v1.0.0; the recipe uses the exact upstream image by digest.
 | Hugging Face | The public, ungated, enabled repository carries the remotely verified, attributed, byte-identical target mirror at `e7c34dba923916754cfcb0bdf6c2c75a9b7ff1fc`, plus the exact completion receipt. No DFlash2 byte is mirrored. |
 | Release assets | Reproducibly built into `dist/` by `tools/build_release_assets.sh`: recipe archive, results archive, CycloneDX SBOM, and checksums. |
 
-`python3 tools/validate_release.py . --report validation.json` must return
-`VERDICT PASS` with all 16 checks after any edit.
+The historical v1.0.0 validator reported 16 checks. The current V1.1 command,
+`python3 tools/validate_release.py . --report validation.json`, must return
+`VERDICT PASS (17 checks, 0 failed)`. Current V1.1 numbers now reconcile
+against the separate machine-readable claims and integrated live-evidence
+exports; the historical benchmark populations remain unchanged. The current
+checks cover integrity metadata, privacy, claims, and the accepted live
+evidence. An offline PASS does not itself attest that the remote V1.1 tag or
+release has been published; the publisher records those observations
+separately.
 
 ## Completed independent Hugging Face mirror
 

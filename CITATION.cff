@@ -2,9 +2,9 @@ cff-version: 1.2.0
 message: "If you use JSpark3 v1, cite it together with the upstream work it composes."
 title: "JSpark3 v1: a reproducible three-DGX-Spark serving recipe for GLM-5.3 Flash"
 type: software
-version: 1.0.0
-date-released: 2026-09-02
-url: "https://github.com/jakejharris/jspark3/releases/tag/v1.0.0"
+version: 1.1.0
+date-released: 2026-09-07
+url: "https://github.com/jakejharris/jspark3/releases/tag/v1.1.0"
 license: Apache-2.0
 repository-code: "https://github.com/jakejharris/jspark3"
 authors:

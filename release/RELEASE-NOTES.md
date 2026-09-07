@@ -1,3 +1,64 @@
+# JSpark3 release notes
+
+## v1.1.0 (Cadence) — 2026-09-07
+
+[GitHub release](https://github.com/jakejharris/jspark3/releases/tag/v1.1.0).
+The sealed candidate passed final review. These are the authorized release
+notes for the tagged commit; observed publication results are recorded
+separately. The v1.0.0 notes below are final and historical.
+
+**Summary.** v1.1 — release name **Cadence** — keeps the entire v1.0.1
+construction and adds two measured single-stream serving features to the
+recipe: a group-128 INT8 shadow for the QKV projections on small-batch pure
+decode, and a request-local speculative width controller that narrows the
+DFlash2 draft from seven to three tokens on high acceptance. Batches of two
+or more requests and prefill fall back to the wide path. The stock indexer
+workspace, the original drafter, and the sampler are retained. Weights,
+checkpoints, and image digests are unchanged.
+
+**Measured scope (paired, single-stream, two independent serving starts).**
+Prose +16.18% and +19.17%; structured count +7.66% and +7.61% (95% CIs
+exclude zero). Code +9.71% then +3.23% with the second interval spanning
+zero, so the paired code gain is not replicated. The first start's sham
+control failed its predeclared resolution margin, so first-start figures are
+diagnostic only; the second start's predeclared sham passes. A fixed quality
+battery showed candidate-only delivered-answer failures and stays
+inconclusive on population-level semantic parity. A short-prompt concurrency
+burst is finite-burst evidence and certifies neither sustained service nor
+large-context capacity. Machine-readable source of record:
+`results/evidence/candidate/cadence-v11/CLAIMS.json`.
+
+**Verifier hardening (F-1).** The public verifier no longer requires the
+stock `Capturing CUDA graphs (FULL)` progress bar, which the byte-pinned
+Cadence capture path never renders. It now requires, on every rank, the
+pinned path's full-bank capture evidence: at least 16 capture receipts whose
+recorded graph-dump SHA-256 matches the on-container dump bytes, and at
+least 8 non-empty serving graph dumps — the per-rank construction measured
+in the archived measured-arm startup receipts. All other runtime identity,
+load, memory, witness, and arithmetic gates are retained.
+
+**Integrated live verification passed.** Host verifier `456a262` accepted
+unchanged candidate `a729583`, including all-rank identity, safety, Cadence
+capture, load, health, arithmetic, focused, and strict long-context gates.
+The pinned long-context request reported 48,957 prompt tokens and 51
+completion tokens with the codeword returned verbatim. The focused median
+was 73.8718 tok/s for its fixed admission workload only; Pi slowdown remains
+unresolved, and E3 is separate. [Sanitized evidence and provenance](../results/evidence/candidate/cadence-v11/README.md#integrated-live-verification)
+retain the earlier verifier failures and explain recipe equivalence. The
+final archive has not been cold-boot tested; maximum context, sustained
+concurrency, and independent-fleet reproduction remain unverified. Publication
+is authorized following final review. v1.1 ships one mandatory,
+measured Cadence construction: the recipe and its verifier carry no toggle
+and no opt-in variant, because a second, never-measured path would be
+exactly the kind of unverified claim this project refuses to ship. This is a
+scoped engineering release choice — it is not a global performance or quality
+claim, and all limits above stand. Whether the maintainer's own live service
+later runs this public build is a separate decision outside this release. No
+global or cross-recipe speed ranking is claimed, and no figure on this page
+is recomputed from any post-hoc repeat.
+
+---
+
 # JSpark3 v1.0.0
 
 Released 2026-09-02:

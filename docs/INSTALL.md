@@ -6,12 +6,27 @@ when an input differs from the pinned one, so read the refusal text rather
 than forcing past it.
 
 Status: [v1.0.0](https://github.com/jakejharris/jspark3/releases/tag/v1.0.0)
-was released 2026-09-02. The attributed target mirror is public at
-<https://huggingface.co/jakejharris/jspark3> and remotely verified at immutable
-main revision `e7c34dba923916754cfcb0bdf6c2c75a9b7ff1fc`. No JSpark3 GHCR image is
+was released 2026-09-02. The [v1.1.0 (Cadence) release](https://github.com/jakejharris/jspark3/releases/tag/v1.1.0),
+dated 2026-09-07, carries the kernel fix in its transform contract plus the
+two measured Cadence serving features. The command below selects that exact
+tag; it does not fall back to an older release or the default branch.
+The attributed target mirror is public at
+<https://huggingface.co/jakejharris/jspark3> and remotely verified at the
+weights-mirror revision
+`e7c34dba923916754cfcb0bdf6c2c75a9b7ff1fc`. No JSpark3 GHCR image is
 published for v1.0.0. The recipe uses the exact upstream serving image by
 digest shown below. Obtain the recipe directory from the public GitHub tree or
 release asset; the commands below do not change.
+
+> **Read this before serving long contexts or launching containers by hand.**
+> The v1.0.0 recipe as published aborts on any single-stream request whose
+> context passes 32,768 tokens, and a hand launch needs one NCCL variable
+> that v1.0.0 never documented. Both are fixed in v1.0.1. If you are setting
+> up v1.0.0 anyway, read
+> [Known issue: single-stream requests past 32,768 tokens](#known-issue-in-v100-single-stream-requests-past-32768-tokens)
+> before your first request, and set the fabric environment from
+> [step 5](#5-fabric-checks) if anything other than `start.sh` creates your
+> containers.
 
 ## 1. Requirements
 
@@ -20,6 +35,8 @@ Hardware and network
 - Three NVIDIA DGX Sparks (GB10, aarch64). The recipe refuses any other count.
 - Two RoCE-v2 capable interfaces per Spark, cabled as a triangle: each pair of
   Sparks shares one direct leg. Each leg is its own IPv4 network, MTU 9000.
+  A switchless triangle also requires `NCCL_IB_SUBNET_AWARE_ROUTING=1` (new
+  in NCCL 2.30.7, off by default); step 5 shows the full fabric environment.
 - A management network reachable from your controller host for SSH, the API,
   and the Gloo and TP sockets.
 - One common RoCE-v2 IPv4 GID index on all six HCAs. The measured fleet saw
@@ -153,6 +170,45 @@ cat /sys/class/infiniband/<hca>/ports/1/gids/<idx>              # IPv4-mapped ad
 The same `<idx>` must satisfy all six HCAs; it becomes `JSPARK_IB_GID_INDEX`.
 The preflight repeats these checks and refuses on any mismatch.
 
+### Fabric environment (required for hand launches)
+
+The lifecycle controller injects a fixed fabric environment into every
+container (the `rank_env` table in `recipe/scripts/fleetctl.py`). Containers
+created by `start.sh` get it automatically. If you launch containers with
+your own tooling, set the same environment yourself. The one variable that
+is new in NCCL 2.30.7 and defaults to off is `NCCL_IB_SUBNET_AWARE_ROUTING`:
+
+```bash
+export NCCL_NET=IB NCCL_NET_PLUGIN=none NCCL_IB_DISABLE=0
+export NCCL_IB_HCA="<both HCA names of this rank, comma-separated>"
+export NCCL_IB_GID_INDEX="<JSPARK_IB_GID_INDEX from above>"
+export NCCL_IB_ROCE_VERSION_NUM=2 NCCL_IB_ADDR_FAMILY=AF_INET
+export NCCL_IB_SUBNET_AWARE_ROUTING=1   # new in NCCL 2.30.7, defaults to 0
+export NCCL_CROSS_NIC=0 NCCL_IB_MERGE_NICS=0 NCCL_NVLS_ENABLE=0
+export NCCL_CUMEM_ENABLE=0 NCCL_IGNORE_CPU_AFFINITY=1
+export NCCL_SOCKET_IFNAME=<management interface>
+export GLOO_SOCKET_IFNAME=<management interface>
+export TP_SOCKET_IFNAME=<management interface>
+export MN_IF_NAME=<management interface>
+export VLLM_HOST_IP=<this rank's management IPv4 address>
+export NCCL_DEBUG=INFO NCCL_DEBUG_SUBSYS=INIT,NET
+export TORCH_NCCL_ASYNC_ERROR_HANDLING=1
+```
+
+With `NCCL_IB_SUBNET_AWARE_ROUTING=0` (the stock default), NCCL pairs NIC
+index to NIC index. On a switchless triangle that means rank 0 reaches
+rank 2 over the connection to rank 1, and NCCL init stalls or hangs on a
+fleet that is otherwise correctly cabled. With it set to 1, both sides pick
+the local NIC whose subnet matches the peer, which is what one distinct
+IPv4 network per leg is for.
+
+Preloading or substituting a different NCCL build is outside the verified
+recipe. The pinned image ships stock NCCL `2.30.7+cuda13.3` and every step
+and measurement here assumes it. A host-built NCCL brought in under
+`LD_PRELOAD` is one plausible route for a stray stub `libcuda` in the launch
+path; that specific mechanism was reported secondhand and remains unconfirmed
+without the affected user's logs.
+
 ## 6. Configure `.env` on the controller
 
 ```bash
@@ -213,6 +269,47 @@ Weight loading and graph capture take several minutes; `health.sh` reports
 `STARTING` until the API answers. Add `--dry-run` to any command to print the
 exact remote commands without contacting a host.
 
+### Known issue in v1.0.0: single-stream requests past 32,768 tokens
+
+The v1.0.0 recipe as published aborts on the first decode step of any
+single-stream request whose context passes 32,768 tokens. The server log
+ends with:
+
+```
+persistent_topk would oversubscribe and the FilteredTopK fallback
+requires >=128KB smem per block
+```
+
+What happens: the sparse-attention indexer's decode top-k runs vLLM's
+`persistent_topk` kernel, which sizes itself from the configured
+`max_model_len`. At 1,000,000 tokens and a single decoding stream under
+DFlash2 it requests 85 cooperative CTAs against the 48 a GB10 can hold
+residently, and the 128 KiB fallback needs more shared memory than a GB10
+exposes. Two or more concurrently decoding sequences do not hit it; a lone
+stream always does once its context passes 32,768 tokens. The v1.0.0
+transform contract pinned that kernel enabled, while every measured run and
+every published benchmark executed with it disabled, so the crash was never
+exercised before release. `verify.sh` in v1.0.0 uses short prompts only and
+cannot catch it.
+
+Use the current recipe, which carries the disable in the transform itself
+(v1.0.1 introduced this; v1.1.0 carries it forward); weights, benchmarks, and
+the serving envelope are unchanged. Integrated verification has now passed
+one pinned single-stream request with 48,957 prompt tokens and 51 completion
+tokens on the assembled candidate. [Receipt and provenance](../results/evidence/candidate/cadence-v11/README.md#integrated-live-verification)
+record the candidate and host verifier separately; the final archive has not
+been cold-boot tested, and maximum-context capacity remains unverified.
+If you cannot move off
+v1.0.0, your options are all unsupported: keep every request's
+total context at or below 32,768 tokens; hand-launch `vllm serve` with
+`--max-model-len 406656` or lower (a ceiling derived from the kernel's
+CTA arithmetic, documented in
+[docs/LIMITATIONS.md](LIMITATIONS.md#kernel-disable-provenance-and-the-32768-token-single-stream-boundary-v100));
+or apply the upstream one-line disable yourself, which the v1.0.0 patch
+contract correctly refuses because it changes the pinned file hash. Do not
+edit the recipe scripts to change `--max-model-len`: they are hash-pinned,
+and the fleet refuses a modified recipe.
+
 ## 8. First request
 
 ```bash
@@ -230,6 +327,10 @@ Thinking is disabled by default in the chat template arguments; pass
 `"enable_thinking": true` per request to enable it. Tool calling uses the
 `glm47` parser and reasoning the `glm45` parser. `scripts/api_smoke.py
 --base-url http://<address>:8000` runs a small end-to-end check.
+
+If you are serving the v1.0.0 recipe, keep this first request short: a
+single stream whose context passes 32,768 tokens aborts the server, per the
+[known issue above](#known-issue-in-v100-single-stream-requests-past-32768-tokens).
 
 ## 9. Stop and remove
 
@@ -252,5 +353,12 @@ inspection. Removal needs its own confirm token.
 | `pinned Fly source mismatch` | The FlyCockpit checkout is not at the pinned commit or was modified. |
 | `fabric interface missing or MTU is not 9000` | Fix the interface configuration and rerun the preflight. |
 | `target SHA256SUMS hash drift` or `target checksum mismatch inventory drift` | The checkpoint download is incomplete or from a different revision. |
+
+Runtime errors (not refusals):
+
+| Runtime error | Cause |
+|---|---|
+| `persistent_topk would oversubscribe and the FilteredTopK fallback requires >=128KB smem per block` | v1.0.0 known issue: a single decoding stream passed 32,768 tokens of context. Use the v1.0.1 recipe; see the [known issue](#known-issue-in-v100-single-stream-requests-past-32768-tokens). |
+| NCCL init stalls; rank 0 to rank 2 connects over rank 1's leg | Hand launch without `NCCL_IB_SUBNET_AWARE_ROUTING=1`. Set the full fabric environment from [step 5](#5-fabric-checks). |
 
 Every refusal exits with status 9 and leaves the fleet unchanged.

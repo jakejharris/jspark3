@@ -17,7 +17,7 @@ SCHEDULER = "vllm/v1/core/sched/scheduler.py"
 DETOKENIZER = "vllm/v1/engine/detokenizer.py"
 VIDEO = "glm53_video_patch.py"
 VIDEO_PTH = "glm53_video.pth"
-KPOOL_VERIFY = "vllm/model_executor/layers/sparse_attn_indexer_kpool.py"
+KPOOL = "vllm/model_executor/layers/sparse_attn_indexer_kpool.py"
 QWEN2 = "vllm/model_executor/models/qwen3_dflash2.py"
 SPECULATOR = "vllm/v1/worker/gpu/spec_decode/dflash2/speculator.py"
 SPEC_INIT = "vllm/v1/worker/gpu/spec_decode/dflash2/__init__.py"
@@ -162,6 +162,20 @@ def registry(before: bytes, patch: bytes) -> bytes:
     return replace_once(before.decode("utf-8"), pairs[0][0], pairs[0][1], "DFlash registry second insertion").encode()
 
 
+def kpool_disable(before: bytes, patch: bytes) -> bytes:
+    # The measured fleet ran the upstream launcher's start-time GB10 disable of
+    # the decode-path persistent_topk (single-stream requests past 32,768 tokens
+    # oversubscribe GB10 shared memory). Reproduce exactly that one-line delta
+    # as a first-class transform target instead of a launcher side effect.
+    values = literal_assignments(patch)
+    old, new = values.get("KPOOL_OLD"), values.get("KPOOL_NEW")
+    if not isinstance(old, str) or not isinstance(new, str):
+        raise Refusal("kpool persistent_topk patch-data drift")
+    return replace_once(
+        before.decode("utf-8"), old, new, "kpool GB10 persistent_topk disable"
+    ).encode()
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--vllm-root", type=Path, required=True)
@@ -197,7 +211,7 @@ def main() -> int:
                 name: safe_target(root, name)
                 for name in (
                     MODEL, KV, SCHEDULER, DETOKENIZER, VIDEO, VIDEO_PTH,
-                    KPOOL_VERIFY, QWEN2, SPECULATOR, SPEC_INIT, QWEN,
+                    KPOOL, QWEN2, SPECULATOR, SPEC_INIT, QWEN,
                     REGISTRY, DFLASH_UTILS, DECODE_INIT,
                 )
             }
@@ -206,11 +220,12 @@ def main() -> int:
                 paths[KV]: drafter_group(before[paths[KV]], source_files["patch_glm5_drafter_group.py"].read_bytes()),
                 paths[SCHEDULER]: scheduler(before[paths[SCHEDULER]], source_files["patch_scheduler_decode_floor.py"].read_bytes()),
                 paths[DETOKENIZER]: detokenizer(before[paths[DETOKENIZER]], source_files["patch_suppress_stops_in_reasoning.py"].read_bytes()),
+                paths[KPOOL]: kpool_disable(before[paths[KPOOL]], source_files["patch_glm_video_placeholders.py"].read_bytes()),
                 paths[VIDEO]: source_files["patch_glm_video_placeholders.py"].read_bytes(),
                 paths[VIDEO_PTH]: b"import glm53_video_patch\n",
                 paths[REGISTRY]: registry(before[paths[REGISTRY]], source_files["patch_dflash2.py"].read_bytes()),
             }
-            for fixed in (KPOOL_VERIFY, QWEN2, SPECULATOR, SPEC_INIT, QWEN, DFLASH_UTILS, DECODE_INIT):
+            for fixed in (QWEN2, SPECULATOR, SPEC_INIT, QWEN, DFLASH_UTILS, DECODE_INIT):
                 outputs[paths[fixed]] = before[paths[fixed]]
             return outputs
 

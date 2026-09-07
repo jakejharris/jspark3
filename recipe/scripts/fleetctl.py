@@ -20,6 +20,28 @@ import urllib.request
 
 IMAGE = "ghcr.io/miaai-lab/glm-5.3-flash-2x-dgx-sparks@sha256:9bb1557a4234fce63d59599e44d10747eabd742beb337eebf9e7070be8a0fd58"
 IMAGE_CONFIG = "sha256:ad0cdd86d1ddd15ee758f519d16da15ac237f7f0648a5c52fbc20f9554944263"
+RELEASE_LABEL = "v1.1.0"
+# The measured Cadence B4+B5 layer, pinned in config/cadence-contract.json.
+B45_ENV = {
+    "B45_COMBINED": "1",
+    "B5_PREFIX_VERIFY": "1",
+    "B5_CALIB_REPLAYS": "20",
+    "B5_T4_SEED_MS": "74.30",
+    "B5_T7_SEED_MS": "92.53",
+    "B5_OUT": "/tmp/b45",
+    "JSPARK3_KDA_QKV_SHADOW": "1",
+    "B4_CAPTURE_ORDER": '["bf16_0","int8_0"]',
+}
+B45_MODULES = {
+    "b45_bootstrap.py": "fa72748f0e7c914d6486e2c2728e1f10c6b457cc1f215081d935bc8bbede3d07",
+    "b45_graphs.py": "dce824588bba64a462cf9d2f04a80e1c39a60fe7826dd311157873cbcacaba3c",
+    "b5_controller.py": "3d4ded0f4d03b6707f7b6e6f5df0374d6350100148719c8c11c91d4a2c25d5b3",
+    "b5_prefix_verify.py": "da8ea1a779fad08459632a9ec141de540b1f21a255a5af3e522f804108dcb0a0",
+    "kda_mixed_output_blocks.py": "db6d60f0ac99d3cc23d5d0b6194a557779b82f2b34132c4dba11f28098fda61f",
+}
+B45_PTH_SHA256 = "eea018d5bfee8fdc28e6470f650b8f4adaa5ec4cc4f8ac86b3e8849368c9fdeb"
+B45_KDA_ORIGINAL_SHA256 = "01aa249dd9ed35c96cc4339f85389d43a90085b9878a52827927974b93c58cd5"
+B5_RECEIPT_MARKER = "B5_PREFIX_VERIFY_RECEIPT rank=0 T4_seed_ms=74.300 T7_seed_ms=92.530 narrow_width=3"
 MEMORY = 68719476736
 SHM = 34359738368
 TARGET_RUNTIME = "/models/Mia-AiLab--GLM-5.3-Flash-EXL3-TR3-4bpw-25a44fdb-tp3-runtime"
@@ -174,6 +196,19 @@ def ssh_argv(values: dict[str, str], rank: int, remote_argv: list[str]) -> list[
             host(values, rank), shlex.join(remote_argv)]
 
 
+# Every remote Python whose stdout is consumed as JSON runs with -S (no site
+# initialization).  The serving image installs two startup hooks into the
+# container's dist-packages: glm53_video.pth (apply_image_glm_dflash) prints a
+# banner BEFORE any script output, and zzz_b45.pth -> b45_bootstrap ->
+# b5_prefix_verify prints calibration receipts AFTER it.  Both fire on every
+# site-initializing interpreter, so a plain `python3 -c`/script stdout can
+# never be a clean JSON channel (boot-51 verify refusal).  All remote Python
+# invoked here is stdlib-only (sibling modules resolve via sys.path[0], which
+# -S preserves), so skipping site hooks provably changes nothing but the
+# noise; the strict parsers stay byte-exact with no banner stripping.
+JSON_PYTHON = ("python3", "-S")
+
+
 def remote(values: dict[str, str], rank: int, argv: list[str], *, check: bool = True) -> subprocess.CompletedProcess[str]:
     process = subprocess.run(ssh_argv(values, rank, argv), text=True,
                              stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False)
@@ -218,6 +253,7 @@ def rank_env(
         "JSPARK3_KDA_FG_BATCHED": "1",
         "JSPARK3_TRUNK_W8A16": "1",
         "JSPARK3_TRUNK_W8A16_K704_GROUP": "64",
+        **B45_ENV,
         "JSPARK_PREFLIGHT_SHA256": preflight_sha256,
         "JSPARK_RECIPE_MANIFEST_SHA256": recipe_manifest_sha256 or sha_file(RECIPE_ROOT / "SHA256SUMS"),
     }
@@ -254,6 +290,7 @@ def server_argv(values: dict[str, str], rank: int) -> list[str]:
         "--compilation-config", compilation,
         "--default-chat-template-kwargs", "{\"enable_thinking\":false}",
         "--chat-template", "/sources/fly/files/chat_template.jinja",
+        "--max-logprobs", "-1",
     ]
     if rank:
         argv.append("--headless")
@@ -283,8 +320,8 @@ def container_argv(
         "--mount", f"type=bind,src={work}/cache/triton,dst=/root/.triton/cache",
         "--mount", f"type=bind,src={work}/cache/tilelang,dst=/root/.tilelang/cache",
         "--label", "org.opencontainers.image.title=jspark3-recipe",
-        "--label", "jspark3.release=v1.0.0", "--label", f"jspark3.rank={rank}",
-        "--label", "jspark3.grade=engineering-evidence",
+        "--label", f"jspark3.release={RELEASE_LABEL}", "--label", f"jspark3.rank={rank}",
+        "--label", "jspark3.grade=engineering-evidence", "--label", "jspark3.b45=boot41",
     ]
     for item in rank_env(values, rank, preflight_sha256, recipe_manifest_sha256):
         argv.extend(("--env", item))
@@ -296,7 +333,7 @@ def container_argv(
 def preflight_argv(values: dict[str, str], rank: int) -> list[str]:
     peers = [values[f"JSPARK_RANK{other}_ADDR"] for other in range(3) if other != rank]
     return [
-        "python3", f"{values['JSPARK_RECIPE_ROOT']}/scripts/remote_preflight.py",
+        *JSON_PYTHON, f"{values['JSPARK_RECIPE_ROOT']}/scripts/remote_preflight.py",
         "--rank", str(rank), "--ifaces", values[f"JSPARK_FABRIC_IFACES_{rank}"],
         "--cidrs", values[f"JSPARK_FABRIC_ADDRS_{rank}"], "--hcas", values[f"JSPARK_HCAS_{rank}"],
         "--gid-index", values["JSPARK_IB_GID_INDEX"],
@@ -311,7 +348,7 @@ def preflight_argv(values: dict[str, str], rank: int) -> list[str]:
 def checkpoint_argv(values: dict[str, str]) -> list[str]:
     root = values["JSPARK_MODEL_ROOT"]
     return [
-        "python3", "-B", f"{values['JSPARK_RECIPE_ROOT']}/scripts/validate_checkpoint.py",
+        *JSON_PYTHON, "-B", f"{values['JSPARK_RECIPE_ROOT']}/scripts/validate_checkpoint.py",
         "--target-root", f"{root}/{TARGET_NATIVE_NAME}",
         "--target-runtime", f"{root}/{TARGET_NATIVE_NAME}-tp3-runtime",
         "--draft-root", f"{root}/{DRAFT_NATIVE_NAME}",
@@ -329,7 +366,7 @@ def render_dry_run(
         preflight_sha = preflight_sha or "0" * 64
         recipe_sha = recipe_manifest_sha256()
         recipe_check = [
-            "python3", "-B", f"{values['JSPARK_RECIPE_ROOT']}/scripts/remote_preflight.py",
+            *JSON_PYTHON, "-B", f"{values['JSPARK_RECIPE_ROOT']}/scripts/remote_preflight.py",
             "--recipe-only", "--recipe-root", values["JSPARK_RECIPE_ROOT"],
             "--expected-recipe-manifest-sha256", recipe_sha,
         ]
@@ -399,6 +436,7 @@ def render_dry_run(
         print("DRY-RUN controller POST arithmetic 323")
         base = f"http://{values['JSPARK_MASTER_ADDR']}:{values['JSPARK_API_PORT']}"
         print(f"DRY-RUN controller {shlex.join(focused_witness_argv(values, base))}")
+        print(f"DRY-RUN controller {shlex.join(long_context_witness_argv(values, base))}")
         return
     if command == "stop":
         for rank in (0, 1, 2):
@@ -574,7 +612,7 @@ def validate_preflight_receipt(
 
 def remote_recipe_sha(values: dict[str, str], rank: int, expected: str | None = None) -> str:
     argv = [
-        "python3", "-B", f"{values['JSPARK_RECIPE_ROOT']}/scripts/remote_preflight.py",
+        *JSON_PYTHON, "-B", f"{values['JSPARK_RECIPE_ROOT']}/scripts/remote_preflight.py",
         "--recipe-only", "--recipe-root", values["JSPARK_RECIPE_ROOT"],
     ]
     if expected is not None:
@@ -627,7 +665,7 @@ def image_receipt_install_argv(path: str, encoded: str) -> list[str]:
         "h.flush(); os.fsync(h.fileno()); h.close(); q=os.open(os.path.dirname(p),os.O_RDONLY|os.O_DIRECTORY); "
         "os.fsync(q); os.close(q)"
     )
-    return ["python3", "-c", code, path, encoded]
+    return [*JSON_PYTHON, "-c", code, path, encoded]
 
 
 def install_image_receipt(values: dict[str, str], rank: int, data: bytes) -> None:
@@ -709,8 +747,8 @@ def validate_container_contract(
     labels = config.get("Labels") or {}
     expected_labels = {
         "org.opencontainers.image.title": "jspark3-recipe",
-        "jspark3.release": "v1.0.0", "jspark3.rank": str(rank),
-        "jspark3.grade": "engineering-evidence",
+        "jspark3.release": RELEASE_LABEL, "jspark3.rank": str(rank),
+        "jspark3.grade": "engineering-evidence", "jspark3.b45": "boot41",
     }
     if any(labels.get(key) != value for key, value in expected_labels.items()):
         raise Refusal(f"rank{rank} release label drift")
@@ -771,8 +809,8 @@ def validate_bound_identity(rank: int, identity: str, item: dict) -> None:
     labels = config.get("Labels") or {}
     expected_labels = {
         "org.opencontainers.image.title": "jspark3-recipe",
-        "jspark3.release": "v1.0.0", "jspark3.rank": str(rank),
-        "jspark3.grade": "engineering-evidence",
+        "jspark3.release": RELEASE_LABEL, "jspark3.rank": str(rank),
+        "jspark3.grade": "engineering-evidence", "jspark3.b45": "boot41",
     }
     if (item.get("Id") != identity or item.get("Name") != f"/{name}" or
             item.get("Image") != IMAGE_CONFIG or config.get("Image") != IMAGE or
@@ -915,9 +953,18 @@ def cmd_start(args: argparse.Namespace, values: dict[str, str]) -> None:
 
 def bound_manifest(
     path: Path, values: dict[str, str], *, require_all: bool = False,
-    require_started: bool = False,
+    require_started: bool = False, candidate_recipe_sha256: str | None = None,
 ) -> dict:
     value = read_receipt(path)
+    if candidate_recipe_sha256 is not None and not SHA_RE.fullmatch(candidate_recipe_sha256):
+        raise Refusal("candidate recipe manifest SHA-256 is malformed")
+    # Zero-boot verification: a patched verifier recipe must be able to verify
+    # a fleet started from an earlier recipe.  The candidate identity then
+    # comes from the operator-declared (SHA-256) candidate recipe manifest and
+    # is re-proven on every rank (verify_remote_recipe), while the verifier's
+    # own recipe identity is reported separately in the receipt.  Without the
+    # flag the historical self-identity check is unchanged.
+    expected_recipe_sha = candidate_recipe_sha256 or recipe_manifest_sha256()
     expected_keys = {
         "schema_version", "candidate", "grade", "configuration_sha256",
         "preflight_sha256", "recipe_manifest_sha256", "image_manifest",
@@ -934,7 +981,7 @@ def bound_manifest(
             value.get("configuration_sha256") != configuration_digest(values) or
             value.get("image_manifest") != IMAGE.split("@", 1)[1] or
             value.get("image_config") != IMAGE_CONFIG or
-            value.get("recipe_manifest_sha256") != recipe_manifest_sha256() or
+            value.get("recipe_manifest_sha256") != expected_recipe_sha or
             not SHA_RE.fullmatch(str(value.get("preflight_sha256", ""))) or
             value.get("start_order") != [2, 1, 0] or value.get("status") not in allowed_status):
         raise Refusal("manifest does not bind this environment/image")
@@ -990,7 +1037,7 @@ if p!=root and root not in p.parents:
 events=dict(line.split() for line in (p/'memory.events').read_text().splitlines())
 print(json.dumps({'memory_max':(p/'memory.max').read_text().strip(),'swap_max':(p/'memory.swap.max').read_text().strip(),'swap_current':int((p/'memory.swap.current').read_text()),'events':events},sort_keys=True))
 """
-    return ["python3", "-c", code, str(pid)]
+    return [*JSON_PYTHON, "-c", code, str(pid)]
 
 
 def cgroup_state(values: dict[str, str], rank: int, pid: int) -> dict:
@@ -1026,6 +1073,63 @@ def collect_status(values: dict[str, str], manifest: dict) -> list[dict]:
     return rows
 
 
+def b45_identity_argv(identity: str) -> list[str]:
+    # Inventory hashes the pinned source modules only. A real generated
+    # __pycache__ directory is skipped; any other non-file, symlink, or
+    # extra name refuses. Host still compares the modules dict to B45_MODULES.
+    pinned = "{" + ", ".join(repr(name) for name in sorted(B45_MODULES)) + "}"
+    code = """import hashlib,json,pathlib,sys
+h=lambda p: hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest()
+b45=pathlib.Path('/opt/b45')
+site=pathlib.Path('/usr/local/lib/python3.12/dist-packages')
+pinned=PINNED
+mods={}
+for p in (b45.iterdir() if b45.is_dir() else []):
+    if p.name=='__pycache__' and not p.is_symlink() and p.is_dir():
+        continue
+    if p.is_symlink() or not p.is_file() or p.name not in pinned:
+        sys.stderr.write('unexpected /opt/b45 entry: '+p.name+'\\n')
+        raise SystemExit(9)
+    mods[p.name]=h(p)
+out=pathlib.Path('/tmp/b45')
+out_entries=sorted(p.relative_to(out).as_posix() for p in out.rglob('*')) if out.is_dir() else []
+graphs=out/'graphs'
+rows=[json.loads(line) for p in sorted(graphs.glob('captures-*.jsonl')) for line in p.read_text().splitlines() if line.strip()] if graphs.is_dir() else []
+dots_intact=all(isinstance(r.get('dot'),str) and (graphs/r['dot']).is_file() and h(graphs/r['dot'])==r.get('dot_sha256') for r in rows)
+serving=sum(1 for p in graphs.glob('graph-serving-*.dot') if p.is_file() and p.stat().st_size>0) if graphs.is_dir() else 0
+print(json.dumps({'modules':mods,'pth_sha256':h(site/'zzz_b45.pth'),'kda_original_sha256':h(site/'vllm/model_executor/layers/quantization/kda_mixed_output_blocks.py'),'b45_out_entries':out_entries,'capture_receipts':len(rows),'capture_dots_intact':bool(dots_intact),'serving_graph_dumps':serving},sort_keys=True))
+""".replace("PINNED", pinned)
+    return ["docker", "exec", identity, *JSON_PYTHON, "-c", code]
+
+
+def b45_identity(values: dict[str, str], binding: dict) -> dict:
+    rank = binding["rank"]
+    identity = binding["container_id"]
+    value = strict_object(remote(values, rank, b45_identity_argv(identity)).stdout,
+                          f"rank{rank} cadence module identity")
+    if (set(value) != CADENCE_IDENTITY_KEYS or
+            value["modules"] != B45_MODULES or value["pth_sha256"] != B45_PTH_SHA256 or
+            value["kda_original_sha256"] != B45_KDA_ORIGINAL_SHA256):
+        raise Refusal(f"rank{rank} cadence module install drift")
+    receipts = value["b45_out_entries"]
+    # The pinned B4 writer emits under B5_OUT/graphs (write() -> OUT = /tmp/b45/graphs),
+    # so entries are 'graphs/activation-<pid>.jsonl'; an unqualified prefix can never match.
+    if not receipts or not any(name.startswith("graphs/activation-") for name in receipts):
+        raise Refusal(f"rank{rank} cadence execution receipts absent under B5_OUT: "
+                      "module file presence alone is not execution proof")
+    if not cadence_capture_evidence_ok(value):
+        raise Refusal(f"rank{rank} cadence capture evidence missing or drifted: the byte-pinned "
+                      "B4 capture must leave hash-matching capture receipts for the full bank "
+                      f"set (>= {CADENCE_CAPTURE_RECEIPTS_MIN}) and >= {CADENCE_SERVING_DUMPS_MIN} "
+                      "non-empty serving graph dumps")
+    return {"modules_verified": len(value["modules"]),
+            "kda_original_untouched": True,
+            "execution_receipts": len(receipts),
+            "capture_receipts": value["capture_receipts"],
+            "capture_dots_intact": value["capture_dots_intact"],
+            "serving_graph_dumps": value["serving_graph_dumps"]}
+
+
 def runtime_identity(values: dict[str, str], binding: dict, manifest: dict) -> dict:
     rank, identity = binding["rank"], binding["container_id"]
     config_argv, pipeline_argv = runtime_identity_argv(identity)
@@ -1055,14 +1159,22 @@ def runtime_identity(values: dict[str, str], binding: dict, manifest: dict) -> d
         raise Refusal(f"rank{rank} host-minted image receipt drift")
     pipeline = remote(values, rank, pipeline_argv)
     pipeline_value = strict_object(pipeline.stdout, f"rank{rank} transform pipeline")
+    cadence = b45_identity(values, binding)
     result = {**configs, "transform_pipeline_state": pipeline_value.get("state"),
               "transform_target_set_sha256": pipeline_value.get("target_set_sha256"),
-              "image_receipt_bound": True}
-    if (result["target_runtime_config"] != "55201c73ed092c5a77f9b87ce40298edb450790ad864c1256cb6ca3a182683bd" or
-            result["draft_runtime_config"] != "c9f0c3a6c41f8a226fb31a1fb7817cea274d1f4b7b0d2e4d787d38c0f508283f" or
-            result["transform_pipeline_state"] != "ALREADY_APPLIED" or
-            result["transform_target_set_sha256"] != "ed7b0092e5a5a1d2aeb6dd2cbe9780783df89d70f733dff019dd05aa8cdd08bd"):
-        raise Refusal(f"rank{rank} runtime-view/transform identity drift")
+              "image_receipt_bound": True, "cadence_b45": cadence}
+    expected = {
+        "target_runtime_config": "55201c73ed092c5a77f9b87ce40298edb450790ad864c1256cb6ca3a182683bd",
+        "draft_runtime_config": "c9f0c3a6c41f8a226fb31a1fb7817cea274d1f4b7b0d2e4d787d38c0f508283f",
+        "transform_pipeline_state": "ALREADY_APPLIED",
+        # SHA-256 of canonical final targets in patch-contract.json, including
+        # the v1.0.1 GB10 kpool correction (0c15723), retained by v1.1.
+        "transform_target_set_sha256": "1f3beb88157da0a7782cc94d49bc5c8d93103fa708b620f8b3fb51f110a8f635",
+    }
+    drift = [f"{key}: expected {value!r}, actual {result[key]!r}"
+             for key, value in expected.items() if result[key] != value]
+    if drift:
+        raise Refusal(f"rank{rank} runtime-view/transform identity drift: " + "; ".join(drift))
     return result
 
 
@@ -1075,8 +1187,8 @@ def runtime_identity_argv(identity: str) -> tuple[list[str], list[str]]:
         "'image_receipt_sha256':h('/evidence/image-receipt.json'),"
         "'image_receipt':json.loads(pathlib.Path('/evidence/image-receipt.json').read_text())},sort_keys=True))"
     )
-    return ["docker", "exec", identity, "python3", "-c", code], [
-        "docker", "exec", identity, "python3", "/recipe/scripts/apply_base_pipeline.py",
+    return ["docker", "exec", identity, *JSON_PYTHON, "-c", code], [
+        "docker", "exec", identity, *JSON_PYTHON, "/recipe/scripts/apply_base_pipeline.py",
         "--vllm-root", "/usr/local/lib/python3.12/dist-packages/vllm",
         "--source-root", "/sources/fly", "--asset-root", "/opt/glm53",
         "--contract", "/recipe/config/patch-contract.json",
@@ -1177,9 +1289,80 @@ def focused_witness_argv(values: dict[str, str], base: str) -> list[str]:
     ]
 
 
+def long_context_witness_argv(values: dict[str, str], base: str) -> list[str]:
+    return [
+        sys.executable, str(Path(__file__).resolve().with_name("long_context_witness.py")),
+        "--base-url", base,
+    ]
+
+
+# The pinned B4 module replaces ModelCudaGraphManager.capture with custom banked
+# capture that renders no stock progress bar: the archived measured-arm startup
+# log (second serving start, rank0; same six module bytes and image digest)
+# contains the dflash2 draft bar completing 5/5 and the shard/startup/receipt
+# lines, but zero occurrences of 'Capturing CUDA graphs (FULL)'. The stock bar
+# gate was therefore a guaranteed refusal for a healthy Cadence server. Capture
+# proof now comes from what the pinned path actually writes under B5_OUT/graphs:
+# captures-*.jsonl receipts whose recorded graph-dump hashes match the
+# on-container dump bytes, plus non-empty graph-serving-*.dot dumps for the
+# full bank set, required on every rank (minimums below the CADENCE_IDENTITY_KEYS).
+CADENCE_IDENTITY_KEYS = {"modules", "pth_sha256", "kda_original_sha256", "b45_out_entries",
+                         "capture_receipts", "capture_dots_intact", "serving_graph_dumps"}
+
+# Full-bank capture completeness of the byte-pinned path, per rank, at the moment
+# verify runs (startup capture only; nothing else writes captures-*.jsonl):
+# the pinned profile.json capture sizes give 4 base FULL family descriptors
+# (16/24/32/48 tokens) plus the mandatory (4,4,1)/(8,8,1) pair captured into BOTH
+# banks -> 8 serving-phase captures, each with its non-empty graph-serving-*.dot
+# dump, and the same set again in the profile phase -> 16 receipt rows.
+# Measured ground truth: the boot41/43 measured-arm startup receipts per rank
+# are exactly 16 rows (8 serving + 8 profile) and 8 non-empty serving dumps.
+CADENCE_CAPTURE_RECEIPTS_MIN = 16
+CADENCE_SERVING_DUMPS_MIN = 8
+
+
+def cadence_capture_evidence_ok(value: dict) -> bool:
+    return (value.get("capture_dots_intact") is True and
+            isinstance(value.get("capture_receipts"), int) and
+            value["capture_receipts"] >= CADENCE_CAPTURE_RECEIPTS_MIN and
+            isinstance(value.get("serving_graph_dumps"), int) and
+            value["serving_graph_dumps"] >= CADENCE_SERVING_DUMPS_MIN)
+
+
+def cadence_capture_evidence(runtime: list[dict]) -> bool:
+    return bool(runtime) and all(
+        cadence_capture_evidence_ok(row.get("cadence_b45", {})) for row in runtime)
+
+
+def load_gate(logs: str, runtime: list[dict]) -> dict:
+    """Rank0 load/graph/cadence receipt gate for verify.
+
+    The stock 'Capturing CUDA graphs (FULL) ... 5/5' target bar is deliberately
+    not required: the byte-pinned B4 capture path cannot render it. It is
+    replaced by per-rank Cadence capture evidence; the dflash2 draft bar, the
+    shard-progress bars, the startup line, and the B5 calibration receipt are
+    all still produced by the pinned path and stay required.
+    """
+    return {
+        "target_shards_120": progress_complete(logs, "Loading safetensors checkpoint shards", 120),
+        "draft_shards_1": progress_complete(logs, "Loading safetensors checkpoint shards", 1),
+        "cadence_capture_evidence": cadence_capture_evidence(runtime),
+        "draft_graphs_5": progress_complete(logs, "Capturing dflash2 CUDA graphs (FULL)", 5),
+        "startup_complete": "Application startup complete." in logs,
+        "b5_controller_calibrated": B5_RECEIPT_MARKER in ANSI_RE.sub("", logs),
+    }
+
+
 def _verify_bound(
-    args: argparse.Namespace, values: dict[str, str], manifest: dict
+    args: argparse.Namespace, values: dict[str, str], manifest: dict,
+    candidate_recipe_sha256: str | None = None,
 ) -> None:
+    if candidate_recipe_sha256 is not None:
+        # Candidate mode: re-prove on every bound rank that the on-host recipe
+        # bytes still hash to the declared candidate manifest before trusting
+        # any runtime identity read from it.
+        for binding in manifest["containers"]:
+            verify_remote_recipe(values, binding["rank"], candidate_recipe_sha256)
     runtime = []
     for binding in manifest["containers"]:
         inspect_bound(values, binding, manifest)
@@ -1199,15 +1382,9 @@ def _verify_bound(
     log_process = remote(values, 0, ["docker", "logs", rank0["container_id"]])
     logs = log_process.stdout + log_process.stderr
     atomic_text(args.log_output, logs)
-    load = {
-        "target_shards_120": progress_complete(logs, "Loading safetensors checkpoint shards", 120),
-        "draft_shards_1": progress_complete(logs, "Loading safetensors checkpoint shards", 1),
-        "target_graphs_5": progress_complete(logs, "Capturing CUDA graphs (FULL)", 5),
-        "draft_graphs_5": progress_complete(logs, "Capturing dflash2 CUDA graphs (FULL)", 5),
-        "startup_complete": "Application startup complete." in logs,
-    }
+    load = load_gate(logs, runtime)
     if not all(load.values()):
-        raise Refusal("rank0 load/graph receipt gate failed")
+        raise Refusal("load/graph/cadence receipt gate failed")
     base = f"http://{values['JSPARK_MASTER_ADDR']}:{values['JSPARK_API_PORT']}"
     with urllib.request.urlopen(base + "/health", timeout=10) as health:
         if health.status != 200:
@@ -1229,12 +1406,21 @@ def _verify_bound(
     if witness.returncode:
         raise Refusal(f"focused witness failed: {witness.stderr.strip()}")
     witness_value = strict_object(witness.stdout, "focused witness response")
+    long_context = subprocess.run(long_context_witness_argv(values, base), text=True,
+                                  stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False)
+    if long_context.returncode:
+        raise Refusal(f"long-context witness failed: {long_context.stderr.strip()}")
+    long_context_value = strict_object(long_context.stdout, "long-context witness response")
     receipt = {
         "schema_version": 1, "grade": "ENGINEERING-EVIDENCE",
         "manifest_sha256": sha_file(args.manifest), "runtime_identity": runtime, "image_and_safety": statuses,
         "load": load, "health_http": 200, "served_model": "glm-5.3-flash",
-        "arithmetic": 323, "focused_witness": witness_value, "status": "VERIFY_PASS",
+        "arithmetic": 323, "focused_witness": witness_value,
+        "long_context_witness": long_context_value, "status": "VERIFY_PASS",
     }
+    if candidate_recipe_sha256 is not None:
+        receipt["candidate_recipe_manifest_sha256"] = candidate_recipe_sha256
+        receipt["verifier_recipe_manifest_sha256"] = recipe_manifest_sha256()
     receipt["payload_sha256"] = sha_bytes(canonical(receipt))
     atomic_json(args.output, receipt)
     print(f"PASS verify receipt={args.output} sha256={sha_file(args.output)}")
@@ -1245,9 +1431,11 @@ def cmd_verify(args: argparse.Namespace, values: dict[str, str]) -> None:
         render_dry_run("verify", values)
         return
     validate_env(values)
-    manifest = bound_manifest(args.manifest, values, require_all=True, require_started=True)
+    candidate = args.candidate_recipe_manifest_sha256 or None
+    manifest = bound_manifest(args.manifest, values, require_all=True, require_started=True,
+                              candidate_recipe_sha256=candidate)
     try:
-        _verify_bound(args, values, manifest)
+        _verify_bound(args, values, manifest, candidate)
     except Exception:
         try:
             preserve_rank0_logs(values, manifest, args.log_output)
@@ -1278,6 +1466,10 @@ def parser() -> argparse.ArgumentParser:
         elif name == "verify":
             command.add_argument("--output", type=Path, default=Path("verify.json"))
             command.add_argument("--log-output", type=Path, default=Path("verify-rank0.log"))
+            command.add_argument("--candidate-recipe-manifest-sha256", default="",
+                                 help="verify a fleet started from an earlier recipe: the declared "
+                                      "candidate recipe manifest SHA-256 replaces the verifier self-identity "
+                                      "check and is re-proven on every rank before any runtime read")
     return result
 
 

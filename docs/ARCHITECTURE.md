@@ -98,6 +98,16 @@ verifies the terminal hashes, and only then removes the journal. A later run
 completes or rolls back an interrupted transaction from observed hashes. The
 full inventory is in `recipe/transforms/README.md`.
 
+## v1.1 additions (Cadence)
+
+Beyond the transforms, v1.1 installs two serving features at the measured
+launch path: the QKV decode shadow (a group-128 INT8 shadow for qualifying
+small-batch pure-decode shapes; every other shape keeps the parent path) and
+the speculative width controller (request-local narrowing from seven to three
+tokens on high acceptance, falling back wide for any batch, prefill, or guard
+condition). Their modules, hashes, and launch contracts are pinned by the
+recipe; the recipe's own inventory is authoritative for exact file names.
+
 ## Fail-closed lifecycle
 
 ```

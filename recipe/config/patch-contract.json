@@ -143,20 +143,30 @@
           "source_sha256": "b41f87832968a63000c9b56ac12948958ad36d1d0f93c031a2969243031aa82d"
         },
         {
-          "after_sha256": "f48c5f93cb3c7d1b1238381761b65c142a1c032023dcef8e449a02f651fb0530",
+          "after_sha256": "00e32052b781723500987a463814116634c4d00b3b61066915f8cc70780c931e",
           "before_sha256": "f48c5f93cb3c7d1b1238381761b65c142a1c032023dcef8e449a02f651fb0530",
-          "forbidden_after_seams": [],
+          "forbidden_after_seams": [
+            "if current_platform.is_cuda() and select_k in (512, 1024, 2048):"
+          ],
           "path": "vllm/model_executor/layers/sparse_attn_indexer_kpool.py",
           "required_after_seams": [
             {
               "count": 1,
               "text": "torch.ops._C.persistent_topk("
+            },
+            {
+              "count": 1,
+              "text": "if False and current_platform.is_cuda() and select_k in (512, 1024, 2048):  # GB10 persistent_topk smem"
             }
           ],
           "required_before_seams": [
             {
               "count": 1,
               "text": "torch.ops._C.persistent_topk("
+            },
+            {
+              "count": 1,
+              "text": "if current_platform.is_cuda() and select_k in (512, 1024, 2048):"
             }
           ],
           "source_sha256": "b41f87832968a63000c9b56ac12948958ad36d1d0f93c031a2969243031aa82d"

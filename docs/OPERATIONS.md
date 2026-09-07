@@ -18,10 +18,24 @@ without losing the guarantees.
   sequences, 8,192 batched tokens, full-decode-only CUDA graphs at 8, 16, 24,
   32 and 48, GPU memory utilization 0.83, `glm47` tool parser, `glm45`
   reasoning parser, thinking disabled by default, served name
-  `glm-5.3-flash`.
+  `glm-5.3-flash`. v1.1 adds the width controller and the QKV decode shadow
+  to the measured launch; the recipe's pinned profile and launch contracts
+  are authoritative for the exact envelope.
 - No FlashInfer autotune, no `NCCL_PROTO`, `NCCL_ALGO`, or
   `NCCL_IB_ADDR_RANGE` overrides. The fabric settings the controller injects
-  are listed in `recipe/scripts/fleetctl.py` and are not operator-tunable.
+  are not operator-tunable. Since v1.0.1 they are also documented in
+  [installation step 5](INSTALL.md#5-fabric-checks); the full per-rank set is
+  `NCCL_NET=IB`, `NCCL_NET_PLUGIN=none`, `NCCL_IB_DISABLE=0`,
+  `NCCL_IB_HCA` (both of the rank's HCAs), `NCCL_IB_GID_INDEX`,
+  `NCCL_IB_ROCE_VERSION_NUM=2`, `NCCL_IB_ADDR_FAMILY=AF_INET`,
+  `NCCL_IB_SUBNET_AWARE_ROUTING=1`, `NCCL_CROSS_NIC=0`,
+  `NCCL_IB_MERGE_NICS=0`, `NCCL_NVLS_ENABLE=0`, `NCCL_CUMEM_ENABLE=0`,
+  `NCCL_IGNORE_CPU_AFFINITY=1`, and the shared management interface for
+  `NCCL_SOCKET_IFNAME`, `GLOO_SOCKET_IFNAME`, `TP_SOCKET_IFNAME`, and
+  `MN_IF_NAME`. `NCCL_IB_SUBNET_AWARE_ROUTING` is new in NCCL 2.30.7 and
+  defaults to off; with it off, NCCL pairs NICs by index and routes rank 0
+  to rank 2 over rank 1's leg, which breaks a switchless triangle. A
+  preloaded or substituted NCCL build is outside the verified recipe.
 
 ## Daily checks
 
@@ -45,6 +59,25 @@ consequences are worth stating plainly:
 - Long prompts are expensive on first sight. A 113,908-token prompt took
   92.290 s to first token in the matched prefill measurement. Prefix caching
   makes repeats cheap; cold prompts are not.
+- In v1.1, single-stream decode may run in the narrow speculative mode when
+  the width controller's acceptance checks pass, and silently falls back to
+  the wide path for any batch of two or more requests, prefill, or guard
+  condition. The fallback is normal behavior, not an error, and the measured
+  single-stream gains carry no promise for a busy multi-stream service.
+- Single-stream long context was a boundary in v1.0.0. The v1.0.0 recipe
+  aborted on any single decoding stream past 32,768 tokens of context (the
+  `persistent_topk` kernel; see the
+  [install-path warning](INSTALL.md#known-issue-in-v100-single-stream-requests-past-32768-tokens)).
+  v1.0.1 disables that kernel in the transform, so the known deterministic
+  single-stream abort is removed and the transform emits the exact kernel
+  file every measured run executed. That is not a demonstration of end-to-end
+  reachability: the configured 1,000,000-token context remains a
+  configuration value and does not certify this candidate's operating
+  envelope. A later integrated live verification passed at 48,957 prompt
+  tokens with 51 completion tokens and the pinned codeword on the assembled
+  candidate; see [receipt and provenance](../results/evidence/candidate/cadence-v11/README.md#integrated-live-verification).
+  Historical benchmark numbers, including the long-prefill figures above,
+  were measured with that disable applied and are unchanged.
 - High concurrency raises time to first token sharply. In the C48 wave, the
   p90 time to first token was 96.722 s even though aggregate throughput rose.
   If you serve interactive traffic, cap concurrency well below 48 or add an
@@ -74,10 +107,37 @@ Spark verification it requires.
   for inspection. Removal requires the separate `REMOVE-JSPARK3` token.
 - A container that exits at start prints exactly one `REFUSE:` line naming
   the failed gate. Fix the cause; do not bypass the gate.
+- A server abort containing `persistent_topk would oversubscribe` means the
+  v1.0.0 known issue was hit: a single decoding stream passed 32,768 tokens
+  of context on the v1.0.0 construction. Move to the v1.0.1 recipe; the
+  [install path](INSTALL.md#known-issue-in-v100-single-stream-requests-past-32768-tokens)
+  lists the unsupported v1.0.0 workarounds.
 - Out-of-memory, swap use, or restart events show up in the cgroup counters
   the preflight and verify paths read. The measured campaign recorded zero of
   each; if you see any, treat the run as invalid evidence and investigate the
   host.
+
+## The serving stack is one-shot: export before any removal
+
+The v1.1 construction is strictly one-shot per container, and its evidence
+lives in places a casual cleanup destroys:
+
+- The Cadence runtime writes its execution receipts, capture receipts, and
+  CUDA-graph dumps under `/tmp/b45` inside each container's writable layer.
+  A plain `docker stop` keeps the container and that evidence; **container
+  removal (`docker rm`, directly or via any remove token) deletes it
+  irrecoverably.**
+- The installer refuses to run against a non-empty output directory, so a
+  stack is never restarted in place on the same names: stop the stack, export
+  what you need, and treat the next start as a fresh construction on names
+  verified absent. The deterministic container names must not exist before a
+  test begins.
+- Before any future removal, export the raw evidence from every rank: the
+  whole `/tmp/b45` tree (activation receipts, `captures-*.jsonl`, and all
+  `graph-*.dot` dumps) plus `docker logs` for each container, and record a
+  `sha256sum` manifest of everything exported alongside the files. Export on
+  failure paths too — a refused or failed run is exactly the evidence worth
+  keeping.
 
 ## Upgrading
 

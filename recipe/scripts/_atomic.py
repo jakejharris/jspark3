@@ -543,4 +543,9 @@ def execute(
 
 
 def print_receipt(value: object) -> None:
+    destination = os.environ.get("JSPARK3_RECEIPT_OUT")
+    if destination:
+        with open(destination, "wb") as handle:
+            handle.write(canonical(value))
+        return
     sys.stdout.buffer.write(canonical(value))

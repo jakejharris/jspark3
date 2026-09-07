@@ -1,0 +1,247 @@
+{
+  "schema_version": 1,
+  "record": "sanitized integrated V1.1 verification evidence",
+  "source": {
+    "raw_receipt_sha256": "1fbba426b8ac7ef9dc7b019241a70351335e82ebc8064c92a19c310e7db628d6",
+    "raw_payload_sha256": "3e8064abc82394f6125db69a7c891bee392f73c5d4b233a7f5e3f41d9cd95486",
+    "raw_receipt_retained_privately": true,
+    "export_rule": "Receipt projection only: remove manifest_sha256, payload_sha256, runtime_identity[].image_receipt_sha256, and image_and_safety[].name. Retain all other receipt fields and values verbatim. Source hashes identify the private original, not this sanitized file; a reviewer with the original can reproduce the projection.",
+    "omitted_fields": [
+      "manifest_sha256",
+      "payload_sha256",
+      "runtime_identity[].image_receipt_sha256",
+      "image_and_safety[].name"
+    ]
+  },
+  "provenance": {
+    "candidate_commit": "a729583fc1e286583023f4b9b92db87efefcb33a",
+    "verifier_commit": "456a2624d0c54e2096327b57fcb54e8333f10114",
+    "candidate_recipe_manifest_file": "CANDIDATE-SHA256SUMS",
+    "changed_recipe_files": [
+      "scripts/fleetctl.py"
+    ],
+    "equivalence_scope": "The candidate recipe and verifier recipe differ only in the host lifecycle/verifier controller and its checksum manifest. Serving entrypoint, modules, transforms, contracts, image pins, model pins and arguments are identical. The final package retains the tested verifier recipe bytes; sealing adds evidence, documentation and offline validation. This does not prove cold-start behavior of the final archive.",
+    "final_archive_cold_boot_tested": false
+  },
+  "limits": {
+    "focused_witness_scope": "Fixed admission workload only; not a Pi speed claim, benchmark population, or comparative performance estimate.",
+    "pi_slowdown_status": "UNRESOLVED",
+    "separate_experiments": "E3 is separate and supplies no release evidence.",
+    "configured_context_verified": false,
+    "sustained_concurrency_certified": false,
+    "independent_fleet_reproduction": false
+  },
+  "verification": {
+    "arithmetic": 323,
+    "candidate_recipe_manifest_sha256": "32784962571dfaa21634d8d290b011b3bbbe36ac8bdeaae0ceff5bd38fed7627",
+    "focused_witness": {
+      "admission_floor": 59.513845,
+      "advisory_recheck_ruler": true,
+      "all_three_ranks_observed": {
+        "rank0": true,
+        "rank1": true,
+        "rank2": true
+      },
+      "automatic_retries": 0,
+      "decode_tok_s": [
+        68.73142558997715,
+        73.96898992188153,
+        73.87180713291826
+      ],
+      "grade": "ENGINEERING-EVIDENCE",
+      "median_decode_tok_s": 73.87180713291826,
+      "pass": true,
+      "request_body_sha256": "681a284f6d441734ccaade4d7b7c4731c736e7fb7ce87cabff1312326c5187a7",
+      "request_window_rank_causality": [
+        {
+          "rank0": true,
+          "rank1": true,
+          "rank2": true
+        },
+        {
+          "rank0": true,
+          "rank1": true,
+          "rank2": true
+        },
+        {
+          "rank0": true,
+          "rank1": true,
+          "rank2": true
+        }
+      ],
+      "schema_version": 1,
+      "scored_requests": 3,
+      "warmups": 1
+    },
+    "grade": "ENGINEERING-EVIDENCE",
+    "health_http": 200,
+    "image_and_safety": [
+      {
+        "actual_image_config": "sha256:ad0cdd86d1ddd15ee758f519d16da15ac237f7f0648a5c52fbc20f9554944263",
+        "cgroup": {
+          "events": {
+            "high": "0",
+            "low": "0",
+            "max": "0",
+            "oom": "0",
+            "oom_group_kill": "0",
+            "oom_kill": "0"
+          },
+          "memory_max": "68719476736",
+          "swap_current": 0,
+          "swap_max": "0"
+        },
+        "exit_code": 0,
+        "image_config_match": true,
+        "image_reference_match": true,
+        "memory_bytes": 68719476736,
+        "memory_swap_bytes": 68719476736,
+        "oom_killed": false,
+        "rank": 0,
+        "restart_count": 0,
+        "restart_policy": "no",
+        "running": true
+      },
+      {
+        "actual_image_config": "sha256:ad0cdd86d1ddd15ee758f519d16da15ac237f7f0648a5c52fbc20f9554944263",
+        "cgroup": {
+          "events": {
+            "high": "0",
+            "low": "0",
+            "max": "0",
+            "oom": "0",
+            "oom_group_kill": "0",
+            "oom_kill": "0"
+          },
+          "memory_max": "68719476736",
+          "swap_current": 0,
+          "swap_max": "0"
+        },
+        "exit_code": 0,
+        "image_config_match": true,
+        "image_reference_match": true,
+        "memory_bytes": 68719476736,
+        "memory_swap_bytes": 68719476736,
+        "oom_killed": false,
+        "rank": 1,
+        "restart_count": 0,
+        "restart_policy": "no",
+        "running": true
+      },
+      {
+        "actual_image_config": "sha256:ad0cdd86d1ddd15ee758f519d16da15ac237f7f0648a5c52fbc20f9554944263",
+        "cgroup": {
+          "events": {
+            "high": "0",
+            "low": "0",
+            "max": "0",
+            "oom": "0",
+            "oom_group_kill": "0",
+            "oom_kill": "0"
+          },
+          "memory_max": "68719476736",
+          "swap_current": 0,
+          "swap_max": "0"
+        },
+        "exit_code": 0,
+        "image_config_match": true,
+        "image_reference_match": true,
+        "memory_bytes": 68719476736,
+        "memory_swap_bytes": 68719476736,
+        "oom_killed": false,
+        "rank": 2,
+        "restart_count": 0,
+        "restart_policy": "no",
+        "running": true
+      }
+    ],
+    "load": {
+      "b5_controller_calibrated": true,
+      "cadence_capture_evidence": true,
+      "draft_graphs_5": true,
+      "draft_shards_1": true,
+      "startup_complete": true,
+      "target_shards_120": true
+    },
+    "long_context_witness": {
+      "code_word_verbatim": true,
+      "completion_tokens": 51,
+      "elapsed_seconds": 56.164,
+      "finish_reason": "stop",
+      "grade": "ENGINEERING-EVIDENCE",
+      "min_completion_tokens": 20,
+      "min_prompt_tokens": 32768,
+      "pass": true,
+      "payload_pinned": true,
+      "prompt_tokens": 48957,
+      "reasons": [],
+      "request_payload_sha256": "882c504c49c626977c32e0ecb4035f29636a6c15ad1aeccdb31a38b6c7e8e652",
+      "schema_version": 1,
+      "served_model": "glm-5.3-flash",
+      "witness": "long-context->32K"
+    },
+    "runtime_identity": [
+      {
+        "cadence_b45": {
+          "capture_dots_intact": true,
+          "capture_receipts": 16,
+          "execution_receipts": 48,
+          "kda_original_untouched": true,
+          "modules_verified": 5,
+          "serving_graph_dumps": 8
+        },
+        "draft_runtime_config": "c9f0c3a6c41f8a226fb31a1fb7817cea274d1f4b7b0d2e4d787d38c0f508283f",
+        "image_receipt_bound": true,
+        "rank": 0,
+        "target_runtime_config": "55201c73ed092c5a77f9b87ce40298edb450790ad864c1256cb6ca3a182683bd",
+        "transform_pipeline_state": "ALREADY_APPLIED",
+        "transform_target_set_sha256": "1f3beb88157da0a7782cc94d49bc5c8d93103fa708b620f8b3fb51f110a8f635"
+      },
+      {
+        "cadence_b45": {
+          "capture_dots_intact": true,
+          "capture_receipts": 16,
+          "execution_receipts": 34,
+          "kda_original_untouched": true,
+          "modules_verified": 5,
+          "serving_graph_dumps": 8
+        },
+        "draft_runtime_config": "c9f0c3a6c41f8a226fb31a1fb7817cea274d1f4b7b0d2e4d787d38c0f508283f",
+        "image_receipt_bound": true,
+        "rank": 1,
+        "target_runtime_config": "55201c73ed092c5a77f9b87ce40298edb450790ad864c1256cb6ca3a182683bd",
+        "transform_pipeline_state": "ALREADY_APPLIED",
+        "transform_target_set_sha256": "1f3beb88157da0a7782cc94d49bc5c8d93103fa708b620f8b3fb51f110a8f635"
+      },
+      {
+        "cadence_b45": {
+          "capture_dots_intact": true,
+          "capture_receipts": 16,
+          "execution_receipts": 34,
+          "kda_original_untouched": true,
+          "modules_verified": 5,
+          "serving_graph_dumps": 8
+        },
+        "draft_runtime_config": "c9f0c3a6c41f8a226fb31a1fb7817cea274d1f4b7b0d2e4d787d38c0f508283f",
+        "image_receipt_bound": true,
+        "rank": 2,
+        "target_runtime_config": "55201c73ed092c5a77f9b87ce40298edb450790ad864c1256cb6ca3a182683bd",
+        "transform_pipeline_state": "ALREADY_APPLIED",
+        "transform_target_set_sha256": "1f3beb88157da0a7782cc94d49bc5c8d93103fa708b620f8b3fb51f110a8f635"
+      }
+    ],
+    "schema_version": 1,
+    "served_model": "glm-5.3-flash",
+    "status": "VERIFY_PASS",
+    "verifier_recipe_manifest_sha256": "afd1fca1f58bcece36a441e2479bc41f39504fcc0c4cad45ae9905e629e62a43"
+  },
+  "prior_verifier_refusals": [
+    {
+      "raw_receipt_sha256": "e2ee2a155c76f400de5bb564c4c0241d03dd67d5984d07894928d74cdece80b7",
+      "host_verifier_commit": "e58c825cde635c6ac6f2366f36df72a4ae0e2fe9",
+      "status": "VERIFY_REFUSED",
+      "reason": "rank0 runtime-view/transform identity drift",
+      "raw_receipt_retained_privately": true
+    }
+  ]
+}

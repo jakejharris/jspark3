@@ -31,8 +31,41 @@ repository. Mirroring is not authorship: no weight byte is modified, the
 checkpoint's own license and attribution travel with it, and the DFlash2 draft
 is left where it is as a separately pinned dependency. All 123 allowlisted Git
 LFS payloads and the exact completion receipt were remotely verified before
-maintainer merge into public Hub main at immutable revision
+maintainer merge into the verified weights-mirror revision
 `e7c34dba923916754cfcb0bdf6c2c75a9b7ff1fc`.
+
+## What v1.1 (Cadence) adds
+
+v1.1 keeps the construction above — including the stock indexer workspace,
+the original drafter, and the sampler — and adds two serving features
+measured together, plus one fix carried forward:
+
+- **QKV decode shadow.** An additional group-128 INT8 shadow of the QKV
+  projections serves qualifying small-batch pure-decode shapes; every other
+  shape keeps the parent path, and the control rows stay BF16.
+- **Speculative width controller.** A request-local controller watches draft
+  acceptance and narrows speculation from seven to three tokens when the
+  narrow path is winning, re-evaluating on a fixed rhythm. Any batch,
+  prefill, or guard condition falls back to the wide path.
+- **The long-context kernel fix.** The v1.0.1 transform-level disable of
+  `persistent_topk` is part of the v1.1 transform contract; the transform
+  emits the exact kernel file the measured arms executed. Integrated live
+  verification passed one pinned request with 48,957 prompt tokens and 51
+  completion tokens, including the verbatim codeword. [Receipt and provenance](../results/evidence/candidate/cadence-v11/README.md#integrated-live-verification)
+  scope that result to candidate `a729583` and host verifier `456a262`; no
+  maximum-context or final-archive cold-start claim follows.
+
+The paired evidence is scoped and honestly bounded: prose and structured-
+count decode gains with confidence intervals excluding zero across two
+independent serving starts, a code gain that did not replicate,
+candidate-only quality losses, and a concurrency burst that certifies no
+operating envelope. A fresh three-rank rebuild from the recipe completed
+construction, route audits, and the frozen batteries without a serving
+repair, and the prior exact arm was restored afterward. Section 6 of this
+report and the historical tables in [BENCHMARKS.md](BENCHMARKS.md) remain the
+v1.0.0 record and are not merged with the v1.1 evidence; the v1.1 numbers
+and their conditions are in
+[BENCHMARKS.md](BENCHMARKS.md#v11-cadence-evidence).
 
 ## 2. The problem with three
 
@@ -52,8 +85,10 @@ start, verifying the hash of every file before and after and refusing on any
 drift. `apply_tp3_overlay.py` carries the padding and the EXL3 expert-map
 sharding; `apply_image_glm_dflash.py` carries MiaAI-Lab's GLM, DFlash2,
 scheduler, and reasoning integration, including DFlash2's padded KV
-slot-sharing, a decode-floor mixed-prefill policy, and a guard that
-suppresses stop sequences inside reasoning; `apply_kpool_tail.py` carries the
+slot-sharing, a decode-floor mixed-prefill policy, a guard that
+suppresses stop sequences inside reasoning, and, since v1.0.1, the GB10
+`persistent_topk` disable the upstream launcher applies at start and every
+measured arm ran (`docs/LIMITATIONS.md` has the boundary); `apply_kpool_tail.py` carries the
 K-pool hybrid-position and persistent tail-slot correction; the two KDA
 programs are ours, batching the linear-attention f/g projections and
 constructing mixed-output blocks. Together they touch 25 files with pinned

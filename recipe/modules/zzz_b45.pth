@@ -1,0 +1,1 @@
+import sys; sys.path.insert(0, '/opt/b45'); import b45_bootstrap

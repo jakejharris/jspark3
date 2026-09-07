@@ -18,7 +18,15 @@
     "base_pipeline": "scripts/apply_base_pipeline.py",
     "patch_contract": "config/patch-contract.json",
     "overlay": "overlays/trunk_w8a16.py",
-    "loader_patcher": "overlays/patch_base_loader_hook.py"
+    "loader_patcher": "overlays/patch_base_loader_hook.py",
+    "cadence": {
+      "contract": "config/cadence-contract.json",
+      "modules_dir": "modules/",
+      "import_owner": "modules/zzz_b45.pth",
+      "provenance_label": "jspark3.b45=boot41",
+      "installer": "scripts/install_b45_modules.py",
+      "long_context_witness": "scripts/long_context_witness.py"
+    }
   },
   "topology": {
     "tensor_parallel": 3,
