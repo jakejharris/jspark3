@@ -7,9 +7,11 @@ import argparse
 import hashlib
 import importlib
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
+import tempfile
 
 from _atomic import (ABSENT, Refusal, canonical, compiled, observed,
                      read_image_receipt, safe_target, sha_file,
@@ -110,15 +112,37 @@ def pending_transactions(root: Path, value: dict) -> list[str]:
     return pending
 
 
-def recover_journals(args: argparse.Namespace, root: Path, names: list[str]) -> list[dict]:
-    receipts = []
-    for name in names:
+def run_stage(args: argparse.Namespace, name: str, mode: str) -> dict:
+    """Run one stage child and collect its receipt on the dedicated file channel.
+
+    Stage stdout is shared with interpreter startup chatter (site .pth imports),
+    so it can never serve as a JSON channel. The child writes canonical receipt
+    bytes to a fresh, nonexistent file named by JSPARK3_RECEIPT_OUT; the parent
+    reads that file only after the child exits successfully.
+    """
+    with tempfile.TemporaryDirectory(prefix="stage-receipt-") as scratch:
+        receipt_path = Path(scratch) / f"{name}.receipt.json"
+        environment = dict(os.environ)
+        environment["JSPARK3_RECEIPT_OUT"] = str(receipt_path)
         process = subprocess.run(command(args, name), text=True, stdout=subprocess.PIPE,
-                                 stderr=subprocess.PIPE, check=False)
+                                 stderr=subprocess.PIPE, check=False, env=environment)
         if process.returncode:
-            raise Refusal(f"{name}: transaction recovery failed: {process.stderr.strip()}")
-        receipts.append(json.loads(process.stdout))
-    return receipts
+            raise Refusal(f"{name}: transaction {mode} failed: {process.stderr.strip()}")
+        try:
+            receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
+        except (FileNotFoundError, UnicodeDecodeError, json.JSONDecodeError) as exc:
+            raise Refusal(f"{name}: stage receipt unavailable on receipt channel: {exc}") from exc
+        if not isinstance(receipt, dict):
+            raise Refusal(f"{name}: stage receipt is not a JSON object")
+        if receipt.get("schema_version") != 1 or receipt.get("transform") != name \
+                or receipt.get("state") not in ("APPLIED", "ALREADY_APPLIED") \
+                or not isinstance(receipt.get("targets"), list):
+            raise Refusal(f"{name}: stage receipt rejected")
+        return receipt
+
+
+def recover_journals(args: argparse.Namespace, root: Path, names: list[str]) -> list[dict]:
+    return [run_stage(args, name, "recovery") for name in names]
 
 
 def main() -> int:
@@ -156,11 +180,7 @@ def main() -> int:
             status = "ALREADY_APPLIED" if current == len(STAGES) else f"READY_STAGE_{current}"
         else:
             for name in STAGES[current:]:
-                process = subprocess.run(command(args, name), text=True, stdout=subprocess.PIPE,
-                                         stderr=subprocess.PIPE, check=False)
-                if process.returncode:
-                    raise Refusal(f"{name}: apply failed: {process.stderr.strip()}")
-                receipts.append(json.loads(process.stdout))
+                receipts.append(run_stage(args, name, "apply"))
             if stage(root, states) != len(STAGES):
                 raise Refusal("pipeline did not reach exact final state")
             status = "ALREADY_APPLIED" if current == len(STAGES) and not receipts else "APPLIED"
