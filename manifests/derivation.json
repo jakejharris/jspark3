@@ -132,10 +132,10 @@
     },
     {
       "changed_lines": 82,
-      "changed_lines_scope": "measured-to-public rename-only delta through v1.0.1; v1.1.0 adds the Cadence payload/identity/verify wiring on top, which is not counted in changed_lines; v1.1.0 also adds python3 -S isolation for remote JSON channels and a declared-candidate recipe binding, which is not counted in changed_lines; v1.1.0 also skips a real generated __pycache__ directory in the cadence module inventory while still refusing extra, missing, tampered, and unexpected non-file content, which is not counted in changed_lines; the measured bundle needed to diff the combined result is unavailable, so the full current delta is unknown and no number is approximated",
+      "changed_lines_scope": "measured-to-public rename-only delta through v1.0.1; v1.1.0 adds the Cadence payload/identity/verify wiring on top, which is not counted in changed_lines; v1.1.0 also adds python3 -S isolation for remote JSON channels and a declared-candidate recipe binding, which is not counted in changed_lines; v1.1.0 also skips a real generated __pycache__ directory in the cadence module inventory while still refusing extra, missing, tampered, and unexpected non-file content, which is not counted in changed_lines; v1.1.0 also corrects the stale v1.0.0 transform target-set aggregate to the unchanged v1.0.1 patch contract and reports exact runtime identity mismatches, which is not counted in changed_lines; the measured bundle needed to diff the combined result is unavailable, so the full current delta is unknown and no number is approximated",
       "measured_sha256": "4b30987138b8382bb716091e8f9bf68e56a5f97ea6a8b382ec39734004f6a654",
       "public": "scripts/fleetctl.py",
-      "public_sha256": "32486a9973b4e0d8e2b723f93c3f5de33ea96143b01fb6fe82edb5271f6dd842"
+      "public_sha256": "5b66f5138b70ec48695235c6f9bba65deca7b5baf3e4f2cecb46b2676058ba4f"
     },
     {
       "changed_lines": 4,

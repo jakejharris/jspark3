@@ -34,7 +34,9 @@ These checks prove, with no hosts, containers, or network:
   default self-identity check is unchanged;
 - the cadence module inventory hashes the pinned /opt/b45 source files only:
   a real generated __pycache__ directory is skipped, and missing, tampered,
-  extra, unexpected-directory, and symlink content still refuse.
+  extra, unexpected-directory, and symlink content still refuse;
+- runtime identity accepts the final target-set digest independently derived
+  from the shipped patch contract, and rejects each mismatched identity field.
 """
 
 from __future__ import annotations
@@ -259,8 +261,58 @@ def runtime_payloads() -> tuple[dict, dict, dict, dict, dict]:
         "image_receipt": receipt,
     }
     pipeline = {"state": "ALREADY_APPLIED",
-                "target_set_sha256": "ed7b0092e5a5a1d2aeb6dd2cbe9780783df89d70f733dff019dd05aa8cdd08bd"}
+                "target_set_sha256": shipped_target_set_sha256()}
     return binding, manifest, configs, pipeline, b45_payload()
+
+
+def shipped_target_set_sha256() -> str:
+    # Derive from the shipped contract, never copy fleetctl's expected digest.
+    # Later transforms replace earlier after-hashes for shared target paths.
+    contract = json.loads((ROOT / "recipe/config/patch-contract.json").read_text())
+    final = {}
+    for name in ("apply_tp3_overlay.py", "apply_image_glm_dflash.py",
+                 "apply_kpool_tail.py", "apply_kda_mixed.py", "apply_kda_fg.py"):
+        for target in contract["transforms"][name]["targets"]:
+            final[target["path"]] = target["after_sha256"]
+    return sha((json.dumps(final, sort_keys=True, separators=(",", ":")) + "\n").encode())
+
+
+def test_runtime_identity_matches_shipped_contract() -> None:
+    values = env_values()
+    binding, manifest, configs, pipeline, b45 = runtime_payloads()
+    original, _ = routed_remote(configs, pipeline, b45)
+    try:
+        result = fleetctl.runtime_identity(values, binding, manifest)
+        expect(result["transform_target_set_sha256"] == shipped_target_set_sha256(),
+               "runtime identity does not match the shipped final target set")
+    finally:
+        restore_remote(original)
+    for channel, field, result_field, bad in (
+        ("configs", "target_runtime_config", "target_runtime_config", "0" * 64),
+        ("configs", "draft_runtime_config", "draft_runtime_config", "0" * 64),
+        ("pipeline", "state", "transform_pipeline_state", "READY_STAGE_4"),
+        ("pipeline", "target_set_sha256", "transform_target_set_sha256", "0" * 64),
+        # The exact stale v1.0.0 aggregate that incorrectly refused the candidate.
+        ("pipeline", "target_set_sha256", "transform_target_set_sha256",
+         "ed7b0092e5a5a1d2aeb6dd2cbe9780783df89d70f733dff019dd05aa8cdd08bd"),
+        ("pipeline", "target_set_sha256", "transform_target_set_sha256", None),
+    ):
+        changed_configs = {**configs, field: bad} if channel == "configs" else configs
+        changed_pipeline = {**pipeline, field: bad} if channel == "pipeline" else pipeline
+        original, _ = routed_remote(changed_configs, changed_pipeline, b45)
+        try:
+            try:
+                fleetctl.runtime_identity(values, binding, manifest)
+            except fleetctl.Refusal as exc:
+                expected = configs[field] if channel == "configs" else pipeline[field]
+                detail = f"{result_field}: expected {expected!r}, actual {bad!r}"
+                expect("runtime-view/transform identity drift" in str(exc) and detail in str(exc),
+                       f"refusal must identify the exact mismatch: {exc}")
+            else:
+                raise AssertionError(f"accepted drifted {result_field}: {bad!r}")
+        finally:
+            restore_remote(original)
+    print("ok runtime-contract shipped target set accepts; stale/tampered/missing identities refuse precisely")
 
 
 def routed_remote(configs: dict, pipeline: dict, b45: dict,
@@ -611,6 +663,7 @@ def main() -> int:
         test_pth_startup_noise_real_interpreter,
         test_remote_consumer_refusals,
         test_identity_channels_end_to_end,
+        test_runtime_identity_matches_shipped_contract,
         test_pipeline_check_on_disk_under_S,
         test_candidate_recipe_binding,
         test_b45_inventory_skips_generated_cache_only,

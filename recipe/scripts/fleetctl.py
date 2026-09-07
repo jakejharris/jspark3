@@ -1163,11 +1163,18 @@ def runtime_identity(values: dict[str, str], binding: dict, manifest: dict) -> d
     result = {**configs, "transform_pipeline_state": pipeline_value.get("state"),
               "transform_target_set_sha256": pipeline_value.get("target_set_sha256"),
               "image_receipt_bound": True, "cadence_b45": cadence}
-    if (result["target_runtime_config"] != "55201c73ed092c5a77f9b87ce40298edb450790ad864c1256cb6ca3a182683bd" or
-            result["draft_runtime_config"] != "c9f0c3a6c41f8a226fb31a1fb7817cea274d1f4b7b0d2e4d787d38c0f508283f" or
-            result["transform_pipeline_state"] != "ALREADY_APPLIED" or
-            result["transform_target_set_sha256"] != "ed7b0092e5a5a1d2aeb6dd2cbe9780783df89d70f733dff019dd05aa8cdd08bd"):
-        raise Refusal(f"rank{rank} runtime-view/transform identity drift")
+    expected = {
+        "target_runtime_config": "55201c73ed092c5a77f9b87ce40298edb450790ad864c1256cb6ca3a182683bd",
+        "draft_runtime_config": "c9f0c3a6c41f8a226fb31a1fb7817cea274d1f4b7b0d2e4d787d38c0f508283f",
+        "transform_pipeline_state": "ALREADY_APPLIED",
+        # SHA-256 of canonical final targets in patch-contract.json, including
+        # the v1.0.1 GB10 kpool correction (0c15723), retained by v1.1.
+        "transform_target_set_sha256": "1f3beb88157da0a7782cc94d49bc5c8d93103fa708b620f8b3fb51f110a8f635",
+    }
+    drift = [f"{key}: expected {value!r}, actual {result[key]!r}"
+             for key, value in expected.items() if result[key] != value]
+    if drift:
+        raise Refusal(f"rank{rank} runtime-view/transform identity drift: " + "; ".join(drift))
     return result
 
 
