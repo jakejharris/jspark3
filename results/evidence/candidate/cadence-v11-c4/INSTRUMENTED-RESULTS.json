@@ -1,0 +1,2385 @@
+{
+  "status": "PASS",
+  "offline_verification": "python3 -B verify_offline.py",
+  "requests": 24,
+  "completion_tokens": 8496,
+  "author_source_change": "DecodeBench request body adds return_token_ids true; streaming module unchanged",
+  "original_proxy_unchanged": true,
+  "all_payloads_byte_identical_to_historical": false,
+  "only_request_body_difference": {
+    "return_token_ids": true
+  },
+  "token_ids_match_usage_all_requests": true,
+  "retries": 0,
+  "node_version": "v22.23.2",
+  "identity_before_after": "PASS bound three-rank recipe/image/runtime; no restarts",
+  "source_hashes": {
+    "source/capture_proxy.mjs": "1f9118cbe968ded9a571253f0481b1ed0314e9f8382af80d7bc4bcf9b7a6e990",
+    "source/sparkdash_runner.mjs": "fe1b26f0f08097ba732a279c553945f9c6a3b42594b1dd8c1845d6541eebc45f",
+    "source/sparkDash/package.json": "02a44e92a41a8a19733ba0e04bd886015befbbecd34b35c5eb8455881943369c",
+    "source/sparkDash/src/shared/llmPrompts.js": "a4a5b300411779de2c2f12a5b652d4702a3b2d6fdeca88421f26d8c7f0c23749",
+    "source/sparkDash/server/collectors/LlmStreaming.js": "27f7f80fd833c9bd11e3c1d27b1f0db0d6a889513a8b104da0f54a90a713e479",
+    "source/sparkDash/server/collectors/DecodeBench.js": "36bf79fb930e24748958ea11d75be983134968ff8fcbf4ada9434a35eaaee8ff",
+    "source/sparkDash/server/util/atomicWrite.js": "e4caf1065209d085561fa28a91e6af6c29857f40f8809b3554869e3815d28654"
+  },
+  "max_relative_metric_discrepancy": 0.00021354130791417791,
+  "metric_check_tolerance": 0.002,
+  "c4_medians": {
+    "original_aggregate_decode_tok_s": 231.9,
+    "original_mean_per_stream_decode_tok_s": 58.71,
+    "full_wave_end_to_end_tok_s": 212.39708697395213
+  },
+  "repetitions": [
+    {
+      "repetition": 1,
+      "request_count": 8,
+      "completion_tokens": 2832,
+      "waves": [
+        {
+          "concurrency": 1,
+          "original_aggregate_decode_tok_s": 91.21,
+          "proxy_aggregate_decode_tok_s": 91.19197529376908,
+          "relative_aggregate_discrepancy": 0.00019761765410497567,
+          "original_mean_per_stream_decode_tok_s": 91.21,
+          "original_mean_ttft_ms": 389.4,
+          "original_duration_ms": 4764.87,
+          "full_wave_end_to_end_tok_s": 83.94772575117474,
+          "one_then_three_visible": false,
+          "dispatch_spreads_ms": {
+            "client_request_create_ns": 0.0,
+            "client_send_headers_callback_ns": 0.0,
+            "proxy_request_start_ns": 0.0
+          },
+          "client_events": [
+            {
+              "event": "client_request_create",
+              "monotonic_ns": "869573567765054",
+              "id": 2,
+              "method": "POST",
+              "path": "/v1/chat/completions",
+              "body_sha256": null
+            },
+            {
+              "event": "client_send_headers_callback",
+              "monotonic_ns": "869573568871550",
+              "id": 2
+            },
+            {
+              "event": "client_response_headers",
+              "monotonic_ns": "869573956089297",
+              "id": 2,
+              "status": 200
+            },
+            {
+              "event": "client_response_complete",
+              "monotonic_ns": "869578331441326",
+              "id": 2
+            }
+          ],
+          "client_to_proxy_correlation": "wave only; opaque body prevents independent per-stream pairing",
+          "streams": [
+            {
+              "exchange": "0002-2026-09-07T20-02-15-761Z",
+              "completion_tokens": 400,
+              "proxy_request_start_ns": 869573569240076,
+              "first_visible_s": 0.385830585,
+              "last_visible_s": 4.761215576,
+              "done_s": 4.761279557,
+              "proxy_decode_tok_s": 91.19197529376908
+            }
+          ],
+          "original_streams": [
+            {
+              "index": 0,
+              "ttftMs": 389.4,
+              "decodeMs": 4374.68,
+              "totalMs": 4764.3,
+              "decodeTps": 91.21,
+              "completionTokens": 400,
+              "decodeTokens": 399
+            }
+          ]
+        },
+        {
+          "concurrency": 2,
+          "original_aggregate_decode_tok_s": 139.17,
+          "proxy_aggregate_decode_tok_s": 139.1604546208478,
+          "relative_aggregate_discrepancy": 6.858790797015235e-05,
+          "original_mean_per_stream_decode_tok_s": 70.28,
+          "original_mean_ttft_ms": 506.14,
+          "original_duration_ms": 6240.97,
+          "full_wave_end_to_end_tok_s": 128.18520197982045,
+          "one_then_three_visible": false,
+          "dispatch_spreads_ms": {
+            "client_request_create_ns": 0.473727,
+            "client_send_headers_callback_ns": 0.475578,
+            "proxy_request_start_ns": 0.911294
+          },
+          "client_events": [
+            {
+              "event": "client_request_create",
+              "monotonic_ns": "869578333730361",
+              "id": 3,
+              "method": "POST",
+              "path": "/v1/chat/completions",
+              "body_sha256": null
+            },
+            {
+              "event": "client_request_create",
+              "monotonic_ns": "869578334204088",
+              "id": 4,
+              "method": "POST",
+              "path": "/v1/chat/completions",
+              "body_sha256": null
+            },
+            {
+              "event": "client_send_headers_callback",
+              "monotonic_ns": "869578335009680",
+              "id": 3
+            },
+            {
+              "event": "client_send_headers_callback",
+              "monotonic_ns": "869578335485258",
+              "id": 4
+            },
+            {
+              "event": "client_response_headers",
+              "monotonic_ns": "869578839024056",
+              "id": 3,
+              "status": 200
+            },
+            {
+              "event": "client_response_headers",
+              "monotonic_ns": "869578839551645",
+              "id": 4,
+              "status": 200
+            },
+            {
+              "event": "client_response_complete",
+              "monotonic_ns": "869584462167759",
+              "id": 3
+            },
+            {
+              "event": "client_response_complete",
+              "monotonic_ns": "869584573550879",
+              "id": 4
+            }
+          ],
+          "client_to_proxy_correlation": "wave only; opaque body prevents independent per-stream pairing",
+          "streams": [
+            {
+              "exchange": "0003-2026-09-07T20-02-20-527Z",
+              "completion_tokens": 400,
+              "proxy_request_start_ns": 869578335442837,
+              "first_visible_s": 0.502675596,
+              "last_visible_s": 6.125579535,
+              "done_s": 6.125649086,
+              "proxy_decode_tok_s": 70.95977529201036
+            },
+            {
+              "exchange": "0004-2026-09-07T20-02-20-528Z",
+              "completion_tokens": 400,
+              "proxy_request_start_ns": 869578336354131,
+              "first_visible_s": 0.502868554,
+              "last_visible_s": 6.237063301,
+              "done_s": 6.2371292810000005,
+              "proxy_decode_tok_s": 69.58256871354914
+            }
+          ],
+          "original_streams": [
+            {
+              "index": 0,
+              "ttftMs": 506.35,
+              "decodeMs": 5622.55,
+              "totalMs": 6129.17,
+              "decodeTps": 70.96,
+              "completionTokens": 400,
+              "decodeTokens": 399
+            },
+            {
+              "index": 1,
+              "ttftMs": 505.93,
+              "decodeMs": 5733.69,
+              "totalMs": 6239.83,
+              "decodeTps": 69.59,
+              "completionTokens": 400,
+              "decodeTokens": 399
+            }
+          ]
+        },
+        {
+          "concurrency": 4,
+          "original_aggregate_decode_tok_s": 233.59,
+          "proxy_aggregate_decode_tok_s": 233.56552519274427,
+          "relative_aggregate_discrepancy": 0.00010477677664166851,
+          "original_mean_per_stream_decode_tok_s": 58.99,
+          "original_mean_ttft_ms": 656.42,
+          "original_duration_ms": 7489.43,
+          "full_wave_end_to_end_tok_s": 213.63441543615468,
+          "one_then_three_visible": false,
+          "dispatch_spreads_ms": {
+            "client_request_create_ns": 0.992325,
+            "client_send_headers_callback_ns": 1.99427,
+            "proxy_request_start_ns": 3.058194
+          },
+          "client_events": [
+            {
+              "event": "client_request_create",
+              "monotonic_ns": "869584575390721",
+              "id": 5,
+              "method": "POST",
+              "path": "/v1/chat/completions",
+              "body_sha256": null
+            },
+            {
+              "event": "client_request_create",
+              "monotonic_ns": "869584575668445",
+              "id": 6,
+              "method": "POST",
+              "path": "/v1/chat/completions",
+              "body_sha256": null
+            },
+            {
+              "event": "client_request_create",
+              "monotonic_ns": "869584576044991",
+              "id": 7,
+              "method": "POST",
+              "path": "/v1/chat/completions",
+              "body_sha256": null
+            },
+            {
+              "event": "client_request_create",
+              "monotonic_ns": "869584576383046",
+              "id": 8,
+              "method": "POST",
+              "path": "/v1/chat/completions",
+              "body_sha256": null
+            },
+            {
+              "event": "client_send_headers_callback",
+              "monotonic_ns": "869584577548388",
+              "id": 5
+            },
+            {
+              "event": "client_send_headers_callback",
+              "monotonic_ns": "869584578725545",
+              "id": 6
+            },
+            {
+              "event": "client_send_headers_callback",
+              "monotonic_ns": "869584579162382",
+              "id": 7
+            },
+            {
+              "event": "client_send_headers_callback",
+              "monotonic_ns": "869584579542658",
+              "id": 8
+            },
+            {
+              "event": "client_response_headers",
+              "monotonic_ns": "869585230792498",
+              "id": 7,
+              "status": 200
+            },
+            {
+              "event": "client_response_headers",
+              "monotonic_ns": "869585231477549",
+              "id": 5,
+              "status": 200
+            },
+            {
+              "event": "client_response_headers",
+              "monotonic_ns": "869585231860504",
+              "id": 8,
+              "status": 200
+            },
+            {
+              "event": "client_response_headers",
+              "monotonic_ns": "869585232238050",
+              "id": 6,
+              "status": 200
+            },
+            {
+              "event": "client_response_complete",
+              "monotonic_ns": "869591930402610",
+              "id": 8
+            },
+            {
+              "event": "client_response_complete",
+              "monotonic_ns": "869591931567527",
+              "id": 6
+            },
+            {
+              "event": "client_response_complete",
+              "monotonic_ns": "869592063095554",
+              "id": 5
+            },
+            {
+              "event": "client_response_complete",
+              "monotonic_ns": "869592063970966",
+              "id": 7
+            }
+          ],
+          "client_to_proxy_correlation": "wave only; opaque body prevents independent per-stream pairing",
+          "streams": [
+            {
+              "exchange": "0005-2026-09-07T20-02-26-769Z",
+              "completion_tokens": 400,
+              "proxy_request_start_ns": 869584578073535,
+              "first_visible_s": 0.651960643,
+              "last_visible_s": 7.48377726,
+              "done_s": 7.483859571,
+              "proxy_decode_tok_s": 58.40320698994547
+            },
+            {
+              "exchange": "0006-2026-09-07T20-02-26-771Z",
+              "completion_tokens": 400,
+              "proxy_request_start_ns": 869584579383974,
+              "first_visible_s": 0.652097,
+              "last_visible_s": 7.352530514000001,
+              "done_s": 7.352559925,
+              "proxy_decode_tok_s": 59.548385812100456
+            },
+            {
+              "exchange": "0007-2026-09-07T20-02-26-772Z",
+              "completion_tokens": 400,
+              "proxy_request_start_ns": 869584580260946,
+              "first_visible_s": 0.651928043,
+              "last_visible_s": 7.485128271,
+              "done_s": 7.485156680999999,
+              "proxy_decode_tok_s": 58.39138129818607
+            },
+            {
+              "exchange": "0008-2026-09-07T20-02-26-772Z",
+              "completion_tokens": 400,
+              "proxy_request_start_ns": 869584581131729,
+              "first_visible_s": 0.652356265,
+              "last_visible_s": 7.351715353,
+              "done_s": 7.351744094,
+              "proxy_decode_tok_s": 59.55793602923827
+            }
+          ],
+          "original_streams": [
+            {
+              "index": 0,
+              "ttftMs": 657.01,
+              "decodeMs": 6831.22,
+              "totalMs": 7488.41,
+              "decodeTps": 58.41,
+              "completionTokens": 400,
+              "decodeTokens": 399
+            },
+            {
+              "index": 1,
+              "ttftMs": 656.98,
+              "decodeMs": 6699.08,
+              "totalMs": 7356.22,
+              "decodeTps": 59.56,
+              "completionTokens": 400,
+              "decodeTokens": 399
+            },
+            {
+              "index": 2,
+              "ttftMs": 655.67,
+              "decodeMs": 6832.53,
+              "totalMs": 7488.34,
+              "decodeTps": 58.4,
+              "completionTokens": 400,
+              "decodeTokens": 399
+            },
+            {
+              "index": 3,
+              "ttftMs": 656.02,
+              "decodeMs": 6698.35,
+              "totalMs": 7354.44,
+              "decodeTps": 59.57,
+              "completionTokens": 400,
+              "decodeTokens": 399
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "repetition": 2,
+      "request_count": 8,
+      "completion_tokens": 2832,
+      "waves": [
+        {
+          "concurrency": 1,
+          "original_aggregate_decode_tok_s": 90.7,
+          "proxy_aggregate_decode_tok_s": 90.68448043084231,
+          "relative_aggregate_discrepancy": 0.00017110881099990927,
+          "original_mean_per_stream_decode_tok_s": 90.7,
+          "original_mean_ttft_ms": 381.78,
+          "original_duration_ms": 4781.56,
+          "full_wave_end_to_end_tok_s": 83.6547068320799,
+          "one_then_three_visible": false,
+          "dispatch_spreads_ms": {
+            "client_request_create_ns": 0.0,
+            "client_send_headers_callback_ns": 0.0,
+            "proxy_request_start_ns": 0.0
+          },
+          "client_events": [
+            {
+              "event": "client_request_create",
+              "monotonic_ns": "869593061843040",
+              "id": 2,
+              "method": "POST",
+              "path": "/v1/chat/completions",
+              "body_sha256": null
+            },
+            {
+              "event": "client_send_headers_callback",
+              "monotonic_ns": "869593062935836",
+              "id": 2
+            },
+            {
+              "event": "client_response_headers",
+              "monotonic_ns": "869593442482681",
+              "id": 2,
+              "status": 200
+            },
+            {
+              "event": "client_response_complete",
+              "monotonic_ns": "869597842268699",
+              "id": 2
+            }
+          ],
+          "client_to_proxy_correlation": "wave only; opaque body prevents independent per-stream pairing",
+          "streams": [
+            {
+              "exchange": "0002-2026-09-07T20-02-35-255Z",
+              "completion_tokens": 400,
+              "proxy_request_start_ns": 869593063245011,
+              "first_visible_s": 0.378215526,
+              "last_visible_s": 4.778086354,
+              "done_s": 4.778142885,
+              "proxy_decode_tok_s": 90.68448043084231
+            }
+          ],
+          "original_streams": [
+            {
+              "index": 0,
+              "ttftMs": 381.78,
+              "decodeMs": 4399.06,
+              "totalMs": 4781.08,
+              "decodeTps": 90.7,
+              "completionTokens": 400,
+              "decodeTokens": 399
+            }
+          ]
+        },
+        {
+          "concurrency": 2,
+          "original_aggregate_decode_tok_s": 135.9,
+          "proxy_aggregate_decode_tok_s": 135.88934280288743,
+          "relative_aggregate_discrepancy": 7.841940480191045e-05,
+          "original_mean_per_stream_decode_tok_s": 67.96,
+          "original_mean_ttft_ms": 511.85,
+          "original_duration_ms": 6384.52,
+          "full_wave_end_to_end_tok_s": 125.30307681705123,
+          "one_then_three_visible": false,
+          "dispatch_spreads_ms": {
+            "client_request_create_ns": 0.402616,
+            "client_send_headers_callback_ns": 0.428836,
+            "proxy_request_start_ns": 0.61345
+          },
+          "client_events": [
+            {
+              "event": "client_request_create",
+              "monotonic_ns": "869597844188687",
+              "id": 3,
+              "method": "POST",
+              "path": "/v1/chat/completions",
+              "body_sha256": null
+            },
+            {
+              "event": "client_request_create",
+              "monotonic_ns": "869597844591303",
+              "id": 4,
+              "method": "POST",
+              "path": "/v1/chat/completions",
+              "body_sha256": null
+            },
+            {
+              "event": "client_send_headers_callback",
+              "monotonic_ns": "869597845296994",
+              "id": 3
+            },
+            {
+              "event": "client_send_headers_callback",
+              "monotonic_ns": "869597845725830",
+              "id": 4
+            },
+            {
+              "event": "client_response_headers",
+              "monotonic_ns": "869598355221183",
+              "id": 4,
+              "status": 200
+            },
+            {
+              "event": "client_response_headers",
+              "monotonic_ns": "869598355728551",
+              "id": 3,
+              "status": 200
+            },
+            {
+              "event": "client_response_complete",
+              "monotonic_ns": "869604226516978",
+              "id": 4
+            },
+            {
+              "event": "client_response_complete",
+              "monotonic_ns": "869604227727385",
+              "id": 3
+            }
+          ],
+          "client_to_proxy_correlation": "wave only; opaque body prevents independent per-stream pairing",
+          "streams": [
+            {
+              "exchange": "0003-2026-09-07T20-02-40-037Z",
+              "completion_tokens": 400,
+              "proxy_request_start_ns": 869597845615517,
+              "first_visible_s": 0.509107497,
+              "last_visible_s": 6.381532689,
+              "done_s": 6.381560489,
+              "proxy_decode_tok_s": 67.94467140144371
+            },
+            {
+              "exchange": "0004-2026-09-07T20-02-40-038Z",
+              "completion_tokens": 400,
+              "proxy_request_start_ns": 869597846228967,
+              "first_visible_s": 0.509134243,
+              "last_visible_s": 6.380200774,
+              "done_s": 6.380264355,
+              "proxy_decode_tok_s": 67.96039491176394
+            }
+          ],
+          "original_streams": [
+            {
+              "index": 0,
+              "ttftMs": 512.3,
+              "decodeMs": 5871.74,
+              "totalMs": 6384.17,
+              "decodeTps": 67.95,
+              "completionTokens": 400,
+              "decodeTokens": 399
+            },
+            {
+              "index": 1,
+              "ttftMs": 511.39,
+              "decodeMs": 5870.76,
+              "totalMs": 6382.37,
+              "decodeTps": 67.96,
+              "completionTokens": 400,
+              "decodeTokens": 399
+            }
+          ]
+        },
+        {
+          "concurrency": 4,
+          "original_aggregate_decode_tok_s": 231.25,
+          "proxy_aggregate_decode_tok_s": 231.24356920743958,
+          "relative_aggregate_discrepancy": 2.7808832693709817e-05,
+          "original_mean_per_stream_decode_tok_s": 58.71,
+          "original_mean_ttft_ms": 678,
+          "original_duration_ms": 7579.99,
+          "full_wave_end_to_end_tok_s": 211.08207266764205,
+          "one_then_three_visible": false,
+          "dispatch_spreads_ms": {
+            "client_request_create_ns": 1.010186,
+            "client_send_headers_callback_ns": 1.608125,
+            "proxy_request_start_ns": 2.264884
+          },
+          "client_events": [
+            {
+              "event": "client_request_create",
+              "monotonic_ns": "869604229354700",
+              "id": 5,
+              "method": "POST",
+              "path": "/v1/chat/completions",
+              "body_sha256": null
+            },
+            {
+              "event": "client_request_create",
+              "monotonic_ns": "869604229615984",
+              "id": 6,
+              "method": "POST",
+              "path": "/v1/chat/completions",
+              "body_sha256": null
+            },
+            {
+              "event": "client_request_create",
+              "monotonic_ns": "869604230062271",
+              "id": 7,
+              "method": "POST",
+              "path": "/v1/chat/completions",
+              "body_sha256": null
+            },
+            {
+              "event": "client_request_create",
+              "monotonic_ns": "869604230364886",
+              "id": 8,
+              "method": "POST",
+              "path": "/v1/chat/completions",
+              "body_sha256": null
+            },
+            {
+              "event": "client_send_headers_callback",
+              "monotonic_ns": "869604231184218",
+              "id": 6
+            },
+            {
+              "event": "client_send_headers_callback",
+              "monotonic_ns": "869604232100832",
+              "id": 5
+            },
+            {
+              "event": "client_send_headers_callback",
+              "monotonic_ns": "869604232469908",
+              "id": 7
+            },
+            {
+              "event": "client_send_headers_callback",
+              "monotonic_ns": "869604232792343",
+              "id": 8
+            },
+            {
+              "event": "client_response_headers",
+              "monotonic_ns": "869604906518287",
+              "id": 5,
+              "status": 200
+            },
+            {
+              "event": "client_response_headers",
+              "monotonic_ns": "869604907046415",
+              "id": 8,
+              "status": 200
+            },
+            {
+              "event": "client_response_headers",
+              "monotonic_ns": "869604907465341",
+              "id": 7,
+              "status": 200
+            },
+            {
+              "event": "client_response_headers",
+              "monotonic_ns": "869604907797316",
+              "id": 6,
+              "status": 200
+            },
+            {
+              "event": "client_response_complete",
+              "monotonic_ns": "869611669143454",
+              "id": 7
+            },
+            {
+              "event": "client_response_complete",
+              "monotonic_ns": "869611670216350",
+              "id": 5
+            },
+            {
+              "event": "client_response_complete",
+              "monotonic_ns": "869611671184805",
+              "id": 8
+            },
+            {
+              "event": "client_response_complete",
+              "monotonic_ns": "869611808607908",
+              "id": 6
+            }
+          ],
+          "client_to_proxy_correlation": "wave only; opaque body prevents independent per-stream pairing",
+          "streams": [
+            {
+              "exchange": "0006-2026-09-07T20-02-46-424Z",
+              "completion_tokens": 400,
+              "proxy_request_start_ns": 869604232511318,
+              "first_visible_s": 0.674436035,
+              "last_visible_s": 7.438259155,
+              "done_s": 7.438284755000001,
+              "proxy_decode_tok_s": 58.99030665367252
+            },
+            {
+              "exchange": "0005-2026-09-07T20-02-46-423Z",
+              "completion_tokens": 400,
+              "proxy_request_start_ns": 869604231589154,
+              "first_visible_s": 0.674573613,
+              "last_visible_s": 7.576093831,
+              "done_s": 7.576157112,
+              "proxy_decode_tok_s": 57.81334943558663
+            },
+            {
+              "exchange": "0007-2026-09-07T20-02-46-424Z",
+              "completion_tokens": 400,
+              "proxy_request_start_ns": 869604233079977,
+              "first_visible_s": 0.67510815,
+              "last_visible_s": 7.437260735,
+              "done_s": 7.437330996,
+              "proxy_decode_tok_s": 59.0048797309119
+            },
+            {
+              "exchange": "0008-2026-09-07T20-02-46-425Z",
+              "completion_tokens": 400,
+              "proxy_request_start_ns": 869604233854038,
+              "first_visible_s": 0.674280278,
+              "last_visible_s": 7.438680296999999,
+              "done_s": 7.438706026999999,
+              "proxy_decode_tok_s": 58.985275690272566
+            }
+          ],
+          "original_streams": [
+            {
+              "index": 0,
+              "ttftMs": 678.09,
+              "decodeMs": 6763.21,
+              "totalMs": 7441.45,
+              "decodeTps": 59,
+              "completionTokens": 400,
+              "decodeTokens": 399
+            },
+            {
+              "index": 1,
+              "ttftMs": 678.58,
+              "decodeMs": 6900.54,
+              "totalMs": 7579.28,
+              "decodeTps": 57.82,
+              "completionTokens": 400,
+              "decodeTokens": 399
+            },
+            {
+              "index": 2,
+              "ttftMs": 678.07,
+              "decodeMs": 6761.33,
+              "totalMs": 7439.57,
+              "decodeTps": 59.01,
+              "completionTokens": 400,
+              "decodeTokens": 399
+            },
+            {
+              "index": 3,
+              "ttftMs": 677.25,
+              "decodeMs": 6763.71,
+              "totalMs": 7441.14,
+              "decodeTps": 58.99,
+              "completionTokens": 400,
+              "decodeTokens": 399
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "repetition": 3,
+      "request_count": 8,
+      "completion_tokens": 2832,
+      "waves": [
+        {
+          "concurrency": 1,
+          "original_aggregate_decode_tok_s": 89.91,
+          "proxy_aggregate_decode_tok_s": 89.90056606022102,
+          "relative_aggregate_discrepancy": 0.00010492647957927037,
+          "original_mean_per_stream_decode_tok_s": 89.91,
+          "original_mean_ttft_ms": 392.29,
+          "original_duration_ms": 4830.52,
+          "full_wave_end_to_end_tok_s": 82.8068199696927,
+          "one_then_three_visible": false,
+          "dispatch_spreads_ms": {
+            "client_request_create_ns": 0.0,
+            "client_send_headers_callback_ns": 0.0,
+            "proxy_request_start_ns": 0.0
+          },
+          "client_events": [
+            {
+              "event": "client_request_create",
+              "monotonic_ns": "869612799652968",
+              "id": 2,
+              "method": "POST",
+              "path": "/v1/chat/completions",
+              "body_sha256": null
+            },
+            {
+              "event": "client_send_headers_callback",
+              "monotonic_ns": "869612800740044",
+              "id": 2
+            },
+            {
+              "event": "client_response_headers",
+              "monotonic_ns": "869613190868206",
+              "id": 2,
+              "status": 200
+            },
+            {
+              "event": "client_response_complete",
+              "monotonic_ns": "869617629077069",
+              "id": 2
+            }
+          ],
+          "client_to_proxy_correlation": "wave only; opaque body prevents independent per-stream pairing",
+          "streams": [
+            {
+              "exchange": "0002-2026-09-07T20-02-54-992Z",
+              "completion_tokens": 400,
+              "proxy_request_start_ns": 869612801034847,
+              "first_visible_s": 0.388933325,
+              "last_visible_s": 4.827170118,
+              "done_s": 4.827232648,
+              "proxy_decode_tok_s": 89.90056606022102
+            }
+          ],
+          "original_streams": [
+            {
+              "index": 0,
+              "ttftMs": 392.29,
+              "decodeMs": 4437.57,
+              "totalMs": 4830.05,
+              "decodeTps": 89.91,
+              "completionTokens": 400,
+              "decodeTokens": 399
+            }
+          ]
+        },
+        {
+          "concurrency": 2,
+          "original_aggregate_decode_tok_s": 83.96,
+          "proxy_aggregate_decode_tok_s": 83.95394880232426,
+          "relative_aggregate_discrepancy": 7.207238775286395e-05,
+          "original_mean_per_stream_decode_tok_s": 87.65,
+          "original_mean_ttft_ms": 2840.35,
+          "original_duration_ms": 9909.19,
+          "full_wave_end_to_end_tok_s": 80.73313762275221,
+          "one_then_three_visible": true,
+          "dispatch_spreads_ms": {
+            "client_request_create_ns": 0.453457,
+            "client_send_headers_callback_ns": 0.483027,
+            "proxy_request_start_ns": 0.67406
+          },
+          "client_events": [
+            {
+              "event": "client_request_create",
+              "monotonic_ns": "869617631124208",
+              "id": 3,
+              "method": "POST",
+              "path": "/v1/chat/completions",
+              "body_sha256": null
+            },
+            {
+              "event": "client_request_create",
+              "monotonic_ns": "869617631577665",
+              "id": 4,
+              "method": "POST",
+              "path": "/v1/chat/completions",
+              "body_sha256": null
+            },
+            {
+              "event": "client_send_headers_callback",
+              "monotonic_ns": "869617632430008",
+              "id": 3
+            },
+            {
+              "event": "client_send_headers_callback",
+              "monotonic_ns": "869617632913035",
+              "id": 4
+            },
+            {
+              "event": "client_response_headers",
+              "monotonic_ns": "869618033527593",
+              "id": 3,
+              "status": 200
+            },
+            {
+              "event": "client_response_complete",
+              "monotonic_ns": "869622510705020",
+              "id": 3
+            },
+            {
+              "event": "client_response_headers",
+              "monotonic_ns": "869622907743305",
+              "id": 4,
+              "status": 200
+            },
+            {
+              "event": "client_response_complete",
+              "monotonic_ns": "869627538998641",
+              "id": 4
+            }
+          ],
+          "client_to_proxy_correlation": "wave only; opaque body prevents independent per-stream pairing",
+          "streams": [
+            {
+              "exchange": "0003-2026-09-07T20-02-59-824Z",
+              "completion_tokens": 400,
+              "proxy_request_start_ns": 869617632777882,
+              "first_visible_s": 0.400105271,
+              "last_visible_s": 4.876825262,
+              "done_s": 4.876891533,
+              "proxy_decode_tok_s": 89.1277544278288
+            },
+            {
+              "exchange": "0004-2026-09-07T20-02-59-825Z",
+              "completion_tokens": 400,
+              "proxy_request_start_ns": 869617633451942,
+              "first_visible_s": 5.274376060000001,
+              "last_visible_s": 9.905316298999999,
+              "done_s": 9.90539615,
+              "proxy_decode_tok_s": 86.159608936383
+            }
+          ],
+          "original_streams": [
+            {
+              "index": 0,
+              "ttftMs": 403.57,
+              "decodeMs": 4476.57,
+              "totalMs": 4880.45,
+              "decodeTps": 89.13,
+              "completionTokens": 400,
+              "decodeTokens": 399
+            },
+            {
+              "index": 1,
+              "ttftMs": 5277.13,
+              "decodeMs": 4630.54,
+              "totalMs": 9907.88,
+              "decodeTps": 86.17,
+              "completionTokens": 400,
+              "decodeTokens": 399
+            }
+          ]
+        },
+        {
+          "concurrency": 4,
+          "original_aggregate_decode_tok_s": 231.9,
+          "proxy_aggregate_decode_tok_s": 231.88546483211516,
+          "relative_aggregate_discrepancy": 6.267860234943079e-05,
+          "original_mean_per_stream_decode_tok_s": 58.56,
+          "original_mean_ttft_ms": 649.75,
+          "original_duration_ms": 7533.06,
+          "full_wave_end_to_end_tok_s": 212.39708697395213,
+          "one_then_three_visible": false,
+          "dispatch_spreads_ms": {
+            "client_request_create_ns": 1.872308,
+            "client_send_headers_callback_ns": 1.876468,
+            "proxy_request_start_ns": 3.280919
+          },
+          "client_events": [
+            {
+              "event": "client_request_create",
+              "monotonic_ns": "869627541533938",
+              "id": 5,
+              "method": "POST",
+              "path": "/v1/chat/completions",
+              "body_sha256": null
+            },
+            {
+              "event": "client_request_create",
+              "monotonic_ns": "869627541947334",
+              "id": 6,
+              "method": "POST",
+              "path": "/v1/chat/completions",
+              "body_sha256": null
+            },
+            {
+              "event": "client_request_create",
+              "monotonic_ns": "869627543020580",
+              "id": 7,
+              "method": "POST",
+              "path": "/v1/chat/completions",
+              "body_sha256": null
+            },
+            {
+              "event": "client_request_create",
+              "monotonic_ns": "869627543406246",
+              "id": 8,
+              "method": "POST",
+              "path": "/v1/chat/completions",
+              "body_sha256": null
+            },
+            {
+              "event": "client_send_headers_callback",
+              "monotonic_ns": "869627544682765",
+              "id": 5
+            },
+            {
+              "event": "client_send_headers_callback",
+              "monotonic_ns": "869627545549618",
+              "id": 6
+            },
+            {
+              "event": "client_send_headers_callback",
+              "monotonic_ns": "869627546082306",
+              "id": 7
+            },
+            {
+              "event": "client_send_headers_callback",
+              "monotonic_ns": "869627546559233",
+              "id": 8
+            },
+            {
+              "event": "client_response_headers",
+              "monotonic_ns": "869628190665061",
+              "id": 8,
+              "status": 200
+            },
+            {
+              "event": "client_response_headers",
+              "monotonic_ns": "869628191140539",
+              "id": 6,
+              "status": 200
+            },
+            {
+              "event": "client_response_headers",
+              "monotonic_ns": "869628191519874",
+              "id": 5,
+              "status": 200
+            },
+            {
+              "event": "client_response_headers",
+              "monotonic_ns": "869628191858900",
+              "id": 7,
+              "status": 200
+            },
+            {
+              "event": "client_response_complete",
+              "monotonic_ns": "869634938016301",
+              "id": 7
+            },
+            {
+              "event": "client_response_complete",
+              "monotonic_ns": "869634939159758",
+              "id": 5
+            },
+            {
+              "event": "client_response_complete",
+              "monotonic_ns": "869635072494310",
+              "id": 6
+            },
+            {
+              "event": "client_response_complete",
+              "monotonic_ns": "869635073371273",
+              "id": 8
+            }
+          ],
+          "client_to_proxy_correlation": "wave only; opaque body prevents independent per-stream pairing",
+          "streams": [
+            {
+              "exchange": "0005-2026-09-07T20-03-09-737Z",
+              "completion_tokens": 400,
+              "proxy_request_start_ns": 869627545353154,
+              "first_visible_s": 0.64480846,
+              "last_visible_s": 7.392994601,
+              "done_s": 7.393024852,
+              "proxy_decode_tok_s": 59.12699970971355
+            },
+            {
+              "exchange": "0006-2026-09-07T20-03-09-738Z",
+              "completion_tokens": 400,
+              "proxy_request_start_ns": 869627546859087,
+              "first_visible_s": 0.645410028,
+              "last_visible_s": 7.52674785,
+              "done_s": 7.526852051,
+              "proxy_decode_tok_s": 57.98291121885863
+            },
+            {
+              "exchange": "0007-2026-09-07T20-03-09-739Z",
+              "completion_tokens": 400,
+              "proxy_request_start_ns": 869627547732560,
+              "first_visible_s": 0.644741949,
+              "last_visible_s": 7.391744843,
+              "done_s": 7.391768723,
+              "proxy_decode_tok_s": 59.13736903163687
+            },
+            {
+              "exchange": "0008-2026-09-07T20-03-09-740Z",
+              "completion_tokens": 400,
+              "proxy_request_start_ns": 869627548634073,
+              "first_visible_s": 0.64446442,
+              "last_visible_s": 7.527172662,
+              "done_s": 7.527200302,
+              "proxy_decode_tok_s": 57.97136620802879
+            }
+          ],
+          "original_streams": [
+            {
+              "index": 0,
+              "ttftMs": 651.18,
+              "decodeMs": 6747.31,
+              "totalMs": 7398.62,
+              "decodeTps": 59.13,
+              "completionTokens": 400,
+              "decodeTokens": 399
+            },
+            {
+              "index": 1,
+              "ttftMs": 649.84,
+              "decodeMs": 6880.97,
+              "totalMs": 7530.97,
+              "decodeTps": 57.99,
+              "completionTokens": 400,
+              "decodeTokens": 399
+            },
+            {
+              "index": 2,
+              "ttftMs": 650.07,
+              "decodeMs": 6746.05,
+              "totalMs": 7396.26,
+              "decodeTps": 59.15,
+              "completionTokens": 400,
+              "decodeTokens": 399
+            },
+            {
+              "index": 3,
+              "ttftMs": 647.92,
+              "decodeMs": 6882.26,
+              "totalMs": 7530.37,
+              "decodeTps": 57.98,
+              "completionTokens": 400,
+              "decodeTokens": 399
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "request_results": [
+    {
+      "exchange": "0001-2026-09-07T20-02-15-074Z",
+      "request": {
+        "model": "glm-5.3-flash",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Output only Python source code. No comments, no docstrings, no markdown fences. Write functions clamp_00 through clamp_49. Each function is exactly:\ndef clamp_NN(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\nChange only the function name suffix (00, 01, \u2026 49). One blank line between functions. No other text."
+          }
+        ],
+        "max_tokens": 32,
+        "temperature": 0,
+        "top_p": 1,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        },
+        "return_token_ids": true,
+        "chat_template_kwargs": {
+          "enable_thinking": false,
+          "thinking": false,
+          "thinking_mode": "disabled"
+        }
+      },
+      "request_sha256": "d653c5d3569bc8e9456d18b60621d1c64e5b155757d02ea025ba48e990920993",
+      "response_sha256": "d5b8869e90630ee720f07b7688b64912fb0bb4a26de72f492c4add88db6f3b3b",
+      "completion_id": "chatcmpl-b6c9f38910666a2a",
+      "proxy_started_utc": "2026-09-07T20:02:15.074Z",
+      "proxy_origin_epoch_ms": 1788811335074,
+      "first_visible_ns": 321466641,
+      "last_visible_ns": 681774969,
+      "done_ns": 681881481,
+      "proxy_total_ns": 683147680,
+      "completion_tokens": 32,
+      "usage": {
+        "prompt_tokens": 102,
+        "total_tokens": 134,
+        "completion_tokens": 32
+      },
+      "decode_tok_s": 86.03742292628884,
+      "output": "def clamp_00(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return",
+      "visible_events": 5,
+      "only_request_body_difference": {
+        "return_token_ids": true
+      },
+      "historical_body_sha256": "93f0d654fad68d97f4914a3e212d8bb7fbb45e645e76226831da22d04991e254",
+      "proxy_observed_request_start_ns": 869572881855683,
+      "repetition": 1
+    },
+    {
+      "exchange": "0002-2026-09-07T20-02-15-761Z",
+      "request": {
+        "model": "glm-5.3-flash",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Output only Python source code. No comments, no docstrings, no markdown fences. Write functions clamp_00 through clamp_49. Each function is exactly:\ndef clamp_NN(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\nChange only the function name suffix (00, 01, \u2026 49). One blank line between functions. No other text."
+          }
+        ],
+        "max_tokens": 400,
+        "temperature": 0,
+        "top_p": 1,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        },
+        "return_token_ids": true,
+        "chat_template_kwargs": {
+          "enable_thinking": false,
+          "thinking": false,
+          "thinking_mode": "disabled"
+        },
+        "min_tokens": 400,
+        "ignore_eos": true,
+        "stop": []
+      },
+      "request_sha256": "0d3408a71f9af7bb20e7915c6f9f044ca1b8f0dbe3db6a41332e4deb78989987",
+      "response_sha256": "cb86fba035f3c1fe05973b431c79f438a6174e3cce925883039ec0397145c59c",
+      "completion_id": "chatcmpl-a17d044919c771ce",
+      "proxy_started_utc": "2026-09-07T20:02:15.761Z",
+      "proxy_origin_epoch_ms": 1788811335761,
+      "first_visible_ns": 385830585,
+      "last_visible_ns": 4761215576,
+      "done_ns": 4761279557,
+      "proxy_total_ns": 4762164870,
+      "completion_tokens": 400,
+      "usage": {
+        "prompt_tokens": 102,
+        "total_tokens": 502,
+        "completion_tokens": 400
+      },
+      "decode_tok_s": 91.19197529376908,
+      "output": "def clamp_00(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_01(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_02(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_03(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_04(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_05(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_06(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_07(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_08(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_09(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_10(x, lo=0, hi=1):\n    if x < lo:\n",
+      "visible_events": 51,
+      "only_request_body_difference": {
+        "return_token_ids": true
+      },
+      "historical_body_sha256": "7e4ec9d508d1adacc6c7eeaecb02fee7ea3dd38e5bd97b77907f01cf9a564034",
+      "proxy_observed_request_start_ns": 869573569240076,
+      "repetition": 1
+    },
+    {
+      "exchange": "0003-2026-09-07T20-02-20-527Z",
+      "request": {
+        "model": "glm-5.3-flash",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Output only Python source code. No comments, no docstrings, no markdown fences. Write functions clamp_00 through clamp_49. Each function is exactly:\ndef clamp_NN(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\nChange only the function name suffix (00, 01, \u2026 49). One blank line between functions. No other text. (stream 1/2)"
+          }
+        ],
+        "max_tokens": 400,
+        "temperature": 0,
+        "top_p": 1,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        },
+        "return_token_ids": true,
+        "chat_template_kwargs": {
+          "enable_thinking": false,
+          "thinking": false,
+          "thinking_mode": "disabled"
+        },
+        "min_tokens": 400,
+        "ignore_eos": true,
+        "stop": []
+      },
+      "request_sha256": "d5090b1d86d302e5cb929f44e87279f8769316e34518b746c602ddc2629cac00",
+      "response_sha256": "282b6208147af21777975dd915c7e2f0700b2804bf3ce013c7ca8ceb3cdbfd92",
+      "completion_id": "chatcmpl-b707064845af6963",
+      "proxy_started_utc": "2026-09-07T20:02:20.527Z",
+      "proxy_origin_epoch_ms": 1788811340527,
+      "first_visible_ns": 502675596,
+      "last_visible_ns": 6125579535,
+      "done_ns": 6125649086,
+      "proxy_total_ns": 6126717022,
+      "completion_tokens": 400,
+      "usage": {
+        "prompt_tokens": 109,
+        "total_tokens": 509,
+        "completion_tokens": 400
+      },
+      "decode_tok_s": 70.95977529201036,
+      "output": "def clamp_00(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_01(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_02(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_03(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_04(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_05(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_06(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_07(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_08(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_09(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_10(x, lo=0, hi=1):\n    if x < lo:\n",
+      "visible_events": 51,
+      "only_request_body_difference": {
+        "return_token_ids": true
+      },
+      "historical_body_sha256": "22bedbc67b778e0f0d8f2f1dc731edf8873276f6ba8845ccb9b7a0d4e96f4f20",
+      "proxy_observed_request_start_ns": 869578335442837,
+      "repetition": 1
+    },
+    {
+      "exchange": "0004-2026-09-07T20-02-20-528Z",
+      "request": {
+        "model": "glm-5.3-flash",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Output only Python source code. No comments, no docstrings, no markdown fences. Write functions clamp_00 through clamp_49. Each function is exactly:\ndef clamp_NN(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\nChange only the function name suffix (00, 01, \u2026 49). One blank line between functions. No other text. (stream 2/2)"
+          }
+        ],
+        "max_tokens": 400,
+        "temperature": 0,
+        "top_p": 1,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        },
+        "return_token_ids": true,
+        "chat_template_kwargs": {
+          "enable_thinking": false,
+          "thinking": false,
+          "thinking_mode": "disabled"
+        },
+        "min_tokens": 400,
+        "ignore_eos": true,
+        "stop": []
+      },
+      "request_sha256": "c5732c661cde6b041b80adfc908f09ac43fdd7dd0d00b98d803dda983b58a88d",
+      "response_sha256": "25d33b2c00e3d1e604c001851af47f3e5c2ef42d7d071c2252e11b492490abc8",
+      "completion_id": "chatcmpl-97ec7242dec75e92",
+      "proxy_started_utc": "2026-09-07T20:02:20.528Z",
+      "proxy_origin_epoch_ms": 1788811340528,
+      "first_visible_ns": 501868554,
+      "last_visible_ns": 6236063301,
+      "done_ns": 6236129281,
+      "proxy_total_ns": 6237056995,
+      "completion_tokens": 400,
+      "usage": {
+        "prompt_tokens": 109,
+        "total_tokens": 509,
+        "completion_tokens": 400
+      },
+      "decode_tok_s": 69.58256871354914,
+      "output": "def clamp_00(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_01(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_02(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_03(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_04(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_05(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_06(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_07(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_08(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_09(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_10(x, lo=0, hi=1):\n    if x < lo:\n",
+      "visible_events": 52,
+      "only_request_body_difference": {
+        "return_token_ids": true
+      },
+      "historical_body_sha256": "23f902e17855758e59f1665164cf42618a65247c11093837d2910c39d01c8369",
+      "proxy_observed_request_start_ns": 869578336354131,
+      "repetition": 1
+    },
+    {
+      "exchange": "0005-2026-09-07T20-02-26-769Z",
+      "request": {
+        "model": "glm-5.3-flash",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Output only Python source code. No comments, no docstrings, no markdown fences. Write functions clamp_00 through clamp_49. Each function is exactly:\ndef clamp_NN(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\nChange only the function name suffix (00, 01, \u2026 49). One blank line between functions. No other text. (stream 1/4)"
+          }
+        ],
+        "max_tokens": 400,
+        "temperature": 0,
+        "top_p": 1,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        },
+        "return_token_ids": true,
+        "chat_template_kwargs": {
+          "enable_thinking": false,
+          "thinking": false,
+          "thinking_mode": "disabled"
+        },
+        "min_tokens": 400,
+        "ignore_eos": true,
+        "stop": []
+      },
+      "request_sha256": "4219ff08c84ff321150ccdc42f08d7414fa5f2c2928a98c9b8beaced2a37c936",
+      "response_sha256": "51008f8171ce1f4d45ffcd5ab5738803171453aa8a431a8405f82fbb91db41df",
+      "completion_id": "chatcmpl-b4e3ad7508acd720",
+      "proxy_started_utc": "2026-09-07T20:02:26.770Z",
+      "proxy_origin_epoch_ms": 1788811346770,
+      "first_visible_ns": 651960643,
+      "last_visible_ns": 7483777260,
+      "done_ns": 7483859571,
+      "proxy_total_ns": 7484626702,
+      "completion_tokens": 400,
+      "usage": {
+        "prompt_tokens": 109,
+        "total_tokens": 509,
+        "completion_tokens": 400
+      },
+      "decode_tok_s": 58.40320698994547,
+      "output": "def clamp_00(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_01(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_02(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_03(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_04(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_05(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_06(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_07(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_08(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_09(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_10(x, lo=0, hi=1):\n    if x < lo:\n",
+      "visible_events": 52,
+      "only_request_body_difference": {
+        "return_token_ids": true
+      },
+      "historical_body_sha256": "9959cf70d88ac56bb48648cd76624f20af3496fd09f52cd30122fc08c7ba29e2",
+      "proxy_observed_request_start_ns": 869584578073535,
+      "repetition": 1
+    },
+    {
+      "exchange": "0006-2026-09-07T20-02-26-771Z",
+      "request": {
+        "model": "glm-5.3-flash",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Output only Python source code. No comments, no docstrings, no markdown fences. Write functions clamp_00 through clamp_49. Each function is exactly:\ndef clamp_NN(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\nChange only the function name suffix (00, 01, \u2026 49). One blank line between functions. No other text. (stream 2/4)"
+          }
+        ],
+        "max_tokens": 400,
+        "temperature": 0,
+        "top_p": 1,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        },
+        "return_token_ids": true,
+        "chat_template_kwargs": {
+          "enable_thinking": false,
+          "thinking": false,
+          "thinking_mode": "disabled"
+        },
+        "min_tokens": 400,
+        "ignore_eos": true,
+        "stop": []
+      },
+      "request_sha256": "62cb8dadbbe829641d47493cac2a45c6d36b62bd2ce716d1a70fd4d661b7bef9",
+      "response_sha256": "2cd722d024137629676402c214e62e52b898b9e0e8f9045992d3498303c78d50",
+      "completion_id": "chatcmpl-8b3beacb5f41fdbe",
+      "proxy_started_utc": "2026-09-07T20:02:26.771Z",
+      "proxy_origin_epoch_ms": 1788811346771,
+      "first_visible_ns": 651097000,
+      "last_visible_ns": 7351530514,
+      "done_ns": 7351559925,
+      "proxy_total_ns": 7352052532,
+      "completion_tokens": 400,
+      "usage": {
+        "prompt_tokens": 109,
+        "total_tokens": 509,
+        "completion_tokens": 400
+      },
+      "decode_tok_s": 59.548385812100456,
+      "output": "def clamp_00(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_01(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_02(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_03(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_04(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_05(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_06(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_07(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_08(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_09(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_10(x, lo=0, hi=1):\n    if x < lo:\n",
+      "visible_events": 51,
+      "only_request_body_difference": {
+        "return_token_ids": true
+      },
+      "historical_body_sha256": "02677f46562d39b78ab97e2f1105917a8c08f2b5af8fb1d3487970463e880de8",
+      "proxy_observed_request_start_ns": 869584579383974,
+      "repetition": 1
+    },
+    {
+      "exchange": "0007-2026-09-07T20-02-26-772Z",
+      "request": {
+        "model": "glm-5.3-flash",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Output only Python source code. No comments, no docstrings, no markdown fences. Write functions clamp_00 through clamp_49. Each function is exactly:\ndef clamp_NN(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\nChange only the function name suffix (00, 01, \u2026 49). One blank line between functions. No other text. (stream 3/4)"
+          }
+        ],
+        "max_tokens": 400,
+        "temperature": 0,
+        "top_p": 1,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        },
+        "return_token_ids": true,
+        "chat_template_kwargs": {
+          "enable_thinking": false,
+          "thinking": false,
+          "thinking_mode": "disabled"
+        },
+        "min_tokens": 400,
+        "ignore_eos": true,
+        "stop": []
+      },
+      "request_sha256": "c7cff646ba56f7ccc8ed8f5c8abf48e07715d26a5156dc0679351f5f0f07ff9e",
+      "response_sha256": "acce8e47ab651e949312cb1acc2700cf861c83b2f1d58a0bcf194e82caa8bf2b",
+      "completion_id": "chatcmpl-8fc7481885ca9275",
+      "proxy_started_utc": "2026-09-07T20:02:26.772Z",
+      "proxy_origin_epoch_ms": 1788811346772,
+      "first_visible_ns": 649928043,
+      "last_visible_ns": 7483128271,
+      "done_ns": 7483156681,
+      "proxy_total_ns": 7483689059,
+      "completion_tokens": 400,
+      "usage": {
+        "prompt_tokens": 109,
+        "total_tokens": 509,
+        "completion_tokens": 400
+      },
+      "decode_tok_s": 58.39138129818607,
+      "output": "def clamp_00(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_01(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_02(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_03(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_04(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_05(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_06(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_07(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_08(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_09(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_10(x, lo=0, hi=1):\n    if x < lo:\n",
+      "visible_events": 52,
+      "only_request_body_difference": {
+        "return_token_ids": true
+      },
+      "historical_body_sha256": "ed6184279e3e3007dc716ac65f00451bb24439980243e14a4d39cd0fe740a83d",
+      "proxy_observed_request_start_ns": 869584580260946,
+      "repetition": 1
+    },
+    {
+      "exchange": "0008-2026-09-07T20-02-26-772Z",
+      "request": {
+        "model": "glm-5.3-flash",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Output only Python source code. No comments, no docstrings, no markdown fences. Write functions clamp_00 through clamp_49. Each function is exactly:\ndef clamp_NN(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\nChange only the function name suffix (00, 01, \u2026 49). One blank line between functions. No other text. (stream 4/4)"
+          }
+        ],
+        "max_tokens": 400,
+        "temperature": 0,
+        "top_p": 1,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        },
+        "return_token_ids": true,
+        "chat_template_kwargs": {
+          "enable_thinking": false,
+          "thinking": false,
+          "thinking_mode": "disabled"
+        },
+        "min_tokens": 400,
+        "ignore_eos": true,
+        "stop": []
+      },
+      "request_sha256": "8bfbc31570080e34bffc777d9c539c4fccf2879e33b2a868d1582a8c0ba8e39b",
+      "response_sha256": "cac526dfcfdd321ee2705a55adf74db885419db82736528fc7ef653c4236f451",
+      "completion_id": "chatcmpl-86474434fe7c2fa5",
+      "proxy_started_utc": "2026-09-07T20:02:26.773Z",
+      "proxy_origin_epoch_ms": 1788811346773,
+      "first_visible_ns": 649356265,
+      "last_visible_ns": 7348715353,
+      "done_ns": 7348744094,
+      "proxy_total_ns": 7349425464,
+      "completion_tokens": 400,
+      "usage": {
+        "prompt_tokens": 109,
+        "total_tokens": 509,
+        "completion_tokens": 400
+      },
+      "decode_tok_s": 59.55793602923827,
+      "output": "def clamp_00(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_01(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_02(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_03(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_04(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_05(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_06(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_07(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_08(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_09(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_10(x, lo=0, hi=1):\n    if x < lo:\n",
+      "visible_events": 51,
+      "only_request_body_difference": {
+        "return_token_ids": true
+      },
+      "historical_body_sha256": "9fe3830eb144cc0d757960a052598b73a0e13668adf552442642d33653de985d",
+      "proxy_observed_request_start_ns": 869584581131729,
+      "repetition": 1
+    },
+    {
+      "exchange": "0001-2026-09-07T20-02-34-563Z",
+      "request": {
+        "model": "glm-5.3-flash",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Output only Python source code. No comments, no docstrings, no markdown fences. Write functions clamp_00 through clamp_49. Each function is exactly:\ndef clamp_NN(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\nChange only the function name suffix (00, 01, \u2026 49). One blank line between functions. No other text."
+          }
+        ],
+        "max_tokens": 32,
+        "temperature": 0,
+        "top_p": 1,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        },
+        "return_token_ids": true,
+        "chat_template_kwargs": {
+          "enable_thinking": false,
+          "thinking": false,
+          "thinking_mode": "disabled"
+        }
+      },
+      "request_sha256": "d653c5d3569bc8e9456d18b60621d1c64e5b155757d02ea025ba48e990920993",
+      "response_sha256": "7e31870f187132dfec5114ff679f46b56ae67e5e004c3b67018c214cabab7353",
+      "completion_id": "chatcmpl-ab1349ce25c5f126",
+      "proxy_started_utc": "2026-09-07T20:02:34.564Z",
+      "proxy_origin_epoch_ms": 1788811354564,
+      "first_visible_ns": 321888337,
+      "last_visible_ns": 686116014,
+      "done_ns": 686208206,
+      "proxy_total_ns": 687420544,
+      "completion_tokens": 32,
+      "usage": {
+        "prompt_tokens": 102,
+        "total_tokens": 134,
+        "completion_tokens": 32
+      },
+      "decode_tok_s": 85.11159902875804,
+      "output": "def clamp_00(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return",
+      "visible_events": 5,
+      "only_request_body_difference": {
+        "return_token_ids": true
+      },
+      "historical_body_sha256": "93f0d654fad68d97f4914a3e212d8bb7fbb45e645e76226831da22d04991e254",
+      "proxy_observed_request_start_ns": 869592371375930,
+      "repetition": 2
+    },
+    {
+      "exchange": "0002-2026-09-07T20-02-35-255Z",
+      "request": {
+        "model": "glm-5.3-flash",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Output only Python source code. No comments, no docstrings, no markdown fences. Write functions clamp_00 through clamp_49. Each function is exactly:\ndef clamp_NN(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\nChange only the function name suffix (00, 01, \u2026 49). One blank line between functions. No other text."
+          }
+        ],
+        "max_tokens": 400,
+        "temperature": 0,
+        "top_p": 1,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        },
+        "return_token_ids": true,
+        "chat_template_kwargs": {
+          "enable_thinking": false,
+          "thinking": false,
+          "thinking_mode": "disabled"
+        },
+        "min_tokens": 400,
+        "ignore_eos": true,
+        "stop": []
+      },
+      "request_sha256": "0d3408a71f9af7bb20e7915c6f9f044ca1b8f0dbe3db6a41332e4deb78989987",
+      "response_sha256": "ef8c6c8065129776b4163c93f8a95b191514ee1c8498bbf1815d302b51b9013a",
+      "completion_id": "chatcmpl-bd65bcdc91512635",
+      "proxy_started_utc": "2026-09-07T20:02:35.255Z",
+      "proxy_origin_epoch_ms": 1788811355255,
+      "first_visible_ns": 378215526,
+      "last_visible_ns": 4778086354,
+      "done_ns": 4778142885,
+      "proxy_total_ns": 4778951237,
+      "completion_tokens": 400,
+      "usage": {
+        "prompt_tokens": 102,
+        "total_tokens": 502,
+        "completion_tokens": 400
+      },
+      "decode_tok_s": 90.68448043084231,
+      "output": "def clamp_00(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_01(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_02(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_03(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_04(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_05(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_06(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_07(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_08(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_09(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_10(x, lo=0, hi=1):\n    if x < lo:\n",
+      "visible_events": 51,
+      "only_request_body_difference": {
+        "return_token_ids": true
+      },
+      "historical_body_sha256": "7e4ec9d508d1adacc6c7eeaecb02fee7ea3dd38e5bd97b77907f01cf9a564034",
+      "proxy_observed_request_start_ns": 869593063245011,
+      "repetition": 2
+    },
+    {
+      "exchange": "0003-2026-09-07T20-02-40-037Z",
+      "request": {
+        "model": "glm-5.3-flash",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Output only Python source code. No comments, no docstrings, no markdown fences. Write functions clamp_00 through clamp_49. Each function is exactly:\ndef clamp_NN(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\nChange only the function name suffix (00, 01, \u2026 49). One blank line between functions. No other text. (stream 1/2)"
+          }
+        ],
+        "max_tokens": 400,
+        "temperature": 0,
+        "top_p": 1,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        },
+        "return_token_ids": true,
+        "chat_template_kwargs": {
+          "enable_thinking": false,
+          "thinking": false,
+          "thinking_mode": "disabled"
+        },
+        "min_tokens": 400,
+        "ignore_eos": true,
+        "stop": []
+      },
+      "request_sha256": "d5090b1d86d302e5cb929f44e87279f8769316e34518b746c602ddc2629cac00",
+      "response_sha256": "011c8bff629bb8a332b1638a71e6d755f1352976afbe5cf6756dad74f2ceaf91",
+      "completion_id": "chatcmpl-828640120402ce11",
+      "proxy_started_utc": "2026-09-07T20:02:40.037Z",
+      "proxy_origin_epoch_ms": 1788811360037,
+      "first_visible_ns": 509107497,
+      "last_visible_ns": 6381532689,
+      "done_ns": 6381560489,
+      "proxy_total_ns": 6382187849,
+      "completion_tokens": 400,
+      "usage": {
+        "prompt_tokens": 109,
+        "total_tokens": 509,
+        "completion_tokens": 400
+      },
+      "decode_tok_s": 67.94467140144371,
+      "output": "def clamp_00(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_01(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_02(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_03(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_04(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_05(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_06(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_07(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_08(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_09(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_10(x, lo=0, hi=1):\n    if x < lo:\n",
+      "visible_events": 51,
+      "only_request_body_difference": {
+        "return_token_ids": true
+      },
+      "historical_body_sha256": "22bedbc67b778e0f0d8f2f1dc731edf8873276f6ba8845ccb9b7a0d4e96f4f20",
+      "proxy_observed_request_start_ns": 869597845615517,
+      "repetition": 2
+    },
+    {
+      "exchange": "0004-2026-09-07T20-02-40-038Z",
+      "request": {
+        "model": "glm-5.3-flash",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Output only Python source code. No comments, no docstrings, no markdown fences. Write functions clamp_00 through clamp_49. Each function is exactly:\ndef clamp_NN(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\nChange only the function name suffix (00, 01, \u2026 49). One blank line between functions. No other text. (stream 2/2)"
+          }
+        ],
+        "max_tokens": 400,
+        "temperature": 0,
+        "top_p": 1,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        },
+        "return_token_ids": true,
+        "chat_template_kwargs": {
+          "enable_thinking": false,
+          "thinking": false,
+          "thinking_mode": "disabled"
+        },
+        "min_tokens": 400,
+        "ignore_eos": true,
+        "stop": []
+      },
+      "request_sha256": "c5732c661cde6b041b80adfc908f09ac43fdd7dd0d00b98d803dda983b58a88d",
+      "response_sha256": "96eafa03eb2e1eb3e498e93ea1df2fa1de36f32ba297f5b2b724551aacf3d139",
+      "completion_id": "chatcmpl-b34a2cde4cc63e64",
+      "proxy_started_utc": "2026-09-07T20:02:40.038Z",
+      "proxy_origin_epoch_ms": 1788811360038,
+      "first_visible_ns": 508134243,
+      "last_visible_ns": 6379200774,
+      "done_ns": 6379264355,
+      "proxy_total_ns": 6380254140,
+      "completion_tokens": 400,
+      "usage": {
+        "prompt_tokens": 109,
+        "total_tokens": 509,
+        "completion_tokens": 400
+      },
+      "decode_tok_s": 67.96039491176394,
+      "output": "def clamp_00(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_01(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_02(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_03(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_04(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_05(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_06(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_07(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_08(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_09(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_10(x, lo=0, hi=1):\n    if x < lo:\n",
+      "visible_events": 51,
+      "only_request_body_difference": {
+        "return_token_ids": true
+      },
+      "historical_body_sha256": "23f902e17855758e59f1665164cf42618a65247c11093837d2910c39d01c8369",
+      "proxy_observed_request_start_ns": 869597846228967,
+      "repetition": 2
+    },
+    {
+      "exchange": "0005-2026-09-07T20-02-46-423Z",
+      "request": {
+        "model": "glm-5.3-flash",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Output only Python source code. No comments, no docstrings, no markdown fences. Write functions clamp_00 through clamp_49. Each function is exactly:\ndef clamp_NN(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\nChange only the function name suffix (00, 01, \u2026 49). One blank line between functions. No other text. (stream 2/4)"
+          }
+        ],
+        "max_tokens": 400,
+        "temperature": 0,
+        "top_p": 1,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        },
+        "return_token_ids": true,
+        "chat_template_kwargs": {
+          "enable_thinking": false,
+          "thinking": false,
+          "thinking_mode": "disabled"
+        },
+        "min_tokens": 400,
+        "ignore_eos": true,
+        "stop": []
+      },
+      "request_sha256": "62cb8dadbbe829641d47493cac2a45c6d36b62bd2ce716d1a70fd4d661b7bef9",
+      "response_sha256": "dff13f1eb4d69de988e53963752cdabe1252b1876db5ad2ff3f990c7e019a50a",
+      "completion_id": "chatcmpl-bc90d56ff487ce5c",
+      "proxy_started_utc": "2026-09-07T20:02:46.423Z",
+      "proxy_origin_epoch_ms": 1788811366423,
+      "first_visible_ns": 674573613,
+      "last_visible_ns": 7576093831,
+      "done_ns": 7576157112,
+      "proxy_total_ns": 7576762161,
+      "completion_tokens": 400,
+      "usage": {
+        "prompt_tokens": 109,
+        "total_tokens": 509,
+        "completion_tokens": 400
+      },
+      "decode_tok_s": 57.81334943558663,
+      "output": "def clamp_00(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_01(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_02(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_03(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_04(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_05(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_06(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_07(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_08(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_09(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_10(x, lo=0, hi=1):\n    if x < lo:\n",
+      "visible_events": 52,
+      "only_request_body_difference": {
+        "return_token_ids": true
+      },
+      "historical_body_sha256": "02677f46562d39b78ab97e2f1105917a8c08f2b5af8fb1d3487970463e880de8",
+      "proxy_observed_request_start_ns": 869604231589154,
+      "repetition": 2
+    },
+    {
+      "exchange": "0006-2026-09-07T20-02-46-424Z",
+      "request": {
+        "model": "glm-5.3-flash",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Output only Python source code. No comments, no docstrings, no markdown fences. Write functions clamp_00 through clamp_49. Each function is exactly:\ndef clamp_NN(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\nChange only the function name suffix (00, 01, \u2026 49). One blank line between functions. No other text. (stream 1/4)"
+          }
+        ],
+        "max_tokens": 400,
+        "temperature": 0,
+        "top_p": 1,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        },
+        "return_token_ids": true,
+        "chat_template_kwargs": {
+          "enable_thinking": false,
+          "thinking": false,
+          "thinking_mode": "disabled"
+        },
+        "min_tokens": 400,
+        "ignore_eos": true,
+        "stop": []
+      },
+      "request_sha256": "4219ff08c84ff321150ccdc42f08d7414fa5f2c2928a98c9b8beaced2a37c936",
+      "response_sha256": "a41cd01c17bfccf468545a7f1243035ea3f0faaa4f11c132211c18e2e1bff884",
+      "completion_id": "chatcmpl-b48f66ee2debdf49",
+      "proxy_started_utc": "2026-09-07T20:02:46.424Z",
+      "proxy_origin_epoch_ms": 1788811366424,
+      "first_visible_ns": 673436035,
+      "last_visible_ns": 7437259155,
+      "done_ns": 7437284755,
+      "proxy_total_ns": 7437725682,
+      "completion_tokens": 400,
+      "usage": {
+        "prompt_tokens": 109,
+        "total_tokens": 509,
+        "completion_tokens": 400
+      },
+      "decode_tok_s": 58.99030665367252,
+      "output": "def clamp_00(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_01(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_02(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_03(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_04(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_05(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_06(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_07(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_08(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_09(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_10(x, lo=0, hi=1):\n    if x < lo:\n",
+      "visible_events": 51,
+      "only_request_body_difference": {
+        "return_token_ids": true
+      },
+      "historical_body_sha256": "9959cf70d88ac56bb48648cd76624f20af3496fd09f52cd30122fc08c7ba29e2",
+      "proxy_observed_request_start_ns": 869604232511318,
+      "repetition": 2
+    },
+    {
+      "exchange": "0007-2026-09-07T20-02-46-424Z",
+      "request": {
+        "model": "glm-5.3-flash",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Output only Python source code. No comments, no docstrings, no markdown fences. Write functions clamp_00 through clamp_49. Each function is exactly:\ndef clamp_NN(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\nChange only the function name suffix (00, 01, \u2026 49). One blank line between functions. No other text. (stream 3/4)"
+          }
+        ],
+        "max_tokens": 400,
+        "temperature": 0,
+        "top_p": 1,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        },
+        "return_token_ids": true,
+        "chat_template_kwargs": {
+          "enable_thinking": false,
+          "thinking": false,
+          "thinking_mode": "disabled"
+        },
+        "min_tokens": 400,
+        "ignore_eos": true,
+        "stop": []
+      },
+      "request_sha256": "c7cff646ba56f7ccc8ed8f5c8abf48e07715d26a5156dc0679351f5f0f07ff9e",
+      "response_sha256": "643aee7e7dafb9aaf9c5ff9a9bba6a1a6c667852b1744a20d53327f4403e3bcc",
+      "completion_id": "chatcmpl-a0b74e42fa88cc7c",
+      "proxy_started_utc": "2026-09-07T20:02:46.425Z",
+      "proxy_origin_epoch_ms": 1788811366425,
+      "first_visible_ns": 673108150,
+      "last_visible_ns": 7435260735,
+      "done_ns": 7435330996,
+      "proxy_total_ns": 7436081597,
+      "completion_tokens": 400,
+      "usage": {
+        "prompt_tokens": 109,
+        "total_tokens": 509,
+        "completion_tokens": 400
+      },
+      "decode_tok_s": 59.0048797309119,
+      "output": "def clamp_00(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_01(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_02(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_03(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_04(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_05(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_06(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_07(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_08(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_09(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_10(x, lo=0, hi=1):\n    if x < lo:\n",
+      "visible_events": 51,
+      "only_request_body_difference": {
+        "return_token_ids": true
+      },
+      "historical_body_sha256": "ed6184279e3e3007dc716ac65f00451bb24439980243e14a4d39cd0fe740a83d",
+      "proxy_observed_request_start_ns": 869604233079977,
+      "repetition": 2
+    },
+    {
+      "exchange": "0008-2026-09-07T20-02-46-425Z",
+      "request": {
+        "model": "glm-5.3-flash",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Output only Python source code. No comments, no docstrings, no markdown fences. Write functions clamp_00 through clamp_49. Each function is exactly:\ndef clamp_NN(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\nChange only the function name suffix (00, 01, \u2026 49). One blank line between functions. No other text. (stream 4/4)"
+          }
+        ],
+        "max_tokens": 400,
+        "temperature": 0,
+        "top_p": 1,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        },
+        "return_token_ids": true,
+        "chat_template_kwargs": {
+          "enable_thinking": false,
+          "thinking": false,
+          "thinking_mode": "disabled"
+        },
+        "min_tokens": 400,
+        "ignore_eos": true,
+        "stop": []
+      },
+      "request_sha256": "8bfbc31570080e34bffc777d9c539c4fccf2879e33b2a868d1582a8c0ba8e39b",
+      "response_sha256": "fc60c1144728510f722877cae7865771503c819b7dc185518d6f0dc5ac8872e4",
+      "completion_id": "chatcmpl-9cea9e587f6ef67a",
+      "proxy_started_utc": "2026-09-07T20:02:46.425Z",
+      "proxy_origin_epoch_ms": 1788811366425,
+      "first_visible_ns": 672280278,
+      "last_visible_ns": 7436680297,
+      "done_ns": 7436706027,
+      "proxy_total_ns": 7437143804,
+      "completion_tokens": 400,
+      "usage": {
+        "prompt_tokens": 109,
+        "total_tokens": 509,
+        "completion_tokens": 400
+      },
+      "decode_tok_s": 58.985275690272566,
+      "output": "def clamp_00(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_01(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_02(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_03(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_04(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_05(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_06(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_07(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_08(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_09(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_10(x, lo=0, hi=1):\n    if x < lo:\n",
+      "visible_events": 51,
+      "only_request_body_difference": {
+        "return_token_ids": true
+      },
+      "historical_body_sha256": "9fe3830eb144cc0d757960a052598b73a0e13668adf552442642d33653de985d",
+      "proxy_observed_request_start_ns": 869604233854038,
+      "repetition": 2
+    },
+    {
+      "exchange": "0001-2026-09-07T20-02-54-293Z",
+      "request": {
+        "model": "glm-5.3-flash",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Output only Python source code. No comments, no docstrings, no markdown fences. Write functions clamp_00 through clamp_49. Each function is exactly:\ndef clamp_NN(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\nChange only the function name suffix (00, 01, \u2026 49). One blank line between functions. No other text."
+          }
+        ],
+        "max_tokens": 32,
+        "temperature": 0,
+        "top_p": 1,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        },
+        "return_token_ids": true,
+        "chat_template_kwargs": {
+          "enable_thinking": false,
+          "thinking": false,
+          "thinking_mode": "disabled"
+        }
+      },
+      "request_sha256": "d653c5d3569bc8e9456d18b60621d1c64e5b155757d02ea025ba48e990920993",
+      "response_sha256": "a127c897bdad35579efeb1d10c1493645728813d9fbca3193ba6f955f515b6f9",
+      "completion_id": "chatcmpl-87bff93a38dbccc6",
+      "proxy_started_utc": "2026-09-07T20:02:54.293Z",
+      "proxy_origin_epoch_ms": 1788811374293,
+      "first_visible_ns": 327774505,
+      "last_visible_ns": 694611550,
+      "done_ns": 694706572,
+      "proxy_total_ns": 695916610,
+      "completion_tokens": 32,
+      "usage": {
+        "prompt_tokens": 102,
+        "total_tokens": 134,
+        "completion_tokens": 32
+      },
+      "decode_tok_s": 84.50618720909172,
+      "output": "def clamp_00(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return",
+      "visible_events": 5,
+      "only_request_body_difference": {
+        "return_token_ids": true
+      },
+      "historical_body_sha256": "93f0d654fad68d97f4914a3e212d8bb7fbb45e645e76226831da22d04991e254",
+      "proxy_observed_request_start_ns": 869612100967666,
+      "repetition": 3
+    },
+    {
+      "exchange": "0002-2026-09-07T20-02-54-992Z",
+      "request": {
+        "model": "glm-5.3-flash",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Output only Python source code. No comments, no docstrings, no markdown fences. Write functions clamp_00 through clamp_49. Each function is exactly:\ndef clamp_NN(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\nChange only the function name suffix (00, 01, \u2026 49). One blank line between functions. No other text."
+          }
+        ],
+        "max_tokens": 400,
+        "temperature": 0,
+        "top_p": 1,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        },
+        "return_token_ids": true,
+        "chat_template_kwargs": {
+          "enable_thinking": false,
+          "thinking": false,
+          "thinking_mode": "disabled"
+        },
+        "min_tokens": 400,
+        "ignore_eos": true,
+        "stop": []
+      },
+      "request_sha256": "0d3408a71f9af7bb20e7915c6f9f044ca1b8f0dbe3db6a41332e4deb78989987",
+      "response_sha256": "f69829aa0f3c2df22eb5157b72300b05a78a4f56399d1b6c53a6d6e805b0ca8a",
+      "completion_id": "chatcmpl-8c96526fdb1bebda",
+      "proxy_started_utc": "2026-09-07T20:02:54.993Z",
+      "proxy_origin_epoch_ms": 1788811374993,
+      "first_visible_ns": 388933325,
+      "last_visible_ns": 4827170118,
+      "done_ns": 4827232648,
+      "proxy_total_ns": 4828075391,
+      "completion_tokens": 400,
+      "usage": {
+        "prompt_tokens": 102,
+        "total_tokens": 502,
+        "completion_tokens": 400
+      },
+      "decode_tok_s": 89.90056606022102,
+      "output": "def clamp_00(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_01(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_02(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_03(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_04(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_05(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_06(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_07(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_08(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_09(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_10(x, lo=0, hi=1):\n    if x < lo:\n",
+      "visible_events": 51,
+      "only_request_body_difference": {
+        "return_token_ids": true
+      },
+      "historical_body_sha256": "7e4ec9d508d1adacc6c7eeaecb02fee7ea3dd38e5bd97b77907f01cf9a564034",
+      "proxy_observed_request_start_ns": 869612801034847,
+      "repetition": 3
+    },
+    {
+      "exchange": "0003-2026-09-07T20-02-59-824Z",
+      "request": {
+        "model": "glm-5.3-flash",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Output only Python source code. No comments, no docstrings, no markdown fences. Write functions clamp_00 through clamp_49. Each function is exactly:\ndef clamp_NN(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\nChange only the function name suffix (00, 01, \u2026 49). One blank line between functions. No other text. (stream 1/2)"
+          }
+        ],
+        "max_tokens": 400,
+        "temperature": 0,
+        "top_p": 1,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        },
+        "return_token_ids": true,
+        "chat_template_kwargs": {
+          "enable_thinking": false,
+          "thinking": false,
+          "thinking_mode": "disabled"
+        },
+        "min_tokens": 400,
+        "ignore_eos": true,
+        "stop": []
+      },
+      "request_sha256": "d5090b1d86d302e5cb929f44e87279f8769316e34518b746c602ddc2629cac00",
+      "response_sha256": "ee066b46de251761550469d0cd926caae8726f16f32b620e58b0e2fd24379be7",
+      "completion_id": "chatcmpl-914af46e32e67d87",
+      "proxy_started_utc": "2026-09-07T20:02:59.824Z",
+      "proxy_origin_epoch_ms": 1788811379824,
+      "first_visible_ns": 400105271,
+      "last_visible_ns": 4876825262,
+      "done_ns": 4876891533,
+      "proxy_total_ns": 4878006270,
+      "completion_tokens": 400,
+      "usage": {
+        "prompt_tokens": 109,
+        "total_tokens": 509,
+        "completion_tokens": 400
+      },
+      "decode_tok_s": 89.1277544278288,
+      "output": "def clamp_00(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_01(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_02(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_03(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_04(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_05(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_06(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_07(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_08(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_09(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_10(x, lo=0, hi=1):\n    if x < lo:\n",
+      "visible_events": 51,
+      "only_request_body_difference": {
+        "return_token_ids": true
+      },
+      "historical_body_sha256": "22bedbc67b778e0f0d8f2f1dc731edf8873276f6ba8845ccb9b7a0d4e96f4f20",
+      "proxy_observed_request_start_ns": 869617632777882,
+      "repetition": 3
+    },
+    {
+      "exchange": "0004-2026-09-07T20-02-59-825Z",
+      "request": {
+        "model": "glm-5.3-flash",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Output only Python source code. No comments, no docstrings, no markdown fences. Write functions clamp_00 through clamp_49. Each function is exactly:\ndef clamp_NN(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\nChange only the function name suffix (00, 01, \u2026 49). One blank line between functions. No other text. (stream 2/2)"
+          }
+        ],
+        "max_tokens": 400,
+        "temperature": 0,
+        "top_p": 1,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        },
+        "return_token_ids": true,
+        "chat_template_kwargs": {
+          "enable_thinking": false,
+          "thinking": false,
+          "thinking_mode": "disabled"
+        },
+        "min_tokens": 400,
+        "ignore_eos": true,
+        "stop": []
+      },
+      "request_sha256": "c5732c661cde6b041b80adfc908f09ac43fdd7dd0d00b98d803dda983b58a88d",
+      "response_sha256": "175c35800efdde15c555bb2964bf553c161edc0b6ba63beab4eecfa07e350606",
+      "completion_id": "chatcmpl-86c783ee092cdaa2",
+      "proxy_started_utc": "2026-09-07T20:02:59.825Z",
+      "proxy_origin_epoch_ms": 1788811379825,
+      "first_visible_ns": 5273376060,
+      "last_visible_ns": 9904316299,
+      "done_ns": 9904396150,
+      "proxy_total_ns": 9905615958,
+      "completion_tokens": 400,
+      "usage": {
+        "prompt_tokens": 109,
+        "total_tokens": 509,
+        "completion_tokens": 400
+      },
+      "decode_tok_s": 86.159608936383,
+      "output": "def clamp_00(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_01(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_02(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_03(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_04(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_05(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_06(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_07(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_08(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_09(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_10(x, lo=0, hi=1):\n    if x < lo:\n",
+      "visible_events": 53,
+      "only_request_body_difference": {
+        "return_token_ids": true
+      },
+      "historical_body_sha256": "23f902e17855758e59f1665164cf42618a65247c11093837d2910c39d01c8369",
+      "proxy_observed_request_start_ns": 869617633451942,
+      "repetition": 3
+    },
+    {
+      "exchange": "0005-2026-09-07T20-03-09-737Z",
+      "request": {
+        "model": "glm-5.3-flash",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Output only Python source code. No comments, no docstrings, no markdown fences. Write functions clamp_00 through clamp_49. Each function is exactly:\ndef clamp_NN(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\nChange only the function name suffix (00, 01, \u2026 49). One blank line between functions. No other text. (stream 1/4)"
+          }
+        ],
+        "max_tokens": 400,
+        "temperature": 0,
+        "top_p": 1,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        },
+        "return_token_ids": true,
+        "chat_template_kwargs": {
+          "enable_thinking": false,
+          "thinking": false,
+          "thinking_mode": "disabled"
+        },
+        "min_tokens": 400,
+        "ignore_eos": true,
+        "stop": []
+      },
+      "request_sha256": "4219ff08c84ff321150ccdc42f08d7414fa5f2c2928a98c9b8beaced2a37c936",
+      "response_sha256": "f46a8e2bb1a04cc0fdbfc5965d7c14e00560284a61a01faebeeff96c68f822d4",
+      "completion_id": "chatcmpl-bd4f94ab854f2172",
+      "proxy_started_utc": "2026-09-07T20:03:09.737Z",
+      "proxy_origin_epoch_ms": 1788811389737,
+      "first_visible_ns": 644808460,
+      "last_visible_ns": 7392994601,
+      "done_ns": 7393024852,
+      "proxy_total_ns": 7393526189,
+      "completion_tokens": 400,
+      "usage": {
+        "prompt_tokens": 109,
+        "total_tokens": 509,
+        "completion_tokens": 400
+      },
+      "decode_tok_s": 59.12699970971355,
+      "output": "def clamp_00(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_01(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_02(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_03(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_04(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_05(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_06(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_07(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_08(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_09(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_10(x, lo=0, hi=1):\n    if x < lo:\n",
+      "visible_events": 51,
+      "only_request_body_difference": {
+        "return_token_ids": true
+      },
+      "historical_body_sha256": "9959cf70d88ac56bb48648cd76624f20af3496fd09f52cd30122fc08c7ba29e2",
+      "proxy_observed_request_start_ns": 869627545353154,
+      "repetition": 3
+    },
+    {
+      "exchange": "0006-2026-09-07T20-03-09-738Z",
+      "request": {
+        "model": "glm-5.3-flash",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Output only Python source code. No comments, no docstrings, no markdown fences. Write functions clamp_00 through clamp_49. Each function is exactly:\ndef clamp_NN(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\nChange only the function name suffix (00, 01, \u2026 49). One blank line between functions. No other text. (stream 2/4)"
+          }
+        ],
+        "max_tokens": 400,
+        "temperature": 0,
+        "top_p": 1,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        },
+        "return_token_ids": true,
+        "chat_template_kwargs": {
+          "enable_thinking": false,
+          "thinking": false,
+          "thinking_mode": "disabled"
+        },
+        "min_tokens": 400,
+        "ignore_eos": true,
+        "stop": []
+      },
+      "request_sha256": "62cb8dadbbe829641d47493cac2a45c6d36b62bd2ce716d1a70fd4d661b7bef9",
+      "response_sha256": "c327f4605b6effd63c77e7b186688b6379d914be7832178f95682d7889380358",
+      "completion_id": "chatcmpl-a49a4eb47bd09c23",
+      "proxy_started_utc": "2026-09-07T20:03:09.739Z",
+      "proxy_origin_epoch_ms": 1788811389739,
+      "first_visible_ns": 643410028,
+      "last_visible_ns": 7524747850,
+      "done_ns": 7524852051,
+      "proxy_total_ns": 7525525411,
+      "completion_tokens": 400,
+      "usage": {
+        "prompt_tokens": 109,
+        "total_tokens": 509,
+        "completion_tokens": 400
+      },
+      "decode_tok_s": 57.98291121885863,
+      "output": "def clamp_00(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_01(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_02(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_03(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_04(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_05(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_06(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_07(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_08(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_09(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_10(x, lo=0, hi=1):\n    if x < lo:\n",
+      "visible_events": 52,
+      "only_request_body_difference": {
+        "return_token_ids": true
+      },
+      "historical_body_sha256": "02677f46562d39b78ab97e2f1105917a8c08f2b5af8fb1d3487970463e880de8",
+      "proxy_observed_request_start_ns": 869627546859087,
+      "repetition": 3
+    },
+    {
+      "exchange": "0007-2026-09-07T20-03-09-739Z",
+      "request": {
+        "model": "glm-5.3-flash",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Output only Python source code. No comments, no docstrings, no markdown fences. Write functions clamp_00 through clamp_49. Each function is exactly:\ndef clamp_NN(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\nChange only the function name suffix (00, 01, \u2026 49). One blank line between functions. No other text. (stream 3/4)"
+          }
+        ],
+        "max_tokens": 400,
+        "temperature": 0,
+        "top_p": 1,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        },
+        "return_token_ids": true,
+        "chat_template_kwargs": {
+          "enable_thinking": false,
+          "thinking": false,
+          "thinking_mode": "disabled"
+        },
+        "min_tokens": 400,
+        "ignore_eos": true,
+        "stop": []
+      },
+      "request_sha256": "c7cff646ba56f7ccc8ed8f5c8abf48e07715d26a5156dc0679351f5f0f07ff9e",
+      "response_sha256": "4f41a860d51cc87cd9e5c523bcda3dbda79075137e7581456889d8b7ebd3403d",
+      "completion_id": "chatcmpl-9623716abf850bfe",
+      "proxy_started_utc": "2026-09-07T20:03:09.739Z",
+      "proxy_origin_epoch_ms": 1788811389739,
+      "first_visible_ns": 642741949,
+      "last_visible_ns": 7389744843,
+      "done_ns": 7389768723,
+      "proxy_total_ns": 7390337572,
+      "completion_tokens": 400,
+      "usage": {
+        "prompt_tokens": 109,
+        "total_tokens": 509,
+        "completion_tokens": 400
+      },
+      "decode_tok_s": 59.13736903163687,
+      "output": "def clamp_00(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_01(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_02(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_03(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_04(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_05(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_06(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_07(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_08(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_09(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_10(x, lo=0, hi=1):\n    if x < lo:\n",
+      "visible_events": 51,
+      "only_request_body_difference": {
+        "return_token_ids": true
+      },
+      "historical_body_sha256": "ed6184279e3e3007dc716ac65f00451bb24439980243e14a4d39cd0fe740a83d",
+      "proxy_observed_request_start_ns": 869627547732560,
+      "repetition": 3
+    },
+    {
+      "exchange": "0008-2026-09-07T20-03-09-740Z",
+      "request": {
+        "model": "glm-5.3-flash",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Output only Python source code. No comments, no docstrings, no markdown fences. Write functions clamp_00 through clamp_49. Each function is exactly:\ndef clamp_NN(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\nChange only the function name suffix (00, 01, \u2026 49). One blank line between functions. No other text. (stream 4/4)"
+          }
+        ],
+        "max_tokens": 400,
+        "temperature": 0,
+        "top_p": 1,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        },
+        "return_token_ids": true,
+        "chat_template_kwargs": {
+          "enable_thinking": false,
+          "thinking": false,
+          "thinking_mode": "disabled"
+        },
+        "min_tokens": 400,
+        "ignore_eos": true,
+        "stop": []
+      },
+      "request_sha256": "8bfbc31570080e34bffc777d9c539c4fccf2879e33b2a868d1582a8c0ba8e39b",
+      "response_sha256": "3b7d87ceb4540a42ee39dd546cd710c0332de566ede010ad091483203173c51c",
+      "completion_id": "chatcmpl-b05f33fa402a6c77",
+      "proxy_started_utc": "2026-09-07T20:03:09.740Z",
+      "proxy_origin_epoch_ms": 1788811389740,
+      "first_visible_ns": 641464420,
+      "last_visible_ns": 7524172662,
+      "done_ns": 7524200302,
+      "proxy_total_ns": 7524704429,
+      "completion_tokens": 400,
+      "usage": {
+        "prompt_tokens": 109,
+        "total_tokens": 509,
+        "completion_tokens": 400
+      },
+      "decode_tok_s": 57.97136620802879,
+      "output": "def clamp_00(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_01(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_02(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_03(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_04(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_05(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_06(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_07(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_08(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_09(x, lo=0, hi=1):\n    if x < lo:\n        return lo\n    if x > hi:\n        return hi\n    return x\n\ndef clamp_10(x, lo=0, hi=1):\n    if x < lo:\n",
+      "visible_events": 52,
+      "only_request_body_difference": {
+        "return_token_ids": true
+      },
+      "historical_body_sha256": "9fe3830eb144cc0d757960a052598b73a0e13668adf552442642d33653de985d",
+      "proxy_observed_request_start_ns": 869627548634073,
+      "repetition": 3
+    }
+  ]
+}

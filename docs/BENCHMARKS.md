@@ -1,12 +1,12 @@
 # Benchmarks
 
-Every number on this page is taken from `results/results.json` and is
-reconciled against it by the release validator. Each table states its
-workload, estimator, sample size, and conditions. The headline comparisons
-use either the same screen, the same author protocol, or the same agent task;
-the limitations beside each one state what was not controlled. The v1.1
-(Cadence) section is the current release's own evidence; the headline
-comparisons and everything below it are the v1.0.0 historical record.
+Numbers on this page reconcile with the frozen historical
+[results](../results/results.json), the sealed
+[Cadence claims](../results/evidence/candidate/cadence-v11/CLAIMS.json), and the
+separate [C4 follow-up export](../results/evidence/candidate/cadence-v11-c4/CLAIMS.json).
+Each measurement states its workload, estimator, sample size and conditions.
+The headline comparisons after the current sections remain the historical
+v1.0.0 record.
 
 The evidence is kept in four classes. A comparison can cross classes only
 when its shared basis and limitations are stated:
@@ -21,6 +21,67 @@ when its shared basis and limitations are stated:
 Grade of all locally measured evidence: `ENGINEERING-EVIDENCE`. It was
 produced by the project's own campaign on its own fleet. No third-party
 reproduction exists yet.
+
+## Headline stat bases
+
+| Metric | Current v1.1 | Historical v1.0.0 | Basis |
+|---|---:|---:|---|
+| Single-stream code decode | 68.77 tok/s | 66.257 tok/s | Median of three battery medians, descriptive across starts/time |
+| Single-stream structured decode | 87.67 tok/s | 81.962 tok/s | Same descriptive estimator; prose 34.64 current, 29.049 historical |
+| Four-stream aggregate decode | 223.14 tok/s | 251.13 tok/s | Current median of three original-client waves; historical author-client point estimate |
+| Prefill | No comparable measurement | 1,234 tok/s | One historical 113,908-token prompt divided by time to first visible output |
+
+The current single-stream values come from the sealed second-start service
+batteries, not selected recording takes. Per-request decode is completion
+tokens minus one divided by last-minus-first visible SSE time. The historical
+code screen's **1.49×** compares **66.3 vs 44.6 tok/s** on this fleet against
+a compatibility-adapted two-Spark recipe. No new two-Spark run supports a
+current speedup ratio. Current and historical rates are descriptive context,
+not a controlled release-to-release effect. The paired Cadence estimates below
+answer a different question.
+
+### Current original-client C4 follow-up
+
+All three original-client code waves are included. The pinned sparkDash
+client uses its original prompts, parser, proxy and request order: one warmup,
+then single-, two- and four-stream waves in each repetition. Scored requests
+use the original force-fill payload, thinking off, temperature zero and a
+400-token cap. Every body matches its historical counterpart byte for byte.
+These are short, repetitive code-throughput requests, not a code-quality test.
+
+| Original-client repetition | Aggregate decode tok/s | Mean per-stream decode tok/s |
+|---|---:|---:|
+| First | 221.73 | 56.04 |
+| Second | 223.14 | 56.59 |
+| Third | 248.61 | 62.17 |
+| Median | **223.14** | **56.59** |
+
+Aggregate uses sum of completion tokens minus one per stream, divided by the
+interval from earliest first-visible to latest last-visible output. The
+per-stream column averages each stream's own decode rate, then takes the
+median across waves for the headline; it is not aggregate divided by four.
+TTFT is excluded from decode. All four visible spans overlap in each wave.
+All planned requests passed with no retries. Three ordered repetitions on
+one retained runtime do not establish launch reliability or sustained capacity.
+Separate dates, serving starts and uncontrolled cache/load history prevent a
+causal comparison with the historical 251.13 result.
+
+The later token-ID instrumentation adds only `return_token_ids: true` to the
+original request constructor. Its C4 aggregates were **233.59 / 231.25 /
+231.90 tok/s**, median **231.90**. It is a distinct series; no observations
+are pooled or substituted into the original-client headline. All single-
+and two-stream results, including the delayed second stream in the final
+instrumented two-stream wave, remain in the receipts. The recording's chosen
+final take does not replace the published service-battery medians.
+
+[Original-client receipt](../results/evidence/candidate/cadence-v11-c4/ORIGINAL-RESULTS.json),
+[instrumented receipt](../results/evidence/candidate/cadence-v11-c4/INSTRUMENTED-RESULTS.json)
+and [hash-bound provenance and derived display values](../results/evidence/candidate/cadence-v11-c4/CLAIMS.json)
+retain every request, output, usage count, wave and observed timing. The release
+validator checks receipt hashes and recomputes the displayed C4 values; the
+original offline verification also compared raw proxy and client clocks within
+its declared tolerance. No serving changes or new measurements were made for
+this documentation update. The sealed tag and previous evidence stay unchanged.
 
 ## v1.1 (Cadence) evidence
 
@@ -91,8 +152,8 @@ absent in both starts, so these are end-to-end stream-timing effects that do
 not isolate kernel-level causality. The larger preregistered sham battery in
 the second start resolves stream-timing contrasts at the stated margins; it
 does not repair an earlier failed resolution null or qualify the device
-observer. Machine-readable source of record for every v1.1 number on this
-page: [results/evidence/candidate/cadence-v11/CLAIMS.json](../results/evidence/candidate/cadence-v11/CLAIMS.json)
+observer. Machine-readable source of record for the sealed Cadence numbers in this
+section: [results/evidence/candidate/cadence-v11/CLAIMS.json](../results/evidence/candidate/cadence-v11/CLAIMS.json)
 ([provenance and reading notes](../results/evidence/candidate/cadence-v11/README.md)),
 exported from the frozen measured record with a stable source hash. The
 historical v1.0.0 tables below remain governed by the frozen

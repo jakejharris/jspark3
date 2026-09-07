@@ -35,6 +35,7 @@ import xml.dom.minidom
 # Set this before importing local helpers; pre-existing caches remain forbidden.
 sys.dont_write_bytecode = True
 from validate_live_evidence import EVIDENCE_PATH, validate as validate_live_evidence
+from validate_c4_followup import validate as validate_c4_followup
 
 SKIP_DIRS = {".git", "dist", "__pycache__", ".pytest_cache"}
 FORBIDDEN_SUFFIXES = {".pcap", ".pcapng", ".safetensors", ".gguf", ".bin", ".pt", ".ckpt",
@@ -1252,11 +1253,13 @@ def check_current_claims(root: Path, report: Report) -> dict:
     return claims
 
 
-def check_claims(root: Path, results: dict, current: dict, report: Report) -> None:
+def check_claims(root: Path, results: dict, current: dict, report: Report, followup: dict | None = None) -> None:
+    followup = followup or {}
     allowed = set(results["display"].values()) | set(current.get("display", {}).values()) | STRUCTURAL_NUMBERS
+    allowed |= set(followup.get("display", {}).values())
     allowed |= {v.lstrip("+") for v in allowed if v.startswith("+")}
     classes: dict[str, set[str]] = {}
-    for source in (results, current):
+    for source in (results, current, followup):
         for key, value in source.get("display", {}).items():
             kind = source["display_class"][key]
             classes.setdefault(value, set()).add(kind)
@@ -1426,7 +1429,13 @@ def main() -> int:
         check_weights_mirror(root, report)
         results = check_results(root, report)
         current = check_current_claims(root, report)
-        check_claims(root, results, current, report)
+        followup = {}
+        try:
+            followup = validate_c4_followup(root)
+            report.ok("c4-followup", "hash-bound original and instrumented receipts; separate three-wave medians recomputed")
+        except Exception as exc:
+            report.fail("c4-followup", f"{type(exc).__name__}: {exc}")
+        check_claims(root, results, current, report, followup)
         check_sbom(root, report)
     except Exception as exc:  # noqa: BLE001
         report.fail("release-shape", f"{type(exc).__name__}: {exc}")
