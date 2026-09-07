@@ -92,7 +92,7 @@
     "published": false,
     "redistributed_here": false,
     "runtime_reference": "ghcr.io/miaai-lab/glm-5.3-flash-2x-dgx-sparks@sha256:9bb1557a4234fce63d59599e44d10747eabd742beb337eebf9e7070be8a0fd58",
-    "publication_policy": "NO-GO for v1.0.0",
-    "status": "not published and not a v1.0.0 deliverable; docker/ is retained for local reproducibility only. Do not redistribute a local build without independently satisfying NVIDIA and upstream terms."
+    "publication_policy": "NO-GO for v1.1.0",
+    "status": "not published and not a v1.1.0 deliverable (the v1.0.0 license audit's NO-GO carries forward unchanged); docker/ is retained for local reproducibility only. Do not redistribute a local build without independently satisfying NVIDIA and upstream terms."
   }
 }

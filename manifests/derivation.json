@@ -32,9 +32,10 @@
     },
     {
       "changed_lines": 15,
+      "changed_lines_scope": "measured-to-public rename-only delta through v1.0.1; v1.1.0 adds the runtime.cadence metadata block on top, which is not counted in changed_lines",
       "measured_sha256": "f4f287f93c2ac367abfeebec2bc6722cade1631f34dc896a196c839e39c40096",
       "public": "config/profile.json",
-      "public_sha256": "79e757e8da22050eadf50584501bf25e2bd09a34abf15a6942dfda0d1408bb05"
+      "public_sha256": "33cd838739dfdcbf4ccc3f0a4e416ca44deba32d4da95d3c6438d7c107bf6281"
     },
     {
       "changed_lines": 2,
@@ -122,15 +123,17 @@
     },
     {
       "changed_lines": 20,
+      "changed_lines_scope": "measured-to-public rename-only delta through v1.0.1; v1.1.0 adds the Cadence entry wiring on top, which is not counted in changed_lines",
       "measured_sha256": "e1e295dd9ebd874322fec528ee1e1852a66e85bc063397c76c902fd92ee1f59b",
       "public": "scripts/container_entry.sh",
-      "public_sha256": "0902de96d7e06d5c5f31412bae5476fdcbd819288e89ae5d6b3c6c5ea5d62de7"
+      "public_sha256": "9624cd553720facf0360241c41924ea920f48d8c2e2cf6e00d9154b37b9e85a1"
     },
     {
       "changed_lines": 82,
+      "changed_lines_scope": "measured-to-public rename-only delta through v1.0.1; v1.1.0 adds the Cadence payload/identity/verify wiring on top, which is not counted in changed_lines",
       "measured_sha256": "4b30987138b8382bb716091e8f9bf68e56a5f97ea6a8b382ec39734004f6a654",
       "public": "scripts/fleetctl.py",
-      "public_sha256": "22690003d9bcb826b826c96005d1ef97b2fb94dcafd5abca87d6612d2d0b161c"
+      "public_sha256": "ec9b841acf4a4dabae9cd5b4ea648bae83ed22c6507489774aff059c57e14cee"
     },
     {
       "changed_lines": 4,
@@ -203,6 +206,69 @@
       "measured_sha256": "b3a7ee6e34f0eaad89125b6f2a3fdabe984dd3ba9491fdfd8fb73a784bd213ed",
       "public": "scripts/verify.sh",
       "public_sha256": "b3a7ee6e34f0eaad89125b6f2a3fdabe984dd3ba9491fdfd8fb73a784bd213ed"
+    },
+    {
+      "changed_lines": null,
+      "measured_sha256": null,
+      "provenance": "new public file in v1.1.0; no measured-side counterpart, so no measured hash or line delta is claimed",
+      "public": "config/cadence-contract.json",
+      "public_sha256": "630c34e7f4b59a537ab89b59556d3f981fc68f546bafd9891602ba8c8dc2f461"
+    },
+    {
+      "changed_lines": null,
+      "measured_sha256": null,
+      "provenance": "new public file in v1.1.0; no measured-side counterpart, so no measured hash or line delta is claimed",
+      "public": "scripts/install_b45_modules.py",
+      "public_sha256": "ce776b95826aa62e25d6a10b3a56b1afeac021ed6e7c2bef7af4645fd4e2e3a0"
+    },
+    {
+      "changed_lines": null,
+      "measured_sha256": null,
+      "provenance": "new public file in v1.1.0; no measured-side counterpart, so no measured hash or line delta is claimed",
+      "public": "scripts/long_context_witness.py",
+      "public_sha256": "8ab89831897e2c07b8e7f9fb8472c707d6dc096f715a8f9ffdd8e9108293c2bd"
+    },
+    {
+      "changed_lines": 0,
+      "measured_sha256": "fa72748f0e7c914d6486e2c2728e1f10c6b457cc1f215081d935bc8bbede3d07",
+      "provenance": "byte-for-byte copy of the measured release bundle file (module-hashes.json); measured and public hashes are identical because the bytes are identical",
+      "public": "modules/b45_bootstrap.py",
+      "public_sha256": "fa72748f0e7c914d6486e2c2728e1f10c6b457cc1f215081d935bc8bbede3d07"
+    },
+    {
+      "changed_lines": 0,
+      "measured_sha256": "dce824588bba64a462cf9d2f04a80e1c39a60fe7826dd311157873cbcacaba3c",
+      "provenance": "byte-for-byte copy of the measured release bundle file (module-hashes.json); measured and public hashes are identical because the bytes are identical",
+      "public": "modules/b45_graphs.py",
+      "public_sha256": "dce824588bba64a462cf9d2f04a80e1c39a60fe7826dd311157873cbcacaba3c"
+    },
+    {
+      "changed_lines": 0,
+      "measured_sha256": "3d4ded0f4d03b6707f7b6e6f5df0374d6350100148719c8c11c91d4a2c25d5b3",
+      "provenance": "byte-for-byte copy of the measured release bundle file (module-hashes.json); measured and public hashes are identical because the bytes are identical",
+      "public": "modules/b5_controller.py",
+      "public_sha256": "3d4ded0f4d03b6707f7b6e6f5df0374d6350100148719c8c11c91d4a2c25d5b3"
+    },
+    {
+      "changed_lines": 0,
+      "measured_sha256": "da8ea1a779fad08459632a9ec141de540b1f21a255a5af3e522f804108dcb0a0",
+      "provenance": "byte-for-byte copy of the measured release bundle file (module-hashes.json); measured and public hashes are identical because the bytes are identical",
+      "public": "modules/b5_prefix_verify.py",
+      "public_sha256": "da8ea1a779fad08459632a9ec141de540b1f21a255a5af3e522f804108dcb0a0"
+    },
+    {
+      "changed_lines": 0,
+      "measured_sha256": "db6d60f0ac99d3cc23d5d0b6194a557779b82f2b34132c4dba11f28098fda61f",
+      "provenance": "byte-for-byte copy of the measured release bundle file (module-hashes.json); measured and public hashes are identical because the bytes are identical",
+      "public": "modules/kda_mixed_output_blocks.py",
+      "public_sha256": "db6d60f0ac99d3cc23d5d0b6194a557779b82f2b34132c4dba11f28098fda61f"
+    },
+    {
+      "changed_lines": 0,
+      "measured_sha256": "eea018d5bfee8fdc28e6470f650b8f4adaa5ec4cc4f8ac86b3e8849368c9fdeb",
+      "provenance": "byte-for-byte copy of the measured release bundle file (module-hashes.json); measured and public hashes are identical because the bytes are identical",
+      "public": "modules/zzz_b45.pth",
+      "public_sha256": "eea018d5bfee8fdc28e6470f650b8f4adaa5ec4cc4f8ac86b3e8849368c9fdeb"
     }
   ],
   "loader_patcher": {
@@ -220,5 +286,5 @@
     "recomputed_from_pristine": true
   },
   "schema_version": 1,
-  "statement": "The public recipe was derived from the measured engineering recipe by identifier renames only (file names and string literals) plus re-pinning the two overlay-file hashes and the loader hook's after-hash that those renames change; that was the complete delta through v1.0.0, with no control flow, contract hash, transform seam, serving argument, or environment value changed. v1.0.1 adds one deliberate behavioral delta on top: the kpool transform target now applies the upstream launcher's GB10 persistent_topk disable (after-hash f48c5f93cb3c7d1b1238381761b65c142a1c032023dcef8e449a02f651fb0530 to 00e32052b781723500987a463814116634c4d00b3b61066915f8cc70780c931e), the exact file every measured arm executed. changed_lines is the unified-diff count of added plus deleted lines between the measured file and the public file. Measured-file hashes are listed so a reviewer holding the private bundle can confirm the mapping."
+  "statement": "The public recipe was derived from the measured engineering recipe by identifier renames only (file names and string literals) plus re-pinning the two overlay-file hashes and the loader hook's after-hash that those renames change; that was the complete delta through v1.0.0, with no control flow, contract hash, transform seam, serving argument, or environment value changed. v1.0.1 adds one deliberate behavioral delta on top: the kpool transform target now applies the upstream launcher's GB10 persistent_topk disable (after-hash f48c5f93cb3c7d1b1238381761b65c142a1c032023dcef8e449a02f651fb0530 to 00e32052b781723500987a463814116634c4d00b3b61066915f8cc70780c931e), the exact file every measured arm executed. changed_lines is the unified-diff count of added plus deleted lines between the measured file and the public file. Measured-file hashes are listed so a reviewer holding the private bundle can confirm the mapping. v1.1.0 adds the Cadence layer: the six measured module files ship byte-for-byte (their measured and public hashes are identical by construction, taken from the measured bundle's module-hashes.json), config/cadence-contract.json, scripts/install_b45_modules.py, and scripts/long_context_witness.py are new public files with no measured-side counterpart (measured_sha256 and changed_lines are null rather than fabricated), and scripts/fleetctl.py plus scripts/container_entry.sh gain Cadence wiring on top of the historical rename-only delta (the changed_lines value keeps its v1.0.x meaning and is scoped explicitly by changed_lines_scope). tools/test_v11_offline.py is a public-only offline test tool with no measured-side counterpart and is therefore not a derivation row."
 }

@@ -78,5 +78,21 @@ quantization `__init__.py` `c49635a0b75c213e8dbf08622701377e979bb1e330b62e5631dc
 and `/opt/glm53/chat_template.jinja`
 `96ed83160b243de213e95eb2fa19bde4ac13b676661cfec477d18e45e9fcca3a`.
 
+## Cadence module layer (v1.1)
+
+The v1.1 Cadence layer is not a transform: it rewrites nothing in the image.
+`config/cadence-contract.json` pins six sealed module files under `modules/`
+(byte-for-byte measured bytes, full hashes in the contract) plus the single
+import owner `modules/zzz_b45.pth`, a Python path-configuration file whose own
+hash is pinned. At container entry, after the transform pipeline,
+`scripts/install_b45_modules.py` installs the modules read-only to `/opt/b45`
+and the path file into site-packages, refusing source or target drift, foreign
+content, a wrong KDA import-target original, environment drift, and any stale
+execution receipt. The on-disk KDA import-target file is never modified. The
+launch payload carries the measured Cadence environment, the measured
+provenance label, and disabled logprob capping; `verify` requires per-rank
+startup capture receipts, the calibrated width-controller log receipt, and the
+long-context witness in `scripts/long_context_witness.py`.
+
 Original package code and prose are Apache-2.0. That license does not relicense
 vLLM, the model/draft, the OCI image, FlyCockpit, or any upstream technique.

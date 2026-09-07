@@ -1,0 +1,209 @@
+{
+  "schema_version": 1,
+  "record": "jspark3-v1.1.0-cadence-current-claims",
+  "release": {
+    "version": "1.1.0",
+    "name": "Cadence",
+    "status": "staged-not-released: offline finalization only; assembled-build live validation and independent review pending"
+  },
+  "evidence_grade": "ENGINEERING-EVIDENCE",
+  "provenance": {
+    "source_document": "frozen measured-evidence record RECIPE.md of the measured Cadence run (private ops runtime, jspark3-v2-run), sections 'What was measured' and 'Limits and version decision'",
+    "source_sha256": "fe0473b7760eb28aae47eb5a5b484740a26cf6245414b9a21ae37262d9f55ac4",
+    "source_frozen": true,
+    "underlying_records": [
+      "B45-CONFIRM preregistered paired design, raw records, and confirm result report (private evidence bundle)",
+      "CADENCE-CONCURRENCY burst result (private evidence bundle)",
+      "reconstruction validation result (private evidence bundle)"
+    ],
+    "export_rule": "Only the values quoted in current public prose are exported here, so each public claim has one machine-readable source of record. The frozen historical v1.0.0 results (results/results.json) are not rewritten by this file.",
+    "excluded": [
+      "credentials",
+      "private host paths and addresses",
+      "the boot ledger",
+      "the standalone single-request benchmark (non-publishable)",
+      "the matched-instrument cross-tool comparison (non-publishable)",
+      "T4/T7 seed timings"
+    ]
+  },
+  "method": {
+    "design": "paired fixed-task within-instance; candidate route versus a within-instance reference route with both Cadence features disabled",
+    "estimator": "crossed block/body bootstrap",
+    "bootstrap_draws": 10000,
+    "bootstrap_seed": 2026090641,
+    "confidence_level_percent": 95,
+    "independent_starts": 2,
+    "notes": "Body aliases repeat payloads; they are not a new prompt population. Each launch is kept separate; no pooling of launches."
+  },
+  "sham_controls": {
+    "first_start": {
+      "requests": 64,
+      "predeclared": false,
+      "result": "FAIL",
+      "consequence": "the first start failed its resolution margin, so every first-start paired effect below is diagnostic only"
+    },
+    "second_start": {
+      "requests": 256,
+      "predeclared": true,
+      "result": "PASS",
+      "note": "its first-64 diagnostic still fails; the larger design resolves stream-timing contrasts only and does not erase the failed first-start null"
+    }
+  },
+  "paired_effects": {
+    "prose": {
+      "first_start": {"delta_percent": 16.18, "ci95": [11.97, 20.78], "diagnostic_only": true},
+      "second_start": {"delta_percent": 19.17, "ci95": [14.93, 23.11], "diagnostic_only": false}
+    },
+    "count": {
+      "first_start": {"delta_percent": 7.66, "ci95": [5.90, 9.76], "diagnostic_only": true},
+      "second_start": {"delta_percent": 7.61, "ci95": [6.24, 9.14], "diagnostic_only": false}
+    },
+    "code": {
+      "first_start": {"delta_percent": 9.71, "ci95": [6.79, 14.16], "diagnostic_only": true},
+      "second_start": {"delta_percent": 3.23, "ci95": [-1.14, 9.04], "diagnostic_only": false, "replicated": false}
+    }
+  },
+  "conditional_contrasts_second_start": {
+    "scope": "different conditional contrasts; they must not be added or multiplied to claim a combined effect",
+    "width_controller_prose": {"delta_percent": 7.54, "ci95": [3.17, 11.88]},
+    "qkv_shadow_prose": {"delta_percent": 13.57, "ci95": [6.60, 22.32]},
+    "width_controller_code": {"delta_percent": -1.96, "ci95": [-6.99, 3.64], "note": "the conditional net-value interval spans zero; the prior positive width-controller code result did not reproduce"}
+  },
+  "service_batteries_descriptive": {
+    "basis": "median of three original battery medians, tok/s; descriptive across starts and time, not a paired causal estimate",
+    "candidate_first_start": {"code": 68.56, "prose": 34.20, "count": 87.31},
+    "candidate_second_start": {"code": 68.77, "prose": 34.64, "count": 87.67},
+    "archived_pre_cadence_arm": {
+      "code": 67.38,
+      "prose": 27.82,
+      "count": 82.42,
+      "caveat": "not the published v1.0.0 package; context only, never a controlled v1.0.0-versus-v1.1 comparison"
+    }
+  },
+  "rebuild_validation": {
+    "code": 72.21,
+    "prose": 33.60,
+    "count": 87.25,
+    "result": "a fresh three-rank build from the recipe contracts completed construction, route audits, and the frozen batteries with no serving repair; the exact prior arm was restored and re-verified afterward",
+    "scope": "reconstruction evidence, not a new performance claim"
+  },
+  "quality_battery": {
+    "answers": 62,
+    "code_answers": 20,
+    "reference_arms_correct": [60, 59],
+    "candidate_arms_correct": [59, 58],
+    "code_correct": {"reference": [19, 18], "candidate": [18, 17]},
+    "candidate_only_failures": [
+      "Caesar-cipher task failed by both candidate arms (one duplicating source text at the length cap, one with incorrect generated self-test expectations)",
+      "FizzBuzz failed by one candidate arm"
+    ],
+    "semantic_confidence": "INCONCLUSIVE at every endpoint; no semantic parity, held-out population, or launch reliability certification follows from two independent starts"
+  },
+  "concurrency_burst": {
+    "requests": 183,
+    "max_concurrent_streams": 24,
+    "aggregate_decode_tok_s": 263.39,
+    "per_stream_decode_tok_s": 15.38,
+    "preemptions": 0,
+    "ttft": "tails degrade from two streams under the unchanged mixed-prefill policy",
+    "scope": "finite-burst short-prompt evidence; certifies neither sustained service, per-stream fairness, the 32-sequence envelope, nor any large-context capacity"
+  },
+  "kernel_transform": {
+    "after_sha256": "00e32052b781723500987a463814116634c4d00b3b61066915f8cc70780c931e",
+    "offline_construction_test": "PASS (independent offline reproduction of the pinned transform output)",
+    "live_witness_threshold_tokens": 32768,
+    "live_witness_status": "PENDING: a live single-stream witness above 32768 tokens on the assembled public build has not run"
+  },
+  "configured_context_tokens": 1000000,
+  "configured_context_verified": false,
+  "display": {
+    "v11.paired.prose.first.delta": "+16.18%",
+    "v11.paired.prose.first.ci1": "+11.97",
+    "v11.paired.prose.first.ci2": "+20.78",
+    "v11.paired.prose.second.delta": "+19.17%",
+    "v11.paired.prose.second.ci1": "+14.93",
+    "v11.paired.prose.second.ci2": "+23.11",
+    "v11.paired.count.first.delta": "+7.66%",
+    "v11.paired.count.first.ci1": "+5.90",
+    "v11.paired.count.first.ci2": "+9.76",
+    "v11.paired.count.second.delta": "+7.61%",
+    "v11.paired.count.second.ci1": "+6.24",
+    "v11.paired.count.second.ci2": "+9.14",
+    "v11.paired.code.first.delta": "+9.71%",
+    "v11.paired.code.first.ci1": "+6.79",
+    "v11.paired.code.first.ci2": "+14.16",
+    "v11.paired.code.second.delta": "+3.23%",
+    "v11.paired.code.second.ci1": "-1.14",
+    "v11.paired.code.second.ci2": "+9.04",
+    "v11.conditional.width_controller_prose.delta": "+7.54%",
+    "v11.conditional.width_controller_prose.ci1": "+3.17",
+    "v11.conditional.width_controller_prose.ci2": "+11.88",
+    "v11.conditional.qkv_shadow_prose.delta": "+13.57%",
+    "v11.conditional.qkv_shadow_prose.ci1": "+6.60",
+    "v11.conditional.qkv_shadow_prose.ci2": "+22.32",
+    "v11.conditional.width_controller_code.delta": "-1.96%",
+    "v11.conditional.width_controller_code.ci1": "-6.99",
+    "v11.conditional.width_controller_code.ci2": "+3.64",
+    "v11.service.first.code": "68.56",
+    "v11.service.first.prose": "34.20",
+    "v11.service.first.count": "87.31",
+    "v11.service.second.code": "68.77",
+    "v11.service.second.prose": "34.64",
+    "v11.service.second.count": "87.67",
+    "v11.service.archived.code": "67.38",
+    "v11.service.archived.prose": "27.82",
+    "v11.service.archived.count": "82.42",
+    "v11.rebuild.code": "72.21",
+    "v11.rebuild.prose": "33.60",
+    "v11.rebuild.count": "87.25",
+    "v11.burst.aggregate": "263.39",
+    "v11.burst.per_stream": "15.38",
+    "v11.method.confidence": "95%",
+    "v11.method.draws": "10,000"
+  },
+  "display_class": {
+    "v11.paired.prose.first.delta": "candidate_v11_paired",
+    "v11.paired.prose.first.ci1": "candidate_v11_paired",
+    "v11.paired.prose.first.ci2": "candidate_v11_paired",
+    "v11.paired.prose.second.delta": "candidate_v11_paired",
+    "v11.paired.prose.second.ci1": "candidate_v11_paired",
+    "v11.paired.prose.second.ci2": "candidate_v11_paired",
+    "v11.paired.count.first.delta": "candidate_v11_paired",
+    "v11.paired.count.first.ci1": "candidate_v11_paired",
+    "v11.paired.count.first.ci2": "candidate_v11_paired",
+    "v11.paired.count.second.delta": "candidate_v11_paired",
+    "v11.paired.count.second.ci1": "candidate_v11_paired",
+    "v11.paired.count.second.ci2": "candidate_v11_paired",
+    "v11.paired.code.first.delta": "candidate_v11_paired",
+    "v11.paired.code.first.ci1": "candidate_v11_paired",
+    "v11.paired.code.first.ci2": "candidate_v11_paired",
+    "v11.paired.code.second.delta": "candidate_v11_paired",
+    "v11.paired.code.second.ci1": "candidate_v11_paired",
+    "v11.paired.code.second.ci2": "candidate_v11_paired",
+    "v11.conditional.width_controller_prose.delta": "candidate_v11_paired",
+    "v11.conditional.width_controller_prose.ci1": "candidate_v11_paired",
+    "v11.conditional.width_controller_prose.ci2": "candidate_v11_paired",
+    "v11.conditional.qkv_shadow_prose.delta": "candidate_v11_paired",
+    "v11.conditional.qkv_shadow_prose.ci1": "candidate_v11_paired",
+    "v11.conditional.qkv_shadow_prose.ci2": "candidate_v11_paired",
+    "v11.conditional.width_controller_code.delta": "candidate_v11_paired",
+    "v11.conditional.width_controller_code.ci1": "candidate_v11_paired",
+    "v11.conditional.width_controller_code.ci2": "candidate_v11_paired",
+    "v11.service.first.code": "candidate_v11_descriptive",
+    "v11.service.first.prose": "candidate_v11_descriptive",
+    "v11.service.first.count": "candidate_v11_descriptive",
+    "v11.service.second.code": "candidate_v11_descriptive",
+    "v11.service.second.prose": "candidate_v11_descriptive",
+    "v11.service.second.count": "candidate_v11_descriptive",
+    "v11.service.archived.code": "candidate_v11_descriptive",
+    "v11.service.archived.prose": "candidate_v11_descriptive",
+    "v11.service.archived.count": "candidate_v11_descriptive",
+    "v11.rebuild.code": "candidate_v11_descriptive",
+    "v11.rebuild.prose": "candidate_v11_descriptive",
+    "v11.rebuild.count": "candidate_v11_descriptive",
+    "v11.burst.aggregate": "candidate_v11_descriptive",
+    "v11.burst.per_stream": "candidate_v11_descriptive",
+    "v11.method.confidence": "candidate_v11_method",
+    "v11.method.draws": "candidate_v11_method"
+  }
+}

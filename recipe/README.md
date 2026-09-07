@@ -24,6 +24,10 @@ verified before start.
 | `overlays/trunk_w8a16.py`, `overlays/patch_base_loader_hook.py` | The W8A16 overlay module and the loader hook patcher. |
 | `scripts/prepare_runtime_views.py`, `scripts/validate_checkpoint.py` | Build and validate the TP3 runtime views of the downloaded checkpoints. |
 | `scripts/api_smoke.py`, `scripts/focused_witness.py` | Endpoint smoke test and the fixed health witness used by `verify`. |
+| `config/cadence-contract.json` | The v1.1 Cadence layer contract: the six sealed module hashes, the import owner, the KDA import target, the measured environment, and the execution-evidence contract. |
+| `modules/`, `modules/zzz_b45.pth` | The six sealed Cadence modules (byte-for-byte measured bytes) and the single path-configuration import owner installed into site-packages. |
+| `scripts/install_b45_modules.py` | Fail-closed installer for the Cadence modules: hash-gated read-only installs, drift and foreign-content refusals, stale-receipt refusal. |
+| `scripts/long_context_witness.py` | The long-context witness embedded in `verify`: refuses unless a served request crosses the single-stream context boundary with a real multi-step decode and the verbatim code word. |
 | `transforms/README.md` | Human-readable transform inventory with every hash. |
 | `SHA256SUMS` | Checksums of every recipe file; checked before any preflight. |
 

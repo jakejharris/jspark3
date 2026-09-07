@@ -32,9 +32,12 @@ a frozen request set through the candidate route, and again through a
 within-instance reference route with both features disabled, so the pairing
 isolates the two features on identical hardware and serving state. Effects
 are crossed block/body bootstrap estimates, 10,000 draws, with 95%
-confidence intervals from a preregistered plan.
+confidence intervals from a preregistered plan. The first start's sham
+control failed its predeclared resolution margin, so every first-start
+effect below is diagnostic only; the second start's formally predeclared
+sham passes (its own first-64 diagnostic still fails).
 
-| Paired effect (candidate vs disabled reference route) | First start [95% CI] | Second start [95% CI] |
+| Paired effect (candidate vs disabled reference route) | First start [95% CI] — diagnostic, sham failed | Second start [95% CI] — sham passes |
 |---|---|---|
 | Prose decode | +16.18% [+11.97, +20.78] | +19.17% [+14.93, +23.11] |
 | Structured count decode | +7.66% [+5.90, +9.76] | +7.61% [+6.24, +9.14] |
@@ -88,6 +91,13 @@ absent in both starts, so these are end-to-end stream-timing effects that do
 not isolate kernel-level causality. The larger preregistered sham battery in
 the second start resolves stream-timing contrasts at the stated margins; it
 does not repair an earlier failed resolution null or qualify the device
+observer. Machine-readable source of record for every v1.1 number on this
+page: [results/evidence/candidate/cadence-v11/CLAIMS.json](../results/evidence/candidate/cadence-v11/CLAIMS.json)
+([provenance and reading notes](../results/evidence/candidate/cadence-v11/README.md)),
+exported from the frozen measured record with a stable source hash. The
+historical v1.0.0 tables below remain governed by the frozen
+[results/results.json](../results/results.json), which a later release never
+rewrites.
 observer.
 
 **What this evidence does not show:** semantic parity with the reference

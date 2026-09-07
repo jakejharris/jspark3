@@ -14,6 +14,7 @@ import json
 import os
 from pathlib import Path
 import py_compile
+import re
 import subprocess
 import sys
 import tempfile
@@ -155,11 +156,12 @@ def check_fleetctl_wiring() -> None:
         values.update({
             f"JSPARK_SOCKET_IFNAME_{rank}": "mgmt0",
             f"JSPARK_HCAS_{rank}": "roce0,roce1",
-            f"JSPARK_RANK{rank}_ADDR": f"10.0.0.{rank + 1}",
+            # TEST-NET-1 documentation addresses stand in for rank addresses.
+            f"JSPARK_RANK{rank}_ADDR": f"192.0.2.{rank + 1}",
         })
     values.update({
         "JSPARK_IB_GID_INDEX": "3", "JSPARK_API_BIND": "0.0.0.0", "JSPARK_API_PORT": "8000",
-        "JSPARK_MASTER_ADDR": "10.0.0.1", "JSPARK_MASTER_PORT": "29533",
+        "JSPARK_MASTER_ADDR": "192.0.2.1", "JSPARK_MASTER_PORT": "29533",
         "JSPARK_WORK_ROOT": "/srv/work", "JSPARK_RECIPE_ROOT": "/srv/recipe",
         "JSPARK_FLY_ROOT": "/srv/fly", "JSPARK_MODEL_ROOT": "/srv/models",
     })
@@ -231,9 +233,74 @@ def check_dry_runs() -> None:
     print("PASS dry-runs render cadence env/label/installer and the long-context witness")
 
 
+def check_validator_boundaries() -> None:
+    """Focused checks for the finalization-time validator logic changes.
+
+    The .git administrative pointer exclusion must be exactly that (a pointer
+    file), the .pth payload policy must admit only small text path files, and
+    the measured-construction boot labels must survive only as the exact
+    permitted literals in their known files.
+    """
+    sys.path.insert(0, str(ROOT / "tools"))
+    import validate_release as vr  # noqa: E402
+
+    with tempfile.TemporaryDirectory() as raw:
+        base = Path(raw)
+        (base / "src.py").write_text("# source\n")
+        (base / ".git").write_text("gitdir: /elsewhere/repo/.git/worktrees/x\n")
+        names = {p.name for p in vr.tree_files(base)}
+        expect(".git" not in names and "src.py" in names,
+               f"git administrative pointer not excluded: {names}")
+        (base / ".git").write_text("not a pointer\n")
+        names = {p.name for p in vr.tree_files(base)}
+        expect(".git" in names, "a non-pointer file named .git must stay in the walk and be scanned")
+
+    real_pth = ROOT / "recipe/modules/zzz_b45.pth"
+    expect(vr.pth_payload_allowed(real_pth), "shipped path-configuration file must be allowed")
+    with tempfile.TemporaryDirectory() as raw:
+        base = Path(raw)
+        binary = base / "weights.pth"
+        binary.write_bytes(b"\x00" * 16)
+        expect(not vr.pth_payload_allowed(binary), "binary .pth payload must refuse")
+        oversized = base / "big.pth"
+        oversized.write_text("x" * 4097)
+        expect(not vr.pth_payload_allowed(oversized), "oversized .pth payload must refuse")
+
+    permitted_files = {
+        "recipe/config/cadence-contract.json",
+        "recipe/config/profile.json",
+        "recipe/modules/b5_prefix_verify.py",
+        "recipe/scripts/fleetctl.py",
+        "recipe/scripts/install_b45_modules.py",
+        "tools/test_v11_offline.py",
+        "tools/validate_release.py",
+    }
+    boot = re.compile(rb"(?i)(?<![a-z0-9])boot\d")
+    seen: dict[str, int] = {}
+    for path in vr.tree_files(ROOT):
+        rel = path.relative_to(ROOT).as_posix()
+        data = path.read_bytes()
+        spans: list[tuple[int, int]] = []
+        for literal in vr.PERMITTED_BOOT_LITERALS:
+            start = 0
+            while True:
+                index = data.find(literal, start)
+                if index < 0:
+                    break
+                spans.append((index, index + len(literal)))
+                start = index + len(literal)
+        for match in boot.finditer(data):
+            expect(any(lo <= match.start() < hi for lo, hi in spans),
+                   f"boot label outside the permitted literals in {rel}: {match.group(0)!r}")
+            seen[rel] = seen.get(rel, 0) + 1
+    expect(set(seen) <= permitted_files,
+           f"boot labels leaked into unexpected files: {sorted(set(seen) - permitted_files)}")
+    print("PASS validator-boundaries git-pointer exclusion, .pth policy, narrow boot-label permission")
+
+
 def main() -> int:
     checks = (check_module_bytes, check_installer_states, check_fleetctl_wiring,
-              check_entry_script, check_witness, check_dry_runs)
+              check_entry_script, check_witness, check_dry_runs, check_validator_boundaries)
     try:
         for check in checks:
             check()

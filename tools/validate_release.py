@@ -32,7 +32,7 @@ import tempfile
 import xml.dom.minidom
 
 SKIP_DIRS = {".git", "dist", "__pycache__", ".pytest_cache"}
-FORBIDDEN_SUFFIXES = {".pcap", ".pcapng", ".safetensors", ".gguf", ".bin", ".pt", ".pth", ".ckpt",
+FORBIDDEN_SUFFIXES = {".pcap", ".pcapng", ".safetensors", ".gguf", ".bin", ".pt", ".ckpt",
                       ".key", ".pem", ".p12", ".pfx", ".log"}
 FORBIDDEN_NAMES = {".env", "id_rsa", "id_ed25519", "PI-SESSION.jsonl", "pi-pane.log"}
 MAX_FILE_BYTES = 12 * 1024 * 1024
@@ -113,6 +113,24 @@ SUPERSEDED_OWNER_FORMS = re.compile(
 )
 DOTTED_QUAD = re.compile(rb"(?<![\d.])(\d{1,3}(?:\.\d{1,3}){3})(?![\d.])")
 ALLOWED_QUADS = re.compile(rb"^(?:0\.0\.0\.0|127\.0\.0\.1|192\.0\.2\.\d+|198\.51\.100\.\d+|203\.0\.113\.\d+)$")
+
+# Measured-construction identifiers the frozen evidence contract requires in public.
+# CONTRACTS.md permits exactly the `jspark3.b45=boot41` provenance label and the exact
+# measured module bytes (which carry their own arm comment); every other boot-label
+# occurrence remains a privacy finding. Narrow, literal, and verified in the offline
+# core checks rather than a pattern-level exemption.
+PERMITTED_BOOT_LITERALS = (
+    b"jspark3.b45=boot41",       # required nonsecret provenance label, CLI/label form
+    b'"jspark3.b45": "boot41"',  # the same label in JSON/dict literal form
+    b"boot40b-r39-r3",           # arm comment inside the hash-pinned measured module bytes
+    b"boot41/43",                # measured-arm pair named in the installer's provenance comment
+)
+
+# Current release identity: v1.1.0 is staged, not released. The v1.0.0 facts below
+# are the frozen historical record and must remain byte-identical in terminal docs.
+CURRENT_TAG = "v1.1.0"
+CURRENT_VERSION = "1.1.0"
+CURRENT_STATUS = "v1.1.0-staged-not-released"
 
 # Public prose whose numbers must reconcile with results.json or the structural allowlist.
 PROSE = [
@@ -211,12 +229,46 @@ def sha256(path: Path) -> str:
     return value.hexdigest()
 
 
+def git_pointer(path: Path) -> bool:
+    """A linked-worktree `.git` administrative pointer file, never a release source file."""
+    try:
+        with path.open("rb") as stream:
+            return stream.read(8) == b"gitdir: "
+    except OSError:
+        return False
+
+
+def pth_payload_allowed(path: Path) -> bool:
+    """A `.pth` file is a Python path-configuration file: small UTF-8 text.
+
+    Torch checkpoints also use the `.pth` suffix, so the payload policy refuses
+    anything binary or oversized rather than whitelisting the suffix.
+    """
+    try:
+        data = path.read_bytes()
+    except OSError:
+        return False
+    if len(data) > 4096 or b"\x00" in data:
+        return False
+    try:
+        data.decode("utf-8")
+    except UnicodeDecodeError:
+        return False
+    return True
+
+
 def tree_files(root: Path) -> list[Path]:
     files = []
     for dirpath, dirnames, filenames in os.walk(root):
         dirnames[:] = sorted(d for d in dirnames if d not in SKIP_DIRS)
         for name in sorted(filenames):
-            files.append(Path(dirpath) / name)
+            candidate = Path(dirpath) / name
+            # Git administrative metadata (a linked worktree's `.git` pointer) is
+            # not a public release source file; anything else named `.git` stays
+            # in the walk and is scanned like any other file.
+            if name == ".git" and git_pointer(candidate):
+                continue
+            files.append(candidate)
     return files
 
 
@@ -229,7 +281,10 @@ def check_inventory(root: Path, files: list[Path], report: Report) -> None:
         total += size
         if path.is_symlink():
             problems.append(f"symlink: {rel}")
-        if path.suffix.lower() in FORBIDDEN_SUFFIXES or path.name in FORBIDDEN_NAMES:
+        suffix = path.suffix.lower()
+        if suffix in FORBIDDEN_SUFFIXES or path.name in FORBIDDEN_NAMES:
+            problems.append(f"forbidden payload: {rel}")
+        elif suffix == ".pth" and not pth_payload_allowed(path):
             problems.append(f"forbidden payload: {rel}")
         if size > MAX_FILE_BYTES:
             problems.append(f"file over {MAX_FILE_BYTES} bytes: {rel} ({size})")
@@ -261,7 +316,22 @@ def check_leaks(root: Path, files: list[Path], report: Report) -> None:
         rel = path.relative_to(root).as_posix()
         data = path.read_bytes()
         for label, pattern in LEAK_PATTERNS:
-            match = pattern.search(data)
+            if label == "internal label":
+                # The measured-construction identifiers are permitted only as the
+                # exact frozen literals; every other boot-label match is a finding.
+                spans: list[tuple[int, int]] = []
+                for literal in PERMITTED_BOOT_LITERALS:
+                    start = 0
+                    while True:
+                        index = data.find(literal, start)
+                        if index < 0:
+                            break
+                        spans.append((index, index + len(literal)))
+                        start = index + len(literal)
+                match = next((m for m in pattern.finditer(data)
+                              if not any(lo <= m.start() < hi for lo, hi in spans)), None)
+            else:
+                match = pattern.search(data)
             if match:
                 problems.append(f"{label} in {rel}: {match.group(0)[:40]!r}")
                 break
@@ -300,7 +370,7 @@ def check_owner_identity(root: Path, files: list[Path], report: Report) -> None:
         if account not in destinations.get(key, ""):
             problems.append(f"intended_destinations.{key} does not name the maintainer's account")
     if destinations.get("ghcr") is not None:
-        problems.append("intended_destinations.ghcr must be null for v1.0.0")
+        problems.append("intended_destinations.ghcr must be null")
     if problems:
         report.fail("owner-identity", "; ".join(problems[:12]))
     else:
@@ -455,8 +525,8 @@ def check_identity(root: Path, report: Report) -> None:
            "owned runtime image must be recorded as unpublished and not redistributed")
     expect(owned.get("runtime_reference") == reference,
            "owned runtime image record must point execution to the exact upstream digest")
-    expect(owned.get("publication_policy") == "NO-GO for v1.0.0",
-           "owned runtime image must carry the v1.0.0 NO-GO policy")
+    expect(owned.get("publication_policy") == "NO-GO for v1.1.0",
+           "owned runtime image must carry the current v1.1.0 NO-GO policy")
     build_script = (root / "docker/build.sh").read_text(encoding="utf-8")
     image_workflow = (root / ".github/workflows/image.yml").read_text(encoding="utf-8")
     expect("--push" not in build_script and "ghcr.io/jakejharris/jspark3" not in build_script,
@@ -466,9 +536,26 @@ def check_identity(root: Path, report: Report) -> None:
     expect("push: false" in image_workflow and "ghcr.io/jakejharris/jspark3" not in image_workflow,
            "image workflow must be a local-only, non-pushing build check")
     licensing = (root / "docs/LICENSING.md").read_text(encoding="utf-8")
-    expect("no jspark3 ghcr image is published for v1.0.0" in licensing.lower() and
+    expect("no jspark3 ghcr image is published" in licensing.lower() and
            "independently satisfying nvidia's terms" in licensing.lower(),
            "licensing page lacks the binding GHCR NO-GO and redistribution boundary")
+    gate = (root / "RELEASE-GATE.md").read_text(encoding="utf-8").lower()
+    expect("no jspark3 ghcr image is published for v1.1.0" in gate,
+           "release gate lacks the current-version GHCR NO-GO")
+    # Cadence layer: profile, contract, and shipped files must agree.
+    cadence = profile["runtime"].get("cadence", {})
+    expect(cadence.get("contract") == "config/cadence-contract.json" and
+           cadence.get("import_owner") == "modules/zzz_b45.pth" and
+           cadence.get("provenance_label") == "jspark3.b45=boot41",
+           "profile.json cadence block differs from the cadence contract")
+    cadence_contract = json.loads((root / "recipe/config/cadence-contract.json").read_text(encoding="utf-8"))
+    expect(set(cadence_contract["modules"]) == {"b45_bootstrap.py", "b45_graphs.py", "b5_controller.py",
+                                                "b5_prefix_verify.py", "kda_mixed_output_blocks.py"},
+           "cadence contract module set drift")
+    for name, digest in cadence_contract["modules"].items():
+        expect(sha256(root / "recipe/modules" / name) == digest, f"cadence module hash drift: {name}")
+    expect(sha256(root / "recipe/modules/zzz_b45.pth") == cadence_contract["import_owner"]["sha256"],
+           "cadence import-owner hash drift")
     for name in ("README.md", "docs/INSTALL.md", "docs/TECHNICAL-REPORT.md", "huggingface/README.md"):
         text = (root / name).read_text(encoding="utf-8")
         expect(target["revision"] in text, f"{name} lacks the target revision")
@@ -733,25 +820,34 @@ def check_release_manifest(root: Path, report: Report) -> None:
     expected = {"github": "https://github.com/jakejharris/jspark3",
                 "huggingface": "https://huggingface.co/jakejharris/jspark3",
                 "ghcr": None}
-    if release.get("name") != "JSpark3 v1" or release.get("slug") != "jspark3" or release.get("tag") != "v1.0.0":
+    if release.get("name") != "JSpark3 v1" or release.get("slug") != "jspark3" or release.get("tag") != CURRENT_TAG:
         problems.append("identity differs from the public identity contract")
     if release.get("intended_destinations") != expected:
         problems.append("intended destinations differ from contract")
     live = release.get("live_links", {})
     if release.get("publication_authorized") is not True:
         problems.append("publication_authorized must record the maintainer's approval")
-    if release.get("status") != RELEASE_STATUS:
-        problems.append("status must record the terminal v1.0.0 release and public Hub mirror")
-    if release.get("date_released") != RELEASE_DATE:
-        problems.append("date_released must record the v1.0.0 release date")
+    # Current version: staged, never a fake released date, status, URL, or tag.
+    if release.get("status") != CURRENT_STATUS:
+        problems.append("status must record v1.1.0 as staged and not released")
+    if release.get("date_released") is not None:
+        problems.append("date_released must be null: v1.1.0 is staged, not released")
     if live.get("github") != expected["github"]:
         problems.append("the live GitHub link must equal the intended destination")
     if live.get("huggingface") != expected["huggingface"]:
         problems.append("the live Hugging Face link must equal the intended destination")
     if live.get("ghcr_digest") is not None:
-        problems.append("GHCR digest must remain null for v1.0.0")
-    if live.get("release_page") != RELEASE_URL:
-        problems.append("release-page link must equal the deterministic v1.0.0 release URL")
+        problems.append("GHCR digest must remain null for v1.1.0")
+    if live.get("release_page") is not None:
+        problems.append("release_page must be null: the v1.1.0 tag and release do not exist yet")
+    # Historical record: the terminal v1.0.0 facts are frozen, never rewritten.
+    historical = release.get("historical", {}).get("v1.0.0", {})
+    if historical.get("status") != RELEASE_STATUS:
+        problems.append("the historical v1.0.0 status record differs from the frozen value")
+    if historical.get("date_released") != RELEASE_DATE:
+        problems.append("the historical v1.0.0 release date differs from the frozen value")
+    if historical.get("release_page") != RELEASE_URL:
+        problems.append("the historical v1.0.0 release URL differs from the frozen value")
     container = release.get("container_distribution", {})
     if container.get("runtime_reference") != "ghcr.io/miaai-lab/glm-5.3-flash-2x-dgx-sparks@sha256:9bb1557a4234fce63d59599e44d10747eabd742beb337eebf9e7070be8a0fd58":
         problems.append("release must use the exact upstream runtime image digest")
@@ -762,16 +858,21 @@ def check_release_manifest(root: Path, report: Report) -> None:
     if release.get("maintainer_contact") != "https://github.com/jakejharris":
         problems.append("maintainer_contact must use the confirmed public GitHub profile")
     cff = (root / "CITATION.cff").read_text(encoding="utf-8")
-    if 'version: 1.0.0' not in cff:
-        problems.append("CITATION.cff version differs")
-    if f'date-released: {RELEASE_DATE}' not in cff:
-        problems.append("CITATION.cff release date differs")
-    if f'url: "{RELEASE_URL}"' not in cff:
-        problems.append("CITATION.cff release URL differs")
+    if f'version: {CURRENT_VERSION}' not in cff:
+        problems.append("CITATION.cff version differs from the current version")
+    if 'date-released' in cff:
+        problems.append("CITATION.cff must not carry a release date for a staged version")
+    if f'releases/tag/{CURRENT_TAG}' in cff:
+        problems.append("CITATION.cff must not reference a release URL whose tag does not exist yet")
+    bib = (root / "CITATION.bib").read_text(encoding="utf-8")
+    if f'version = {{{CURRENT_VERSION}}}' not in bib:
+        problems.append("CITATION.bib version differs from the current version")
     terminal_docs = (
         "README.md", "RELEASE-GATE.md", "FINAL-RELEASE-INDEX.md", "CHANGELOG.md",
         "docs/INSTALL.md", "release/RELEASE-NOTES.md",
     )
+    # The terminal v1.0.0 URL and date are the frozen historical record and must
+    # remain present in the terminal documents.
     for relative in terminal_docs:
         text = (root / relative).read_text(encoding="utf-8")
         if RELEASE_URL not in text:
@@ -800,6 +901,7 @@ def check_release_manifest(root: Path, report: Report) -> None:
         "not merged into the public hub main revision": "Hub mirror still described as unmerged",
         "not merged into main": "Hub mirror still described as unmerged",
         "weight transfer is pending": "Hub mirror still described as pending",
+        "releases/tag/v1.1.0": "a v1.1.0 release URL is referenced before the tag exists",
     }
     for relative in state_files:
         lowered = (root / relative).read_text(encoding="utf-8").lower()
@@ -809,7 +911,8 @@ def check_release_manifest(root: Path, report: Report) -> None:
     if problems:
         report.fail("release-manifest", "; ".join(problems))
     else:
-        report.ok("release-manifest", "v1.0.0 release URL and date frozen; verified mirror on immutable public Hub main; GHCR excluded")
+        report.ok("release-manifest", "v1.1.0 staged with no fake date, status, URL, or tag; "
+                  "historical v1.0.0 release URL and date frozen; verified mirror on immutable public Hub main; GHCR excluded")
 
 
 def fmt_rate(value: float) -> str:
@@ -1000,14 +1103,131 @@ def check_results(root: Path, report: Report) -> dict:
     return results
 
 
-def check_claims(root: Path, results: dict, report: Report) -> None:
-    allowed = set(results["display"].values()) | STRUCTURAL_NUMBERS
+CURRENT_CLAIMS_PATH = "results/evidence/candidate/cadence-v11/CLAIMS.json"
+KERNEL_TRANSFORM_AFTER_SHA256 = "00e32052b781723500987a463814116634c4d00b3b61066915f8cc70780c931e"
+V11_CLASSES = {"candidate_v11_paired", "candidate_v11_descriptive", "candidate_v11_method"}
+
+
+def check_current_claims(root: Path, report: Report) -> dict:
+    """The current (v1.1.0 Cadence) public claims: a distinct machine-readable evidence
+    export, derived display values, and the uncertainty facts made structural.
+
+    The frozen historical results.json is never rewritten for a new release; current
+    claims live in their own file and the validator derives the prose-claim allowlist
+    from it alongside the frozen historical display values.
+    """
+    path = root / CURRENT_CLAIMS_PATH
+    problems = []
+    try:
+        claims = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        report.fail("current-claims", f"unreadable current-claims evidence: {exc}")
+        return {}
+
+    def expect(condition: bool, message: str) -> None:
+        if not condition:
+            problems.append(message)
+
+    def pct_token(value: float) -> str:
+        return f"{value:+.2f}%"
+
+    def bound_token(value: float) -> str:
+        return f"{value:+.2f}"
+
+    def rate_token(value: float) -> str:
+        return f"{value:.2f}"
+
+    # Recompute the declared display map from the structured fields.
+    derived: dict[str, str] = {}
+    for workload, row in claims["paired_effects"].items():
+        for start in ("first_start", "second_start"):
+            cell = row[start]
+            label = "first" if start == "first_start" else "second"
+            derived[f"v11.paired.{workload}.{label}.delta"] = pct_token(cell["delta_percent"])
+            derived[f"v11.paired.{workload}.{label}.ci1"] = bound_token(cell["ci95"][0])
+            derived[f"v11.paired.{workload}.{label}.ci2"] = bound_token(cell["ci95"][1])
+    for name, row in claims["conditional_contrasts_second_start"].items():
+        if not isinstance(row, dict) or "delta_percent" not in row:
+            continue
+        derived[f"v11.conditional.{name}.delta"] = pct_token(row["delta_percent"])
+        derived[f"v11.conditional.{name}.ci1"] = bound_token(row["ci95"][0])
+        derived[f"v11.conditional.{name}.ci2"] = bound_token(row["ci95"][1])
+    service = claims["service_batteries_descriptive"]
+    for arm, label in (("candidate_first_start", "first"), ("candidate_second_start", "second"),
+                       ("archived_pre_cadence_arm", "archived")):
+        for workload in ("code", "prose", "count"):
+            derived[f"v11.service.{label}.{workload}"] = rate_token(service[arm][workload])
+    for workload in ("code", "prose", "count"):
+        derived[f"v11.rebuild.{workload}"] = rate_token(claims["rebuild_validation"][workload])
+    derived["v11.burst.aggregate"] = rate_token(claims["concurrency_burst"]["aggregate_decode_tok_s"])
+    derived["v11.burst.per_stream"] = rate_token(claims["concurrency_burst"]["per_stream_decode_tok_s"])
+    derived["v11.method.confidence"] = f"{claims['method']['confidence_level_percent']}%"
+    derived["v11.method.draws"] = f"{claims['method']['bootstrap_draws']:,}"
+
+    display = claims.get("display", {})
+    expect(display == derived, "display map drift: declared display values differ from the structured fields")
+    classes = claims.get("display_class", {})
+    expect(set(classes) == set(display), "every current display value must carry an evidence class")
+    expect(set(classes.values()) <= V11_CLASSES, "current-claims classes must stay inside the v1.1 taxonomy")
+    expect(not (set(classes.values()) & EXTERNAL_CLASSES),
+           "current-claims values must not wear an external evidence class")
+
+    # The uncertainty facts are structural, not prose-only.
+    sham = claims["sham_controls"]
+    expect(sham["first_start"]["result"] == "FAIL",
+           "the failed first-start sham must remain visible in the structured evidence")
+    expect(sham["second_start"]["result"] == "PASS" and sham["second_start"]["predeclared"] is True,
+           "the second start's predeclared sham pass must be recorded")
+    for workload, row in claims["paired_effects"].items():
+        expect(row["first_start"]["diagnostic_only"] is True,
+               f"first-start {workload} effect must be marked diagnostic-only")
+        expect(row["second_start"]["diagnostic_only"] is False,
+               f"second-start {workload} effect must not be marked diagnostic-only")
+    code = claims["paired_effects"]["code"]["second_start"]
+    expect(code["ci95"][0] < 0 < code["ci95"][1] and code["replicated"] is False,
+           "the non-replicated paired code gain (interval spans zero) must remain structural")
+    conditional = claims["conditional_contrasts_second_start"]["width_controller_code"]
+    expect(conditional["ci95"][0] < 0 < conditional["ci95"][1],
+           "the width-controller code interval spanning zero must remain structural")
+    expect("not be added" in claims["conditional_contrasts_second_start"]["scope"],
+           "the no-combining rule for conditional contrasts must remain recorded")
+    expect(claims["quality_battery"]["semantic_confidence"].startswith("INCONCLUSIVE"),
+           "quality semantic confidence must remain disclosed as inconclusive")
+    expect(bool(claims["quality_battery"]["candidate_only_failures"]),
+           "candidate-only quality failures must remain disclosed")
+    expect("not the published v1.0.0 package" in service["archived_pre_cadence_arm"]["caveat"],
+           "the archived-arm caveat must remain recorded")
+    kernel = claims["kernel_transform"]
+    expect(kernel["after_sha256"] == KERNEL_TRANSFORM_AFTER_SHA256,
+           "kernel transform after-hash differs from the pinned contract value")
+    expect(kernel["live_witness_status"].startswith("PENDING"),
+           "the live long-context witness must remain recorded as pending")
+    expect(claims["configured_context_verified"] is False,
+           "configured context must remain recorded as unverified")
+    provenance = claims["provenance"]
+    expect(re.fullmatch(r"[0-9a-f]{64}", provenance.get("source_sha256", "")) is not None,
+           "provenance lacks a stable source hash")
+    expect(provenance.get("source_frozen") is True, "the measured source must be recorded as frozen")
+    expect("/home/" not in provenance.get("source_document", ""),
+           "provenance must not carry a private host path")
+    if problems:
+        report.fail("current-claims", "; ".join(problems[:10]))
+    else:
+        report.ok("current-claims",
+                  f"{len(display)} current v1.1 display values recompute from the structured evidence; "
+                  "failed first-start sham, non-replicated code gain, and pending live witness stay structural")
+    return claims
+
+
+def check_claims(root: Path, results: dict, current: dict, report: Report) -> None:
+    allowed = set(results["display"].values()) | set(current.get("display", {}).values()) | STRUCTURAL_NUMBERS
     allowed |= {v.lstrip("+") for v in allowed if v.startswith("+")}
     classes: dict[str, set[str]] = {}
-    for key, value in results["display"].items():
-        kind = results["display_class"][key]
-        classes.setdefault(value, set()).add(kind)
-        classes.setdefault(value.lstrip("+"), set()).add(kind)
+    for source in (results, current):
+        for key, value in source.get("display", {}).items():
+            kind = source["display_class"][key]
+            classes.setdefault(value, set()).add(kind)
+            classes.setdefault(value.lstrip("+"), set()).add(kind)
 
     def kinds(token: str) -> set[str]:
         return classes.get(token, set()) | classes.get(token.lstrip("+"), set())
@@ -1075,7 +1295,8 @@ def check_claims(root: Path, results: dict, report: Report) -> None:
         report.fail("claim-reconciliation", f"{len(problems)} findings: " + "; ".join(problems[:15]))
     else:
         report.ok("claim-reconciliation",
-                  f"{checked} numeric tokens reconcile with results.json display values; "
+                  f"{checked} numeric tokens reconcile with the frozen historical display values and the "
+                  f"current v1.1 evidence export; "
                   f"{units} comparison units and every table carrying an external row are free of a "
                   f"cross-class percentage, and no bare 'baseline' appears")
 
@@ -1171,7 +1392,8 @@ def main() -> int:
         check_release_manifest(root, report)
         check_weights_mirror(root, report)
         results = check_results(root, report)
-        check_claims(root, results, report)
+        current = check_current_claims(root, report)
+        check_claims(root, results, current, report)
         check_sbom(root, report)
     except Exception as exc:  # noqa: BLE001
         report.fail("release-shape", f"{type(exc).__name__}: {exc}")

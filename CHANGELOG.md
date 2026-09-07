@@ -22,6 +22,9 @@ merged with the v1.1 evidence.
   independent serving starts: prose +16.18% and +19.17%, structured count
   +7.66% and +7.61% (95% CIs exclude zero); code +9.71% then +3.23% with the
   second interval spanning zero, so the paired code gain is not replicated.
+  The first start's sham control failed its predeclared resolution margin, so
+  first-start figures are diagnostic only; the second start's predeclared
+  sham passes.
   A fixed quality battery showed candidate-only delivered-answer failures and
   remains inconclusive on population-level semantic parity. A short-prompt
   concurrency burst (183 requests, up to 24 concurrent streams, aggregate

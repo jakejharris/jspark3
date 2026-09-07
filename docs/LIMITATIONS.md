@@ -85,6 +85,10 @@ next long-prefill investigation starts there.
 - **No replicated code gain.** The paired code effect was positive in the
   first start and spanned zero in the second; no universal code-speed gain is
   claimed.
+- **First-start figures are diagnostic.** The first serving start's sham
+  control failed its predeclared resolution margin, so only the second
+  start's predeclared-sham results are confirmatory; both are published with
+  that label rather than dropped.
 - **Quality contains candidate-only losses.** In the fixed 62-answer quality
   battery, both candidate arms failed the Caesar-cipher coding task and one
   also failed FizzBuzz, while both reference arms completed both tasks.

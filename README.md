@@ -44,15 +44,18 @@ the v1 construction and carries the proven long-context kernel fix.
 The v1.1 effects below were measured inside the candidate against its own
 disabled reference route. They are not comparisons against the published
 v1.0.0 numbers further down, which used different request sets and estimators,
-and no number was re-measured across the two releases.
+and no number was re-measured across the two releases. Two independent serving
+starts ran the same paired design; the first start's sham control failed its
+predeclared resolution margin, so first-start figures are diagnostic only,
+while the second start's predeclared sham passes.
 
 ### v1.1 (Cadence) — measured, single-stream, in scope
 
-| Paired effect (candidate route vs disabled reference route) | Result over two independent serving starts |
-|---|---|
-| Prose decode | **+16.18%** and **+19.17%** (95% CIs exclude zero) |
-| Structured-count decode | **+7.66%** and **+7.61%** |
-| Code decode | +9.71%, then +3.23% with the second interval spanning zero — **not a replicated gain** |
+| Paired effect (candidate route vs disabled reference route) | First start (diagnostic — sham failed) | Second start (sham passes) |
+|---|---|---|
+| Prose decode | **+16.18%** | **+19.17%** (95% CIs exclude zero) |
+| Structured-count decode | **+7.66%** | **+7.61%** |
+| Code decode | +9.71% | +3.23% with the interval spanning zero — **not a replicated gain** |
 | Scope | Single-stream decode with the width controller active; batches of two or more requests and prefill fall back to the wide path |
 
 Conditions, confidence intervals, quality results, and every caveat:
