@@ -71,5 +71,13 @@
     "provenance": "huggingface/jspark3/PROVENANCE.md",
     "tool": "tools/mirror_weights.py",
     "draft_checkpoint_mirrored": false
+  },
+  "verification_evidence": {
+    "status": "INTEGRATED_LIVE_PASS",
+    "record": "results/evidence/candidate/cadence-v11/LIVE-VERIFY.json",
+    "candidate_commit": "a729583fc1e286583023f4b9b92db87efefcb33a",
+    "verifier_commit": "456a2624d0c54e2096327b57fcb54e8333f10114",
+    "final_archive_cold_boot_tested": false,
+    "scope": "One integrated same-candidate admission pass. Maximum context, sustained concurrency, independent-fleet reproduction and Pi slowdown remain unresolved; final review and publication are separate decisions."
   }
 }

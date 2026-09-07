@@ -97,12 +97,13 @@ next long-prefill investigation starts there.
   evidence (up to 24 concurrent streams) certifies neither sustained service,
   per-stream fairness, the 32-sequence envelope, nor capacity near the
   configured maximum context.
-- **Long context past 32,768 tokens still awaits assembled-build live
-  validation.** The transform-level kernel-file change is pinned and its
-  output verified, but a live single-stream witness above 32,768 tokens on
-  the assembled public build is a pending release-verification item. The
-  configured 1,000,000-token context is a configuration value; it does not
-  certify this candidate's operating envelope.
+- **Long-context proof is one tested request.** Integrated verification on
+  candidate `a729583` passed with 48,957 prompt tokens, 51 completion tokens,
+  and the pinned codeword. [Receipt and provenance](../results/evidence/candidate/cadence-v11/README.md#integrated-live-verification)
+  identify host verifier `456a262` separately. The configured 1,000,000-token
+  context remains unverified; this request certifies neither sustained
+  concurrency nor the full operating envelope. The final archive has not
+  been cold-boot tested. Pi slowdown remains unresolved; E3 is separate.
 - **Not included.** Separate workspace experiments are not part of this
   construction, and their results do not transfer. The v1.1 candidate retains
   the stock indexer workspace.

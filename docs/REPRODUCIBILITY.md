@@ -14,7 +14,8 @@ pinned and verified; a mismatch is a refusal, not a warning. Follow
 - `scripts/validate_checkpoint.py` printed `serving_checkpoint_pass: true`
   on every rank.
 - Every container printed `JSPARK3_STARTUP_PATCH_PASS`.
-- `verify.json` reports `PASS` with the fixed focused witness.
+- `verify.json` reports `VERIFY_PASS`, including the fixed focused witness
+  and strict long-context witness.
 
 The recipe-level contract, with the complete list of pinned identities, is
 [`recipe/docs/REPRODUCIBILITY.md`](../recipe/docs/REPRODUCIBILITY.md).
@@ -67,9 +68,12 @@ comparisons.
 - Whether the run cleared the internal gates recorded in
   [LIMITATIONS.md](LIMITATIONS.md), since the measured build did not.
 - For the v1.1 recipe: the width-controller and QKV-shadow route receipts
-  from the launch audit, and — once the live witness is implemented — the
-  single-stream witness above 32,768 prompt tokens, which remains a pending
-  release-verification item for the public build.
+  from the launch audit, and the integrated single-stream witness above
+  32,768 prompt tokens with at least 20 completion tokens and the pinned
+  codeword. The accepted candidate's [sanitized evidence](../results/evidence/candidate/cadence-v11/README.md#integrated-live-verification)
+  records 48,957 prompt tokens and 51 completion tokens. Keep the candidate
+  and host verifier recipe identities separate when they differ; the final
+  archive has not been cold-boot tested.
 
 A third-party reproduction on a separate three-Spark fleet is an open release
 gate; none has been performed yet.

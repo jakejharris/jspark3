@@ -153,10 +153,13 @@ differs from the measured construction.
 The transform contract also carries the one-line disable of vLLM's
 `persistent_topk` kernel, the exact long-context fix described in the known
 issues above and in [docs/LIMITATIONS.md](docs/LIMITATIONS.md#kernel-disable-provenance-and-the-32768-token-single-stream-boundary-v100).
-A live single-stream witness above 32,768 tokens on the assembled public build
-is part of release verification and has not run yet. The transform's
-kernel-file change is pinned and verified; long-context operation past 32,768
-tokens on the assembled public build is not yet validated.
+Integrated live verification passed on the assembled candidate: one pinned
+single-stream request reported 48,957 prompt tokens and 51 completion tokens,
+with the codeword returned verbatim. The [sanitized receipt and provenance](results/evidence/candidate/cadence-v11/README.md#integrated-live-verification)
+separate running candidate `a729583` from host verifier `456a262`. This proves
+the tested request past the old boundary; it does not certify the configured
+maximum context, sustained concurrency, Pi speed, or a cold boot of the final
+release archive.
 
 ## What is new in v1.1 (Cadence)
 

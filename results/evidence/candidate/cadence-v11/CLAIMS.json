@@ -4,7 +4,7 @@
   "release": {
     "version": "1.1.0",
     "name": "Cadence",
-    "status": "staged-not-released: offline finalization only; assembled-build live validation and independent review pending"
+    "status": "staged-not-released: integrated live verification passed; final package review and publication pending"
   },
   "evidence_grade": "ENGINEERING-EVIDENCE",
   "provenance": {
@@ -16,7 +16,7 @@
       "CADENCE-CONCURRENCY burst result (private evidence bundle)",
       "reconstruction validation result (private evidence bundle)"
     ],
-    "export_rule": "Only the values quoted in current public prose are exported here, so each public claim has one machine-readable source of record. The frozen historical v1.0.0 results (results/results.json) are not rewritten by this file.",
+    "export_rule": "Only the values quoted in current public prose are exported here, so each public claim has one machine-readable source of record. The frozen historical v1.0.0 results (results/results.json) are not rewritten by this file. The later integrated live verification is a separate source in LIVE-VERIFY.json; its admission measurements do not alter the frozen benchmark populations.",
     "excluded": [
       "credentials",
       "private host paths and addresses",
@@ -112,11 +112,15 @@
     "after_sha256": "00e32052b781723500987a463814116634c4d00b3b61066915f8cc70780c931e",
     "offline_construction_test": "PASS (independent offline reproduction of the pinned transform output)",
     "live_witness_threshold_tokens": 32768,
-    "live_witness_status": "PENDING: a live single-stream witness above 32768 tokens on the assembled public build has not run"
+    "live_witness_status": "PASS: integrated same-candidate verification; see LIVE-VERIFY.json for scope and provenance",
+    "live_witness_evidence": "results/evidence/candidate/cadence-v11/LIVE-VERIFY.json"
   },
   "configured_context_tokens": 1000000,
   "configured_context_verified": false,
   "display": {
+    "v11.verify.focused_median": "73.8718",
+    "v11.verify.completion_tokens": "51",
+    "v11.verify.prompt_tokens": "48,957",
     "v11.paired.prose.first.delta": "+16.18%",
     "v11.paired.prose.first.ci1": "+11.97",
     "v11.paired.prose.first.ci2": "+20.78",
@@ -162,6 +166,9 @@
     "v11.method.draws": "10,000"
   },
   "display_class": {
+    "v11.verify.focused_median": "candidate_v11_verification",
+    "v11.verify.completion_tokens": "candidate_v11_verification",
+    "v11.verify.prompt_tokens": "candidate_v11_verification",
     "v11.paired.prose.first.delta": "candidate_v11_paired",
     "v11.paired.prose.first.ci1": "candidate_v11_paired",
     "v11.paired.prose.first.ci2": "candidate_v11_paired",

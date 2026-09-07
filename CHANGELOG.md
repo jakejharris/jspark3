@@ -33,9 +33,14 @@ merged with the v1.1 evidence.
   nor large-context capacity.
 - **Long-context kernel fix carried.** The v1.0.1 transform-level disable of
   vLLM's `persistent_topk` kernel is part of the v1.1 transform contract; the
-  transform emits the exact kernel file the measured arms executed. A live
-  single-stream witness above 32,768 tokens on the assembled public build
-  remains a pending release-verification item and is not claimed as passed.
+  transform emits the exact kernel file the measured arms executed. Integrated
+  live verification now passes on candidate `a729583` with host verifier
+  `456a262`: 48,957 prompt tokens, 51 completion tokens, and the pinned codeword.
+  [Evidence and equivalence limits](results/evidence/candidate/cadence-v11/README.md#integrated-live-verification)
+  distinguish this tested request from maximum-context or archive cold-start
+  certification. Host verifier fixes isolate JSON from site-hook output,
+  handle generated caches without relaxing module pins, and correct the stale
+  transform aggregate; the candidate's serving bytes remain unchanged.
 - **Documentation corrections carried into this release:** the unverified
   stub-`libcuda` causal claim in the v1.0.1 install notes is reworded as
   unconfirmed; the v1.0.1 operations wording implying proven 1,000,000-token

@@ -73,10 +73,11 @@ consequences are worth stating plainly:
   file every measured run executed. That is not a demonstration of end-to-end
   reachability: the configured 1,000,000-token context remains a
   configuration value and does not certify this candidate's operating
-  envelope, and a live single-stream witness above 32,768 tokens on the
-  assembled public build is a pending verification item. All published
-  numbers, including the long-prefill figures above, were measured with that
-  disable applied and are unchanged.
+  envelope. A later integrated live verification passed at 48,957 prompt
+  tokens with 51 completion tokens and the pinned codeword on the assembled
+  candidate; see [receipt and provenance](../results/evidence/candidate/cadence-v11/README.md#integrated-live-verification).
+  Historical benchmark numbers, including the long-prefill figures above,
+  were measured with that disable applied and are unchanged.
 - High concurrency raises time to first token sharply. In the C48 wave, the
   p90 time to first token was 96.722 s even though aggregate throughput rose.
   If you serve interactive traffic, cap concurrency well below 48 or add an

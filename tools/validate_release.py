@@ -31,6 +31,8 @@ import sys
 import tempfile
 import xml.dom.minidom
 
+from validate_live_evidence import EVIDENCE_PATH, validate as validate_live_evidence
+
 SKIP_DIRS = {".git", "dist", "__pycache__", ".pytest_cache"}
 FORBIDDEN_SUFFIXES = {".pcap", ".pcapng", ".safetensors", ".gguf", ".bin", ".pt", ".ckpt",
                       ".key", ".pem", ".p12", ".pfx", ".log"}
@@ -82,6 +84,8 @@ REQUIRED = [
     "tools/validate_release.py", "tools/build_release_assets.sh", "tools/build_sbom.py",
     "tools/mirror_weights.py",
     "tools/build_hashes.py", "tools/analyze_tail.py", "tools/analyze_sse_pcap.py",
+    "tools/validate_live_evidence.py", "tools/test_live_evidence.py", EVIDENCE_PATH,
+    "results/evidence/candidate/cadence-v11/CANDIDATE-SHA256SUMS",
 ]
 
 # Internal labels, private locations, and machine identity that must not appear anywhere.
@@ -1105,7 +1109,8 @@ def check_results(root: Path, report: Report) -> dict:
 
 CURRENT_CLAIMS_PATH = "results/evidence/candidate/cadence-v11/CLAIMS.json"
 KERNEL_TRANSFORM_AFTER_SHA256 = "00e32052b781723500987a463814116634c4d00b3b61066915f8cc70780c931e"
-V11_CLASSES = {"candidate_v11_paired", "candidate_v11_descriptive", "candidate_v11_method"}
+V11_CLASSES = {"candidate_v11_paired", "candidate_v11_descriptive", "candidate_v11_method",
+               "candidate_v11_verification"}
 
 
 def check_current_claims(root: Path, report: Report) -> dict:
@@ -1163,12 +1168,22 @@ def check_current_claims(root: Path, report: Report) -> dict:
     derived["v11.burst.per_stream"] = rate_token(claims["concurrency_burst"]["per_stream_decode_tok_s"])
     derived["v11.method.confidence"] = f"{claims['method']['confidence_level_percent']}%"
     derived["v11.method.draws"] = f"{claims['method']['bootstrap_draws']:,}"
+    try:
+        live = validate_live_evidence(root)
+        derived["v11.verify.prompt_tokens"] = f"{live['long_context_witness']['prompt_tokens']:,}"
+        derived["v11.verify.completion_tokens"] = str(live['long_context_witness']['completion_tokens'])
+        derived["v11.verify.focused_median"] = f"{live['focused_witness']['median_decode_tok_s']:.4f}"
+    except (OSError, ValueError, KeyError, TypeError) as exc:
+        problems.append(f"invalid integrated live evidence: {exc}")
 
     display = claims.get("display", {})
     expect(display == derived, "display map drift: declared display values differ from the structured fields")
     classes = claims.get("display_class", {})
     expect(set(classes) == set(display), "every current display value must carry an evidence class")
     expect(set(classes.values()) <= V11_CLASSES, "current-claims classes must stay inside the v1.1 taxonomy")
+    expect(all(classes.get(key) == "candidate_v11_verification" for key in derived
+               if key.startswith("v11.verify.")),
+           "live admission values must stay separate from benchmark evidence classes")
     expect(not (set(classes.values()) & EXTERNAL_CLASSES),
            "current-claims values must not wear an external evidence class")
 
@@ -1200,8 +1215,9 @@ def check_current_claims(root: Path, report: Report) -> dict:
     kernel = claims["kernel_transform"]
     expect(kernel["after_sha256"] == KERNEL_TRANSFORM_AFTER_SHA256,
            "kernel transform after-hash differs from the pinned contract value")
-    expect(kernel["live_witness_status"].startswith("PENDING"),
-           "the live long-context witness must remain recorded as pending")
+    expect(kernel["live_witness_status"].startswith("PASS:") and
+           kernel.get("live_witness_evidence") == EVIDENCE_PATH,
+           "the live witness claim must name the validated integrated evidence")
     expect(claims["configured_context_verified"] is False,
            "configured context must remain recorded as unverified")
     provenance = claims["provenance"]
@@ -1215,7 +1231,7 @@ def check_current_claims(root: Path, report: Report) -> dict:
     else:
         report.ok("current-claims",
                   f"{len(display)} current v1.1 display values recompute from the structured evidence; "
-                  "failed first-start sham, non-replicated code gain, and pending live witness stay structural")
+                  "historical failures stay structural; integrated live witness and package equivalence verified")
     return claims
 
 

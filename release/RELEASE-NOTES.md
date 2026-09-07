@@ -36,9 +36,17 @@ least 8 non-empty serving graph dumps — the per-rank construction measured
 in the archived measured-arm startup receipts. All other runtime identity,
 load, memory, witness, and arithmetic gates are retained.
 
-**Pending before publication.** A live single-stream witness above 32,768
-tokens on the assembled public build has not run; the F-1-corrected verifier
-itself awaits live confirmation on hardware. v1.1 ships one mandatory,
+**Integrated live verification passed.** Host verifier `456a262` accepted
+unchanged candidate `a729583`, including all-rank identity, safety, Cadence
+capture, load, health, arithmetic, focused, and strict long-context gates.
+The pinned long-context request reported 48,957 prompt tokens and 51
+completion tokens with the codeword returned verbatim. The focused median
+was 73.8718 tok/s for its fixed admission workload only; Pi slowdown remains
+unresolved, and E3 is separate. [Sanitized evidence and provenance](../results/evidence/candidate/cadence-v11/README.md#integrated-live-verification)
+retain the earlier verifier failures and explain recipe equivalence. The
+final archive has not been cold-boot tested; maximum context, sustained
+concurrency, and independent-fleet reproduction remain unverified. Final
+review and publication decisions remain open. v1.1 ships one mandatory,
 measured Cadence construction: the recipe and its verifier carry no toggle
 and no opt-in variant, because a second, never-measured path would be
 exactly the kind of unverified claim this project refuses to ship. This is a

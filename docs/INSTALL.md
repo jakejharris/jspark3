@@ -294,10 +294,12 @@ cannot catch it.
 
 Use the current recipe, which carries the disable in the transform itself
 (v1.0.1 introduced this; v1.1.0 carries it forward); weights, benchmarks, and
-the serving envelope are unchanged. A live single-stream witness above 32,768
-prompt tokens on the assembled public build is a pending release-verification
-item: the transform-level kernel-file change is verified, but long-context
-operation has not been validated on the public build. If you cannot move off
+the serving envelope are unchanged. Integrated verification has now passed
+one pinned single-stream request with 48,957 prompt tokens and 51 completion
+tokens on the assembled candidate. [Receipt and provenance](../results/evidence/candidate/cadence-v11/README.md#integrated-live-verification)
+record the candidate and host verifier separately; the final archive has not
+been cold-boot tested, and maximum-context capacity remains unverified.
+If you cannot move off
 v1.0.0, your options are all unsupported: keep every request's
 total context at or below 32,768 tokens; hand-launch `vllm serve` with
 `--max-model-len 406656` or lower (a ceiling derived from the kernel's
