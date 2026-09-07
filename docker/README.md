@@ -1,7 +1,7 @@
 # Local-only image reproduction
 
-JSpark3 v1.0.0 was measured on, and always launches, the upstream MiaAI-Lab
-image at this exact digest:
+JSpark3 v1.0.0 and v1.1.0 use the same upstream MiaAI-Lab image. Both
+releases launch this exact digest:
 
 ```text
 ghcr.io/miaai-lab/glm-5.3-flash-2x-dgx-sparks@sha256:9bb1557a4234fce63d59599e44d10747eabd742beb337eebf9e7070be8a0fd58
@@ -9,8 +9,13 @@ ghcr.io/miaai-lab/glm-5.3-flash-2x-dgx-sparks@sha256:9bb1557a4234fce63d59599e44d
 
 The lifecycle controller, per-rank preflight, transform contract, and
 host-minted image receipt all bind that manifest digest and its config digest.
-No JSpark3 GHCR image is published for v1.0.0, and no alternate image is a
-release deliverable.
+No JSpark3 GHCR image is published for either release, and no alternate image
+is a release deliverable.
+
+The mounted recipe applies its hash-checked runtime transforms before serving.
+The v1.1.0 recipe supplies the Cadence modules and long-context kernel fix;
+these changes do not require a new base image. The lifecycle launches the
+upstream digest directly, not the optional local derivative below.
 
 ## Why the Dockerfile remains
 
@@ -33,7 +38,7 @@ On an arm64 host with Docker Buildx:
 ./docker/build.sh
 ```
 
-This loads `jspark3-local:1.0.0` into the local Docker image store. The script
+This loads `jspark3-local:1.1.0` into the local Docker image store. The script
 has no push mode, registry login, remote tag, or export path. The manual image
 workflow performs the same non-pushing build check in CI.
 
@@ -44,4 +49,4 @@ independently satisfying NVIDIA's terms and every applicable upstream term.
 Changing labels, adding notices, or assigning a new tag does not itself supply
 those rights. If a future, independently cleared image is created, it is a new
 release decision and requires fresh license review and three-node verification;
-it is not part of v1.0.0.
+it is not part of v1.0.0 or v1.1.0.
