@@ -196,6 +196,19 @@ def ssh_argv(values: dict[str, str], rank: int, remote_argv: list[str]) -> list[
             host(values, rank), shlex.join(remote_argv)]
 
 
+# Every remote Python whose stdout is consumed as JSON runs with -S (no site
+# initialization).  The serving image installs two startup hooks into the
+# container's dist-packages: glm53_video.pth (apply_image_glm_dflash) prints a
+# banner BEFORE any script output, and zzz_b45.pth -> b45_bootstrap ->
+# b5_prefix_verify prints calibration receipts AFTER it.  Both fire on every
+# site-initializing interpreter, so a plain `python3 -c`/script stdout can
+# never be a clean JSON channel (boot-51 verify refusal).  All remote Python
+# invoked here is stdlib-only (sibling modules resolve via sys.path[0], which
+# -S preserves), so skipping site hooks provably changes nothing but the
+# noise; the strict parsers stay byte-exact with no banner stripping.
+JSON_PYTHON = ("python3", "-S")
+
+
 def remote(values: dict[str, str], rank: int, argv: list[str], *, check: bool = True) -> subprocess.CompletedProcess[str]:
     process = subprocess.run(ssh_argv(values, rank, argv), text=True,
                              stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False)
@@ -320,7 +333,7 @@ def container_argv(
 def preflight_argv(values: dict[str, str], rank: int) -> list[str]:
     peers = [values[f"JSPARK_RANK{other}_ADDR"] for other in range(3) if other != rank]
     return [
-        "python3", f"{values['JSPARK_RECIPE_ROOT']}/scripts/remote_preflight.py",
+        *JSON_PYTHON, f"{values['JSPARK_RECIPE_ROOT']}/scripts/remote_preflight.py",
         "--rank", str(rank), "--ifaces", values[f"JSPARK_FABRIC_IFACES_{rank}"],
         "--cidrs", values[f"JSPARK_FABRIC_ADDRS_{rank}"], "--hcas", values[f"JSPARK_HCAS_{rank}"],
         "--gid-index", values["JSPARK_IB_GID_INDEX"],
@@ -335,7 +348,7 @@ def preflight_argv(values: dict[str, str], rank: int) -> list[str]:
 def checkpoint_argv(values: dict[str, str]) -> list[str]:
     root = values["JSPARK_MODEL_ROOT"]
     return [
-        "python3", "-B", f"{values['JSPARK_RECIPE_ROOT']}/scripts/validate_checkpoint.py",
+        *JSON_PYTHON, "-B", f"{values['JSPARK_RECIPE_ROOT']}/scripts/validate_checkpoint.py",
         "--target-root", f"{root}/{TARGET_NATIVE_NAME}",
         "--target-runtime", f"{root}/{TARGET_NATIVE_NAME}-tp3-runtime",
         "--draft-root", f"{root}/{DRAFT_NATIVE_NAME}",
@@ -353,7 +366,7 @@ def render_dry_run(
         preflight_sha = preflight_sha or "0" * 64
         recipe_sha = recipe_manifest_sha256()
         recipe_check = [
-            "python3", "-B", f"{values['JSPARK_RECIPE_ROOT']}/scripts/remote_preflight.py",
+            *JSON_PYTHON, "-B", f"{values['JSPARK_RECIPE_ROOT']}/scripts/remote_preflight.py",
             "--recipe-only", "--recipe-root", values["JSPARK_RECIPE_ROOT"],
             "--expected-recipe-manifest-sha256", recipe_sha,
         ]
@@ -599,7 +612,7 @@ def validate_preflight_receipt(
 
 def remote_recipe_sha(values: dict[str, str], rank: int, expected: str | None = None) -> str:
     argv = [
-        "python3", "-B", f"{values['JSPARK_RECIPE_ROOT']}/scripts/remote_preflight.py",
+        *JSON_PYTHON, "-B", f"{values['JSPARK_RECIPE_ROOT']}/scripts/remote_preflight.py",
         "--recipe-only", "--recipe-root", values["JSPARK_RECIPE_ROOT"],
     ]
     if expected is not None:
@@ -652,7 +665,7 @@ def image_receipt_install_argv(path: str, encoded: str) -> list[str]:
         "h.flush(); os.fsync(h.fileno()); h.close(); q=os.open(os.path.dirname(p),os.O_RDONLY|os.O_DIRECTORY); "
         "os.fsync(q); os.close(q)"
     )
-    return ["python3", "-c", code, path, encoded]
+    return [*JSON_PYTHON, "-c", code, path, encoded]
 
 
 def install_image_receipt(values: dict[str, str], rank: int, data: bytes) -> None:
@@ -940,9 +953,18 @@ def cmd_start(args: argparse.Namespace, values: dict[str, str]) -> None:
 
 def bound_manifest(
     path: Path, values: dict[str, str], *, require_all: bool = False,
-    require_started: bool = False,
+    require_started: bool = False, candidate_recipe_sha256: str | None = None,
 ) -> dict:
     value = read_receipt(path)
+    if candidate_recipe_sha256 is not None and not SHA_RE.fullmatch(candidate_recipe_sha256):
+        raise Refusal("candidate recipe manifest SHA-256 is malformed")
+    # Zero-boot verification: a patched verifier recipe must be able to verify
+    # a fleet started from an earlier recipe.  The candidate identity then
+    # comes from the operator-declared (SHA-256) candidate recipe manifest and
+    # is re-proven on every rank (verify_remote_recipe), while the verifier's
+    # own recipe identity is reported separately in the receipt.  Without the
+    # flag the historical self-identity check is unchanged.
+    expected_recipe_sha = candidate_recipe_sha256 or recipe_manifest_sha256()
     expected_keys = {
         "schema_version", "candidate", "grade", "configuration_sha256",
         "preflight_sha256", "recipe_manifest_sha256", "image_manifest",
@@ -959,7 +981,7 @@ def bound_manifest(
             value.get("configuration_sha256") != configuration_digest(values) or
             value.get("image_manifest") != IMAGE.split("@", 1)[1] or
             value.get("image_config") != IMAGE_CONFIG or
-            value.get("recipe_manifest_sha256") != recipe_manifest_sha256() or
+            value.get("recipe_manifest_sha256") != expected_recipe_sha or
             not SHA_RE.fullmatch(str(value.get("preflight_sha256", ""))) or
             value.get("start_order") != [2, 1, 0] or value.get("status") not in allowed_status):
         raise Refusal("manifest does not bind this environment/image")
@@ -1015,7 +1037,7 @@ if p!=root and root not in p.parents:
 events=dict(line.split() for line in (p/'memory.events').read_text().splitlines())
 print(json.dumps({'memory_max':(p/'memory.max').read_text().strip(),'swap_max':(p/'memory.swap.max').read_text().strip(),'swap_current':int((p/'memory.swap.current').read_text()),'events':events},sort_keys=True))
 """
-    return ["python3", "-c", code, str(pid)]
+    return [*JSON_PYTHON, "-c", code, str(pid)]
 
 
 def cgroup_state(values: dict[str, str], rank: int, pid: int) -> dict:
@@ -1071,7 +1093,7 @@ def b45_identity_argv(identity: str) -> list[str]:
         "'capture_receipts':len(rows),'capture_dots_intact':bool(dots_intact),"
         "'serving_graph_dumps':serving},sort_keys=True))"
     )
-    return ["docker", "exec", identity, "python3", "-c", code]
+    return ["docker", "exec", identity, *JSON_PYTHON, "-c", code]
 
 
 def b45_identity(values: dict[str, str], binding: dict) -> dict:
@@ -1152,8 +1174,8 @@ def runtime_identity_argv(identity: str) -> tuple[list[str], list[str]]:
         "'image_receipt_sha256':h('/evidence/image-receipt.json'),"
         "'image_receipt':json.loads(pathlib.Path('/evidence/image-receipt.json').read_text())},sort_keys=True))"
     )
-    return ["docker", "exec", identity, "python3", "-c", code], [
-        "docker", "exec", identity, "python3", "/recipe/scripts/apply_base_pipeline.py",
+    return ["docker", "exec", identity, *JSON_PYTHON, "-c", code], [
+        "docker", "exec", identity, *JSON_PYTHON, "/recipe/scripts/apply_base_pipeline.py",
         "--vllm-root", "/usr/local/lib/python3.12/dist-packages/vllm",
         "--source-root", "/sources/fly", "--asset-root", "/opt/glm53",
         "--contract", "/recipe/config/patch-contract.json",
@@ -1319,8 +1341,15 @@ def load_gate(logs: str, runtime: list[dict]) -> dict:
 
 
 def _verify_bound(
-    args: argparse.Namespace, values: dict[str, str], manifest: dict
+    args: argparse.Namespace, values: dict[str, str], manifest: dict,
+    candidate_recipe_sha256: str | None = None,
 ) -> None:
+    if candidate_recipe_sha256 is not None:
+        # Candidate mode: re-prove on every bound rank that the on-host recipe
+        # bytes still hash to the declared candidate manifest before trusting
+        # any runtime identity read from it.
+        for binding in manifest["containers"]:
+            verify_remote_recipe(values, binding["rank"], candidate_recipe_sha256)
     runtime = []
     for binding in manifest["containers"]:
         inspect_bound(values, binding, manifest)
@@ -1376,6 +1405,9 @@ def _verify_bound(
         "arithmetic": 323, "focused_witness": witness_value,
         "long_context_witness": long_context_value, "status": "VERIFY_PASS",
     }
+    if candidate_recipe_sha256 is not None:
+        receipt["candidate_recipe_manifest_sha256"] = candidate_recipe_sha256
+        receipt["verifier_recipe_manifest_sha256"] = recipe_manifest_sha256()
     receipt["payload_sha256"] = sha_bytes(canonical(receipt))
     atomic_json(args.output, receipt)
     print(f"PASS verify receipt={args.output} sha256={sha_file(args.output)}")
@@ -1386,9 +1418,11 @@ def cmd_verify(args: argparse.Namespace, values: dict[str, str]) -> None:
         render_dry_run("verify", values)
         return
     validate_env(values)
-    manifest = bound_manifest(args.manifest, values, require_all=True, require_started=True)
+    candidate = args.candidate_recipe_manifest_sha256 or None
+    manifest = bound_manifest(args.manifest, values, require_all=True, require_started=True,
+                              candidate_recipe_sha256=candidate)
     try:
-        _verify_bound(args, values, manifest)
+        _verify_bound(args, values, manifest, candidate)
     except Exception:
         try:
             preserve_rank0_logs(values, manifest, args.log_output)
@@ -1419,6 +1453,10 @@ def parser() -> argparse.ArgumentParser:
         elif name == "verify":
             command.add_argument("--output", type=Path, default=Path("verify.json"))
             command.add_argument("--log-output", type=Path, default=Path("verify-rank0.log"))
+            command.add_argument("--candidate-recipe-manifest-sha256", default="",
+                                 help="verify a fleet started from an earlier recipe: the declared "
+                                      "candidate recipe manifest SHA-256 replaces the verifier self-identity "
+                                      "check and is re-proven on every rank before any runtime read")
     return result
 
 
