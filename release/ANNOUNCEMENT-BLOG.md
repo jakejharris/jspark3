@@ -5,7 +5,7 @@ publishing this announcement is a separate maintainer action.
 
 ---
 
-## DRAFT v1.1.0 (Cadence) section — staged, not released
+## DRAFT announcement for v1.1.0 (Cadence) — 2026-09-07
 
 JSpark3 v1.1 — release name **Cadence** — keeps everything v1.0.1 served and
 adds two measured single-stream features to the recipe: an INT8 shadow for

@@ -4,8 +4,8 @@
   "slug": "jspark3",
   "tag": "v1.1.0",
   "release_name": "Cadence",
-  "status": "v1.1.0-staged-not-released",
-  "date_released": null,
+  "status": "v1.1.0-released",
+  "date_released": "2026-09-07",
   "publication_authorized": true,
   "product_type": "reproducible three-DGX-Spark serving and runtime recipe for GLM-5.3 Flash; the GitHub recipe is not a weights redistribution and is paired with a public, attributed, byte-identical Hugging Face mirror of the pinned target checkpoint",
   "intended_destinations": {
@@ -17,7 +17,7 @@
     "github": "https://github.com/jakejharris/jspark3",
     "huggingface": "https://huggingface.co/jakejharris/jspark3",
     "ghcr_digest": null,
-    "release_page": null
+    "release_page": "https://github.com/jakejharris/jspark3/releases/tag/v1.1.0"
   },
   "historical": {
     "v1.0.0": {
@@ -27,10 +27,10 @@
       "note": "Frozen historical record. The v1.0.0 release facts are preserved byte-identically; v1.0.0 evidence stays labeled historical."
     }
   },
-  "publication_sequencing": "Merge to main, the v1.1.0 tag, the GitHub release, and the Hugging Face card push are separate coordinated operations, never an atomic transaction. The v1.1.0 tag does not exist yet; install references name it and fail until it exists, with no default-branch fallback.",
+  "publication_sequencing": "Publish this reviewed commit with the v1.1.0 tag and GitHub release dated 2026-09-07, then update the Hugging Face documentation. Git commit/tag selection binds the release content; GitHub release creation, asset upload and the Hugging Face commit are separate operations. Record each observed result separately; do not treat this metadata as proof that those operations already occurred.",
   "maintainer_contact": "https://github.com/jakejharris",
   "payloads": {
-    "github_repository": "v1.1.0 (Cadence) staged for publication, not tagged and not released; the historical v1.0.0 release shipped 2026-09-02 and is recorded under historical.v1.0.0; source repository public at https://github.com/jakejharris/jspark3; this tree except huggingface/ and dist/",
+    "github_repository": "v1.1.0 (Cadence) release content dated 2026-09-07; effective when the publisher creates the tag and release at this commit. Historical v1.0.0 release facts remain under historical.v1.0.0. Source repository: https://github.com/jakejharris/jspark3.",
     "huggingface_repository": "public attributed target-weight mirror at https://huggingface.co/jakejharris/jspark3, remotely verified and merged into main at e7c34dba923916754cfcb0bdf6c2c75a9b7ff1fc",
     "release_assets": "dist/ produced by tools/build_release_assets.sh (recipe tarball, checksums, SBOM)",
     "container_image": "v1.0.0 uses the exact upstream image by digest; docker/ is local-reproducibility material only and no JSpark3 GHCR image will be published"
@@ -78,6 +78,12 @@
     "candidate_commit": "a729583fc1e286583023f4b9b92db87efefcb33a",
     "verifier_commit": "456a2624d0c54e2096327b57fcb54e8333f10114",
     "final_archive_cold_boot_tested": false,
-    "scope": "One integrated same-candidate admission pass. Maximum context, sustained concurrency, independent-fleet reproduction and Pi slowdown remain unresolved; final review and publication are separate decisions."
+    "scope": "One integrated same-candidate admission pass. Maximum context, sustained concurrency, independent-fleet reproduction and Pi slowdown remain unresolved; the sealed candidate review passed and publication is authorized; remote observations are recorded separately."
+  },
+  "publication_record": {
+    "kind": "release-content",
+    "effective_at": "publication of the v1.1.0 tag and release",
+    "observed_publication": null,
+    "note": "This immutable release content declares the authorized date and destination. It is not a remote publication receipt. The publisher records observed GitHub and Hugging Face revisions and URLs separately after each service operation."
   }
 }

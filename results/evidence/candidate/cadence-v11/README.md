@@ -101,7 +101,8 @@ evidence, documentation, and offline checks. Its source archive is exported
 from the final commit; source, recipe, results, and SBOM asset checksums are
 recorded together in the sealing handoff. It has not been cold-boot tested.
 The configured maximum context, sustained concurrency, independent-fleet
-reproduction, final review, and publication remain open.
+reproduction remain unverified. The sealed candidate passed final review;
+publication is authorized, with observed service writes recorded separately.
 
 The release validator checks all integrated gate fields, recomputes the
 focused median and public display values, checks the candidate checksum

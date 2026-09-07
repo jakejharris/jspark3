@@ -195,12 +195,11 @@ measured on.
 > including its named exclusion; Z.AI's base model remains MIT. DFlash2 is
 > not mirrored and remains a separate CC BY-NC-ND 4.0 dependency.
 
-> **Release status: v1.1.0 (Cadence) is staged for publication and supersedes
-> v1.0.1 with the kernel fix carried in the transform plus the measured
-> Cadence features described above. The `v1.1.0` tag and release do not exist
-> yet; they are created at publication, and the clone command in the quick
-> start names that tag on purpose — it fails until publication rather than
-> installing older code.** Historical releases: [v1.0.1](https://github.com/jakejharris/jspark3/releases)
+> **[v1.1.0 (Cadence), 2026-09-07](https://github.com/jakejharris/jspark3/releases/tag/v1.1.0):**
+> supersedes v1.0.1 with the kernel fix carried in the transform plus the
+> measured Cadence features described above. The quick start selects the
+> exact release tag. This commit is the authorized release content;
+> publication observations are recorded separately. Historical releases: [v1.0.1](https://github.com/jakejharris/jspark3/releases)
 > supersedes [v1.0.0](https://github.com/jakejharris/jspark3/releases/tag/v1.0.0)
 > (released 2026-09-02) with the `persistent_topk` transform fix and the
 > fabric documentation fix described above; weights and benchmarks are

@@ -4,10 +4,11 @@ All notable changes to JSpark3 are recorded here. Versions follow semantic
 versioning; the serving envelope, pinned inputs, and transform contract are
 part of the public interface.
 
-## v1.1.0 (Cadence) - Unreleased
+## v1.1.0 (Cadence) - 2026-09-07
 
-Staged for publication; the `v1.1.0` tag and release are created at
-publication and none of the items below are claimed as released before then.
+[Release](https://github.com/jakejharris/jspark3/releases/tag/v1.1.0).
+This is the authorized release content for the tagged commit; observed
+publication results are recorded separately by the publisher.
 Weights, checkpoints, and image digests are unchanged; the historical v1.0.0
 benchmark results keep their existing identity and are not remeasured or
 merged with the v1.1 evidence.

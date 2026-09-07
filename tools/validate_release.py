@@ -86,6 +86,7 @@ REQUIRED = [
     "tools/build_hashes.py", "tools/analyze_tail.py", "tools/analyze_sse_pcap.py",
     "tools/validate_live_evidence.py", "tools/test_live_evidence.py", EVIDENCE_PATH,
     "results/evidence/candidate/cadence-v11/CANDIDATE-SHA256SUMS",
+    "tools/test_publication_metadata.py", "huggingface/jspark3/V1.1.0-RELEASE.md",
 ]
 
 # Internal labels, private locations, and machine identity that must not appear anywhere.
@@ -130,11 +131,13 @@ PERMITTED_BOOT_LITERALS = (
     b"boot41/43",                # measured-arm pair named in the installer's provenance comment
 )
 
-# Current release identity: v1.1.0 is staged, not released. The v1.0.0 facts below
-# are the frozen historical record and must remain byte-identical in terminal docs.
+# Authorized release content. Observed remote writes are recorded separately;
+# the v1.0.0 facts below remain the frozen historical record.
 CURRENT_TAG = "v1.1.0"
 CURRENT_VERSION = "1.1.0"
-CURRENT_STATUS = "v1.1.0-staged-not-released"
+CURRENT_STATUS = "v1.1.0-released"
+CURRENT_DATE = "2026-09-07"
+CURRENT_URL = "https://github.com/jakejharris/jspark3/releases/tag/v1.1.0"
 
 # Public prose whose numbers must reconcile with results.json or the structural allowlist.
 PROSE = [
@@ -144,6 +147,7 @@ PROSE = [
     "release/RELEASE-NOTES.md", "release/ANNOUNCEMENT-BLOG.md", "release/ANNOUNCEMENT-SOCIAL.md",
     "recipe/README.md", "recipe/docs/REPRODUCIBILITY.md", "recipe/docs/LIMITATIONS.md",
     "docker/README.md", "results/SUMMARY.md", "FINAL-RELEASE-INDEX.md", "RELEASE-GATE.md",
+    "huggingface/jspark3/V1.1.0-RELEASE.md",
 ]
 # Configuration, identity, and version literals that are not measurements.
 STRUCTURAL_NUMBERS = {
@@ -831,19 +835,25 @@ def check_release_manifest(root: Path, report: Report) -> None:
     live = release.get("live_links", {})
     if release.get("publication_authorized") is not True:
         problems.append("publication_authorized must record the maintainer's approval")
-    # Current version: staged, never a fake released date, status, URL, or tag.
+    # This immutable content becomes effective at publication. It must not
+    # masquerade as an observation that remote writes have already happened.
     if release.get("status") != CURRENT_STATUS:
-        problems.append("status must record v1.1.0 as staged and not released")
-    if release.get("date_released") is not None:
-        problems.append("date_released must be null: v1.1.0 is staged, not released")
+        problems.append("status must identify the authorized v1.1.0 release content")
+    if release.get("date_released") != CURRENT_DATE:
+        problems.append("release date differs from the authorized 2026-09-07 date")
+    record = release.get("publication_record", {})
+    if (record.get("kind") != "release-content" or
+            record.get("effective_at") != "publication of the v1.1.0 tag and release" or
+            "observed_publication" not in record or record["observed_publication"] is not None):
+        problems.append("release content must separate intended metadata from observed publication")
     if live.get("github") != expected["github"]:
         problems.append("the live GitHub link must equal the intended destination")
     if live.get("huggingface") != expected["huggingface"]:
         problems.append("the live Hugging Face link must equal the intended destination")
     if live.get("ghcr_digest") is not None:
         problems.append("GHCR digest must remain null for v1.1.0")
-    if live.get("release_page") is not None:
-        problems.append("release_page must be null: the v1.1.0 tag and release do not exist yet")
+    if live.get("release_page") != CURRENT_URL:
+        problems.append("release destination differs from the authorized tag URL")
     # Historical record: the terminal v1.0.0 facts are frozen, never rewritten.
     historical = release.get("historical", {}).get("v1.0.0", {})
     if historical.get("status") != RELEASE_STATUS:
@@ -864,13 +874,13 @@ def check_release_manifest(root: Path, report: Report) -> None:
     cff = (root / "CITATION.cff").read_text(encoding="utf-8")
     if f'version: {CURRENT_VERSION}' not in cff:
         problems.append("CITATION.cff version differs from the current version")
-    if 'date-released' in cff:
-        problems.append("CITATION.cff must not carry a release date for a staged version")
-    if f'releases/tag/{CURRENT_TAG}' in cff:
-        problems.append("CITATION.cff must not reference a release URL whose tag does not exist yet")
+    if f'date-released: {CURRENT_DATE}' not in cff or f'url: "{CURRENT_URL}"' not in cff:
+        problems.append("CITATION.cff must bind the authorized release date and URL")
     bib = (root / "CITATION.bib").read_text(encoding="utf-8")
     if f'version = {{{CURRENT_VERSION}}}' not in bib:
         problems.append("CITATION.bib version differs from the current version")
+    if f'url     = {{{CURRENT_URL}}}' not in bib:
+        problems.append("CITATION.bib must bind the authorized release URL")
     terminal_docs = (
         "README.md", "RELEASE-GATE.md", "FINAL-RELEASE-INDEX.md", "CHANGELOG.md",
         "docs/INSTALL.md", "release/RELEASE-NOTES.md",
@@ -905,7 +915,9 @@ def check_release_manifest(root: Path, report: Report) -> None:
         "not merged into the public hub main revision": "Hub mirror still described as unmerged",
         "not merged into main": "Hub mirror still described as unmerged",
         "weight transfer is pending": "Hub mirror still described as pending",
-        "releases/tag/v1.1.0": "a v1.1.0 release URL is referenced before the tag exists",
+        "v1.1.0-staged-not-released": "obsolete staged release status retained",
+        "staged for publication": "obsolete staged publication assertion retained",
+        "staged, not released": "obsolete staged release heading retained",
     }
     for relative in state_files:
         lowered = (root / relative).read_text(encoding="utf-8").lower()
@@ -915,7 +927,8 @@ def check_release_manifest(root: Path, report: Report) -> None:
     if problems:
         report.fail("release-manifest", "; ".join(problems))
     else:
-        report.ok("release-manifest", "v1.1.0 staged with no fake date, status, URL, or tag; "
+        report.ok("release-manifest", "authorized v1.1.0 date and tag URL bound as release content, "
+                  "separate from observed remote publication; "
                   "historical v1.0.0 release URL and date frozen; verified mirror on immutable public Hub main; GHCR excluded")
 
 

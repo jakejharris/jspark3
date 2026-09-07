@@ -37,6 +37,11 @@ request-local speculative width controller that falls back wide for batches
 and prefill) and carries the proven long-context kernel fix. The weights here
 are unchanged by all of this.
 
+[v1.1.0 release — 2026-09-07](https://github.com/jakejharris/jspark3/releases/tag/v1.1.0)
+· [Release guide and verified limits](jspark3/V1.1.0-RELEASE.md).
+The GitHub tag selects the release content; this card update is a separate
+documentation commit and changes no checkpoint or tokenizer bytes.
+
 ## Results
 
 The v1.1 effects were measured inside the candidate against its own disabled
@@ -55,7 +60,7 @@ diagnostic only, while the second start's predeclared sham passes.
 
 Conditions, confidence intervals, quality results (including candidate-only
 delivered-answer failures), and every caveat are in the
-[GitHub benchmarks page](https://github.com/jakejharris/jspark3/blob/main/docs/BENCHMARKS.md#v11-cadence-evidence).
+[GitHub benchmarks page](https://github.com/jakejharris/jspark3/blob/v1.1.0/docs/BENCHMARKS.md#v11-cadence-evidence).
 
 ### v1.0.0 — historical benchmarks, unchanged
 
@@ -71,8 +76,8 @@ The code-screen comparison and agent task were run on the JSpark3 fleet
 against the compatibility-adapted current Mia two-Spark recipe. sparkDash
 used the same pinned author protocol as Mia's published figures, on separate
 fleets and dates. See the
-[machine-readable results](https://github.com/jakejharris/jspark3/blob/main/results/results.json)
-and [exact figures, receipts, and caveats](https://github.com/jakejharris/jspark3/blob/main/docs/BENCHMARKS.md#headline-comparisons).
+[machine-readable results](https://github.com/jakejharris/jspark3/blob/v1.1.0/results/results.json)
+and [exact figures, receipts, and caveats](https://github.com/jakejharris/jspark3/blob/v1.1.0/docs/BENCHMARKS.md#headline-comparisons).
 
 ## What you get
 
@@ -103,14 +108,17 @@ device holds residently; the fallback needs more shared memory than a GB10
    that kernel disabled, so the v1.0.0 construction had never actually been
    run past 32,768 tokens by anyone. v1.0.1 moved the disable into the
    transform itself, and v1.1.0 carries it in its transform contract; the
-   transform emits the exact kernel file the measured arms executed. A live
-   single-stream witness above 32,768 tokens on the assembled public build
-   remains a pending release-verification item. No weight byte and no
-   benchmark figure changes. Details
+   transform emits the exact kernel file the measured arms executed.
+   Integrated live verification now passes a pinned single-stream request
+   with 48,957 prompt tokens and 51 completion tokens, returning the codeword
+   verbatim. Candidate `a729583` and host verifier `456a262` are recorded
+   separately in the [release guide](jspark3/V1.1.0-RELEASE.md). The final
+   archive has not been cold-boot tested, and maximum-context capacity
+   remains unverified. No weight byte or historical benchmark figure changes. Details
    and v1.0.0 workarounds: the
-   [install-path warning](https://github.com/jakejharris/jspark3/blob/main/docs/INSTALL.md#known-issue-in-v100-single-stream-requests-past-32768-tokens)
+   [install-path warning](https://github.com/jakejharris/jspark3/blob/v1.1.0/docs/INSTALL.md#known-issue-in-v100-single-stream-requests-past-32768-tokens)
    and the
-   [mechanism and arithmetic](https://github.com/jakejharris/jspark3/blob/main/docs/LIMITATIONS.md#kernel-disable-provenance-and-the-32768-token-single-stream-boundary-v100).
+   [mechanism and arithmetic](https://github.com/jakejharris/jspark3/blob/v1.1.0/docs/LIMITATIONS.md#kernel-disable-provenance-and-the-32768-token-single-stream-boundary-v100).
 2. **Containers launched by hand need `NCCL_IB_SUBNET_AWARE_ROUTING=1`.**
    The variable is new in NCCL 2.30.7 and defaults to off; with it off, NCCL
    pairs NICs by index and routes rank 0 to rank 2 over rank 1's leg, which
@@ -118,11 +126,10 @@ device holds residently; the fallback needs more shared memory than a GB10
    set it; the v1.0.0 documentation never named it, so an operator launching
    containers with their own tooling could not know it existed. The v1.0.1
    install steps list the
-   [full fabric environment](https://github.com/jakejharris/jspark3/blob/main/docs/INSTALL.md#fabric-environment-required-for-hand-launches).
+   [full fabric environment](https://github.com/jakejharris/jspark3/blob/v1.1.0/docs/INSTALL.md#fabric-environment-required-for-hand-launches).
 
-Use the v1.1.0 release from the GitHub repository; the `v1.1.0` tag is
-created at publication, and install commands that name it fail until then
-rather than install older code. Benchmarks are unchanged across the kernel
+Use the [v1.1.0 release](https://github.com/jakejharris/jspark3/releases/tag/v1.1.0)
+from the GitHub repository; install commands select that exact tag. Benchmarks are unchanged across the kernel
 fix: every published number was measured with the kernel disable applied,
 which is the same file the transform now emits.
 
@@ -148,8 +155,8 @@ verified by size and SHA-256 against the pinned manifest, and
 byte for byte before merge into the verified weights-mirror revision. The
 recipe, documentation, and evidence are in the
 [`v1.0.0` GitHub release](https://github.com/jakejharris/jspark3/releases/tag/v1.0.0),
-released 2026-09-02, with v1.0.1 and the staged v1.1.0 (Cadence) following it;
-see the [GitHub releases](https://github.com/jakejharris/jspark3/releases).
+released 2026-09-02, preserved as history. The current recipe is
+[v1.1.0 (Cadence), dated 2026-09-07](https://github.com/jakejharris/jspark3/releases/tag/v1.1.0).
 
 ## Weights
 
@@ -240,7 +247,7 @@ statically and never run on this fleet.
 
 This is v1.0.0-era evidence about the trunk overlay, preserved unchanged; the
 v1.1 additions have their own paired evidence in the
-[GitHub benchmarks page](https://github.com/jakejharris/jspark3/blob/main/docs/BENCHMARKS.md#v11-cadence-evidence).
+[GitHub benchmarks page](https://github.com/jakejharris/jspark3/blob/v1.1.0/docs/BENCHMARKS.md#v11-cadence-evidence).
 
 Separately from the comparison above, the project ran a matched A/B against
 **the matched three-Spark control (same recipe, overlay disabled), an
@@ -313,8 +320,11 @@ the same author protocol but separate fleets and dates; the agent comparison
 uses independent trajectories; no literal FlyCockpit or jetnet reproduction
 and no jetnet run at all; no public accuracy benchmark for this release; no
 authentication on the endpoint; the kernel-file transform change is verified
-but long context past 32,768 tokens still awaits assembled-build live
-validation; and the v1.0.0 recipe
+and integrated live verification passed one request with 48,957 prompt
+tokens and 51 completion tokens; maximum-context capacity, sustained
+concurrency, and final-archive cold-start validation remain unproven.
+The focused witness is a fixed admission workload, not a Pi speed claim;
+interactive performance remains workload-dependent. The v1.0.0 recipe
 carried the two known issues described above, fixed since v1.0.1. The full
 list is in the GitHub repository's `docs/LIMITATIONS.md`.
 
@@ -368,7 +378,7 @@ prose.
   title   = {JSpark3 v1.1 (Cadence): a reproducible three-DGX-Spark serving recipe for GLM-5.3 Flash},
   version = {1.1.0},
   year    = {2026},
-  url     = {https://github.com/jakejharris/jspark3}
+  url     = {https://github.com/jakejharris/jspark3/releases/tag/v1.1.0}
 }
 ```
 

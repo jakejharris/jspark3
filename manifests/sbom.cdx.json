@@ -263,15 +263,15 @@
       },
       {
         "name": "jspark3:release_status",
-        "value": "v1.1.0-staged-not-released"
+        "value": "v1.1.0-released"
       },
       {
         "name": "jspark3:release_date",
-        "value": null
+        "value": "2026-09-07"
       },
       {
         "name": "jspark3:release_url",
-        "value": null
+        "value": "https://github.com/jakejharris/jspark3/releases/tag/v1.1.0"
       },
       {
         "name": "jspark3:hf_main_revision",
@@ -305,7 +305,7 @@
       }
     ]
   },
-  "serialNumber": "urn:uuid:23679e27-8985-522a-bd5d-1182cc84c57e",
+  "serialNumber": "urn:uuid:80007ad0-6b82-5925-bc54-14ad79a75fa9",
   "specVersion": "1.5",
   "version": 1
 }

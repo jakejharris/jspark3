@@ -6,10 +6,10 @@ when an input differs from the pinned one, so read the refusal text rather
 than forcing past it.
 
 Status: [v1.0.0](https://github.com/jakejharris/jspark3/releases/tag/v1.0.0)
-was released 2026-09-02. v1.1.0 (Cadence) is staged for publication: it
-carries the kernel fix in its transform contract plus the two measured
-Cadence serving features, and the `v1.1.0` tag named below is created at
-publication — the command fails until then rather than install older code.
+was released 2026-09-02. The [v1.1.0 (Cadence) release](https://github.com/jakejharris/jspark3/releases/tag/v1.1.0),
+dated 2026-09-07, carries the kernel fix in its transform contract plus the
+two measured Cadence serving features. The command below selects that exact
+tag; it does not fall back to an older release or the default branch.
 The attributed target mirror is public at
 <https://huggingface.co/jakejharris/jspark3> and remotely verified at the
 weights-mirror revision

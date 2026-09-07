@@ -1,8 +1,8 @@
 # Final release index: JSpark3 v1.0.0 (tagged public release)
 
 > Historical record. This page is the terminal v1.0.0 release receipt,
-> preserved unchanged. The current release state — v1.1.0 (Cadence), staged
-> for publication — is tracked in [RELEASE-GATE.md](RELEASE-GATE.md) and the
+> preserved unchanged. The current release content — v1.1.0 (Cadence), dated
+> 2026-09-07 — is tracked in [RELEASE-GATE.md](RELEASE-GATE.md) and the
 > [changelog](CHANGELOG.md).
 
 This is the receipt for the terminal v1.0.0 release state: what surfaces exist,

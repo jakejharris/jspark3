@@ -1,10 +1,11 @@
 # JSpark3 release notes
 
-## DRAFT: v1.1.0 (Cadence) — staged, not released
+## v1.1.0 (Cadence) — 2026-09-07
 
-Status: staged for publication; the `v1.1.0` tag and GitHub release do not
-exist yet and nothing below is claimed as released. The v1.0.0 notes below
-are final and historical.
+[GitHub release](https://github.com/jakejharris/jspark3/releases/tag/v1.1.0).
+The sealed candidate passed final review. These are the authorized release
+notes for the tagged commit; observed publication results are recorded
+separately. The v1.0.0 notes below are final and historical.
 
 **Summary.** v1.1 — release name **Cadence** — keeps the entire v1.0.1
 construction and adds two measured single-stream serving features to the
@@ -45,8 +46,8 @@ was 73.8718 tok/s for its fixed admission workload only; Pi slowdown remains
 unresolved, and E3 is separate. [Sanitized evidence and provenance](../results/evidence/candidate/cadence-v11/README.md#integrated-live-verification)
 retain the earlier verifier failures and explain recipe equivalence. The
 final archive has not been cold-boot tested; maximum context, sustained
-concurrency, and independent-fleet reproduction remain unverified. Final
-review and publication decisions remain open. v1.1 ships one mandatory,
+concurrency, and independent-fleet reproduction remain unverified. Publication
+is authorized following final review. v1.1 ships one mandatory,
 measured Cadence construction: the recipe and its verifier carry no toggle
 and no opt-in variant, because a second, never-measured path would be
 exactly the kind of unverified claim this project refuses to ship. This is a
