@@ -5,6 +5,32 @@ publishing this announcement is a separate maintainer action.
 
 ---
 
+## DRAFT v1.1.0 (Cadence) section — staged, not released
+
+JSpark3 v1.1 — release name **Cadence** — keeps everything v1.0.1 served and
+adds two measured single-stream features to the recipe: an INT8 shadow for
+the QKV projections on small-batch pure decode, and a request-local
+speculative width controller that narrows the DFlash2 draft from seven to
+three tokens on high acceptance. Two or more concurrent requests, or
+prefill, fall back to the wide path; the drafter, indexer workspace, and
+sampler are the stock ones.
+
+What the paired measurements show, across two independent serving starts:
+prose +16.18% and +19.17%, structured count +7.66% and +7.61%, 95% CIs
+excluding zero. The code gain did not replicate (second interval spans
+zero). The first start's sham control failed its predeclared margin, so
+those figures are diagnostic only. A quality battery showed candidate-only
+delivered-answer failures and is inconclusive on semantic parity.
+
+What we are not claiming: no global or cross-recipe speed ranking, no
+whole-arm causality, and no default-service switch. A live single-stream
+witness above 32,768 tokens on the assembled public build is still pending,
+and the corrected public verifier awaits live confirmation; whether Cadence
+becomes the default recipe is a separate maintainer decision made after that
+proof. The v1.0.0 announcement below is unchanged history.
+
+---
+
 GLM-5.3 Flash runs well on two DGX Sparks; several community recipes prove
 it. We wanted to know what a third Spark buys when it is used as a full
 tensor-parallel and expert-parallel peer rather than a spare, and we wanted

@@ -1060,10 +1060,16 @@ def b45_identity_argv(identity: str) -> list[str]:
         "mods=sorted(p.name for p in b45.iterdir()) if b45.is_dir() else []; "
         "out=pathlib.Path('/tmp/b45'); "
         "out_entries=sorted(p.relative_to(out).as_posix() for p in out.rglob('*')) if out.is_dir() else []; "
+        "graphs=out/'graphs'; "
+        "rows=[json.loads(line) for p in sorted(graphs.glob('captures-*.jsonl')) for line in p.read_text().splitlines() if line.strip()] if graphs.is_dir() else []; "
+        "dots_intact=all(isinstance(r.get('dot'),str) and (graphs/r['dot']).is_file() and h(graphs/r['dot'])==r.get('dot_sha256') for r in rows); "
+        "serving=sum(1 for p in graphs.glob('graph-serving-*.dot') if p.is_file() and p.stat().st_size>0) if graphs.is_dir() else 0; "
         "print(json.dumps({'modules':{m:h(b45/m) for m in mods},"
         "'pth_sha256':h(site/'zzz_b45.pth'),"
         "'kda_original_sha256':h(site/'vllm/model_executor/layers/quantization/kda_mixed_output_blocks.py'),"
-        "'b45_out_entries':out_entries},sort_keys=True))"
+        "'b45_out_entries':out_entries,"
+        "'capture_receipts':len(rows),'capture_dots_intact':bool(dots_intact),"
+        "'serving_graph_dumps':serving},sort_keys=True))"
     )
     return ["docker", "exec", identity, "python3", "-c", code]
 
@@ -1073,17 +1079,27 @@ def b45_identity(values: dict[str, str], binding: dict) -> dict:
     identity = binding["container_id"]
     value = strict_object(remote(values, rank, b45_identity_argv(identity)).stdout,
                           f"rank{rank} cadence module identity")
-    if (set(value) != {"modules", "pth_sha256", "kda_original_sha256", "b45_out_entries"} or
+    if (set(value) != CADENCE_IDENTITY_KEYS or
             value["modules"] != B45_MODULES or value["pth_sha256"] != B45_PTH_SHA256 or
             value["kda_original_sha256"] != B45_KDA_ORIGINAL_SHA256):
         raise Refusal(f"rank{rank} cadence module install drift")
     receipts = value["b45_out_entries"]
-    if not receipts or not any(name.startswith("activation-") for name in receipts):
+    # The pinned B4 writer emits under B5_OUT/graphs (write() -> OUT = /tmp/b45/graphs),
+    # so entries are 'graphs/activation-<pid>.jsonl'; an unqualified prefix can never match.
+    if not receipts or not any(name.startswith("graphs/activation-") for name in receipts):
         raise Refusal(f"rank{rank} cadence execution receipts absent under B5_OUT: "
                       "module file presence alone is not execution proof")
+    if not cadence_capture_evidence_ok(value):
+        raise Refusal(f"rank{rank} cadence capture evidence missing or drifted: the byte-pinned "
+                      "B4 capture must leave hash-matching capture receipts for the full bank "
+                      f"set (>= {CADENCE_CAPTURE_RECEIPTS_MIN}) and >= {CADENCE_SERVING_DUMPS_MIN} "
+                      "non-empty serving graph dumps")
     return {"modules_verified": len(value["modules"]),
             "kda_original_untouched": True,
-            "execution_receipts": len(receipts)}
+            "execution_receipts": len(receipts),
+            "capture_receipts": value["capture_receipts"],
+            "capture_dots_intact": value["capture_dots_intact"],
+            "serving_graph_dumps": value["serving_graph_dumps"]}
 
 
 def runtime_identity(values: dict[str, str], binding: dict, manifest: dict) -> dict:
@@ -1245,6 +1261,63 @@ def long_context_witness_argv(values: dict[str, str], base: str) -> list[str]:
     ]
 
 
+# The pinned B4 module replaces ModelCudaGraphManager.capture with custom banked
+# capture that renders no stock progress bar: the archived measured-arm startup
+# log (second serving start, rank0; same six module bytes and image digest)
+# contains the dflash2 draft bar completing 5/5 and the shard/startup/receipt
+# lines, but zero occurrences of 'Capturing CUDA graphs (FULL)'. The stock bar
+# gate was therefore a guaranteed refusal for a healthy Cadence server. Capture
+# proof now comes from what the pinned path actually writes under B5_OUT/graphs:
+# captures-*.jsonl receipts whose recorded graph-dump hashes match the
+# on-container dump bytes, plus non-empty graph-serving-*.dot dumps for the
+# full bank set, required on every rank (minimums below the CADENCE_IDENTITY_KEYS).
+CADENCE_IDENTITY_KEYS = {"modules", "pth_sha256", "kda_original_sha256", "b45_out_entries",
+                         "capture_receipts", "capture_dots_intact", "serving_graph_dumps"}
+
+# Full-bank capture completeness of the byte-pinned path, per rank, at the moment
+# verify runs (startup capture only; nothing else writes captures-*.jsonl):
+# the pinned profile.json capture sizes give 4 base FULL family descriptors
+# (16/24/32/48 tokens) plus the mandatory (4,4,1)/(8,8,1) pair captured into BOTH
+# banks -> 8 serving-phase captures, each with its non-empty graph-serving-*.dot
+# dump, and the same set again in the profile phase -> 16 receipt rows.
+# Measured ground truth: the boot41/43 measured-arm startup receipts per rank
+# are exactly 16 rows (8 serving + 8 profile) and 8 non-empty serving dumps.
+CADENCE_CAPTURE_RECEIPTS_MIN = 16
+CADENCE_SERVING_DUMPS_MIN = 8
+
+
+def cadence_capture_evidence_ok(value: dict) -> bool:
+    return (value.get("capture_dots_intact") is True and
+            isinstance(value.get("capture_receipts"), int) and
+            value["capture_receipts"] >= CADENCE_CAPTURE_RECEIPTS_MIN and
+            isinstance(value.get("serving_graph_dumps"), int) and
+            value["serving_graph_dumps"] >= CADENCE_SERVING_DUMPS_MIN)
+
+
+def cadence_capture_evidence(runtime: list[dict]) -> bool:
+    return bool(runtime) and all(
+        cadence_capture_evidence_ok(row.get("cadence_b45", {})) for row in runtime)
+
+
+def load_gate(logs: str, runtime: list[dict]) -> dict:
+    """Rank0 load/graph/cadence receipt gate for verify.
+
+    The stock 'Capturing CUDA graphs (FULL) ... 5/5' target bar is deliberately
+    not required: the byte-pinned B4 capture path cannot render it. It is
+    replaced by per-rank Cadence capture evidence; the dflash2 draft bar, the
+    shard-progress bars, the startup line, and the B5 calibration receipt are
+    all still produced by the pinned path and stay required.
+    """
+    return {
+        "target_shards_120": progress_complete(logs, "Loading safetensors checkpoint shards", 120),
+        "draft_shards_1": progress_complete(logs, "Loading safetensors checkpoint shards", 1),
+        "cadence_capture_evidence": cadence_capture_evidence(runtime),
+        "draft_graphs_5": progress_complete(logs, "Capturing dflash2 CUDA graphs (FULL)", 5),
+        "startup_complete": "Application startup complete." in logs,
+        "b5_controller_calibrated": B5_RECEIPT_MARKER in ANSI_RE.sub("", logs),
+    }
+
+
 def _verify_bound(
     args: argparse.Namespace, values: dict[str, str], manifest: dict
 ) -> None:
@@ -1267,16 +1340,9 @@ def _verify_bound(
     log_process = remote(values, 0, ["docker", "logs", rank0["container_id"]])
     logs = log_process.stdout + log_process.stderr
     atomic_text(args.log_output, logs)
-    load = {
-        "target_shards_120": progress_complete(logs, "Loading safetensors checkpoint shards", 120),
-        "draft_shards_1": progress_complete(logs, "Loading safetensors checkpoint shards", 1),
-        "target_graphs_5": progress_complete(logs, "Capturing CUDA graphs (FULL)", 5),
-        "draft_graphs_5": progress_complete(logs, "Capturing dflash2 CUDA graphs (FULL)", 5),
-        "startup_complete": "Application startup complete." in logs,
-        "b5_controller_calibrated": B5_RECEIPT_MARKER in ANSI_RE.sub("", logs),
-    }
+    load = load_gate(logs, runtime)
     if not all(load.values()):
-        raise Refusal("rank0 load/graph/cadence receipt gate failed")
+        raise Refusal("load/graph/cadence receipt gate failed")
     base = f"http://{values['JSPARK_MASTER_ADDR']}:{values['JSPARK_API_PORT']}"
     with urllib.request.urlopen(base + "/health", timeout=10) as health:
         if health.status != 200:

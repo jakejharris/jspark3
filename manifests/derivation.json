@@ -133,7 +133,7 @@
       "changed_lines_scope": "measured-to-public rename-only delta through v1.0.1; v1.1.0 adds the Cadence payload/identity/verify wiring on top, which is not counted in changed_lines",
       "measured_sha256": "4b30987138b8382bb716091e8f9bf68e56a5f97ea6a8b382ec39734004f6a654",
       "public": "scripts/fleetctl.py",
-      "public_sha256": "ec9b841acf4a4dabae9cd5b4ea648bae83ed22c6507489774aff059c57e14cee"
+      "public_sha256": "c67cdc60f90d9580e20ef9071c10bc2984af611d5bb71d4a1b921d66ac09a304"
     },
     {
       "changed_lines": 4,

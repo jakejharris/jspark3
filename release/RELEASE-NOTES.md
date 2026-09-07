@@ -1,3 +1,51 @@
+# JSpark3 release notes
+
+## DRAFT: v1.1.0 (Cadence) — staged, not released
+
+Status: staged for publication; the `v1.1.0` tag and GitHub release do not
+exist yet and nothing below is claimed as released. The v1.0.0 notes below
+are final and historical.
+
+**Summary.** v1.1 — release name **Cadence** — keeps the entire v1.0.1
+construction and adds two measured single-stream serving features to the
+recipe: a group-128 INT8 shadow for the QKV projections on small-batch pure
+decode, and a request-local speculative width controller that narrows the
+DFlash2 draft from seven to three tokens on high acceptance. Batches of two
+or more requests and prefill fall back to the wide path. The stock indexer
+workspace, the original drafter, and the sampler are retained. Weights,
+checkpoints, and image digests are unchanged.
+
+**Measured scope (paired, single-stream, two independent serving starts).**
+Prose +16.18% and +19.17%; structured count +7.66% and +7.61% (95% CIs
+exclude zero). Code +9.71% then +3.23% with the second interval spanning
+zero, so the paired code gain is not replicated. The first start's sham
+control failed its predeclared resolution margin, so first-start figures are
+diagnostic only; the second start's predeclared sham passes. A fixed quality
+battery showed candidate-only delivered-answer failures and stays
+inconclusive on population-level semantic parity. A short-prompt concurrency
+burst is finite-burst evidence and certifies neither sustained service nor
+large-context capacity. Machine-readable source of record:
+`results/evidence/candidate/cadence-v11/CLAIMS.json`.
+
+**Verifier hardening (F-1).** The public verifier no longer requires the
+stock `Capturing CUDA graphs (FULL)` progress bar, which the byte-pinned
+Cadence capture path never renders. It now requires, on every rank, the
+pinned path's full-bank capture evidence: at least 16 capture receipts whose
+recorded graph-dump SHA-256 matches the on-container dump bytes, and at
+least 8 non-empty serving graph dumps — the per-rank construction measured
+in the archived measured-arm startup receipts. All other runtime identity,
+load, memory, witness, and arithmetic gates are retained.
+
+**Pending before publication.** A live single-stream witness above 32,768
+tokens on the assembled public build has not run; the F-1-corrected verifier
+itself awaits live confirmation on hardware. No default-service decision is
+claimed: whether Cadence serves by default or remains an opt-in recipe is a
+separate maintainer choice, made only after that live proof. No global or
+cross-recipe speed ranking is claimed, and no figure on this page is
+recomputed from any post-hoc repeat.
+
+---
+
 # JSpark3 v1.0.0
 
 Released 2026-09-02:

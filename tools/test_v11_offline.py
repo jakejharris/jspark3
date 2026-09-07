@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """Offline core checks for the v1.1 Cadence wiring and the long-context witness.
 
-Covers exactly the core pass: measured module bytes, the fail-closed installer
-states (fresh / already-applied / refusals), the launch payload wiring in
-fleetctl and container_entry.sh, and the long-context witness gates. No hosts,
-no containers, no network beyond a guaranteed-refused localhost probe.
+Covers the core pass (measured module bytes, the fail-closed installer states
+(fresh / already-applied / refusals), the launch payload wiring in fleetctl and
+container_entry.sh, and the long-context witness gates) plus the F-1 verifier
+capture-gate fix (Cadence capture evidence replaces the absent stock bar).
+No hosts, no containers, no network beyond a guaranteed-refused localhost probe.
 """
 
 from __future__ import annotations
@@ -216,6 +217,75 @@ def check_witness() -> None:
     print("PASS witness determinism, pinned payload, boundary/multi-decode/needle gates, visible refusal")
 
 
+def check_verify_capture_gate() -> None:
+    """F-1 regression: verify's capture gate must accept a valid Cadence startup
+    without the stock 'Capturing CUDA graphs (FULL) 5/5' bar (the byte-pinned B4
+    capture cannot render it), while still refusing missing/drifted Cadence
+    capture evidence and keeping every unrelated gate literal enforced.
+    Log fixture lines replicate the archived measured-arm startup log
+    (second serving start, rank0): dflash2 bar completes 5/5, the stock target
+    bar never appears, shard bars and the B5 receipt are present. The evidence
+    thresholds equal the pinned path's full-bank construction (16 receipts,
+    8 serving dumps per rank, measured in the boot41/43 measured-arm startup
+    receipts); a partial bank set or partial serving dumps must be refused.
+    """
+    logs = "\n".join([
+        "(EngineCore pid=1) Loading safetensors checkpoint shards: 100%|120/120 [01:10<00:00, 12.1it/s]",
+        "(EngineCore pid=1) Loading safetensors checkpoint shards: 100%|1/1 [00:00<00:00, 3.2it/s]",
+        "(Worker_TP0_EP0 pid=1866) Capturing dflash2 CUDA graphs (FULL):   0%|  0/5 [00:00<?, ?it/s]",
+        "(Worker_TP0_EP0 pid=1866) Capturing dflash2 CUDA graphs (FULL): 100%|5/5 [00:32<00:00, 6.47s/it]",
+        "Application startup complete.",
+        "B5_PREFIX_VERIFY_RECEIPT rank=0 T4_seed_ms=74.300 T7_seed_ms=92.530 narrow_width=3",
+    ])
+    expect("Capturing CUDA graphs (FULL)" not in logs, "fixture must be a valid Cadence log without the stock target bar")
+    expect(not fleetctl.progress_complete(logs, "Capturing CUDA graphs (FULL)", 5),
+           "the absent stock bar must not satisfy anything")
+
+    def rank_row(capture_ok=True, receipts=16, serving=8):
+        return {"rank": 0, "cadence_b45": {"modules_verified": 5, "kda_original_untouched": True,
+                "execution_receipts": 9, "capture_receipts": receipts if capture_ok else 0,
+                "capture_dots_intact": capture_ok, "serving_graph_dumps": serving}}
+
+    valid = fleetctl.load_gate(logs, [rank_row() for _ in range(3)])
+    expect(all(valid.values()) and valid["cadence_capture_evidence"] and valid["draft_graphs_5"],
+           f"a valid Cadence startup must pass the full load gate: {valid}")
+
+    exec_view = {"modules": {}, "pth_sha256": "x", "kda_original_sha256": "y",
+                 "b45_out_entries": ["graphs/activation-1.jsonl"],
+                 "capture_receipts": 16, "capture_dots_intact": True, "serving_graph_dumps": 8}
+    expect(fleetctl.cadence_capture_evidence_ok(exec_view), "a healthy in-container capture report must pass")
+    for drift in ({"capture_receipts": 0}, {"capture_dots_intact": False},
+                  {"serving_graph_dumps": 0}, {"capture_receipts": "12"},
+                  {"capture_dots_intact": None}, {"capture_receipts": 15},
+                  {"serving_graph_dumps": 7}):
+        expect(not fleetctl.cadence_capture_evidence_ok({**exec_view, **drift}),
+               f"drifted capture evidence must fail: {drift}")
+
+    for name, rows in (("missing receipts", [rank_row(capture_ok=False)] * 3),
+                       ("hash-drifted dumps", [rank_row(capture_ok=False, receipts=16)] * 3),
+                       ("no serving dumps", [rank_row(serving=0)] * 3),
+                       ("incomplete receipts 15/16", [rank_row(receipts=15)] * 3),
+                       ("incomplete serving dumps 7/8", [rank_row(serving=7)] * 3),
+                       ("cadence block absent", [{"rank": r} for r in range(3)]),
+                       ("empty runtime", [])):
+        gate = fleetctl.load_gate(logs, rows)
+        expect(not gate["cadence_capture_evidence"] and not all(gate.values()),
+               f"{name} must fail the capture gate")
+
+    for needle, key in (("Application startup complete.", "startup_complete"),
+                        ("Capturing dflash2 CUDA graphs (FULL)", "draft_graphs_5"),
+                        ("B5_PREFIX_VERIFY_RECEIPT", "b5_controller_calibrated"),
+                        ("120/120", "target_shards_120"),
+                        ("1/1", "draft_shards_1")):
+        reduced = fleetctl.load_gate(logs.replace(needle, ""), [rank_row() for _ in range(3)])
+        expect(reduced[key] is False, f"removing {needle!r} must fail {key}")
+        expect(reduced["cadence_capture_evidence"] is True,
+               f"removing {needle!r} must not touch the capture evidence condition")
+    expect(not fleetctl.progress_complete("Capturing dflash2 CUDA graphs (FULL):  60%|3/5", "Capturing dflash2 CUDA graphs (FULL)", 5),
+           "an incomplete progress bar must stay refused")
+    print("PASS verify-capture-gate Cadence evidence replaces the absent stock bar; drift and unrelated gates still refused")
+
+
 def check_dry_runs() -> None:
     for script, args, needles in (
         ("start", ["--dry-run"], ["B45_COMBINED=1", "jspark3.b45=boot41", "--max-logprobs -1"]),
@@ -300,7 +370,8 @@ def check_validator_boundaries() -> None:
 
 def main() -> int:
     checks = (check_module_bytes, check_installer_states, check_fleetctl_wiring,
-              check_entry_script, check_witness, check_dry_runs, check_validator_boundaries)
+              check_entry_script, check_witness, check_verify_capture_gate, check_dry_runs,
+              check_validator_boundaries)
     try:
         for check in checks:
             check()
