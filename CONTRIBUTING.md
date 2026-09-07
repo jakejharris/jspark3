@@ -13,8 +13,10 @@ when they keep that property.
   credentials, or container identities. `tools/validate_release.py` refuses
   them; so should you.
 - A performance claim needs a receipt. Add the sanitized machine-readable
-  evidence under `results/evidence/`, regenerate `results/results.json`, and
-  quote only values that exist in its `display` map.
+  evidence under `results/evidence/` and quote only validated `display` values.
+  Keep historical `results/results.json` and sealed release evidence unchanged;
+  later measurements get a separate export and receipt-derived validation, as
+  in `tools/validate_c4_followup.py`. Run the full validator after authoring.
 - Keep upstream credit intact. `THIRD_PARTY_NOTICES.md` and
   `REQUIRED_ATTRIBUTION.md` are byte-stable; changes to them are a
   maintainer-only, legal-review item.

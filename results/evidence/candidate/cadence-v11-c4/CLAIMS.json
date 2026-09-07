@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "release": "1.1.0",
+  "release_commit": "bde15cf769203cf9c387720810f0cc09dea55c66",
+  "record": "post-release original-client C4 follow-up, 2026-09-07",
+  "author_commit": "e93fc87d54c8699e98b63a764ab260bf9d446c52",
+  "method": "Three ordered repetitions per series on the retained release runtime; original warmup then C1, C2, C4; scored code cap 400. Aggregate = sum(completion_tokens - 1) / (latest last-visible - earliest first-visible). Headline is median of all three original-client C4 aggregates. Per-stream value is independently the median of three wave means, not aggregate divided by four.",
+  "limits": "Original payloads byte-identical to historical. Instrumented series adds return_token_ids and remains separate. Different dates, starts and uncontrolled cache/load histories; no causal release comparison, equivalence, quality or sustained-capacity certification. Historical v1.0.0 records and sealed Cadence evidence remain unchanged.",
+  "series": {
+    "original": {
+      "receipt": "ORIGINAL-RESULTS.json",
+      "sha256": "b8432fe15e1f954e44c2a6e489251ef7aef92aff7afee93753ddc94d0461fba8",
+      "aggregate_decode_tok_s": [
+        221.73,
+        223.14,
+        248.61
+      ],
+      "mean_per_stream_decode_tok_s": [
+        56.04,
+        56.59,
+        62.17
+      ],
+      "median_aggregate_decode_tok_s": 223.14,
+      "median_mean_per_stream_decode_tok_s": 56.59
+    },
+    "instrumented": {
+      "receipt": "INSTRUMENTED-RESULTS.json",
+      "sha256": "f0a7100f269bf437e4aae780d6a8ed04dd3e14a882e9dc0caa082341a93d24c5",
+      "aggregate_decode_tok_s": [
+        233.59,
+        231.25,
+        231.9
+      ],
+      "mean_per_stream_decode_tok_s": [
+        58.99,
+        58.71,
+        58.56
+      ],
+      "median_aggregate_decode_tok_s": 231.9,
+      "median_mean_per_stream_decode_tok_s": 58.71
+    }
+  },
+  "display": {
+    "v11.c4.original.aggregate_decode_tok_s.r1": "221.73",
+    "v11.c4.original.aggregate_decode_tok_s.r2": "223.14",
+    "v11.c4.original.aggregate_decode_tok_s.r3": "248.61",
+    "v11.c4.original.aggregate_decode_tok_s.median": "223.14",
+    "v11.c4.original.mean_per_stream_decode_tok_s.r1": "56.04",
+    "v11.c4.original.mean_per_stream_decode_tok_s.r2": "56.59",
+    "v11.c4.original.mean_per_stream_decode_tok_s.r3": "62.17",
+    "v11.c4.original.mean_per_stream_decode_tok_s.median": "56.59",
+    "v11.c4.instrumented.aggregate_decode_tok_s.r1": "233.59",
+    "v11.c4.instrumented.aggregate_decode_tok_s.r2": "231.25",
+    "v11.c4.instrumented.aggregate_decode_tok_s.r3": "231.90",
+    "v11.c4.instrumented.aggregate_decode_tok_s.median": "231.90",
+    "v11.c4.instrumented.mean_per_stream_decode_tok_s.r1": "58.99",
+    "v11.c4.instrumented.mean_per_stream_decode_tok_s.r2": "58.71",
+    "v11.c4.instrumented.mean_per_stream_decode_tok_s.r3": "58.56",
+    "v11.c4.instrumented.mean_per_stream_decode_tok_s.median": "58.71",
+    "historical.prefill.rounded": "1,234"
+  },
+  "display_class": {
+    "v11.c4.original.aggregate_decode_tok_s.r1": "candidate_v11_descriptive",
+    "v11.c4.original.aggregate_decode_tok_s.r2": "candidate_v11_descriptive",
+    "v11.c4.original.aggregate_decode_tok_s.r3": "candidate_v11_descriptive",
+    "v11.c4.original.aggregate_decode_tok_s.median": "candidate_v11_descriptive",
+    "v11.c4.original.mean_per_stream_decode_tok_s.r1": "candidate_v11_descriptive",
+    "v11.c4.original.mean_per_stream_decode_tok_s.r2": "candidate_v11_descriptive",
+    "v11.c4.original.mean_per_stream_decode_tok_s.r3": "candidate_v11_descriptive",
+    "v11.c4.original.mean_per_stream_decode_tok_s.median": "candidate_v11_descriptive",
+    "v11.c4.instrumented.aggregate_decode_tok_s.r1": "candidate_v11_descriptive",
+    "v11.c4.instrumented.aggregate_decode_tok_s.r2": "candidate_v11_descriptive",
+    "v11.c4.instrumented.aggregate_decode_tok_s.r3": "candidate_v11_descriptive",
+    "v11.c4.instrumented.aggregate_decode_tok_s.median": "candidate_v11_descriptive",
+    "v11.c4.instrumented.mean_per_stream_decode_tok_s.r1": "candidate_v11_descriptive",
+    "v11.c4.instrumented.mean_per_stream_decode_tok_s.r2": "candidate_v11_descriptive",
+    "v11.c4.instrumented.mean_per_stream_decode_tok_s.r3": "candidate_v11_descriptive",
+    "v11.c4.instrumented.mean_per_stream_decode_tok_s.median": "candidate_v11_descriptive",
+    "historical.prefill.rounded": "internal_ablation"
+  },
+  "historical_prefill_source": "results/results.json#/prefill_matched/candidate_prefill_tok_s"
+}

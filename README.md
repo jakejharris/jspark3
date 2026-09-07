@@ -18,32 +18,32 @@ quantizes nothing, and changes no checkpoint weight bytes.
 
 ## Results
 
-**Cadence's paired effects compare its candidate route with its own disabled
-reference route, not with published v1.0.0 benchmarks.** Two independent serving
-starts used the same paired design. The first start's sham control failed;
-those figures are diagnostic only. The second start's predeclared sham passes.
+| **68.77 tok/s** | **87.67 tok/s** | **223.14 tok/s** | **1,234 tok/s** |
+|---|---|---|---|
+| Code decode, v1.1 | Structured decode, v1.1 | Four-stream aggregate, v1.1 | Prefill, historical v1.0.0 |
+| Single stream | Code 68.77 / prose 34.64 | 56.59 per stream | 113,908-token prompt |
 
-| Single-stream decode | First start (diagnostic) | Second start |
-|---|---:|---:|
-| Prose | +16.18% | +19.17% |
-| Structured count | +7.66% | +7.61% |
-| Code | +9.71% | +3.23%; interval spans zero |
+Single-stream figures are descriptive medians of three battery medians;
+C4 is the median of three original sparkDash client waves. Prefill is one
+historical prompt/TTFT measurement, with no comparable v1.1 rerun.
+[Sources, estimators and all repeats](docs/BENCHMARKS.md#headline-stat-bases)
+keep these distinct from paired effects and selected demo takes.
 
-The prose and count intervals exclude zero; **code has no replicated gain**.
-Batches and prefill fall back to the wide path. The quality battery includes
-candidate-only failures, and neither semantic parity nor sustained concurrency
-is certified. Read the [conditions, confidence intervals and quality results](docs/BENCHMARKS.md#v11-cadence-evidence)
-and [Cadence limits](docs/LIMITATIONS.md#v11-cadence-limits).
+Cadence's second-start paired effects were **+19.17% prose** and **+7.61%
+structured count** against its own disabled reference route. **Code has no
+replicated gain**: +3.23%, with an interval spanning zero. The first start's
+sham failed, making its effects diagnostic only; the second start's
+predeclared sham passes. Batches and prefill use the wide path. The quality
+battery has candidate-only failures; semantic parity and sustained concurrency
+remain uncertified. [Paired evidence](docs/BENCHMARKS.md#v11-cadence-evidence)
+and [limitations](docs/LIMITATIONS.md#v11-cadence-limits) retain every result.
 
-Historical v1.0.0 results remain separate: single-stream code reached
-**66.3 tok/s versus 44.6** on the compatibility-adapted two-Spark recipe;
-sparkDash four-stream aggregate decode reached **251 tok/s versus 146.5**.
-The code screen ran on this fleet; sparkDash used the same pinned author
-protocol on separate fleets and dates. These are different workloads and
-estimators from the Cadence pairing, not a release-to-release comparison.
-[Exact figures, agent-task comparisons and receipts](docs/BENCHMARKS.md#headline-comparisons-v100-historical-record)
-include every mismatch. [Historical regressions and missed gates](docs/LIMITATIONS.md#measured-regressions-and-misses-v100-evidence)
-remain part of the record.
+Historical v1.0.0 code was **1.49× as fast: 66.3 vs 44.6 tok/s** on the
+compatibility-adapted two-Spark screen. Its sparkDash C4 result was
+**251 tok/s vs 146.5** on separate fleets and dates. These are historical
+comparisons, not current speedup claims. [Exact figures and caveats](docs/BENCHMARKS.md#headline-comparisons-v100-historical-record)
+and [regressions and missed gates](docs/LIMITATIONS.md#measured-regressions-and-misses-v100-evidence)
+remain published.
 
 ## Prerequisites
 
