@@ -70,7 +70,9 @@ def exact_gpu_inventory(text: str) -> tuple[str, str]:
 def exact_system_product(values: list[str]) -> str:
     normalized = {re.sub(r"\s+", " ", value.replace("\x00", " ")).strip()
                   for value in values if value.strip("\x00 \t\r\n")}
-    aliases = {"NVIDIA DGX Spark", "DGX Spark"}
+    # Exact validated spellings only: the DMI reports the underscore form
+    # NVIDIA_DGX_Spark; no fuzzy punctuation normalization is applied.
+    aliases = {"NVIDIA DGX Spark", "DGX Spark", "NVIDIA_DGX_Spark"}
     if not normalized or not normalized <= aliases:
         raise Refusal("system product is not exactly NVIDIA DGX Spark")
     return "NVIDIA DGX Spark"

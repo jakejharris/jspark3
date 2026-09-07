@@ -27,6 +27,7 @@ sys.path.insert(0, str(SCRIPTS))
 import fleetctl  # noqa: E402
 import install_b45_modules as installer  # noqa: E402
 import long_context_witness as witness  # noqa: E402
+import remote_preflight  # noqa: E402
 
 # Independent copy of the measured release bundle's module-hashes.json.
 MEASURED = {
@@ -368,10 +369,41 @@ def check_validator_boundaries() -> None:
     print("PASS validator-boundaries git-pointer exclusion, .pth policy, narrow boot-label permission")
 
 
+def check_dmi_product_alias() -> None:
+    """The DMI underscore spelling NVIDIA_DGX_Spark must be accepted exactly,
+    while unrelated or spoofed near-miss spellings stay refused. No fuzzy
+    punctuation normalization may creep in."""
+    accept = remote_preflight.exact_system_product
+    for values in (["NVIDIA_DGX_Spark"],                       # live DMI underscore form
+                   ["NVIDIA_DGX_Spark\x00"],                  # device-tree trailing NUL
+                   ["NVIDIA DGX Spark"], ["DGX Spark"],        # prior spellings still valid
+                   [" DGX Spark\n"], ["NVIDIA  DGX  Spark"],   # whitespace forms still valid
+                   ["NVIDIA DGX Spark", "NVIDIA_DGX_Spark"]):  # dmi + devicetree mix
+        expect(accept(values) == "NVIDIA DGX Spark", f"alias must accept {values!r}")
+    for values in (["nvidia_dgx_spark"],                       # case
+                   ["NVIDIA_DGX_Spar"], ["NVIDIA_DGX_Sparkk"],
+                   ["NVIDIA_DGX_Spark_pro"], ["xNVIDIA_DGX_Spark"],
+                   ["NVIDIA-DGX-Spark"], ["NVIDIA DGX-Spark"],  # punctuation near-misses
+                   ["DGXSPARK"], ["DGX Spark dgx"], ["Fake DGX Spark"],
+                   ["NVIDIA DGX Spark\nextra"],
+                   [], [""], ["\x00"], ["GB10 devboard"]):      # empty / unrelated
+        try:
+            accept(values)
+        except remote_preflight.Refusal:
+            pass
+        else:
+            raise AssertionError(f"near-miss product must refuse: {values!r}")
+    # Canonical return value keeps the fleetctl receipt label byte-identical
+    # (fleetctl.expected_preflight_row emits the literal "NVIDIA DGX Spark").
+    expect(accept(["NVIDIA_DGX_Spark"]) == "NVIDIA DGX Spark",
+           "canonical system label must stay aligned with the receipt expectation")
+    print("PASS dmi-product-alias exact underscore spelling accepted, near-misses refused")
+
+
 def main() -> int:
     checks = (check_module_bytes, check_installer_states, check_fleetctl_wiring,
               check_entry_script, check_witness, check_verify_capture_gate, check_dry_runs,
-              check_validator_boundaries)
+              check_dmi_product_alias, check_validator_boundaries)
     try:
         for check in checks:
             check()

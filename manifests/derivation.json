@@ -169,7 +169,7 @@
       "changed_lines": 6,
       "measured_sha256": "94c1dc0b5f1c153f6132ac101d1fa9308ca3d3574f4eebb14f50d1ca906fb0ed",
       "public": "scripts/remote_preflight.py",
-      "public_sha256": "b353d0f9719589bc267e357e42b975d4b20f95bd1e890010661d38ce3926d944"
+      "public_sha256": "54b3f81599b85827c7b8561bd96eb0ea4c51afb635e2659032bd1004735f2a9d"
     },
     {
       "changed_lines": 2,
