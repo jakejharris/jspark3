@@ -31,6 +31,9 @@ import sys
 import tempfile
 import xml.dom.minidom
 
+# Validation must not create the compiled caches that inventory rejects.
+# Set this before importing local helpers; pre-existing caches remain forbidden.
+sys.dont_write_bytecode = True
 from validate_live_evidence import EVIDENCE_PATH, validate as validate_live_evidence
 
 SKIP_DIRS = {".git", "dist", "__pycache__", ".pytest_cache"}
@@ -87,6 +90,7 @@ REQUIRED = [
     "tools/validate_live_evidence.py", "tools/test_live_evidence.py", EVIDENCE_PATH,
     "results/evidence/candidate/cadence-v11/CANDIDATE-SHA256SUMS",
     "tools/test_publication_metadata.py", "huggingface/jspark3/V1.1.0-RELEASE.md",
+    "tools/test_validator_inventory.py",
 ]
 
 # Internal labels, private locations, and machine identity that must not appear anywhere.
