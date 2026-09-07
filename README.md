@@ -1,5 +1,7 @@
 # JSpark3 v1.1 (Cadence)
 
+<img width="1920" height="1080" alt="hook" src="https://github.com/user-attachments/assets/e528a9a7-f824-480f-85e2-2a91b322cdcf" />
+
 **JSpark3 turns three NVIDIA DGX Sparks into one OpenAI-compatible GLM-5.3
 Flash endpoint, with a reproducible TP3 recipe and public benchmarks.**
 
