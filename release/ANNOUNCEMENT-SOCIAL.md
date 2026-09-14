@@ -85,3 +85,13 @@ github.com/jakejharris/jspark3
    byte for byte.
 4. Credits: Z.AI, Brandon M. Music and Mia-AiLab (ShapleyMcg EXL3/TR3), Inco AI
    (DFlash2), MiaAI-Lab, FlyCockpit, vcruz305, vLLM, ExLlamaV3.
+
+## Model download clarification, 2026-09-14
+
+Brandon M. Music made this version of GLM-5.3 Flash. Mia's AI Lab hosts a copy with credit, and JSPARK3 keeps its own pinned copy. The model files are the same, so you only need to download them once. The model cards and other repository files differ.
+
+Download the GLM model once, from Mia's copy or JSPARK3's pinned copy.
+They contain the same model files. Cadence also needs the separate DFlash2
+draft, a smaller model that helps generate answers faster.
+See the [install guide](https://github.com/jakejharris/jspark3/blob/main/docs/INSTALL.md)
+for the download links and setup. This clarification accompanies the historical text above.

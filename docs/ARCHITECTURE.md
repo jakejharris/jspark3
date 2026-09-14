@@ -1,5 +1,8 @@
 # Architecture
 
+> Download clarification, 2026-09-14: Download the GLM model once, from Mia's copy or JSPARK3's pinned copy. They contain the same model files. Cadence also needs the separate DFlash2 draft, a smaller model that helps generate answers faster.
+> [Download sources and setup](https://github.com/jakejharris/jspark3/blob/main/docs/INSTALL.md).
+
 JSpark3 v1 turns three NVIDIA DGX Sparks into one GLM-5.3 Flash endpoint.
 This page describes the pieces and how they hold together. The reasoning
 behind each choice is in [TECHNICAL-REPORT.md](TECHNICAL-REPORT.md).

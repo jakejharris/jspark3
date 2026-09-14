@@ -88,8 +88,15 @@ Image, pinned by digest (about the size of a full vLLM CUDA image):
 docker pull ghcr.io/miaai-lab/glm-5.3-flash-2x-dgx-sparks@sha256:9bb1557a4234fce63d59599e44d10747eabd742beb337eebf9e7070be8a0fd58
 ```
 
-Checkpoints, pinned by revision, into directory names the preflight expects
-under `JSPARK_MODEL_ROOT`:
+Download the GLM model once: use Mia's copy below or the JSPARK3 copy in the
+next command block. They contain the same model files. Brandon M. Music made
+this version; Mia hosts a copy with credit. Cadence also needs the separate
+DFlash2 draft, a smaller model that helps generate answers faster.
+
+Use the pinned revisions and directory names below. If you already have
+Brandon's matching model files, you can reuse them, but keep this guide's
+supporting files, directory layout and validation steps. See
+[the source comparison](../huggingface/jspark3/PROVENANCE.md#model-file-check-2026-09-14).
 
 ```bash
 export JSPARK_MODEL_ROOT=/srv/models
@@ -102,9 +109,9 @@ huggingface-cli download incoai/GLM-5.3-Flash-DFlash2 \
   --local-dir "$JSPARK_MODEL_ROOT/incoai--GLM-5.3-Flash-DFlash2-dc77ff1c-native"
 ```
 
-You may fetch the target checkpoint from the JSpark3 mirror instead. It is an
-exact, hash-verifiable copy of the same repository at the same revision, so
-either source produces byte-identical serving files:
+Use this [JSPARK3 copy](https://huggingface.co/jakejharris/jspark3/tree/e7c34dba923916754cfcb0bdf6c2c75a9b7ff1fc) instead of the Mia download above if you prefer.
+It supplies the same model files, with its own model card and recipe files.
+You still need the DFlash2 download:
 
 ```bash
 mirror=https://huggingface.co/jakejharris/jspark3

@@ -105,17 +105,17 @@ Historical release: [v1.0.0, 2026-09-02](https://github.com/jakejharris/jspark3/
 
 ## Weights
 
-The GitHub recipe and release assets contain no checkpoint weights. The
-[public target mirror](https://huggingface.co/jakejharris/jspark3) is an
-attributed, byte-identical copy of Brandon M. Music's quantization, re-hosted
-by Mia-AiLab. [Provenance and checksum records](huggingface/jspark3/PROVENANCE.md)
-include the upstream chain and recorded checksum discrepancy.
+Brandon M. Music made this version of GLM-5.3 Flash. Mia's AI Lab hosts a copy with credit, and JSPARK3 keeps its own pinned copy. The model files are the same, so you only need to download them once. The model cards and other repository files differ.
 
-Pinned inputs are the
-[Mia-AiLab target](https://huggingface.co/Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw/tree/25a44fdbf16862a46b7cc9921142c6c81350af2f)
-and [Inco AI draft](https://huggingface.co/incoai/GLM-5.3-Flash-DFlash2/tree/dc77ff1c99eeb2df044ee3d4f0094eb033fee410).
-The draft is fetched separately and is not mirrored. The recipe verifies
-serving bytes regardless of download source.
+The install guide downloads [Mia's copy](https://huggingface.co/Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw/tree/25a44fdbf16862a46b7cc9921142c6c81350af2f). You can use the
+[JSPARK3 copy](https://huggingface.co/jakejharris/jspark3/tree/e7c34dba923916754cfcb0bdf6c2c75a9b7ff1fc) instead.
+The GitHub recipe and release assets contain no model weights.
+
+Cadence also needs the separate [Inco AI DFlash2 draft](https://huggingface.co/incoai/GLM-5.3-Flash-DFlash2/tree/dc77ff1c99eeb2df044ee3d4f0094eb033fee410),
+a smaller model that helps generate answers faster. Download it once as well.
+Follow the [install guide](docs/INSTALL.md) for the required supporting files
+and setup. [Sources and verification](huggingface/jspark3/PROVENANCE.md)
+record the exact revisions and how the files were compared.
 
 ## License
 
@@ -127,6 +127,10 @@ CC BY-NC-ND 4.0 for research and evaluation; commercial use requires permission
 from Inco AI. Read the [full license boundaries](docs/LICENSING.md).
 
 ## Credits
+
+Z.AI created GLM-5.3 Flash. Brandon M. Music made the EXL3/TR3 version used here.
+Mia's AI Lab hosts a credited copy and provides the two-Spark recipe and image.
+JSPARK3 supplies its own copy and three-Spark serving recipe. Inco AI provides DFlash2.
 
 Thanks to Z.AI, Brandon M. Music, Mia-AiLab, Inco AI, z-lab, FlyCockpit,
 vcruz305, tonyd2wild, sfxnz, vLLM and ExLlamaV3. Their specific contributions

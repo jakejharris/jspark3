@@ -18,21 +18,17 @@ makes vLLM's GLM integration work at TP 3, the operating envelope, the W8A16
 overlay, the measurement campaign, and a serving recipe that refuses to run
 anything other than the measured construction. We did not train, fine-tune,
 or quantize the model. The checkpoint is Brandon M. Music's ShapleyMcg EXL3/TR3
-quantization published by Mia-AiLab; the draft is Inco AI's DFlash2; the
+quantization, hosted by Mia's AI Lab with credit; the draft is Inco AI's DFlash2; the
 serving image and its GLM integration are MiaAI-Lab's; the TP3 technique
 lineage is FlyCockpit's; the K-pool tail correction is vcruz305's. Each is
 pinned by revision or digest and credited in `THIRD_PARTY_NOTICES.md`.
 
-The Hugging Face side of this release re-hosts the target weights so operators
-can fetch the checkpoint from one place. That mirror is an exact,
-hash-verifiable copy of `Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw` at its pinned
-revision, itself a byte-identical re-host of the quantization author's own
-repository. Mirroring is not authorship: no weight byte is modified, the
-checkpoint's own license and attribution travel with it, and the DFlash2 draft
-is left where it is as a separately pinned dependency. All 123 allowlisted Git
-LFS payloads and the exact completion receipt were remotely verified before
-maintainer merge into the verified weights-mirror revision
-`e7c34dba923916754cfcb0bdf6c2c75a9b7ff1fc`.
+Brandon M. Music made this version of GLM-5.3 Flash. Mia's AI Lab hosts a copy with credit, and JSPARK3 keeps its own pinned copy. The model files are the same, so you only need to download them once. The model cards and other repository files differ.
+
+Use [Mia's copy](https://huggingface.co/Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw/tree/25a44fdbf16862a46b7cc9921142c6c81350af2f) or the [JSPARK3 copy](https://huggingface.co/jakejharris/jspark3/tree/e7c34dba923916754cfcb0bdf6c2c75a9b7ff1fc),
+plus the separate DFlash2 draft. Follow the [install guide](INSTALL.md)
+for the required supporting files and validation steps. The recorded transfer
+and checksum checks are in [the provenance note](../huggingface/jspark3/PROVENANCE.md).
 
 ## What v1.1 (Cadence) adds
 
@@ -312,7 +308,7 @@ The pinned identities, all of which the recipe verifies before serving:
 
 | Input | Identity |
 |---|---|
-| Target checkpoint | `Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw` at `25a44fdbf16862a46b7cc9921142c6c81350af2f` (declared byte-identical to `brandonmusic/GLM-5.3-Flash-tr3-4bpw` at `5ab363a8dcf6405955fd5f99671e01a1c9fb124b`) |
+| Target checkpoint | [Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw](https://huggingface.co/Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw/tree/25a44fdbf16862a46b7cc9921142c6c81350af2f), revision [25a44fd](https://huggingface.co/Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw/tree/25a44fdbf16862a46b7cc9921142c6c81350af2f). The model files match Brandon M. Music's [declared source, 5ab363a8](https://huggingface.co/brandonmusic/GLM-5.3-Flash-tr3-4bpw/tree/5ab363a8dcf6405955fd5f99671e01a1c9fb124b), and [1ae6d70](https://huggingface.co/brandonmusic/GLM-5.3-Flash-tr3-4bpw/tree/1ae6d70430a12d762917786696db06a7b4f9bbae). The model cards and other repository files differ. |
 | Draft checkpoint | `incoai/GLM-5.3-Flash-DFlash2` at `dc77ff1c99eeb2df044ee3d4f0094eb033fee410` |
 | Serving image | `ghcr.io/miaai-lab/glm-5.3-flash-2x-dgx-sparks@sha256:9bb1557a4234fce63d59599e44d10747eabd742beb337eebf9e7070be8a0fd58` (config `sha256:ad0cdd86d1ddd15ee758f519d16da15ac237f7f0648a5c52fbc20f9554944263`) |
 | Technique sources | FlyCockpit `9093765c757bd1976372196e44af84a67cf86bad`; vcruz305 `622cb878d66f703c597bd6baaa2423caa1786f99` |

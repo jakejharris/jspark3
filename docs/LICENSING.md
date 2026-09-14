@@ -27,10 +27,9 @@ recipe depends on.
 
 ## What the Hugging Face repository redistributes
 
-The Hugging Face side of this release publicly mirrors the target checkpoint:
-an exact, hash-verifiable copy of
-`Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw` at its pinned revision, which is itself
-a byte-identical re-host of the quantization author's repository. The mirror
+Brandon M. Music made this version of GLM-5.3 Flash. Mia's AI Lab hosts a copy with credit, and JSPARK3 keeps its own pinned copy. The model files are the same, so you only need to download them once. The model cards and other repository files differ.
+
+The mirror
 carries the checkpoint's own `LICENSE`, its notices, and its provenance files
 unmodified, and JSpark3's Apache-2.0 set sits beside them under
 `huggingface/jspark3/`. All 123 allowlisted Git LFS payloads and the exact
@@ -45,7 +44,7 @@ that fetch and to serving.
 
 | Component | Source | Terms as published upstream | Practical effect |
 |---|---|---|---|
-| Target checkpoint `Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw` (declared byte-identical to `brandonmusic/GLM-5.3-Flash-tr3-4bpw`) | Hugging Face, pinned revision in `manifests/dependencies.json` | ShapleyMcg License v1.0, attribution-required | Source-available, attribution-required, not OSI open source; downstream copies stay under this license; the license contains a named exclusion, reproduced as written. The attribution sentence in `REQUIRED_ATTRIBUTION.md` must stay byte-for-byte intact in copies, model cards, and generated reports, and the license's provenance fields must not be removed from artifact metadata. |
+| Target checkpoint `Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw` (same model files as `brandonmusic/GLM-5.3-Flash-tr3-4bpw`) | Hugging Face, pinned revision in `manifests/dependencies.json` | ShapleyMcg License v1.0, attribution-required | Source-available, attribution-required, not OSI open source; downstream copies stay under this license; the license contains a named exclusion, reproduced as written. The attribution sentence in `REQUIRED_ATTRIBUTION.md` must stay byte-for-byte intact in copies, model cards, and generated reports, and the license's provenance fields must not be removed from artifact metadata. |
 | Base model GLM-5.3 Flash | Z.AI | As published by Z.AI for the base model | Review the base model terms for your use. |
 | Draft checkpoint `incoai/GLM-5.3-Flash-DFlash2` | Hugging Face, pinned revision | CC BY-NC-ND 4.0, research and evaluation use | The default serving path is non-commercial. Commercial use requires separate permission from Inco AI. |
 | DFlash speculative decoding | `z-lab/dflash` | As published upstream | Referenced technique; review upstream terms. |
