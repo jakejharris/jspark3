@@ -78,15 +78,15 @@ comparisons.
 A third-party reproduction on a separate three-Spark fleet is an open release
 gate; none has been performed yet.
 
-## Pinned inputs
+## Exact model and software versions
 
-| Input | Identity |
+| Download | Exact version |
 |---|---|
-| Target checkpoint | `Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw` at `25a44fdbf16862a46b7cc9921142c6c81350af2f` (declared byte-identical to `brandonmusic/GLM-5.3-Flash-tr3-4bpw` at `5ab363a8dcf6405955fd5f99671e01a1c9fb124b`) |
-| Draft checkpoint | `incoai/GLM-5.3-Flash-DFlash2` at `dc77ff1c99eeb2df044ee3d4f0094eb033fee410` |
-| Serving image | `ghcr.io/miaai-lab/glm-5.3-flash-2x-dgx-sparks@sha256:9bb1557a4234fce63d59599e44d10747eabd742beb337eebf9e7070be8a0fd58` |
+| GLM model files | [Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw](https://huggingface.co/Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw/tree/25a44fdbf16862a46b7cc9921142c6c81350af2f), revision [25a44fd](https://huggingface.co/Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw/tree/25a44fdbf16862a46b7cc9921142c6c81350af2f). The model files match Brandon M. Music's [version credited by Mia, 5ab363a8](https://huggingface.co/brandonmusic/GLM-5.3-Flash-tr3-4bpw/tree/5ab363a8dcf6405955fd5f99671e01a1c9fb124b), and [1ae6d70](https://huggingface.co/brandonmusic/GLM-5.3-Flash-tr3-4bpw/tree/1ae6d70430a12d762917786696db06a7b4f9bbae). The model cards and other repository files differ. |
+| DFlash2 helper model | `incoai/GLM-5.3-Flash-DFlash2` at `dc77ff1c99eeb2df044ee3d4f0094eb033fee410` |
+| Docker software package | `ghcr.io/miaai-lab/glm-5.3-flash-2x-dgx-sparks@sha256:9bb1557a4234fce63d59599e44d10747eabd742beb337eebf9e7070be8a0fd58` |
 | Technique sources | FlyCockpit `9093765c757bd1976372196e44af84a67cf86bad`, vcruz305 `622cb878d66f703c597bd6baaa2423caa1786f99` |
 
-Everything is listed with hashes in
+A checksum is an identifier for a file’s contents. The full file checksums are in
 [manifests/dependencies.json](../manifests/dependencies.json) and
 [manifests/sbom.cdx.json](../manifests/sbom.cdx.json).

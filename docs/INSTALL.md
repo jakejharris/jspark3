@@ -80,16 +80,27 @@ rather than falling back to an older release or the default branch.
 The recipe directory is mounted read-only inside the containers. Never edit it
 in place on a rank; change it on the controller, re-verify, and re-sync.
 
-## 3. Fetch the pinned inputs on every rank
+<a id="3-fetch-the-pinned-inputs-on-every-rank"></a>
 
-Image, pinned by digest (about the size of a full vLLM CUDA image):
+## 3. Download the software and model files on each Spark
+
+Download this exact Docker software package. Docker runs the model software
+in a separate environment called a container. The long identifier in this
+command selects the required version:
 
 ```bash
 docker pull ghcr.io/miaai-lab/glm-5.3-flash-2x-dgx-sparks@sha256:9bb1557a4234fce63d59599e44d10747eabd742beb337eebf9e7070be8a0fd58
 ```
 
-Checkpoints, pinned by revision, into directory names the preflight expects
-under `JSPARK_MODEL_ROOT`:
+Download the GLM model once: use Mia's copy below or the JSPARK3 copy in the
+next command block. They contain the same model files. Brandon M. Music made
+this version; Mia hosts a copy with credit. Cadence also needs the separate
+DFlash2 draft, a smaller model that helps generate answers faster.
+
+Use the exact model versions and folder names below. If you already have
+Brandon's matching model files, you can reuse them, but keep this guide's
+supporting files, folder layout and file checks. See
+[the source comparison](../huggingface/jspark3/PROVENANCE.md#model-file-check-2026-09-14).
 
 ```bash
 export JSPARK_MODEL_ROOT=/srv/models
@@ -102,9 +113,9 @@ huggingface-cli download incoai/GLM-5.3-Flash-DFlash2 \
   --local-dir "$JSPARK_MODEL_ROOT/incoai--GLM-5.3-Flash-DFlash2-dc77ff1c-native"
 ```
 
-You may fetch the target checkpoint from the JSpark3 mirror instead. It is an
-exact, hash-verifiable copy of the same repository at the same revision, so
-either source produces byte-identical serving files:
+Use this [JSPARK3 copy](https://huggingface.co/jakejharris/jspark3/tree/e7c34dba923916754cfcb0bdf6c2c75a9b7ff1fc) instead of the Mia download above if you prefer.
+It supplies the same model files, with its own model card and recipe files.
+You still need the DFlash2 download:
 
 ```bash
 mirror=https://huggingface.co/jakejharris/jspark3
@@ -113,19 +124,17 @@ huggingface-cli download "${mirror#https://huggingface.co/}" \
   --local-dir "$JSPARK_MODEL_ROOT/Mia-AiLab--GLM-5.3-Flash-EXL3-TR3-4bpw-25a44fdb"
 ```
 
-**The preflight validates bytes, not URLs.** It checks the checkpoint's hashes
-against the pinned contract regardless of where you downloaded it from, so a
-mirror that differs by one byte fails exactly as an altered upstream would. The
-mirror is described file by file in `huggingface/jspark3/WEIGHTS-MANIFEST.json`
-and can be checked directly with `python3 tools/mirror_weights.py verify <dir>`.
-The immutable main revision above contains the remotely verified target mirror;
-the pinned upstream repository remains an equivalent source.
+The setup checks the downloaded files against the recorded checksums,
+which identify file contents. It refuses files that do not match, whichever
+source you used. The [file list](../huggingface/jspark3/WEIGHTS-MANIFEST.json)
+records each required file. You can also check your download directly with
+`python3 tools/mirror_weights.py verify <dir>`.
 
-The downloaded files must be regular files, not symlinks into a cache; the
-checkpoint validator refuses symlinked serving files. The target repository
-ships its own `SHA256SUMS`, which the validator uses as the ledger.
+Keep the downloaded files in these folders as actual files, not symbolic links
+(shortcuts to files elsewhere). The checks reject symbolic links. The GLM
+model download includes a `SHA256SUMS` file listing the expected checksums.
 
-FlyCockpit sources at the pinned commit, read-only:
+Download this exact version of FlyCockpit’s source code, and leave its files unchanged:
 
 ```bash
 git clone https://github.com/FlyCockpit/GLM-5.3-Flash-EXL3-3x-DGX-Sparks \
@@ -134,9 +143,9 @@ git -C /srv/sources/FlyCockpit-GLM-5.3-Flash-EXL3-3x-DGX-Sparks \
   checkout 9093765c757bd1976372196e44af84a67cf86bad
 ```
 
-Read the licenses before serving. The target checkpoint is
-attribution-required and the draft is non-commercial research and evaluation
-use; see `docs/LICENSING.md`.
+Read the licenses before running the server. The GLM model requires credit
+to its author. DFlash2 is for non-commercial research and evaluation.
+See [the license guide](LICENSING.md) for the full terms.
 
 ## 4. Build and validate the runtime views
 

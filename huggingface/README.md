@@ -160,42 +160,34 @@ released 2026-09-02, preserved as history. The current recipe is
 
 ## Weights
 
-**These weights are not ours.** This repository carries an exact,
-hash-verifiable mirror of
-[`Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw`](https://huggingface.co/Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw)
-at revision `25a44fdbf16862a46b7cc9921142c6c81350af2f`, which is itself a
-byte-identical re-host of
-[`brandonmusic/GLM-5.3-Flash-tr3-4bpw`](https://huggingface.co/brandonmusic/GLM-5.3-Flash-tr3-4bpw)
-at revision `5ab363a8dcf6405955fd5f99671e01a1c9fb124b`. Brandon M. Music is the
-quantization author; Z.AI created the base model. JSpark3 trained nothing,
-quantized nothing, and modified no weight byte.
+Brandon M. Music made this version of GLM-5.3 Flash. Mia's AI Lab hosts a copy with credit, and JSPARK3 keeps a copy of the same model version. The model files are the same, so you only need to download them once. The model cards and other repository files differ.
 
-The mirror is described file by file in
-[`jspark3/WEIGHTS-MANIFEST.json`](jspark3/WEIGHTS-MANIFEST.json): every file at
-the pinned revision with its size, SHA-256, and how that hash was obtained. The
-chain, the verification method, and one recorded discrepancy in the upstream
-checksum file are in [`jspark3/PROVENANCE.md`](jspark3/PROVENANCE.md). The
-upstream card is preserved verbatim as
-[`UPSTREAM_MODEL_CARD.md`](UPSTREAM_MODEL_CARD.md), and every other upstream
-file keeps its exact upstream path so that a checkpoint contract validating a
-download from this mirror validates exactly as it does upstream.
+Use [Mia's copy](https://huggingface.co/Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw/tree/25a44fdbf16862a46b7cc9921142c6c81350af2f) or [JSPARK3's copy of this model version](https://huggingface.co/jakejharris/jspark3/tree/e7c34dba923916754cfcb0bdf6c2c75a9b7ff1fc).
+Follow the [install guide](https://github.com/jakejharris/jspark3/blob/main/docs/INSTALL.md)
+for the supporting files and the separate DFlash2 download.
 
-The DFlash2 speculative draft is a separate checkpoint from Inco AI under
-CC BY-NC-ND 4.0. It is **not** mirrored here; operators fetch it from its own
-repository at its own pinned revision.
+The [file list](jspark3/WEIGHTS-MANIFEST.json) records each file's size and
+checksum, an identifier for its contents. The [source note](jspark3/PROVENANCE.md)
+explains who made the files, how they were checked, and a difference found in
+an older checksum list. The original model card is kept unchanged as
+[`UPSTREAM_MODEL_CARD.md`](UPSTREAM_MODEL_CARD.md). Other original files keep
+their folder locations so the install guide can check either download source.
 
-> **Hub status: all 123 allowlisted Git LFS payloads and
-> [`jspark3/MIRROR-COMPLETION.json`](jspark3/MIRROR-COMPLETION.json) were remotely
-> verified before merge into the verified weights-mirror revision.** See
-> [`jspark3/UPLOAD.md`](jspark3/UPLOAD.md) for the recorded procedure.
+DFlash2 is a separate, smaller model from Inco AI that helps generate answers
+faster. Download it separately using the install guide. It is not included
+in this copy of GLM. Its license is CC BY-NC-ND 4.0.
 
-## Pinned inputs
+Before the JSPARK3 copy became public, all 123 large files were checked by
+size and checksum. The [completion record](jspark3/MIRROR-COMPLETION.json)
+was checked too. The [upload record](jspark3/UPLOAD.md) describes those checks.
 
-| Input | Identity |
+## Exact model and software versions
+
+| Download | Exact version |
 |---|---|
-| Target checkpoint | [`Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw`](https://huggingface.co/Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw) at `25a44fdbf16862a46b7cc9921142c6c81350af2f`, declared byte-identical to `brandonmusic/GLM-5.3-Flash-tr3-4bpw` at `5ab363a8dcf6405955fd5f99671e01a1c9fb124b` |
-| Draft checkpoint | [`incoai/GLM-5.3-Flash-DFlash2`](https://huggingface.co/incoai/GLM-5.3-Flash-DFlash2) at `dc77ff1c99eeb2df044ee3d4f0094eb033fee410` |
-| Serving image | `ghcr.io/miaai-lab/glm-5.3-flash-2x-dgx-sparks@sha256:9bb1557a4234fce63d59599e44d10747eabd742beb337eebf9e7070be8a0fd58` |
+| GLM model files | [Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw](https://huggingface.co/Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw/tree/25a44fdbf16862a46b7cc9921142c6c81350af2f), revision [25a44fd](https://huggingface.co/Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw/tree/25a44fdbf16862a46b7cc9921142c6c81350af2f). The model files match Brandon M. Music's [version credited by Mia, 5ab363a8](https://huggingface.co/brandonmusic/GLM-5.3-Flash-tr3-4bpw/tree/5ab363a8dcf6405955fd5f99671e01a1c9fb124b), and [1ae6d70](https://huggingface.co/brandonmusic/GLM-5.3-Flash-tr3-4bpw/tree/1ae6d70430a12d762917786696db06a7b4f9bbae). The model cards and other repository files differ. |
+| DFlash2 helper model | [`incoai/GLM-5.3-Flash-DFlash2`](https://huggingface.co/incoai/GLM-5.3-Flash-DFlash2) at `dc77ff1c99eeb2df044ee3d4f0094eb033fee410` |
+| Docker software package | `ghcr.io/miaai-lab/glm-5.3-flash-2x-dgx-sparks@sha256:9bb1557a4234fce63d59599e44d10747eabd742beb337eebf9e7070be8a0fd58` |
 | Base model | [`zai-org/GLM-5.3-Flash`](https://huggingface.co/zai-org/GLM-5.3-Flash) (Z.AI) |
 
 ## How it compares with what was already public
