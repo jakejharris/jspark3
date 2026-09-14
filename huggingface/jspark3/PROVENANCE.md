@@ -25,26 +25,29 @@ deliberately not mirrored here.
 
 ## Model file check, 2026-09-14
 
-Brandon M. Music made this version of GLM-5.3 Flash. Mia's AI Lab hosts a copy with credit, and JSPARK3 keeps its own pinned copy. The model files are the same, so you only need to download them once. The model cards and other repository files differ.
+Brandon M. Music made this version of GLM-5.3 Flash. Mia's AI Lab hosts a copy with credit, and JSPARK3 keeps a copy of the same model version. The model files are the same, so you only need to download them once. The model cards and other repository files differ.
 
 We compared the file sizes and SHA-256 checksums published by Hugging Face.
+A checksum identifies a file’s contents; matching checksums let us check that
+two copies contain the same data.
 All 120 model files match between [Mia's copy, 25a44fd](https://huggingface.co/Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw/tree/25a44fdbf16862a46b7cc9921142c6c81350af2f),
-[Brandon's declared source, 5ab363a8](https://huggingface.co/brandonmusic/GLM-5.3-Flash-tr3-4bpw/tree/5ab363a8dcf6405955fd5f99671e01a1c9fb124b), and
-[Brandon's later revision, 1ae6d70](https://huggingface.co/brandonmusic/GLM-5.3-Flash-tr3-4bpw/tree/1ae6d70430a12d762917786696db06a7b4f9bbae). The model index,
-quantization settings and tokenizer match too. This check used Hugging Face's
-published checksums; it did not download and hash the model files again.
+[Brandon's version credited by Mia, 5ab363a8](https://huggingface.co/brandonmusic/GLM-5.3-Flash-tr3-4bpw/tree/5ab363a8dcf6405955fd5f99671e01a1c9fb124b), and
+[Brandon's later revision, 1ae6d70](https://huggingface.co/brandonmusic/GLM-5.3-Flash-tr3-4bpw/tree/1ae6d70430a12d762917786696db06a7b4f9bbae). The file index,
+model storage settings and text-processing files match too. This check used Hugging Face's
+published checksums; it did not download the model files and calculate new checksums.
 
-The earlier table records the original source declarations. Its whole-repository
-copy wording is too broad: Mia and Brandon have different cards and extra files.
-JSPARK3 also adds its own card and recipe files. The original source revision
+The earlier table records how the copies were originally described. Its claim
+that the entire repositories match is too broad: Mia and Brandon have different
+model descriptions and extra files.
+JSPARK3 also adds its own card and recipe files. The original source version
 remains the one Mia recorded; the later comparison does not replace it.
 
 The actual `LICENSE` files also match at these revisions. The discrepancy
 recorded below is between a file and an older checksum list. It does not show
 that Mia changed Brandon's license.
 
-Use [Mia's copy](https://huggingface.co/Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw/tree/25a44fdbf16862a46b7cc9921142c6c81350af2f) or [JSPARK3's pinned copy](https://huggingface.co/jakejharris/jspark3/tree/e7c34dba923916754cfcb0bdf6c2c75a9b7ff1fc),
-plus the separate DFlash2 draft. Follow the
+Use [Mia's copy](https://huggingface.co/Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw/tree/25a44fdbf16862a46b7cc9921142c6c81350af2f) or [JSPARK3's copy of this model version](https://huggingface.co/jakejharris/jspark3/tree/e7c34dba923916754cfcb0bdf6c2c75a9b7ff1fc),
+plus the separate DFlash2 helper model. Follow the
 [install guide](https://github.com/jakejharris/jspark3/blob/main/docs/INSTALL.md)
 for the required supporting files and setup.
 

@@ -1,6 +1,6 @@
 # Release state: JSpark3
 
-> Download clarification, 2026-09-14: Download the GLM model once, from Mia's copy or JSPARK3's pinned copy. They contain the same model files. Cadence also needs the separate DFlash2 draft, a smaller model that helps generate answers faster.
+> Download clarification, 2026-09-14: Download the GLM model once, from Mia's copy or JSPARK3's copy of the same version. They contain the same model files. Cadence also needs the separate DFlash2 draft, a smaller model that helps generate answers faster.
 > [Download sources and setup](https://github.com/jakejharris/jspark3/blob/main/docs/INSTALL.md).
 
 Release content: **[v1.1.0 (Cadence), 2026-09-07](https://github.com/jakejharris/jspark3/releases/tag/v1.1.0).

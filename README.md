@@ -57,7 +57,7 @@ remain published.
 
 ## Quick start
 
-Get the published release on your controller:
+Download the published release on the computer you will use to manage the three Sparks:
 
 ```bash
 git clone --branch v1.1.0 https://github.com/jakejharris/jspark3.git
@@ -66,15 +66,15 @@ cd jspark3
 ```
 
 **Cloning is only the first step.** Follow the [installation guide](docs/INSTALL.md#2-get-the-recipe-onto-every-rank)
-to copy the recipe to every rank, stage the pinned image, checkpoints and
-FlyCockpit source, build and validate TP3 runtime views, and configure the
-fabric. Those required downloads and host-specific settings must be complete
-before starting the service.
+to copy the setup scripts to each Spark, download the required software and
+model files, prepare the files for three Sparks, and set up the network
+connections. Complete these steps before starting the server.
 
-Then [fill every fleet value in `.env`](docs/INSTALL.md#6-configure-env-on-the-controller)
-and [run preflight, start, health and verification](docs/INSTALL.md#7-preflight-start-verify).
-The lifecycle refuses input or hash drift. It exposes model `glm-5.3-flash`
-on rank 0, with thinking off by default and switchable per request.
+Then [fill in every machine setting in `.env`](docs/INSTALL.md#6-configure-env-on-the-controller)
+and [check the setup, start the server, and test it](docs/INSTALL.md#7-preflight-start-verify).
+The startup scripts refuse files that differ from the required versions.
+The first Spark, called rank 0 in the commands, serves requests under the model
+name `glm-5.3-flash`. Thinking is off by default and can be enabled per request.
 [Send a first request](docs/INSTALL.md#8-first-request) or consult
 [operations and shutdown](docs/OPERATIONS.md).
 
@@ -105,17 +105,17 @@ Historical release: [v1.0.0, 2026-09-02](https://github.com/jakejharris/jspark3/
 
 ## Weights
 
-Brandon M. Music made this version of GLM-5.3 Flash. Mia's AI Lab hosts a copy with credit, and JSPARK3 keeps its own pinned copy. The model files are the same, so you only need to download them once. The model cards and other repository files differ.
+Brandon M. Music made this version of GLM-5.3 Flash. Mia's AI Lab hosts a copy with credit, and JSPARK3 keeps a copy of the same model version. The model files are the same, so you only need to download them once. The model cards and other repository files differ.
 
 The install guide downloads [Mia's copy](https://huggingface.co/Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw/tree/25a44fdbf16862a46b7cc9921142c6c81350af2f). You can use the
 [JSPARK3 copy](https://huggingface.co/jakejharris/jspark3/tree/e7c34dba923916754cfcb0bdf6c2c75a9b7ff1fc) instead.
-The GitHub recipe and release assets contain no model weights.
+The GitHub repository and release downloads contain the setup software, not the model files.
 
 Cadence also needs the separate [Inco AI DFlash2 draft](https://huggingface.co/incoai/GLM-5.3-Flash-DFlash2/tree/dc77ff1c99eeb2df044ee3d4f0094eb033fee410),
 a smaller model that helps generate answers faster. Download it once as well.
 Follow the [install guide](docs/INSTALL.md) for the required supporting files
 and setup. [Sources and verification](huggingface/jspark3/PROVENANCE.md)
-record the exact revisions and how the files were compared.
+record the exact model versions and how the files were compared.
 
 ## License
 
@@ -128,13 +128,14 @@ from Inco AI. Read the [full license boundaries](docs/LICENSING.md).
 
 ## Credits
 
-Z.AI created GLM-5.3 Flash. Brandon M. Music made the EXL3/TR3 version used here.
-Mia's AI Lab hosts a credited copy and provides the two-Spark recipe and image.
-JSPARK3 supplies its own copy and three-Spark serving recipe. Inco AI provides DFlash2.
+Z.AI created GLM-5.3 Flash. Brandon M. Music made the smaller EXL3/TR3 version
+used here. Mia's AI Lab hosts a credited copy and provides the software and
+instructions to run it on two Sparks. JSPARK3 supplies its own copy and the
+setup for three Sparks. Inco AI provides DFlash2, the smaller helper model.
 
 Thanks to Z.AI, Brandon M. Music, Mia-AiLab, Inco AI, z-lab, FlyCockpit,
 vcruz305, tonyd2wild, sfxnz, vLLM and ExLlamaV3. Their specific contributions
-and pinned sources are in [third-party notices](THIRD_PARTY_NOTICES.md).
+and exact source versions are in [third-party notices](THIRD_PARTY_NOTICES.md).
 
 ## Attribution
 
