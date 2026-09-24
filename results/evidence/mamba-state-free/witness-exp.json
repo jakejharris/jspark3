@@ -1,0 +1,17 @@
+{
+  "code_word_verbatim": true,
+  "completion_tokens": 51,
+  "elapsed_seconds": 549.4,
+  "finish_reason": "stop",
+  "grade": "ENGINEERING-EVIDENCE",
+  "min_completion_tokens": 20,
+  "min_prompt_tokens": 32768,
+  "pass": true,
+  "payload_pinned": false,
+  "prompt_tokens": 578120,
+  "reasons": [],
+  "request_payload_sha256": "89f7f6479788143ff1b9451c6c2d988c1a0276637f3ae7ab4f51b929612ab18a",
+  "schema_version": 1,
+  "served_model": "glm-5.3-flash",
+  "witness": "long-context->32K"
+}

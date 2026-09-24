@@ -125,10 +125,10 @@
     },
     {
       "changed_lines": 20,
-      "changed_lines_scope": "measured-to-public rename-only delta through v1.0.1; v1.1.0 adds the Cadence entry wiring on top, which is not counted in changed_lines",
+      "changed_lines_scope": "measured-to-public rename-only delta through v1.0.1; v1.1.0 adds the Cadence entry wiring on top, which is not counted in changed_lines; a proposed mamba state-free overlay application (upstream MiaAI patch, A/B -32.5% peak per-request KV footprint) adds 10 further lines on top, which is not counted in changed_lines",
       "measured_sha256": "e1e295dd9ebd874322fec528ee1e1852a66e85bc063397c76c902fd92ee1f59b",
       "public": "scripts/container_entry.sh",
-      "public_sha256": "9624cd553720facf0360241c41924ea920f48d8c2e2cf6e00d9154b37b9e85a1"
+      "public_sha256": "bfecbc6a06a9df57dd5486b92b1ac31223b3f29770ccc7d3c0d97a8304358c70"
     },
     {
       "changed_lines": 82,

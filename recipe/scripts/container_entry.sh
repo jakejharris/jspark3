@@ -99,4 +99,14 @@ if [[ ${JSPARK_DRAFT_RUNTIME:-} != /models/incoai--GLM-5.3-Flash-DFlash2-dc77ff1
   echo "REFUSE: draft runtime path drift" >&2
   exit 9
 fi
+# [jspark3-mamba-state-free-v1] MiaAI patch_mamba_align_state_free.py (upstream
+# proposal pending; A/B 2026-09-23: -32% peak per-request KV footprint, 0 preemptions).
+# Targets files disjoint from the recipe base pipeline; fails closed on anchor drift.
+python3 "$recipe/overlays/patch_mamba_align_state_free.py"
+grep -q "glm53-mamba-align-state-free-v1" "$vllm/v1/core/single_type_kv_cache_manager.py" || {
+  echo "REFUSE: mamba state-free patch not present" >&2; exit 9; }
+grep -q "glm53-mamba-align-state-free-v1" "$vllm/v1/kv_cache_interface.py" || {
+  echo "REFUSE: mamba state-free spec edit not present" >&2; exit 9; }
+echo "JSPARK3_MAMBA_STATE_FREE_APPLIED"
+
 exec vllm serve "$JSPARK_TARGET_RUNTIME" "$@"
