@@ -1,0 +1,188 @@
+{
+  "image": {
+    "config": "de01da91a1eefc7b2dee9df78c2e1b7abca64fbb9e19862a7872cc5338b6ce86",
+    "manifest": "a15b3e6056828219cabe19662fd239245e61fb2b45defe3a8e2712b75b925b3f"
+  },
+  "transforms": {
+    "apply_warmjit.py": {
+      "sources": {
+        "warmup_jit.py": "8e055d6c48e35ffe23a661ab9a8cb6bfab037438294513cb8311d2ea7b5ddbe9"
+      },
+      "targets": [
+        {
+          "path": "vllm/v1/worker/gpu_worker.py",
+          "before_sha256": "c1aa70809364f4cc2fef76baf5b86aa8e9107a48a8d83982769eb0a3ea0b2fab",
+          "after_sha256": "e566013a2fe339bcea3e3fd0b961c6731d4ffa8f7aac53b42baeeae36ae0e2b9",
+          "required_before_seams": [],
+          "required_after_seams": [
+            {
+              "count": 1,
+              "text": "# [jspark3-s911-warmjit]"
+            }
+          ],
+          "forbidden_after_seams": [],
+          "installers": [
+            "warmup_jit.py"
+          ],
+          "source_sha256": "8e055d6c48e35ffe23a661ab9a8cb6bfab037438294513cb8311d2ea7b5ddbe9"
+        },
+        {
+          "path": "vllm/v1/worker/gpu/spec_decode/rejection_sampler_utils.py",
+          "before_sha256": "659e82c2ce1249a6e614f7adf62e3824329a7b79e7a4caa55cfadf254068a98a",
+          "after_sha256": "659e82c2ce1249a6e614f7adf62e3824329a7b79e7a4caa55cfadf254068a98a",
+          "required_before_seams": [],
+          "required_after_seams": [],
+          "forbidden_after_seams": [],
+          "installers": [
+            "warmup_jit.py"
+          ],
+          "source_sha256": "8e055d6c48e35ffe23a661ab9a8cb6bfab037438294513cb8311d2ea7b5ddbe9"
+        },
+        {
+          "path": "vllm/v1/worker/gpu/spec_decode/dflash/speculator.py",
+          "before_sha256": "bd7f4c63d1196cb53bee0a81339aa5651e36938fc38b73c4ce89d978e0176a87",
+          "after_sha256": "bd7f4c63d1196cb53bee0a81339aa5651e36938fc38b73c4ce89d978e0176a87",
+          "required_before_seams": [],
+          "required_after_seams": [],
+          "forbidden_after_seams": [],
+          "installers": [
+            "warmup_jit.py"
+          ],
+          "source_sha256": "8e055d6c48e35ffe23a661ab9a8cb6bfab037438294513cb8311d2ea7b5ddbe9"
+        },
+        {
+          "path": "vllm/v1/worker/gpu/sample/gumbel.py",
+          "before_sha256": "8d04f3068a8dc22de69ec7ec6ab4f4192b8d45b5c3e253dcb7817eaf6c1314cd",
+          "after_sha256": "8d04f3068a8dc22de69ec7ec6ab4f4192b8d45b5c3e253dcb7817eaf6c1314cd",
+          "required_before_seams": [],
+          "required_after_seams": [],
+          "forbidden_after_seams": [],
+          "installers": [
+            "warmup_jit.py"
+          ],
+          "source_sha256": "8e055d6c48e35ffe23a661ab9a8cb6bfab037438294513cb8311d2ea7b5ddbe9"
+        },
+        {
+          "path": "vllm/v1/worker/gpu/sample/logprob.py",
+          "before_sha256": "78de8c1e2f338e0c83663217ac50950557aa77c6b52b5b76bd53876c51b89566",
+          "after_sha256": "78de8c1e2f338e0c83663217ac50950557aa77c6b52b5b76bd53876c51b89566",
+          "required_before_seams": [],
+          "required_after_seams": [],
+          "forbidden_after_seams": [],
+          "installers": [
+            "warmup_jit.py"
+          ],
+          "source_sha256": "8e055d6c48e35ffe23a661ab9a8cb6bfab037438294513cb8311d2ea7b5ddbe9"
+        },
+        {
+          "path": "vllm/v1/sample/ops/topk_topp_triton.py",
+          "before_sha256": "3aa60b97cffa744a07757f046d7760b08c029cb29423428c40f5f0bb80ac574e",
+          "after_sha256": "3aa60b97cffa744a07757f046d7760b08c029cb29423428c40f5f0bb80ac574e",
+          "required_before_seams": [],
+          "required_after_seams": [],
+          "forbidden_after_seams": [],
+          "installers": [
+            "warmup_jit.py"
+          ],
+          "source_sha256": "8e055d6c48e35ffe23a661ab9a8cb6bfab037438294513cb8311d2ea7b5ddbe9"
+        },
+        {
+          "path": "vllm/third_party/flash_linear_attention/ops/l2norm.py",
+          "before_sha256": "520f4513ef4fc97e6b88dc07877cca8e29da0d34e44673fe989e3af002d86381",
+          "after_sha256": "520f4513ef4fc97e6b88dc07877cca8e29da0d34e44673fe989e3af002d86381",
+          "required_before_seams": [],
+          "required_after_seams": [],
+          "forbidden_after_seams": [],
+          "installers": [
+            "warmup_jit.py"
+          ],
+          "source_sha256": "8e055d6c48e35ffe23a661ab9a8cb6bfab037438294513cb8311d2ea7b5ddbe9"
+        },
+        {
+          "path": "vllm/models/glm5next/nvidia/ops/kpool_compress.py",
+          "before_sha256": "8da850460cfe91a57fbd116985e07be5254778c3069f523ffe75f0dd1152936b",
+          "after_sha256": "8da850460cfe91a57fbd116985e07be5254778c3069f523ffe75f0dd1152936b",
+          "required_before_seams": [],
+          "required_after_seams": [],
+          "forbidden_after_seams": [],
+          "installers": [
+            "warmup_jit.py"
+          ],
+          "source_sha256": "8e055d6c48e35ffe23a661ab9a8cb6bfab037438294513cb8311d2ea7b5ddbe9"
+        },
+        {
+          "path": "vllm/model_executor/layers/mamba/ops/causal_conv1d.py",
+          "before_sha256": "044d005cfe59fd0818ed421274e04f3e8dd679b8cdb64fca9f4422f2643484b2",
+          "after_sha256": "044d005cfe59fd0818ed421274e04f3e8dd679b8cdb64fca9f4422f2643484b2",
+          "required_before_seams": [],
+          "required_after_seams": [],
+          "forbidden_after_seams": [],
+          "installers": [
+            "warmup_jit.py"
+          ],
+          "source_sha256": "8e055d6c48e35ffe23a661ab9a8cb6bfab037438294513cb8311d2ea7b5ddbe9"
+        },
+        {
+          "path": "vllm/model_executor/kernels/mhc/tilelang_kernels.py",
+          "before_sha256": "03aeb3f7c0eabfe8391006ff80f8d4cfedba7cf3d0a168e0dee2d678d3e3bd24",
+          "after_sha256": "03aeb3f7c0eabfe8391006ff80f8d4cfedba7cf3d0a168e0dee2d678d3e3bd24",
+          "required_before_seams": [],
+          "required_after_seams": [],
+          "forbidden_after_seams": [],
+          "installers": [
+            "warmup_jit.py"
+          ],
+          "source_sha256": "8e055d6c48e35ffe23a661ab9a8cb6bfab037438294513cb8311d2ea7b5ddbe9"
+        },
+        {
+          "path": "vllm/model_executor/kernels/mhc/tilelang.py",
+          "before_sha256": "c8ce81539c779436eb2b9fbba84738f3114bf3ac0a149f2b606f7d38bd1067ce",
+          "after_sha256": "c8ce81539c779436eb2b9fbba84738f3114bf3ac0a149f2b606f7d38bd1067ce",
+          "required_before_seams": [],
+          "required_after_seams": [],
+          "forbidden_after_seams": [],
+          "installers": [
+            "warmup_jit.py"
+          ],
+          "source_sha256": "8e055d6c48e35ffe23a661ab9a8cb6bfab037438294513cb8311d2ea7b5ddbe9"
+        },
+        {
+          "path": "vllm/models/glm5next/nvidia/kda.py",
+          "before_sha256": "b262d0c3668c635fa6045968e1956fa5f0d9029fd52a645c1c75a1b6a412b29d",
+          "after_sha256": "b262d0c3668c635fa6045968e1956fa5f0d9029fd52a645c1c75a1b6a412b29d",
+          "required_before_seams": [],
+          "required_after_seams": [],
+          "forbidden_after_seams": [],
+          "installers": [
+            "warmup_jit.py"
+          ],
+          "source_sha256": "8e055d6c48e35ffe23a661ab9a8cb6bfab037438294513cb8311d2ea7b5ddbe9"
+        },
+        {
+          "path": "vllm/v1/attention/backends/gdn_attn.py",
+          "before_sha256": "f27f887e71a7d092b79f7de55044a303456cfbd1e5eaf3461b394da9b3f21eba",
+          "after_sha256": "f27f887e71a7d092b79f7de55044a303456cfbd1e5eaf3461b394da9b3f21eba",
+          "required_before_seams": [],
+          "required_after_seams": [],
+          "forbidden_after_seams": [],
+          "installers": [
+            "warmup_jit.py"
+          ],
+          "source_sha256": "8e055d6c48e35ffe23a661ab9a8cb6bfab037438294513cb8311d2ea7b5ddbe9"
+        },
+        {
+          "path": "vllm/v1/worker/jspark3_warmup_jit.py",
+          "before_sha256": "ABSENT",
+          "after_sha256": "8e055d6c48e35ffe23a661ab9a8cb6bfab037438294513cb8311d2ea7b5ddbe9",
+          "required_before_seams": [],
+          "required_after_seams": [],
+          "forbidden_after_seams": [],
+          "installers": [
+            "warmup_jit.py"
+          ],
+          "source_sha256": "8e055d6c48e35ffe23a661ab9a8cb6bfab037438294513cb8311d2ea7b5ddbe9"
+        }
+      ]
+    }
+  }
+}

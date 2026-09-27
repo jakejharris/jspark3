@@ -1,0 +1,46 @@
+# JSpark3 v1.8.0
+
+Up to 141.7 tok/s code and 90.7 tok/s prose decode at 4 streams on three DGX Sparks, stock weights.
+
+Best of two runs. Full ranges in the results below.
+
+
+Faster than the published three-Spark reference build on its own benchmark at one and two streams, in every run.
+
+These are protocol-matched stock-weight prose medians from separate fleets and dates. The reference is author-reported, with unknown repetition count and exact harness commit. Individual runs can overlap the reference. No cross-protocol speedup is implied.
+
+| Streams | Our median tok/s | Author-reported tok/s | Source |
+|---|---|---|---|
+| 1 | 47.57 | 40.1 | [reference](https://github.com/MiaAI-Lab/GLM-5.3-Flash-EXL3-2x-DGX-Sparks/blob/f4970207e9fb2bdeac40d88b7cbef18c98aea310/README.md) |
+| 2 | 64.26 | 56.6 | [reference](https://github.com/MiaAI-Lab/GLM-5.3-Flash-EXL3-2x-DGX-Sparks/blob/f4970207e9fb2bdeac40d88b7cbef18c98aea310/README.md) |
+| 3 | 78.09 | 75.5 | [reference](https://github.com/MiaAI-Lab/GLM-5.3-Flash-EXL3-2x-DGX-Sparks/blob/f4970207e9fb2bdeac40d88b7cbef18c98aea310/README.md) |
+| 4 | 86.44 | 88.4 | [reference](https://github.com/MiaAI-Lab/GLM-5.3-Flash-EXL3-2x-DGX-Sparks/blob/f4970207e9fb2bdeac40d88b7cbef18c98aea310/README.md) |
+
+At four streams, our median is 86.44 tok/s versus the author-reported 88.4 tok/s.
+
+Four-stream decode, 512 forced tokens, concurrent streams. Full two-run within-start ranges (not confidence intervals):
+
+| Workload | Streams | tok/s range |
+|---|---|---|
+| code | 4 | 136.9 to 141.7 |
+| prose | 4 | 83.3 to 90.7 |
+
+A serving recipe for GLM-5.3 Flash on three DGX Sparks.
+
+Stock weights (`ABLIT=0`) and `production-stock` are the defaults. Choose stock or edited behavior before launch. Changing modes requires a service restart and recomputes conversation prefixes. Edited weights remain an explicit opt-in supplied separately; no edited checkpoint is redistributed.
+
+The historical measured stock cohort used a validation profile for testing. It does not qualify production admission. This sanitized source distribution retains `hardware_qualified=false`; fresh qualification of the exact shipped configuration is required before production mode-0 admission. Measurements describe the separately identified serving configuration, not a hardware test of this source export.
+
+Thirds and active TRIAR are deferred to the next release. No TRIAR speedup is claimed. The selected source retains TRIAR code resident but inactive under the NCCL graph path. Do not enable it; the startup resident flag is distinct from the runtime OFF state. The full positive inactive-path attestation and native qualification are required.
+
+First-pass canaries are recorded only; quick runs are diagnostic. Post-hygiene canaries block admission, together with the 1100 tok/s prefill floor, correctness, memory/no-swap and zero post-readiness compilation requirements.
+
+Stock free-form JSON may arrive in a Markdown fence, and code may be formatted with backticks. Clients needing bare JSON should request structured output with `response_format` and `json_schema`. Grammar-constrained requests retain the full speculative width. No quality-equivalence claim is made between stock and edited weights.
+
+The single-request grammar-width crash is fixed. Its applicability to v1.1.0 is established by source inspection and reproduction on a later build, not a v1.1.0 hardware reproduction. Greedy near-ties still require controlled parity checks. Prefixes beyond retained replay boundaries may safely recompute.
+
+Native binaries, weights and images are obtained separately. The exact pinned image, native builds, cache preparation and operator hygiene remain installation prerequisites. A fully independent image rebuild has not been demonstrated by this export.
+
+Original code and prose are Apache-2.0. Included derivatives retain AGPL-3.0-only and vendored headers retain MIT. The assembled service is not wholly Apache-2.0; per-file SPDX and REUSE records govern. The draft-model dependency retains its non-commercial research/evaluation restriction.
+
+Read [installation](docs/INSTALL.md), [operations](docs/OPERATIONS.md), [benchmarks](docs/BENCHMARKS.md), [release notes](release/RELEASE-NOTES.md) and [licensing](docs/LICENSING.md). Verify the source with `python3 -B tools/validate_release.py .`.

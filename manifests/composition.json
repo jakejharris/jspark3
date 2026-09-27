@@ -1,0 +1,50 @@
+{
+  "executable_ast_equal": true,
+  "original_targets_verified": true,
+  "public_contracts_verified": true,
+  "public_targets_verified": true,
+  "scope": "stages 1-5 replayed, sanitized stages 6-7 composed; no hardware execution",
+  "targets": {
+    "vllm/models/glm5next/nvidia/ops/kpool_compress.py": {
+      "input_sha256": "8da850460cfe91a57fbd116985e07be5254778c3069f523ffe75f0dd1152936b",
+      "public_sha256": "8da850460cfe91a57fbd116985e07be5254778c3069f523ffe75f0dd1152936b"
+    },
+    "vllm/v1/attention/backends/mla/indexer.py": {
+      "input_sha256": "4b45bb8573f480e7586d9d3bfab54474f873b700d6754a21987d3910db399c86",
+      "public_sha256": "4b45bb8573f480e7586d9d3bfab54474f873b700d6754a21987d3910db399c86"
+    },
+    "vllm/v1/core/kv_cache_utils.py": {
+      "input_sha256": "42c70906c43235803510a700d75f401d9b3abfb62803d08cee66fa4c38e9ab29",
+      "public_sha256": "11c756125b120863aae90220d49188a166063e4eef8858fe02feb5fc51d660b1"
+    },
+    "vllm/v1/core/sched/scheduler.py": {
+      "input_sha256": "0b086dd3cc0febc4924202ca1fef8809b8290b9a59ef15fa80004cef4edeb937",
+      "public_sha256": "0b086dd3cc0febc4924202ca1fef8809b8290b9a59ef15fa80004cef4edeb937"
+    },
+    "vllm/v1/worker/glm53_display_kv.py": {
+      "input_sha256": "515f55d178abbf658e4807fc03a9b2a3a731936b7310c0e67e55e666ab407ba0",
+      "public_sha256": "384c00af49aae77bcdfeafd870b413dce4c285b8673ad781eeeee26aab851545"
+    },
+    "vllm/v1/worker/gpu/attn_utils.py": {
+      "input_sha256": "1d976c2b72450060fb7e8c29d9772dad01f5b573a7f6a099d12b5940a3ab232b",
+      "public_sha256": "1d976c2b72450060fb7e8c29d9772dad01f5b573a7f6a099d12b5940a3ab232b"
+    },
+    "vllm/v1/worker/gpu_model_runner.py": {
+      "input_sha256": "c3469e422154de2140e3a3070e5c2b4ef8098dc49e0887d810c4e5a6ec7909a8",
+      "public_sha256": "c3469e422154de2140e3a3070e5c2b4ef8098dc49e0887d810c4e5a6ec7909a8"
+    },
+    "vllm/v1/worker/gpu_worker.py": {
+      "input_sha256": "c1aa70809364f4cc2fef76baf5b86aa8e9107a48a8d83982769eb0a3ea0b2fab",
+      "public_sha256": "c1aa70809364f4cc2fef76baf5b86aa8e9107a48a8d83982769eb0a3ea0b2fab"
+    },
+    "vllm/v1/worker/kv_connector_model_runner_mixin.py": {
+      "input_sha256": "478b522bea419fd3c2202f5b75f0b1ca2aaf7313ffab395788bc532758e0ecd4",
+      "public_sha256": "478b522bea419fd3c2202f5b75f0b1ca2aaf7313ffab395788bc532758e0ecd4"
+    },
+    "vllm/v1/worker/utils.py": {
+      "input_sha256": "6c754c4afe74796010cb730fbc9333c6c7116edf8e66db1ffd32aee3d26727ec",
+      "public_sha256": "6c754c4afe74796010cb730fbc9333c6c7116edf8e66db1ffd32aee3d26727ec"
+    }
+  },
+  "verdict": "PASS"
+}

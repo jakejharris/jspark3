@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "candidate": "JSpark3 v1.1 Cadence (B4+B5)",
+  "grade": "ENGINEERING-EVIDENCE",
+  "provenance": {
+    "measured_arms": "historical cadence reference pair; reconstruction validated separately",
+    "source_manifest": "inherited release module pins with the v1.6 grammar fix described below",
+    "v16_grammar_fix": "B5 preserves scheduler widths for structured-output batches, including forced-width requests; upstream constrained speculative sampling is unchanged. Offline regression only; hardware verification pending.",
+    "behavior": "B4 group128 QKV shadow banks plus B5 request-local width 7/3 controller on the stock workspace; B1 is absent and must stay absent; no indexer or scheduler override is permitted",
+    "bootstrap_role": "zzz_b45.pth is the single import owner; it inserts /opt/b45 on sys.path and imports b45_bootstrap, which redirects only the Python import of the KDA mixed-output module to the sealed /opt/b45 copy. The on-disk original KDA file stays untouched for launcher hash checks."
+  },
+  "modules": {
+    "b45_bootstrap.py": "a19fd73e683be553a5880e12f1cce1bd0e8ac793217646e9c47573008b3439e3",
+    "b45_graphs.py": "d8b165b0c63775cd25c1962a8c2ad2d6ab726a449065e33ea362bf437da6e251",
+    "b5_controller.py": "1f7cea92cbaba7309074f813681988c7f7dc4a2e5260383540700ca76e6df11d",
+    "b5_prefix_verify.py": "778fa7119158b0d1cdf23964e55bdbb7f65b6cf4d9a060281eb5f5490a465e78",
+    "kda_mixed_output_blocks.py": "1628a3c1581c36f9d2dd1453b2169a0556c36938343cd0a0d0705c2f3e19160a"
+  },
+  "import_owner": {
+    "file": "zzz_b45.pth",
+    "sha256": "eea018d5bfee8fdc28e6470f650b8f4adaa5ec4cc4f8ac86b3e8849368c9fdeb",
+    "site": "/usr/local/lib/python3.12/dist-packages"
+  },
+  "kda_import_target": {
+    "module": "vllm.model_executor.layers.quantization.kda_mixed_output_blocks",
+    "site_relative_path": "vllm/model_executor/layers/quantization/kda_mixed_output_blocks.py",
+    "required_sha256": "01aa249dd9ed35c96cc4339f85389d43a90085b9878a52827927974b93c58cd5",
+    "role": "on-disk bytes the bootstrap asserts before shadowing the import; equals the apply_kda_fg.py contract after-hash"
+  },
+  "environment": {
+    "B45_COMBINED": "1",
+    "B5_PREFIX_VERIFY": "1",
+    "B5_CALIB_REPLAYS": "20",
+    "B5_T4_SEED_MS": "74.30",
+    "B5_T7_SEED_MS": "92.53",
+    "B5_OUT": "/tmp/b45",
+    "JSPARK3_KDA_QKV_SHADOW": "1",
+    "B4_CAPTURE_ORDER": "[\"bf16_0\",\"int8_0\"]"
+  },
+  "label": {
+    "jspark3.b45": "cadence-reference",
+    "meaning": "provenance of the measured launch pair; deliberately retained, not a boot counter"
+  },
+  "output": {
+    "out_dir": "/tmp/b45",
+    "graphs_dir": "/tmp/b45/graphs",
+    "start_state": "must exist and be empty before serving; receipts written during serving are the execution evidence checked by verify",
+    "restart_policy": "a stopped candidate is never restarted with stale receipts; a fresh container is required"
+  },
+  "execution_evidence": {
+    "startup_log_line": "B5_PREFIX_VERIFY_RECEIPT rank=0 T4_seed_ms=74.300 T7_seed_ms=92.530 narrow_width=3",
+    "b4_receipts": "graphs/activation-<pid>.jsonl, graphs/steps-<pid>.jsonl and graph dot dumps appear under the output directory during real graph capture and decode",
+    "b5_receipts": "b5-steps-<hostname>-<pid>.jsonl and b5-receipt-<hostname>-<pid>.json appear under the output directory during controller-driven decode"
+  }
+}

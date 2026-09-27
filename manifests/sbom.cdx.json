@@ -1,0 +1,3053 @@
+{
+  "bomFormat": "CycloneDX",
+  "components": [
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "f4b50ecc71f2e2450e8e0a7d428d62cf5248277eb2fb61e8042c05f61e79eb11"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/.env.example",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "fe699b71bf569001d8f34e8ab9da79db578cd93f21e2228d583e1f0c5a55fe99"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/.gitignore",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "2943c466850c35ce34561ad3ef9135687e09965a97df9adf673769624e1d17e2"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "name": "Retained upstream license text or notice"
+          }
+        }
+      ],
+      "name": "recipe/LICENSE",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "a7ad1fd0f5b72ee649e4c6301a6cec30d9b631913c7549ef66d8886be778fd1a"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/README.md",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "61cac2a6a6c47b4c1880af6c69845a9c41e54e3b091745616f0bfeddbf8f8d62"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/REQUIRED_ATTRIBUTION.md",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "6d8b69ad943610b18edaeedc386e9be0f7a11a5b5d04f1d421f156956f4f2b8f"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "name": "Retained upstream license text or notice"
+          }
+        }
+      ],
+      "name": "recipe/THIRD_PARTY_NOTICES.md",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "76a6ba1878e14d02f7246f821c4fa106ccd12b16daab5ceb6ef1c344e1c1b0fd"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/config/cadence-contract.json",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "5f39ea600fa38f2baf8a67caaf4f1a71845637d79a8eeed4afaadc1857c55210"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/config/checkpoint-contract.json",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "a15b3e6056828219cabe19662fd239245e61fb2b45defe3a8e2712b75b925b3f"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/config/image-oci.json",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "d5758b15b73dcd56487e9e3c57f57bea08dfb49412b889a24fda7a73b0840f70"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/config/loader-audit.json",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "f1b6657e2fe42c542add9d2f0ad3c1538650194fe1d312e8b2b6dd76069e5ce9"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/config/patch-contract.json",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "de0f91701501592fe22eb64338cd4aaf21a72378a33ed4339a9c8351a33ea7c4"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/config/profile.json",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "4bd30a71c0496e9a76de9c7f94f283e43cbb2e4a271a5c9494a084c394e41af5"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/config/swa-contract.json",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "21dda064013284535d462a4c55e626b308c13c96e30538418cedce94254e62e7"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/config/v14-expect-display0.json",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "92e30d6d7b58662d7e2d52b3c52d005933a262c0199d0711c667604417b020bb"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/config/v14-expect-full.json",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "a22616e1f04b14afc69fbc587f231721030904289e2f9f0a0508abae70f93548"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/config/v16-adaptive-k-contract.json",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "6a03b93257bb10ed9198549acff9cb1363dbedf46418bd0da4e00614f910b145"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/config/v16-dense-fp8-contract.json",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "d756f3a38888703cc7ad747ed255aceb8b8368d54f2989bba94a7170e5c21841"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/config/v16-grammar-fsm-contract.json",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "5cfcf751837cac9a705b0da611bf76b79bb7c124c1730bf63e1f1bc5c7a8c05a"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/config/v16-warmjit-contract.json",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "51201753a17aaedd0b0dbac3d4b3447dc9bd135a7268c72a4c0f1e1dff91f00a"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/docs/LIMITATIONS.md",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "17af78ccc43c2ac45eb8f3d0f500a3fe2ccb424fc78071a3aaa5feb18878ec6e"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/docs/REPRODUCIBILITY.md",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "a19fd73e683be553a5880e12f1cce1bd0e8ac793217646e9c47573008b3439e3"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/modules/b45_bootstrap.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "d8b165b0c63775cd25c1962a8c2ad2d6ab726a449065e33ea362bf437da6e251"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/modules/b45_graphs.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "1f7cea92cbaba7309074f813681988c7f7dc4a2e5260383540700ca76e6df11d"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/modules/b5_controller.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "778fa7119158b0d1cdf23964e55bdbb7f65b6cf4d9a060281eb5f5490a465e78"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/modules/b5_prefix_verify.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "1628a3c1581c36f9d2dd1453b2169a0556c36938343cd0a0d0705c2f3e19160a"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/modules/kda_mixed_output_blocks.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "eea018d5bfee8fdc28e6470f650b8f4adaa5ec4cc4f8ac86b3e8849368c9fdeb"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/modules/zzz_b45.pth",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "91b28ac17086c857cd8ed960379a82bfbcd02aaf54b639aa97b8101e585ab3d4"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/overlays/ablit_transplant.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "160c82bc5ab9cb43e38954efb982f4e874dbcc00695909eda110a2dca80fe207"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/overlays/instanttensor_audit.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "bd70f24fffc61788094f6a730a380e20f6062c25366fc2e9aa9205fb2e18b1f9"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "recipe/overlays/patch_apc_per_group_retention.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "8a2f74597dc9252a35e7050bbe15c7ea4864c9bfff27ccf50135b5b28048bd9c"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/overlays/patch_base_loader_hook.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "cd1c58b3d43cf59d4e2d6544bc3ba41102ef71475c586d9a669a12df6454c8d6"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "recipe/overlays/patch_dflash_fine_replay_window.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "90dca3701b3b254af4f497c3f4f5802601c246d3a66e28f13ef966b12818d6af"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "recipe/overlays/patch_hybrid_prefix_hit.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "8f3e3f294aeb0eb1d69e79732c496219752b168c6feab2550f0fe5c9239c86d8"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "recipe/overlays/patch_mamba_align_state_free.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "5aeff0cf92e715094d737faded2bf35000f7ce586213c495431b5a4805f7307d"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/overlays/trunk_w8a16.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "4ef48ac729e3a8ea4e471d23d4f01f110825687f6df671a771ff6fc26fb45881"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v14/display_kv/BUILD.json",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "ac16fa02980facc09297694c8bfa70339ca31d87d59df3779c28fc3cb09c9ae6"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v14/display_kv/build.sh",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "5801acf0b091dda46d7f0db906a6d85b26f1c62f86e33052869e645922d217fe"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v14/display_kv/bw_pinned.cu",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "3d93d7b40b3f72347978e149640e49956777b4301f161ed960c57bc7da23355a"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v14/display_kv/display_kv.c",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "384c00af49aae77bcdfeafd870b413dce4c285b8673ad781eeeee26aab851545"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v14/display_kv/glm53_display_kv.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "682cc29c77799f256bd9d672627cf8945c7a80648272e74a18cf1ee1546a5c3b"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v14/display_kv/patch_display_kv.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "34763a07e0aca22a4a3f6850d7a590e912a67d7187945a9a077debcfa5ed94be"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v14/display_kv/probe_main.cu",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "504087b2fb6fb615e242d95a5f4e14b7cb8d516148b6bfd056ee822a0daca402"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v14/patch_glm5_drafter_group.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "7b413f0436b736acdcca25e16f4aa926621aa92dd2d407f5c13e5be4f327dc3e"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v14/patch_indexer_warmup_range.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "25f1e5c801aa4ad4530d6a11fe761039aa9ec712fb1b5f0d266e4dc5e6cd35c0"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v14/patch_kpool_seed_stride.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "3c1587e41f8e94f3420d817e223fcb46d04cb8aebf08dba8f943b94f2fef9f94"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v14/patch_kv_capacity_log.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "0197ac174d9a6bffcc89ca12f93861cac229143c1c6c9a076297f62e9ce2ee04"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v14/patch_mamba_align_chunking.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "5884f118ae45795b85e40069aff71147e102bfed4beb6936c29dbad5d97f0303"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v14/patch_scheduler_decode_floor.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "69309df5f236502ec8cf55648f72369c20052c646ebd8850cd88272be881b48e"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v15/jspark3_exl3_fatpath.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "3fd5ffc1e44566f7060de7598889611eac4cbfaaefb406d905508ffe5a21e9fc"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v15/patch_exl3_fatpath.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "35c06d967579d8314fc8a7230db6129248bc1a80d6ce4be1ded6c210ef8d83b1"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/adaptive_k/jspark3_adaptive_k.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "aa3398c4254c4cc9adcf82efe10751c9f400cfd7a910bd7883c107a2c85c7625"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/adaptive_k/patch_adaptive_k.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "83d1fa1edbb43eee75c870d73f7c56787af49953ca8024e25047177cf0e0bda7"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/.gitignore",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "b8e028fd0fb9ad783614d6902ec8acb0174775d51e0572b8a4b62bb44fd5982b"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/BUILD.json",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "b29d056d38666f1d8db83e90d937efa6da60a99d6cf213d3eb40283335682792"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/INSTALL_CONTRACT.json",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "38d93fdef5c10cece0d97e66fd402d9669598bf09c784af69db706f469cce9da"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/SOURCE_MANIFEST.json",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "74b2994b586b25075f945ef55a778f4ef0c5c87852065a7fe2ecf305b3473003"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/build_repro.sh",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "d48b01844af2aa68bc3fbea765069b94d70adb0c67dc4a62ca605c067aec9ab3"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "name": "Retained upstream license text or notice"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/bundle/LICENSE.MIT",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "27a32b6263fcd96c79d3beeecf221c4366780bdf15ad51986f48650bd7369bff"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "name": "Retained upstream license text or notice"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/bundle/LICENSE.exllamav3",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "8486a10c4393cee1c25392769ddd3b2d6c242d6ec7928e1414efff7dfb2f07ef"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "name": "Retained upstream license text or notice"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/bundle/LICENSE.upstream-AGPL-3.0",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "0e2c0675077d99e9181d2a8dc276f22db2e7fe1c8477321e614c1aa4aa589d8f"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/bundle/PROVENANCE.json",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "5a914760a9fc80c8b623b4f8c0f624e5cb00a82fe4bcf04e68f786c59d929085"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/bundle/dispatch_policy.json",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "dd6038fa6eb8b28df56b184e358e5633421af76eeb40bad4abc522ce6ba54f57"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/bundle/headers/compat.cuh",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "8ceacb1b321af5877a9a3d651e038fb1f44b543c3011e2f814f448830efe27ee"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/bundle/headers/ptx.cuh",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "0e3c63b323f8d3cc15c6a8f2e2b3816efafd71e149a99997b30b2f806375138a"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/bundle/headers/quant/codebook.cuh",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "7e3009b0f70635e8a98edf8b929832ca0fe16b6a5ad20f13b77ebfa72723feac"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/bundle/headers/quant/exl3_dq.cuh",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "12fadaabf5483b0c3b5c6cfd33eb8b23442c92b928e2813057342ea7a89eb863"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/bundle/headers/quant/exl3_gemv_kernel.cuh",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "6db5f3ab7ed173236080d641309076608c32c97c923555fbdeb699e08515729e"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/bundle/headers/quant/exl3_kernel_map.cuh",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "62903607abe42a9d662ac101af91823dcd20f9935b6097a6708602683a5ccec8"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/bundle/headers/quant/exl3_moe_coop.cuh",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "fdd8feb8f0641ef7c8392e78a7eb2d18cf1b3ea68b89cf0e114d4cd6b692132e"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/bundle/headers/quant/glm53_coop_kernel.cuh",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "8d8e437aced88735e919563301ffac0e4a2aac28cc542ed3f738e1216ea0c36b"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/bundle/headers/quant/hadamard_inner.cuh",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "1907cea115260db7c3b0de540e375e7733b7ffc9019bec190c1d92abea1d964e"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/bundle/headers/util.cuh",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "ba89ac6793bf31cfe123d13baa2e34531a18a24bc3b2ff4add8cf4856b75a1c8"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/bundle/headers/util.h",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "519c7f28ed629e43b9d595b4b1dc433365e2637381e78696d50a7f962be9209d"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/bundle/manifest.json",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "65660930bc9965ff7b7379afaa270e0f80f418276bad4c42c10dbdee7ac3d0eb"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/bundle/runtime.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "93ccc2f4c97c03bc767c611c75f3bb16b97e49606f5cd3ca05d7f6201ff8f8de"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "name": "Retained upstream license text or notice"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/bundle/source/native/LICENSE.exllamav3",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "a62db04fbbf0558dff99c880b5a511652ff36a29584f94f8d9e1679b8157c6ed"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/bundle/source/native/cooperative_moe.cu",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "fdd8feb8f0641ef7c8392e78a7eb2d18cf1b3ea68b89cf0e114d4cd6b692132e"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/bundle/source/native/cooperative_moe_kernel.cuh",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "05910a28b3e2613fabb7a6a284a1c89fa8bd3388c1adffe778f4d4b8e4832808"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/bundle/source/native/dispatch.cu",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "62903607abe42a9d662ac101af91823dcd20f9935b6097a6708602683a5ccec8"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/bundle/source/native/exl3_moe_coop.cuh",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "09f5ba5ca19ef6d9e064667fe5059810cc1feb1e05b71b38d0d5c05e58076ce2"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/bundle/toolchain.txt",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "d48b01844af2aa68bc3fbea765069b94d70adb0c67dc4a62ca605c067aec9ab3"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "name": "Retained upstream license text or notice"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/source/LICENSE.MIT",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "8486a10c4393cee1c25392769ddd3b2d6c242d6ec7928e1414efff7dfb2f07ef"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "name": "Retained upstream license text or notice"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/source/LICENSE.upstream-AGPL-3.0",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "0e2c0675077d99e9181d2a8dc276f22db2e7fe1c8477321e614c1aa4aa589d8f"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/source/PROVENANCE.json",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "bc7426013e1ae27031596cd6e150df1184ee65fe4d6ce20dc3284555912fdac5"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/source/README.md",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "2116537249a73a6770ef7a0e83a2c222a069f154d25167b2f1131d5c75c60c47"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/source/dispatch_policy.json",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "996edafabdf8bf594e485f6581929d34da887af418487571fc00d8699ff69114"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/source/manifest.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "93ccc2f4c97c03bc767c611c75f3bb16b97e49606f5cd3ca05d7f6201ff8f8de"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "name": "Retained upstream license text or notice"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/source/native/LICENSE.exllamav3",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "a62db04fbbf0558dff99c880b5a511652ff36a29584f94f8d9e1679b8157c6ed"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/source/native/cooperative_moe.cu",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "fdd8feb8f0641ef7c8392e78a7eb2d18cf1b3ea68b89cf0e114d4cd6b692132e"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/source/native/cooperative_moe_kernel.cuh",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "05910a28b3e2613fabb7a6a284a1c89fa8bd3388c1adffe778f4d4b8e4832808"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/source/native/dispatch.cu",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "62903607abe42a9d662ac101af91823dcd20f9935b6097a6708602683a5ccec8"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/source/native/exl3_moe_coop.cuh",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "d02d265de148f5e4ab85c09691579ed643da707929bd02fa6d4421d2b80cb9c3"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/source/profile_shapes.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "65660930bc9965ff7b7379afaa270e0f80f418276bad4c42c10dbdee7ac3d0eb"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/source/runtime.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "723f9b238d3fb2af327189eca10273f36415f54b1f85ac87b14782307b93e25f"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/source/sanitizer_smoke.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "ae24b349f731a1b8b07322abe4b061c92deb4371d7dc7f5cd51abaaf63567a1f"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/source/select_policy.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "e7a0bfbaefbfda4fd6423effbb2f61b420a402c3867b12477effa14d20ac25d2"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/source/test_contract.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "6dd442725cfcc5193c0563f1cfb4245e134e4dfd186701eaad27a57d458204b3"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/source/test_cuda_integration.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "4c0aa979c21d79d96243a68d0337a10f985fc20041952f2cfdf663a54a485dc7"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/source/test_dispatch.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "1531c2630c1ba6de1e8f75bbdcf73901757787054b01db746ba84563a2fcf082"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/source/test_geometry2_sanitizer.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "de7492da684763d3f4102d6dbf9aa15b0b00ceacadacd5d3cdd28333b89d4be0"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/source/test_policy_gpu.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "27a32b6263fcd96c79d3beeecf221c4366780bdf15ad51986f48650bd7369bff"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "name": "Retained upstream license text or notice"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/source/vendor/LICENSE.exllamav3",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "dd6038fa6eb8b28df56b184e358e5633421af76eeb40bad4abc522ce6ba54f57"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/source/vendor/exllamav3_ext/compat.cuh",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "8ceacb1b321af5877a9a3d651e038fb1f44b543c3011e2f814f448830efe27ee"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/source/vendor/exllamav3_ext/ptx.cuh",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "0e3c63b323f8d3cc15c6a8f2e2b3816efafd71e149a99997b30b2f806375138a"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/source/vendor/exllamav3_ext/quant/codebook.cuh",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "7e3009b0f70635e8a98edf8b929832ca0fe16b6a5ad20f13b77ebfa72723feac"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/source/vendor/exllamav3_ext/quant/exl3_dq.cuh",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "12fadaabf5483b0c3b5c6cfd33eb8b23442c92b928e2813057342ea7a89eb863"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/source/vendor/exllamav3_ext/quant/exl3_gemv_kernel.cuh",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "6db5f3ab7ed173236080d641309076608c32c97c923555fbdeb699e08515729e"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/source/vendor/exllamav3_ext/quant/exl3_kernel_map.cuh",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "8d8e437aced88735e919563301ffac0e4a2aac28cc542ed3f738e1216ea0c36b"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/source/vendor/exllamav3_ext/quant/hadamard_inner.cuh",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "1907cea115260db7c3b0de540e375e7733b7ffc9019bec190c1d92abea1d964e"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/source/vendor/exllamav3_ext/util.cuh",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "ba89ac6793bf31cfe123d13baa2e34531a18a24bc3b2ff4add8cf4856b75a1c8"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/coop/source/vendor/exllamav3_ext/util.h",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "3c30ce3ea4aaddabef37f6ee3219b6698be319b95324cc8ed80794e292a4203d"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/dense_fp8/jspark3_dense_fp8.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "f747068d43ea9b7b105049a332fda398d715b535c6cef6fa3b851c71c0869afc"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/dense_fp8/jspark3_dense_fp8_reference.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "0babfbf0ff753db350d58e0f362200ab0727b33340a69aa784eff5f7fdd70e1d"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/dense_fp8/patch_ablit_dense_fp8.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "de84093ea2f51bf08e7d955b9fffbc7ae9ade337506146caebbad40a11d261a3"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/grammar_fsm/patch_xgrammar_termination.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "8e055d6c48e35ffe23a661ab9a8cb6bfab037438294513cb8311d2ea7b5ddbe9"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v16/warmjit/warmup_jit.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "703820079200f547c6fa117560d73e0e5986d401f5a7a880dec7e091f24bec86"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v17/triar/INSTALL_CONTRACT.json",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "e1746fe8ec4ab5e3dd4ad9c103b764e8ac97f264df81d3f6dbfb56d380b03dd3"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v17/triar/__init__.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "0f3b9326277fdedc13b720eaa71bf52bb11c447f7e65647d50c63a87ca5de641"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v17/triar/jspark3_triar_arithmetic.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "db317d939b88764cbca2c6cb71309889bf00cd7d28fa74098aaa0dd148a6c93e"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v17/triar/jspark3_triar_dual.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "7bd145bebfecb2170cef9508dcb1f8cff3c64c27021052e6c4417aa00a5155f9"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v17/triar/jspark3_triar_kernel.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "e9a73e1ffea2a38e519c0ec4ebb5db771734f4a9fbcfc8e4a545dae394fecf49"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/overlays/v17/triar/jspark3_triar_runtime.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "71a857e6bf89d13efc7df7db846fda9a5f5d5ca72c1c6e45789cca5ff74de156"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/scripts/_atomic.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "9739442b3b0b4f0ecca528e774b0ef7daf4f73c3944557ee3635c292df687bed"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/scripts/_contracts.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "aba522cd49468c80a000eb73faaa52dd4ead91b3b26a7c05063e54d20cceab57"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/scripts/_fleetctl.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "671324ca675ff5c74430932353e8ede3b9f02c82f84c69f9cd75b00c8150dbd2"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/scripts/_installer_guard.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "2e823762ea37c0fbb7c3b94c1771820feb56847026741828f767b43b5114e4d7"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/scripts/api_smoke.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "5ae84ea2e6ad8004745a2eda0d23bec9409bc3e55e9261ca72a06e7fdbdcab37"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/scripts/apply_adaptive_k.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "095350e19c68da3693dbb1d84a5070b9e3b0f6cee3b17e11fa89c4b7ec22da49"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/scripts/apply_base_pipeline.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "49d1f7321cf4947dcee10462d1a401b056e45ef28788e4d6b73f1e4f949993f9"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/scripts/apply_coop_moe.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "93c6d08bd3a3bf9b4c10cc472f92244417f336b0d1e3c38bc69bab607c84b807"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/scripts/apply_dense_fp8.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "b846f6fef31506eb54440e727268b6b8b5b394978130c2e47bd62d7ee01b7ec9"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/scripts/apply_display_kv.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "cbea34dfe62fa32bdbdaaeebdc968b327dadb54dd3502cec7565beee513b0a26"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/scripts/apply_exl3_fatpath.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "1e0aadcf35c719c52e8716e405e1d083aefbe4f3c2705c78eca4cd615b5097ec"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/scripts/apply_grammar_fsm.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "5ef8591274361823dde920188a5186e30d93590ed795a4d8008e9168a3f8033f"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/scripts/apply_image_glm_dflash.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "977630b2b9e134ac9815a701a7ed01213065d178a0846c5504335185f2657cda"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/scripts/apply_kda_fg.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "838801654ebfa9b3f950ef30cb163fca56b62d3db8052587bee85892c1110f73"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/scripts/apply_kda_mixed.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "0d588b7416dffc1e5464c11c66d9739aa6490363dde29d668c204189f101ad44"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/scripts/apply_kpool_tail.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "8155857ab8f99075fafef0f9fea72f6ee43cb90e5d3191ff541d4d136490164a"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/scripts/apply_swa.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "5de3e265c8cacb19ed2bfb6f5f4ba0c4bc721783e921cf3d63588eb3bca2d03b"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/scripts/apply_tp3_overlay.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "b8430fe7e56499bd8ba74bf21bf981ac2d2fa35b372d2b75f50e5988e9e1ee92"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/scripts/apply_triar.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "b21ee2ffd8a753e79c1d4deab6882db5876198361d32c9daa43b6837b3ff8bcc"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/scripts/apply_v14_core.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "c8e3c46b95779b35ac06a1ee2bf399f96669296c621429c9ed716fc5e6d5b81d"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/scripts/apply_warmjit.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "7b49204aecd811125bbe50fdfd80ea28cbfd26da88c585588250607778f1b419"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/scripts/clean-room-setup.sh",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "b830b123102777aea3080bfda50acd8b17417f8b8e370a77daf328c4a3b75aec"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/scripts/container_entry.sh",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "1ce77080e863391497515e71f023f16143c2bcc5c960d5f88f45814b0036ba14"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/scripts/final_container_preflight.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "74d8b223252971c5f384191ab591e1d3495151c27b18f67b49240a3831fa9363"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/scripts/fleetctl.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "506550dd63bd7c1ea90b0592c2c71c0f3b84577512d7ecc016f20c722ab72e1e"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/scripts/focused_witness.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "7ba091d89c1a5c5ac31da0e0aefb1dec4f016cf767aef74e886c18f5f69d5a92"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/scripts/health.sh",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "1aed8db54022f046902be3515049246e906fa529a1168b3467b83f9e87c0e2f8"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/scripts/install_b45_modules.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "8ab89831897e2c07b8e7f9fb8472c707d6dc096f715a8f9ffdd8e9108293c2bd"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/scripts/long_context_witness.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "1772c493a986c4afadd40f7e7586c5b72313e6d4a01b0964ebc4a0a66321f015"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/scripts/make_image_receipt.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "f9124cd8dc4cc6ec9f0725648287615da21b7b892304628b4718f00123d6e110"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/scripts/patch_loader_audit.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "7acbe3a2c672f4389033e4ffa9c3bcc08ca025949226bd47e25fc03b0b1807be"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/scripts/preflight.sh",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "9c841dacaddf9049b89f7a698e19871f54be1e839e12b335789b6a5f75d68fb4"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/scripts/prepare_runtime_views.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "a01109a7aab19d99a2f496ff55acffddc5bc2510a25ad216e271435c7cde2ca7"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/scripts/production_stock.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "589e5868d3c49c3c672be746cac841d1d038027d191d3ac8bdea1dbec80de449"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/scripts/remote_preflight.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "289bfa60747c74159e36ccdd2cf3ea9c5f6f5e4628dbceaafefd6e5bf1161ad5"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/scripts/resource_scope.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "96e48080558bd37c8b4b7406f3fc49b27f7dc804f9bf566c1787170761943755"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/scripts/rollback.sh",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "fe64887388c384a6cdf68bdc056a7df3c13c9c57782458b9e497ed5fad1da01c"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/scripts/start.sh",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "7ba091d89c1a5c5ac31da0e0aefb1dec4f016cf767aef74e886c18f5f69d5a92"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/scripts/status.sh",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "bcbefa28de373d389c398d00eed0b11f40c9777cc313046ed6058976e99e105e"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/scripts/stop.sh",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "2ad96dfb54dcd471acb89734a33b7a071463b92a7ed45cbff96bf448e1f2225b"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/scripts/thirds_entry.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "14912a3baabdc25c692ea404ee10fc5d9bd887446545a69d7ac95b9744485470"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/scripts/triar_entry.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "b7c1081c0716648284a5ab520552a5b8e56f71f3576e69e0d036f3d57dff7417"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/scripts/v18_triar.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "ea697f54d80088dfe68970a6466007f2a4c2e271b9e3ce697fec2f73e3bb763c"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/scripts/validate_ablit_artifacts.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "efac036e8261ff5aa5b17bf47efaede33ba0ca1a50142bd1de013bf594974f26"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/scripts/validate_checkpoint.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "b3a7ee6e34f0eaad89125b6f2a3fdabe984dd3ba9491fdfd8fb73a784bd213ed"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/scripts/verify.sh",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "369108af9b703f6da027c90ccddfb245c4146c46b59f096cabf6718906b5ac6c"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/scripts/verify_stock.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "ca75b5b751517ef2361be1e27bf733b43142a9c2277e7fda4bed01d584f322da"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/transforms/README.md",
+      "type": "file"
+    },
+    {
+      "description": "SWA corrections",
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "MiaAI-Lab/GLM-5.3-Flash-EXL3-2x-DGX-Sparks",
+      "type": "library",
+      "version": "357fce7a976fb835740916151edf2f9325384482"
+    },
+    {
+      "description": "cooperative MoE; PR 202",
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "MiaAI-Lab/GLM-5.3-Flash-EXL3-2x-DGX-Sparks",
+      "type": "library",
+      "version": "bc68f310f8d5e941227ce5c93e95bca43b50fd6c"
+    },
+    {
+      "description": "indexer warmup; PR 203",
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "MiaAI-Lab/GLM-5.3-Flash-EXL3-2x-DGX-Sparks",
+      "type": "library",
+      "version": "77ef2f3f8a911788a599bc5498d2088525ea5a5a"
+    },
+    {
+      "description": "core scheduling, drafter, grammar; vLLM PRs 53046/52805",
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "MiaAI-Lab/GLM-5.3-Flash-EXL3-2x-DGX-Sparks",
+      "type": "library",
+      "version": "7cded8e2ed9d7502f32591cfeeeea4747db3d393"
+    },
+    {
+      "description": "hybrid prefix and replay-window derivative; PR 251",
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "MiaAI-Lab/GLM-5.3-Flash-EXL3-2x-DGX-Sparks",
+      "type": "library",
+      "version": "f4970207e9fb2bdeac40d88b7cbef18c98aea310"
+    },
+    {
+      "description": "display-KV original",
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "coolbho3k/DeepSeek-v4.1-Flash-2x-DGX-Spark",
+      "type": "library",
+      "version": "878e0eecd893fadc69ad2d58b2df0fabb0fae2ee"
+    },
+    {
+      "description": "display-KV adaptation; Mia PR 234",
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "gabewillen/GLM-5.3-Flash-EXL3-2x-DGX-Sparks",
+      "type": "library",
+      "version": "cd504b691816623fc12a840483342a987b30ff73"
+    },
+    {
+      "description": "nine unmodified headers in two copies",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "name": "turboderp-org/exllamav3",
+      "type": "library",
+      "version": "02aef45cd681b960a00afcd0749a4ab99e6c1bfe"
+    },
+    {
+      "description": "cooperative kernel declared origin",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "name": "turboderp-org/exllamav3",
+      "type": "library",
+      "version": "58d4d732"
+    },
+    {
+      "description": "operator-provided technique source",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "name": "FlyCockpit/GLM-5.3-Flash-EXL3-3x-DGX-Sparks",
+      "type": "library",
+      "version": "9093765c757bd1976372196e44af84a67cf86bad"
+    },
+    {
+      "description": "seed stride; PR 57477",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "vllm-project/vllm",
+      "type": "library",
+      "version": "db1bfdd4"
+    },
+    {
+      "description": "image-only dependency; statically linked libaio LGPL-2.1 and liburing; module/image not redistributed",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "InstantTensor",
+      "type": "library",
+      "version": "0.2.0"
+    }
+  ],
+  "specVersion": "1.5",
+  "version": 1
+}

@@ -1,0 +1,17 @@
+{
+  "image": "sha256:de01da91a1eefc7b2dee9df78c2e1b7abca64fbb9e19862a7872cc5338b6ce86",
+  "network": "none",
+  "outputs": {
+    "display_kv_probe": "9c9e675021e7361ba6d2aac8f360ffc0f836724a6a8881489d6379a980217f8b",
+    "libglm53_display_kv.so": "75eed665b248fd6e3467165a834d3d30d75face910a7bfa7aa3332bb60dc77f4"
+  },
+  "reproducible": "built twice, bit-identical",
+  "sources": {
+    "display_kv.c": "3d93d7b40b3f72347978e149640e49956777b4301f161ed960c57bc7da23355a",
+    "probe_main.cu": "34763a07e0aca22a4a3f6850d7a590e912a67d7187945a9a077debcfa5ed94be"
+  },
+  "toolchain": [
+    "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "Build cuda_13.0.r13.0/compiler.36424714_0"
+  ]
+}

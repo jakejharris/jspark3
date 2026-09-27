@@ -1,0 +1,43 @@
+{
+  "grade": "ENGINEERING-EVIDENCE",
+  "target": {
+    "repository": "Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw",
+    "revision": "25a44fdbf16862a46b7cc9921142c6c81350af2f",
+    "declared_byte_identical_source": "brandonmusic/GLM-5.3-Flash-tr3-4bpw@5ab363a8dcf6405955fd5f99671e01a1c9fb124b",
+    "native_config_sha256": "4f5341e048984459471bfb9c894e6bf87e69b9c67402672af901631d1349f265",
+    "runtime_config_sha256": "55201c73ed092c5a77f9b87ce40298edb450790ad864c1256cb6ca3a182683bd",
+    "model_index_sha256": "2f64d21c67c90bbafeb36c4e9b2f06f54063ed439e9f7cf95962d425a1d8515d",
+    "indexed_shards": 120,
+    "indexed_tensor_bytes": 175622979576,
+    "physical_safetensors_bytes": 175642157752,
+    "tokenizer_sha256": "19e773648cb4e65de8660ea6365e10acca112d42a854923df93db4a6f333a82d",
+    "tokenizer_config_sha256": "98b1271574f41abf89427ae2dda030d94dc9478f0edc5a8bd240db213c6fd5fc",
+    "native_heads": 64,
+    "runtime_heads": 66,
+    "logical_vocab": 154880,
+    "physical_vocab": 154944,
+    "inert_vocab_tail_rows": 64,
+    "routed_experts": 288,
+    "routed_intermediate_width": 2048,
+    "native_shared_expert_width": 2048,
+    "runtime_shared_expert_width": 2112,
+    "publication_ledger_sha256": "cb0da1f97a53aebc3fbc5478f19c82b25586b0bf8533c99fb4ed5321a48f5342",
+    "publication_ledger_complete": false
+  },
+  "draft": {
+    "repository": "incoai/GLM-5.3-Flash-DFlash2",
+    "revision": "dc77ff1c99eeb2df044ee3d4f0094eb033fee410",
+    "native_config_sha256": "c4aeac0101196a6e26705b34c45230bcd0c7c68ee2d2d1efdb242087f3712573",
+    "runtime_config_sha256": "c9f0c3a6c41f8a226fb31a1fb7817cea274d1f4b7b0d2e4d787d38c0f508283f",
+    "model_sha256": "b33c03475ba7322cf398828f2d8d1be376df30dc05c6b40c28c8ea8da23e410b",
+    "model_bytes": 2342169800,
+    "native_q_heads": 32,
+    "native_kv_heads": 8,
+    "runtime_q_heads": 36,
+    "runtime_kv_heads": 9,
+    "target_layer_indices_zero_based": [5, 14, 24, 33, 42],
+    "is_causal": false,
+    "license_scope": "CC BY-NC-ND 4.0; non-commercial research/evaluation only"
+  }
+}
+

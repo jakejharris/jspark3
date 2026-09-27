@@ -1,0 +1,91 @@
+{
+  "image": {
+    "config": "de01da91a1eefc7b2dee9df78c2e1b7abca64fbb9e19862a7872cc5338b6ce86",
+    "manifest": "a15b3e6056828219cabe19662fd239245e61fb2b45defe3a8e2712b75b925b3f"
+  },
+  "transforms": {
+    "apply_dense_fp8.py": {
+      "sources": {
+        "jspark3_dense_fp8.py": "3c30ce3ea4aaddabef37f6ee3219b6698be319b95324cc8ed80794e292a4203d",
+        "jspark3_dense_fp8_reference.py": "f747068d43ea9b7b105049a332fda398d715b535c6cef6fa3b851c71c0869afc",
+        "patch_ablit_dense_fp8.py": "0babfbf0ff753db350d58e0f362200ab0727b33340a69aa784eff5f7fdd70e1d"
+      },
+      "targets": [
+        {
+          "after_sha256": "81ecbff301d9c5db87869883dab02115906d2f0c249209e127c57fac48c7fad0",
+          "before_sha256": "91b28ac17086c857cd8ed960379a82bfbcd02aaf54b639aa97b8101e585ab3d4",
+          "forbidden_after_seams": [
+            "def finalize_with_ablit(model):\n    from . import trunk_w8a16 as trunk\n    mode = os.environ.get('ABLIT')\n"
+          ],
+          "installers": [
+            "patch_ablit_dense_fp8.py"
+          ],
+          "path": "vllm/model_executor/layers/quantization/ablit_transplant.py",
+          "required_after_seams": [
+            {
+              "count": 1,
+              "text": "# [jspark3-v16-dense-fp8]"
+            },
+            {
+              "count": 1,
+              "text": "jspark3_dense_fp8 as trunk"
+            }
+          ],
+          "required_before_seams": [
+            {
+              "count": 1,
+              "text": "def finalize_with_ablit(model):\n    from . import trunk_w8a16 as trunk\n    mode = os.environ.get('ABLIT')\n"
+            }
+          ],
+          "source_sha256": "0babfbf0ff753db350d58e0f362200ab0727b33340a69aa784eff5f7fdd70e1d"
+        },
+        {
+          "after_sha256": "3c30ce3ea4aaddabef37f6ee3219b6698be319b95324cc8ed80794e292a4203d",
+          "before_sha256": "ABSENT",
+          "forbidden_after_seams": [],
+          "installers": [
+            "jspark3_dense_fp8.py"
+          ],
+          "path": "vllm/model_executor/layers/quantization/jspark3_dense_fp8.py",
+          "required_after_seams": [
+            {
+              "count": 1,
+              "text": "class DenseFp8Method"
+            },
+            {
+              "count": 1,
+              "text": "def finalize_dense_fp8"
+            },
+            {
+              "count": 1,
+              "text": "\"w8a8\": False"
+            }
+          ],
+          "required_before_seams": [],
+          "source_sha256": "3c30ce3ea4aaddabef37f6ee3219b6698be319b95324cc8ed80794e292a4203d"
+        },
+        {
+          "after_sha256": "f747068d43ea9b7b105049a332fda398d715b535c6cef6fa3b851c71c0869afc",
+          "before_sha256": "ABSENT",
+          "forbidden_after_seams": [],
+          "installers": [
+            "jspark3_dense_fp8_reference.py"
+          ],
+          "path": "vllm/model_executor/layers/quantization/jspark3_dense_fp8_reference.py",
+          "required_after_seams": [
+            {
+              "count": 1,
+              "text": "CATEGORY_SPECS = {"
+            },
+            {
+              "count": 1,
+              "text": "def quantize_matrix"
+            }
+          ],
+          "required_before_seams": [],
+          "source_sha256": "f747068d43ea9b7b105049a332fda398d715b535c6cef6fa3b851c71c0869afc"
+        }
+      ]
+    }
+  }
+}

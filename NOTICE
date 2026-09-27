@@ -1,0 +1,9 @@
+JSpark3 v1
+Copyright 2026 JSpark3 authors
+
+Original JSpark3 code and prose are Apache-2.0. Included upstream source
+retains its per-file terms; see THIRD_PARTY_NOTICES.md and REUSE.toml.
+The assembled serving process includes AGPL-3.0-only components.
+Model checkpoints and container images are obtained separately.
+The ShapleyMcg attribution in REQUIRED_ATTRIBUTION.md must remain
+byte-for-byte intact in copies and generated reports.

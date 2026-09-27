@@ -1,0 +1,162 @@
+{
+  "components": [
+    {
+      "description": "SWA corrections",
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "MiaAI-Lab/GLM-5.3-Flash-EXL3-2x-DGX-Sparks",
+      "type": "library",
+      "version": "357fce7a976fb835740916151edf2f9325384482"
+    },
+    {
+      "description": "cooperative MoE; PR 202",
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "MiaAI-Lab/GLM-5.3-Flash-EXL3-2x-DGX-Sparks",
+      "type": "library",
+      "version": "bc68f310f8d5e941227ce5c93e95bca43b50fd6c"
+    },
+    {
+      "description": "indexer warmup; PR 203",
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "MiaAI-Lab/GLM-5.3-Flash-EXL3-2x-DGX-Sparks",
+      "type": "library",
+      "version": "77ef2f3f8a911788a599bc5498d2088525ea5a5a"
+    },
+    {
+      "description": "core scheduling, drafter, grammar; vLLM PRs 53046/52805",
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "MiaAI-Lab/GLM-5.3-Flash-EXL3-2x-DGX-Sparks",
+      "type": "library",
+      "version": "7cded8e2ed9d7502f32591cfeeeea4747db3d393"
+    },
+    {
+      "description": "hybrid prefix and replay-window derivative; PR 251",
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "MiaAI-Lab/GLM-5.3-Flash-EXL3-2x-DGX-Sparks",
+      "type": "library",
+      "version": "f4970207e9fb2bdeac40d88b7cbef18c98aea310"
+    },
+    {
+      "description": "display-KV original",
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "coolbho3k/DeepSeek-v4.1-Flash-2x-DGX-Spark",
+      "type": "library",
+      "version": "878e0eecd893fadc69ad2d58b2df0fabb0fae2ee"
+    },
+    {
+      "description": "display-KV adaptation; Mia PR 234",
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-only"
+          }
+        }
+      ],
+      "name": "gabewillen/GLM-5.3-Flash-EXL3-2x-DGX-Sparks",
+      "type": "library",
+      "version": "cd504b691816623fc12a840483342a987b30ff73"
+    },
+    {
+      "description": "nine unmodified headers in two copies",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "name": "turboderp-org/exllamav3",
+      "type": "library",
+      "version": "02aef45cd681b960a00afcd0749a4ab99e6c1bfe"
+    },
+    {
+      "description": "cooperative kernel declared origin",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "name": "turboderp-org/exllamav3",
+      "type": "library",
+      "version": "58d4d732"
+    },
+    {
+      "description": "operator-provided technique source",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "name": "FlyCockpit/GLM-5.3-Flash-EXL3-3x-DGX-Sparks",
+      "type": "library",
+      "version": "9093765c757bd1976372196e44af84a67cf86bad"
+    },
+    {
+      "description": "seed stride; PR 57477",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "vllm-project/vllm",
+      "type": "library",
+      "version": "db1bfdd4"
+    },
+    {
+      "description": "image-only dependency; statically linked libaio LGPL-2.1 and liburing; module/image not redistributed",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "InstantTensor",
+      "type": "library",
+      "version": "0.2.0"
+    }
+  ],
+  "policy": "Source-only distribution. Runtime model and image pins remain in recipe/config; obtain separately under their own terms.",
+  "schema_version": 1
+}

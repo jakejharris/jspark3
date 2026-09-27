@@ -1,0 +1,38 @@
+{
+  "upstreams": [
+    {
+      "repository": "https://github.com/MiaAI-Lab/GLM-5.3-Flash-EXL3-2x-DGX-Sparks",
+      "commit": "bc68f310f8d5e941227ce5c93e95bca43b50fd6c",
+      "archive_sha256": "4cff982b01466a2e23b15cc7965567ebc8ce1b0c4462c3e5d064f566c13c5d47",
+      "imported_original_sha256": {
+        "extensions/cooperative_moe/microbench.py": "79a17a35b08ebcbb6714cf39445c2ed53f2534cd762337501d4313604dd810d1",
+        "extensions/cooperative_moe/runtime.py": "9427f6a65def09ebdbea231e42f735236e145f3d02c19cf5e5276c2e704ce1ca",
+        "extensions/cooperative_moe/build.sh": "a9da670a49eae38b64156e3d01911ca4bc340899338814b03864cd49985bcd25",
+        "extensions/cooperative_moe/test_cuda_integration.py": "984fb2b7d1e57110549fbbaa37c9ba3cfebce37233db2d65271d9d9f81eb1bf1",
+        "extensions/cooperative_moe/native/exl3_moe_coop.cuh": "62903607abe42a9d662ac101af91823dcd20f9935b6097a6708602683a5ccec8",
+        "extensions/cooperative_moe/native/cooperative_moe_kernel.cuh": "b6c3fd1bb7abb996e977d92befa7e352d0c24772f1ea020c19670773df3a5cbb",
+        "extensions/cooperative_moe/native/cooperative_moe.cu": "b3716b1ebc0578611a4f2a014faa315c407fc599c6554a82e4ced9f05e0dec4a",
+        "extensions/cooperative_moe/native/LICENSE.exllamav3": "93ccc2f4c97c03bc767c611c75f3bb16b97e49606f5cd3ca05d7f6201ff8f8de"
+      }
+    },
+    {
+      "repository": "https://github.com/turboderp-org/exllamav3",
+      "commit": "02aef45cd681b960a00afcd0749a4ab99e6c1bfe",
+      "archive_sha256": "96ddc22a4bb4df0dfb83d2f3770a873ef83086589953b24a3e753b45ce208094",
+      "header_sha256": {
+        "vendor/exllamav3_ext/compat.cuh": "dd6038fa6eb8b28df56b184e358e5633421af76eeb40bad4abc522ce6ba54f57",
+        "vendor/exllamav3_ext/util.cuh": "1907cea115260db7c3b0de540e375e7733b7ffc9019bec190c1d92abea1d964e",
+        "vendor/exllamav3_ext/ptx.cuh": "8ceacb1b321af5877a9a3d651e038fb1f44b543c3011e2f814f448830efe27ee",
+        "vendor/exllamav3_ext/util.h": "ba89ac6793bf31cfe123d13baa2e34531a18a24bc3b2ff4add8cf4856b75a1c8",
+        "vendor/exllamav3_ext/quant/codebook.cuh": "0e3c63b323f8d3cc15c6a8f2e2b3816efafd71e149a99997b30b2f806375138a",
+        "vendor/exllamav3_ext/quant/hadamard_inner.cuh": "8d8e437aced88735e919563301ffac0e4a2aac28cc542ed3f738e1216ea0c36b",
+        "vendor/exllamav3_ext/quant/exl3_dq.cuh": "7e3009b0f70635e8a98edf8b929832ca0fe16b6a5ad20f13b77ebfa72723feac",
+        "vendor/exllamav3_ext/quant/exl3_gemv_kernel.cuh": "12fadaabf5483b0c3b5c6cfd33eb8b23442c92b928e2813057342ea7a89eb863",
+        "vendor/exllamav3_ext/quant/exl3_kernel_map.cuh": "6db5f3ab7ed173236080d641309076608c32c97c923555fbdeb699e08515729e"
+      }
+    }
+  ],
+  "kernel_origin": "turboderp-org/exllamav3@58d4d732 (as declared by pinned upstream)",
+  "modification": "TP3 EP I2048, 96 local experts; 32/64-row ABI2; nine-bit ordering key; build manifest; tests. 2026-09-16",
+  "image_digest": "sha256:a05d0d66cc8f09b3addf6a6a49f899b87308096b264a299a10397637a47b81c2"
+}

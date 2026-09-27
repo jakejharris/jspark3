@@ -1,0 +1,43 @@
+{
+  "bundle": {
+    "dispatch_policy_sha256": "5a914760a9fc80c8b623b4f8c0f624e5cb00a82fe4bcf04e68f786c59d929085",
+    "manifest_sha256": "519c7f28ed629e43b9d595b4b1dc433365e2637381e78696d50a7f962be9209d",
+    "native_sha256": "87706d4d25cc810e3039855a56a673317d20c7a0c6eb69cb33cd98df2f4e2470",
+    "runtime_sha256": "65660930bc9965ff7b7379afaa270e0f80f418276bad4c42c10dbdee7ac3d0eb"
+  },
+  "image": {
+    "config": "de01da91a1eefc7b2dee9df78c2e1b7abca64fbb9e19862a7872cc5338b6ce86",
+    "manifest": "a15b3e6056828219cabe19662fd239245e61fb2b45defe3a8e2712b75b925b3f"
+  },
+  "qualification": {
+    "cases": 468,
+    "ep_ranks": [
+      0,
+      1,
+      2
+    ],
+    "geometries": [
+      0,
+      1,
+      2
+    ],
+    "profile_log_sha256": {
+      "rank0-geo0.jsonl": "e0de02bb9f902b2ea9e8a012cce171ffe95881e4f7032a7f6678f59636dbc5da",
+      "rank0-geo1.jsonl": "0caa10156267534dcf240e5b126c1b3f1064ca68f21843403126fda19e5236ca",
+      "rank0-geo2.jsonl": "231e2cfaff3d86e2a2c3de169772536b01aa43cf2cdfad210c1a5d4f95c1b8ad",
+      "rank1-geo0.jsonl": "5c1dc13367e563f76916d4c97374e2366d281c55d8e04742dc266a42fb43d6f1",
+      "rank1-geo1.jsonl": "ac843af232ec7b03e50101bb8d3796a43a112d40a40c2842434140529e897ac4",
+      "rank1-geo2.jsonl": "55816558caf7ceb5ebcae67b5e95439e5a3bbd22e6d0370e6a6ff1973b210779",
+      "rank2-geo0.jsonl": "2eb987902af39dc49de9d065c76a76a4c2ee8c049decd11e7dcd8c9bbf9f679b",
+      "rank2-geo1.jsonl": "284ab3d1290c7165c1a35597321f7c32e6076d6a54e28d68057cbc881ca0356e",
+      "rank2-geo2.jsonl": "94bb2f2ed5bf42a08d2819d2c55a90b26e89a9fd3c98d41f94b5587384ff9799"
+    }
+  },
+  "reproducibility": {
+    "binary_sha256": "87706d4d25cc810e3039855a56a673317d20c7a0c6eb69cb33cd98df2f4e2470",
+    "comparison": "bit-identical",
+    "runs": 2
+  },
+  "schema_version": 1,
+  "source_manifest_sha256": "38d93fdef5c10cece0d97e66fd402d9669598bf09c784af69db706f469cce9da"
+}

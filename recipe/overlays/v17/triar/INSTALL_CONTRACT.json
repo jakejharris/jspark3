@@ -1,0 +1,66 @@
+{
+  "image": {
+    "config": "de01da91a1eefc7b2dee9df78c2e1b7abca64fbb9e19862a7872cc5338b6ce86",
+    "manifest": "a15b3e6056828219cabe19662fd239245e61fb2b45defe3a8e2712b75b925b3f"
+  },
+  "transforms": {
+    "apply_triar.py": {
+      "sources": {
+        "jspark3_triar_arithmetic.py": "0f3b9326277fdedc13b720eaa71bf52bb11c447f7e65647d50c63a87ca5de641",
+        "jspark3_triar_dual.py": "db317d939b88764cbca2c6cb71309889bf00cd7d28fa74098aaa0dd148a6c93e",
+        "jspark3_triar_kernel.py": "7bd145bebfecb2170cef9508dcb1f8cff3c64c27021052e6c4417aa00a5155f9",
+        "jspark3_triar_runtime.py": "e9a73e1ffea2a38e519c0ec4ebb5db771734f4a9fbcfc8e4a545dae394fecf49"
+      },
+      "targets": [
+        {
+          "after_sha256": "383029bcd053e5e7e7809624c5106e2479169b17e91a7058a01b67170eb098ea",
+          "before_sha256": "a9a0242175c3d3e0d46d586a38cb76139e6e4e92d15032d5b1e33237af2f6757",
+          "forbidden_after_seams": [],
+          "path": "vllm/distributed/device_communicators/cuda_communicator.py",
+          "required_after_seams": [],
+          "required_before_seams": []
+        },
+        {
+          "after_sha256": "28596817ee9fb842026624a8a6c32b0637630b6b908ddb2a79ecccbeac531e35",
+          "before_sha256": "28596817ee9fb842026624a8a6c32b0637630b6b908ddb2a79ecccbeac531e35",
+          "forbidden_after_seams": [],
+          "path": "vllm/distributed/device_communicators/pynccl.py",
+          "required_after_seams": [],
+          "required_before_seams": []
+        },
+        {
+          "after_sha256": "0f3b9326277fdedc13b720eaa71bf52bb11c447f7e65647d50c63a87ca5de641",
+          "before_sha256": "ABSENT",
+          "forbidden_after_seams": [],
+          "path": "vllm/distributed/device_communicators/jspark3_triar_arithmetic.py",
+          "required_after_seams": [],
+          "required_before_seams": []
+        },
+        {
+          "after_sha256": "7bd145bebfecb2170cef9508dcb1f8cff3c64c27021052e6c4417aa00a5155f9",
+          "before_sha256": "ABSENT",
+          "forbidden_after_seams": [],
+          "path": "vllm/distributed/device_communicators/jspark3_triar_kernel.py",
+          "required_after_seams": [],
+          "required_before_seams": []
+        },
+        {
+          "after_sha256": "e9a73e1ffea2a38e519c0ec4ebb5db771734f4a9fbcfc8e4a545dae394fecf49",
+          "before_sha256": "ABSENT",
+          "forbidden_after_seams": [],
+          "path": "vllm/distributed/device_communicators/jspark3_triar_runtime.py",
+          "required_after_seams": [],
+          "required_before_seams": []
+        },
+        {
+          "after_sha256": "db317d939b88764cbca2c6cb71309889bf00cd7d28fa74098aaa0dd148a6c93e",
+          "before_sha256": "ABSENT",
+          "forbidden_after_seams": [],
+          "path": "vllm/distributed/device_communicators/jspark3_triar_dual.py",
+          "required_after_seams": [],
+          "required_before_seams": []
+        }
+      ]
+    }
+  }
+}

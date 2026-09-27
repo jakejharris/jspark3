@@ -1,0 +1,31 @@
+{
+  "recipe/overlays/v14/display_kv/display_kv_probe": {
+    "build_script": "tools/v14/build_display_kv.sh",
+    "distributed": false,
+    "expected_sha256": "9c9e675021e7361ba6d2aac8f360ffc0f836724a6a8881489d6379a980217f8b",
+    "sources": [
+      "recipe/overlays/v14/display_kv/probe_main.cu"
+    ],
+    "status": "Not distributed. Expected historical output pin; rebuild and verify before hardware qualification."
+  },
+  "recipe/overlays/v14/display_kv/libglm53_display_kv.so": {
+    "build_script": "recipe/overlays/v14/display_kv/build.sh",
+    "distributed": false,
+    "expected_sha256": "75eed665b248fd6e3467165a834d3d30d75face910a7bfa7aa3332bb60dc77f4",
+    "sources": [
+      "recipe/overlays/v14/display_kv/display_kv.c"
+    ],
+    "status": "Not distributed. Expected historical output pin; rebuild and verify before hardware qualification."
+  },
+  "recipe/overlays/v16/coop/bundle/cooperative_moe.so": {
+    "build_script": "recipe/overlays/v16/coop/build_repro.sh",
+    "distributed": false,
+    "expected_sha256": "87706d4d25cc810e3039855a56a673317d20c7a0c6eb69cb33cd98df2f4e2470",
+    "sources": [
+      "recipe/overlays/v16/coop/source/native/cooperative_moe.cu",
+      "recipe/overlays/v16/coop/source/native/cooperative_moe_kernel.cuh",
+      "recipe/overlays/v16/coop/source/native/dispatch.cu"
+    ],
+    "status": "Not distributed. Expected historical output pin; rebuild and verify before hardware qualification."
+  }
+}

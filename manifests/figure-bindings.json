@@ -1,0 +1,295 @@
+{
+  "comparison_rule": "strict",
+  "fields": [
+    {
+      "field": "sets.release_m0.cells.decode_c4.lo",
+      "token": "136.9"
+    },
+    {
+      "field": "sets.release_m0.cells.decode_c4.hi",
+      "token": "141.7"
+    },
+    {
+      "field": "sets.release_m0.cells.decode_prose_c4.lo",
+      "token": "83.3"
+    },
+    {
+      "field": "sets.release_m0.cells.decode_prose_c4.hi",
+      "token": "90.7"
+    },
+    {
+      "field": "sets.release_m0.cells.sd512_prose_c1.lo",
+      "token": "43.34"
+    },
+    {
+      "field": "sets.release_m0.cells.sd512_prose_c2.lo",
+      "token": "60.12"
+    },
+    {
+      "field": "sets.release_m0.cells.sd512_prose_c3.lo",
+      "token": "72.66"
+    },
+    {
+      "field": "sets.release_m0.cells.sd512_prose_c4.lo",
+      "token": "83.16"
+    },
+    {
+      "field": "sets.release_m0.cells.sd512_prose_c1.median",
+      "token": "47.57"
+    },
+    {
+      "field": "sets.release_m0.cells.sd512_prose_c1.mia.lo",
+      "token": "40.1"
+    },
+    {
+      "field": "sets.release_m0.cells.sd512_prose_c2.median",
+      "token": "64.26"
+    },
+    {
+      "field": "sets.release_m0.cells.sd512_prose_c2.mia.lo",
+      "token": "56.6"
+    },
+    {
+      "field": "sets.release_m0.cells.sd512_prose_c3.median",
+      "token": "78.09"
+    },
+    {
+      "field": "sets.release_m0.cells.sd512_prose_c3.mia.lo",
+      "token": "75.5"
+    },
+    {
+      "field": "sets.release_m0.cells.sd512_prose_c4.median",
+      "token": "86.44"
+    },
+    {
+      "field": "sets.release_m0.cells.sd512_prose_c4.mia.lo",
+      "token": "88.4"
+    },
+    {
+      "field": "sets.release_m0.cells.sd512_prose_c4.median",
+      "token": "86.44"
+    },
+    {
+      "field": "sets.release_m0.cells.sd512_prose_c4.mia.lo",
+      "token": "88.4"
+    },
+    {
+      "field": "sets.release_m0.cells.prefill.lo",
+      "token": "1195.0"
+    },
+    {
+      "field": "sets.release_m0.cells.prefill.hi",
+      "token": "1262.6"
+    },
+    {
+      "field": "sets.release_m0.cells.decode_c1.lo",
+      "token": "68.2"
+    },
+    {
+      "field": "sets.release_m0.cells.decode_c1.hi",
+      "token": "73.3"
+    },
+    {
+      "field": "sets.release_m0.cells.decode_c2.lo",
+      "token": "101.0"
+    },
+    {
+      "field": "sets.release_m0.cells.decode_c2.hi",
+      "token": "103.9"
+    },
+    {
+      "field": "sets.release_m0.cells.decode_c4.lo",
+      "token": "136.9"
+    },
+    {
+      "field": "sets.release_m0.cells.decode_c4.hi",
+      "token": "141.7"
+    },
+    {
+      "field": "sets.release_m0.cells.decode_c8.lo",
+      "token": "174.0"
+    },
+    {
+      "field": "sets.release_m0.cells.decode_c8.hi",
+      "token": "179.7"
+    },
+    {
+      "field": "sets.release_m0.cells.decode_prose_c1.lo",
+      "token": "44.3"
+    },
+    {
+      "field": "sets.release_m0.cells.decode_prose_c1.hi",
+      "token": "49.1"
+    },
+    {
+      "field": "sets.release_m0.cells.decode_prose_c2.lo",
+      "token": "61.6"
+    },
+    {
+      "field": "sets.release_m0.cells.decode_prose_c2.hi",
+      "token": "63.5"
+    },
+    {
+      "field": "sets.release_m0.cells.decode_prose_c4.lo",
+      "token": "83.3"
+    },
+    {
+      "field": "sets.release_m0.cells.decode_prose_c4.hi",
+      "token": "90.7"
+    },
+    {
+      "field": "sets.release_m0.cells.decode_prose_c8.lo",
+      "token": "110.1"
+    },
+    {
+      "field": "sets.release_m0.cells.decode_prose_c8.hi",
+      "token": "110.8"
+    },
+    {
+      "field": "sets.base_m0_q.cells.prefill.lo",
+      "token": "1196.7"
+    },
+    {
+      "field": "sets.base_m0_q.cells.prefill.hi",
+      "token": "1263.3"
+    },
+    {
+      "field": "sets.base_m0_q.cells.decode_c1.lo",
+      "token": "73.0"
+    },
+    {
+      "field": "sets.base_m0_q.cells.decode_c1.hi",
+      "token": "75.7"
+    },
+    {
+      "field": "sets.base_m0_q.cells.decode_c2.lo",
+      "token": "104.1"
+    },
+    {
+      "field": "sets.base_m0_q.cells.decode_c2.hi",
+      "token": "112.5"
+    },
+    {
+      "field": "sets.base_m0_q.cells.decode_c4.lo",
+      "token": "137.8"
+    },
+    {
+      "field": "sets.base_m0_q.cells.decode_c4.hi",
+      "token": "141.5"
+    },
+    {
+      "field": "sets.base_m0_q.cells.decode_c8.lo",
+      "token": "180.1"
+    },
+    {
+      "field": "sets.base_m0_q.cells.decode_c8.hi",
+      "token": "181.0"
+    },
+    {
+      "field": "sets.base_m0_q.cells.decode_prose_c1.lo",
+      "token": "44.8"
+    },
+    {
+      "field": "sets.base_m0_q.cells.decode_prose_c1.hi",
+      "token": "45.7"
+    },
+    {
+      "field": "sets.base_m0_q.cells.decode_prose_c2.lo",
+      "token": "65.7"
+    },
+    {
+      "field": "sets.base_m0_q.cells.decode_prose_c2.hi",
+      "token": "66.0"
+    },
+    {
+      "field": "sets.base_m0_q.cells.decode_prose_c4.lo",
+      "token": "85.9"
+    },
+    {
+      "field": "sets.base_m0_q.cells.decode_prose_c4.hi",
+      "token": "92.6"
+    },
+    {
+      "field": "sets.base_m0_q.cells.decode_prose_c8.lo",
+      "token": "111.4"
+    },
+    {
+      "field": "sets.base_m0_q.cells.decode_prose_c8.hi",
+      "token": "112.4"
+    },
+    {
+      "field": "sets.opt_in_m1.cells.prefill.lo",
+      "token": "1185.6"
+    },
+    {
+      "field": "sets.opt_in_m1.cells.prefill.hi",
+      "token": "1266.2"
+    },
+    {
+      "field": "sets.opt_in_m1.cells.decode_c1.lo",
+      "token": "62.7"
+    },
+    {
+      "field": "sets.opt_in_m1.cells.decode_c1.hi",
+      "token": "64.4"
+    },
+    {
+      "field": "sets.opt_in_m1.cells.decode_c2.lo",
+      "token": "106.5"
+    },
+    {
+      "field": "sets.opt_in_m1.cells.decode_c2.hi",
+      "token": "108.0"
+    },
+    {
+      "field": "sets.opt_in_m1.cells.decode_c4.lo",
+      "token": "126.8"
+    },
+    {
+      "field": "sets.opt_in_m1.cells.decode_c4.hi",
+      "token": "136.5"
+    },
+    {
+      "field": "sets.opt_in_m1.cells.decode_c8.lo",
+      "token": "168.3"
+    },
+    {
+      "field": "sets.opt_in_m1.cells.decode_c8.hi",
+      "token": "172.5"
+    },
+    {
+      "field": "sets.opt_in_m1.cells.decode_prose_c1.lo",
+      "token": "43.8"
+    },
+    {
+      "field": "sets.opt_in_m1.cells.decode_prose_c1.hi",
+      "token": "47.9"
+    },
+    {
+      "field": "sets.opt_in_m1.cells.decode_prose_c2.lo",
+      "token": "58.0"
+    },
+    {
+      "field": "sets.opt_in_m1.cells.decode_prose_c2.hi",
+      "token": "60.3"
+    },
+    {
+      "field": "sets.opt_in_m1.cells.decode_prose_c4.lo",
+      "token": "77.1"
+    },
+    {
+      "field": "sets.opt_in_m1.cells.decode_prose_c4.hi",
+      "token": "79.8"
+    },
+    {
+      "field": "sets.opt_in_m1.cells.decode_prose_c8.lo",
+      "token": "101.6"
+    },
+    {
+      "field": "sets.opt_in_m1.cells.decode_prose_c8.hi",
+      "token": "106.4"
+    }
+  ],
+  "policy": "literal frozen tokens; c4 sweep maxima allowed only with the best-of-two label and both full ranges in the same document; protocol-matched reference clause only from the release cohort",
+  "results_sha256": "056faf5047b836f43baad062583c07bdace2b25172cf1db15afdf0309e33b99c"
+}

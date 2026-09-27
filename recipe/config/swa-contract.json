@@ -1,0 +1,34 @@
+{
+  "schema_version": 2,
+  "mia_commit": "7cded8e2ed9d7502f32591cfeeeea4747db3d393",
+  "order": [
+    "patch_hybrid_prefix_hit.py",
+    "patch_apc_per_group_retention.py",
+    "patch_mamba_align_state_free.py",
+    "patch_dflash_fine_replay_window.py"
+  ],
+  "patches": {
+    "patch_hybrid_prefix_hit.py": "90dca3701b3b254af4f497c3f4f5802601c246d3a66e28f13ef966b12818d6af",
+    "patch_apc_per_group_retention.py": "bd70f24fffc61788094f6a730a380e20f6062c25366fc2e9aa9205fb2e18b1f9",
+    "patch_mamba_align_state_free.py": "8f3e3f294aeb0eb1d69e79732c496219752b168c6feab2550f0fe5c9239c86d8",
+    "patch_dflash_fine_replay_window.py": "cd1c58b3d43cf59d4e2d6544bc3ba41102ef71475c586d9a669a12df6454c8d6"
+  },
+  "targets": {
+    "vllm/v1/core/kv_cache_coordinator.py": {
+      "before": "f640b5c42f6bc718926329a8f8b48a0fd0c8c8f24368af4e4b9ec8d13f68432f",
+      "after": "a1eee1873ccff43b48bbe7789c8563163ec974861c5909d20d708c9cdec1cf39"
+    },
+    "vllm/v1/core/block_pool.py": {
+      "before": "ddee56dccb2208411b3a035918e917ce8f56a9858471e9ca12b420d5d79bc69c",
+      "after": "176f6abe48471e617af8ac538ac12b578a51f864fc8637c9b640336bf6858472"
+    },
+    "vllm/v1/core/single_type_kv_cache_manager.py": {
+      "before": "41043976d1d5e38e0465c8004fc04e01f35f66b39a40099c62d79b3756337d00",
+      "after": "e1bbc598512838ad6da648a5697fbd5c31c1064737f07287baa854be43c82b6e"
+    },
+    "vllm/v1/kv_cache_interface.py": {
+      "before": "54a761dd60907945c8f3bfc450b1264033013b83b204320581961f887b03e5b0",
+      "after": "8ec239d3f7675b8f3667e3f1a587a6a79d47a5d7ca712f89ad866ea19e31c2ec"
+    }
+  }
+}

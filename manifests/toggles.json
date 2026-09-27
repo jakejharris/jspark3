@@ -1,0 +1,75 @@
+{
+  "ABLIT": {
+    "example_default": "0",
+    "modes": [
+      "0",
+      "1"
+    ],
+    "qualification": "Example selects stock; production-stock requires mode 0 and a fresh passing stock qualification before admission.",
+    "release_ship_value": "0",
+    "sealed_base_value": "0"
+  },
+  "GLM53_ADAPTIVE_K": {
+    "epoch_file": "/evidence/adaptive-k-epoch.json",
+    "example_default": "ema",
+    "modes": [
+      "off",
+      "ema"
+    ],
+    "qualification": "Epoch changes must be coordinated and recorded across ranks.",
+    "release_ship_value": "ema",
+    "sealed_base_value": "ema"
+  },
+  "JSPARK3_V14_PROFILE": {
+    "example_default": "full",
+    "modes": [
+      "full",
+      "display0"
+    ],
+    "qualification": "Memory-layout change requires restart.",
+    "release_ship_value": "full",
+    "sealed_base_value": "full"
+  },
+  "JSPARK3_V16_APC_LRU": {
+    "example_default": "1",
+    "modes": [
+      "0",
+      "1"
+    ],
+    "qualification": "Sealed base enables prefix-cache LRU. The example omits it; final ship value is undecided.",
+    "release_ship_value": "1",
+    "sealed_base_value": "1"
+  },
+  "JSPARK3_V16_COOP": {
+    "example_default": "1",
+    "modes": [
+      "0",
+      "1"
+    ],
+    "qualification": "Off by example; a new arm requires qualification.",
+    "release_ship_value": "1",
+    "sealed_base_value": "1"
+  },
+  "JSPARK3_V16_DENSE_FP8": {
+    "example_default": "trunk",
+    "modes": [
+      "off",
+      "trunk",
+      "negative-coarse"
+    ],
+    "qualification": "negative-coarse is QA-only with explicit test acknowledgement.",
+    "release_ship_value": "trunk",
+    "sealed_base_value": "trunk"
+  },
+  "JSPARK3_V16_PROFILE": {
+    "example_default": "production-stock",
+    "modes": [
+      "production",
+      "production-stock",
+      "qa"
+    ],
+    "qualification": "QA does not confer production admission.",
+    "release_ship_value": "production-stock",
+    "sealed_base_value": "production-stock"
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "contract": {
+    "abi": 2,
+    "activation_limit": 10.0,
+    "counter_lengths": {
+      "32": 5635,
+      "64": 11267
+    },
+    "experts_max": 96,
+    "hidden": 4096,
+    "intermediate_local": 2048,
+    "params_size": 344,
+    "row_capacities": [
+      32,
+      64
+    ],
+    "topk": 8
+  },
+  "files": {
+    "LICENSE.MIT": "d48b01844af2aa68bc3fbea765069b94d70adb0c67dc4a62ca605c067aec9ab3",
+    "LICENSE.exllamav3": "27a32b6263fcd96c79d3beeecf221c4366780bdf15ad51986f48650bd7369bff",
+    "LICENSE.upstream-AGPL-3.0": "8486a10c4393cee1c25392769ddd3b2d6c242d6ec7928e1414efff7dfb2f07ef",
+    "PROVENANCE.json": "0e2c0675077d99e9181d2a8dc276f22db2e7fe1c8477321e614c1aa4aa589d8f",
+    "cooperative_moe.so": "87706d4d25cc810e3039855a56a673317d20c7a0c6eb69cb33cd98df2f4e2470",
+    "dispatch_policy.json": "5a914760a9fc80c8b623b4f8c0f624e5cb00a82fe4bcf04e68f786c59d929085",
+    "headers/compat.cuh": "dd6038fa6eb8b28df56b184e358e5633421af76eeb40bad4abc522ce6ba54f57",
+    "headers/ptx.cuh": "8ceacb1b321af5877a9a3d651e038fb1f44b543c3011e2f814f448830efe27ee",
+    "headers/quant/codebook.cuh": "0e3c63b323f8d3cc15c6a8f2e2b3816efafd71e149a99997b30b2f806375138a",
+    "headers/quant/exl3_dq.cuh": "7e3009b0f70635e8a98edf8b929832ca0fe16b6a5ad20f13b77ebfa72723feac",
+    "headers/quant/exl3_gemv_kernel.cuh": "12fadaabf5483b0c3b5c6cfd33eb8b23442c92b928e2813057342ea7a89eb863",
+    "headers/quant/exl3_kernel_map.cuh": "6db5f3ab7ed173236080d641309076608c32c97c923555fbdeb699e08515729e",
+    "headers/quant/exl3_moe_coop.cuh": "62903607abe42a9d662ac101af91823dcd20f9935b6097a6708602683a5ccec8",
+    "headers/quant/glm53_coop_kernel.cuh": "fdd8feb8f0641ef7c8392e78a7eb2d18cf1b3ea68b89cf0e114d4cd6b692132e",
+    "headers/quant/hadamard_inner.cuh": "8d8e437aced88735e919563301ffac0e4a2aac28cc542ed3f738e1216ea0c36b",
+    "headers/util.cuh": "1907cea115260db7c3b0de540e375e7733b7ffc9019bec190c1d92abea1d964e",
+    "headers/util.h": "ba89ac6793bf31cfe123d13baa2e34531a18a24bc3b2ff4add8cf4856b75a1c8",
+    "runtime.py": "65660930bc9965ff7b7379afaa270e0f80f418276bad4c42c10dbdee7ac3d0eb",
+    "source/native/LICENSE.exllamav3": "93ccc2f4c97c03bc767c611c75f3bb16b97e49606f5cd3ca05d7f6201ff8f8de",
+    "source/native/cooperative_moe.cu": "a62db04fbbf0558dff99c880b5a511652ff36a29584f94f8d9e1679b8157c6ed",
+    "source/native/cooperative_moe_kernel.cuh": "fdd8feb8f0641ef7c8392e78a7eb2d18cf1b3ea68b89cf0e114d4cd6b692132e",
+    "source/native/dispatch.cu": "05910a28b3e2613fabb7a6a284a1c89fa8bd3388c1adffe778f4d4b8e4832808",
+    "source/native/exl3_moe_coop.cuh": "62903607abe42a9d662ac101af91823dcd20f9935b6097a6708602683a5ccec8",
+    "toolchain.txt": "09f5ba5ca19ef6d9e064667fe5059810cc1feb1e05b71b38d0d5c05e58076ce2"
+  },
+  "gpu_validation": "pending; build success is not correctness or performance proof",
+  "schema": 1
+}

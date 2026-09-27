@@ -1,0 +1,23 @@
+{
+  "deferred": [],
+  "draft_sha256": {
+    "CHANGELOG-entry.md": "4633fd604d30e0fe2437a6e94c93f385844ee76c0dcad5a88f4c3aab38d46bd4",
+    "INSTALL-delta.md": "8144db72303fb4b6fca7d66dcddb03b035275abf559fa971f916daf71b4fa8a2",
+    "LICENSING-delta.md": "59d6463824e08c0f5c2d1dbbb7ef0263a5616c06c1640f988745169a3ef31ae0",
+    "LIMITATIONS-delta.md": "a14ebc9ffafd483572e32c5fc4e25a5d134d1dc58d6b53d3855477cd7af03599",
+    "OPERATIONS-delta.md": "325caa8a6a1d56b3f9d09c30349619173ea53874f136525a481dae30ed9763f0",
+    "RELEASE-NOTES-skeleton.md": "7c5f9ec5a20f07f994a1c7c2d4b9c3bc42e7bf7a94df89bda5ddbe1e326ae8b2"
+  },
+  "installation_gaps": [
+    "locally rebuilt serving image has not reproduced the required image identity",
+    "portable host-hygiene and kernel-cache commands are not shipped; operator orchestration required"
+  ],
+  "measurement_scope": "separate historical QA and selected serving cohorts; source export hardware_qualified=false",
+  "mode_change_policy": "service restart and prefix recomputation",
+  "numbers_sha256": "155127e40928034d38019c1acc25249e376ae8869033f7d6427e10532ca7c061",
+  "release_ready": true,
+  "results_sha256": "056faf5047b836f43baad062583c07bdace2b25172cf1db15afdf0309e33b99c",
+  "ruling_sha256": "43b57bad294bbba5b91735567344053fbdcd32216926eef26e764ad88262ef59",
+  "schema_version": 1,
+  "status": "release-package-frozen"
+}

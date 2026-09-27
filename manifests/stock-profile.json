@@ -1,0 +1,6 @@
+{
+  "composition": "already-in-sealed-source",
+  "hardware_qualified": false,
+  "qualification": "requires fresh hardware qualification of the exact shipped configuration; historical QA measurements do not qualify production",
+  "seal_sha256": "5cbbd9fa03d18ab20dc472eaac5a400527d3df3c5666f44a3144ff125d26e48c"
+}

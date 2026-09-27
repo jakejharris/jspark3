@@ -1,0 +1,13 @@
+{
+  "candidate_manifest_sha256": "dd8ef472ded8195420d8015a260e6d4fe08ff02f14bbd6d76b849645e6301877",
+  "numbers_frozen": true,
+  "qualification_sha256": "959f8021062bf82f4f499693d681175db054fe68af66121a69d10ba72530bdf6",
+  "runtime_settings": {
+    "adaptive": "ema",
+    "b5": "default",
+    "triar": "off"
+  },
+  "serving_receipt_sha256": "9d8e08780f9985f20270c2982cb25c1536121ccdefda1e9981df6d0182efae34",
+  "source_export_hardware_qualified": false,
+  "status": "serving"
+}

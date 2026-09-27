@@ -1,0 +1,49 @@
+{
+  "image": {
+    "config": "de01da91a1eefc7b2dee9df78c2e1b7abca64fbb9e19862a7872cc5338b6ce86",
+    "manifest": "a15b3e6056828219cabe19662fd239245e61fb2b45defe3a8e2712b75b925b3f"
+  },
+  "transforms": {
+    "apply_grammar_fsm.py": {
+      "sources": {
+        "patch_xgrammar_termination.py": "de84093ea2f51bf08e7d955b9fffbc7ae9ade337506146caebbad40a11d261a3"
+      },
+      "targets": [
+        {
+          "after_sha256": "041ab0d1328817102af00a6feec3825658be7480c25cd559efd05783e37de7d2",
+          "before_sha256": "3fd606dc2b8e950fe9b49f28cf1c030be78beaaf7c78b457b5942a0909d3457f",
+          "forbidden_after_seams": [],
+          "installers": [
+            "patch_xgrammar_termination.py"
+          ],
+          "path": "vllm/v1/structured_output/backend_xgrammar.py",
+          "required_after_seams": [
+            {
+              "count": 1,
+              "text": "# [glm53-xgrammar-termination] Source-exact vLLM 12f64b39 backport."
+            }
+          ],
+          "required_before_seams": [],
+          "source_sha256": "de84093ea2f51bf08e7d955b9fffbc7ae9ade337506146caebbad40a11d261a3"
+        },
+        {
+          "after_sha256": "9bc1b09f94902e4d68c1e7a3d4f05c8516d21196ef5773389f76c7bf6337335a",
+          "before_sha256": "355f6f1193c15d5d6901a0f567e2e16005e3681f04f70079c6ba11e020b4d33a",
+          "forbidden_after_seams": [],
+          "installers": [
+            "patch_xgrammar_termination.py"
+          ],
+          "path": "vllm/v1/structured_output/__init__.py",
+          "required_after_seams": [
+            {
+              "count": 1,
+              "text": "# [glm53-xgrammar-reasoning] Source-exact vLLM c6e19b3 backport."
+            }
+          ],
+          "required_before_seams": [],
+          "source_sha256": "de84093ea2f51bf08e7d955b9fffbc7ae9ade337506146caebbad40a11d261a3"
+        }
+      ]
+    }
+  }
+}

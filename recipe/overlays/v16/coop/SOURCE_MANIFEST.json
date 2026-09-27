@@ -1,0 +1,62 @@
+{
+  "exllamav3_vendored_headers_commit": "02aef45cd681b960a00afcd0749a4ab99e6c1bfe",
+  "files": {
+    "LICENSE.MIT": "d48b01844af2aa68bc3fbea765069b94d70adb0c67dc4a62ca605c067aec9ab3",
+    "LICENSE.upstream-AGPL-3.0": "8486a10c4393cee1c25392769ddd3b2d6c242d6ec7928e1414efff7dfb2f07ef",
+    "PROVENANCE.json": "0e2c0675077d99e9181d2a8dc276f22db2e7fe1c8477321e614c1aa4aa589d8f",
+    "README.md": "bc7426013e1ae27031596cd6e150df1184ee65fe4d6ce20dc3284555912fdac5",
+    "dispatch_policy.json": "2116537249a73a6770ef7a0e83a2c222a069f154d25167b2f1131d5c75c60c47",
+    "manifest.py": "996edafabdf8bf594e485f6581929d34da887af418487571fc00d8699ff69114",
+    "native/LICENSE.exllamav3": "93ccc2f4c97c03bc767c611c75f3bb16b97e49606f5cd3ca05d7f6201ff8f8de",
+    "native/cooperative_moe.cu": "a62db04fbbf0558dff99c880b5a511652ff36a29584f94f8d9e1679b8157c6ed",
+    "native/cooperative_moe_kernel.cuh": "fdd8feb8f0641ef7c8392e78a7eb2d18cf1b3ea68b89cf0e114d4cd6b692132e",
+    "native/dispatch.cu": "05910a28b3e2613fabb7a6a284a1c89fa8bd3388c1adffe778f4d4b8e4832808",
+    "native/exl3_moe_coop.cuh": "62903607abe42a9d662ac101af91823dcd20f9935b6097a6708602683a5ccec8",
+    "profile_shapes.py": "d02d265de148f5e4ab85c09691579ed643da707929bd02fa6d4421d2b80cb9c3",
+    "runtime.py": "65660930bc9965ff7b7379afaa270e0f80f418276bad4c42c10dbdee7ac3d0eb",
+    "sanitizer_smoke.py": "723f9b238d3fb2af327189eca10273f36415f54b1f85ac87b14782307b93e25f",
+    "select_policy.py": "ae24b349f731a1b8b07322abe4b061c92deb4371d7dc7f5cd51abaaf63567a1f",
+    "test_contract.py": "e7a0bfbaefbfda4fd6423effbb2f61b420a402c3867b12477effa14d20ac25d2",
+    "test_cuda_integration.py": "6dd442725cfcc5193c0563f1cfb4245e134e4dfd186701eaad27a57d458204b3",
+    "test_dispatch.py": "4c0aa979c21d79d96243a68d0337a10f985fc20041952f2cfdf663a54a485dc7",
+    "test_geometry2_sanitizer.py": "1531c2630c1ba6de1e8f75bbdcf73901757787054b01db746ba84563a2fcf082",
+    "test_policy_gpu.py": "de7492da684763d3f4102d6dbf9aa15b0b00ceacadacd5d3cdd28333b89d4be0",
+    "vendor/LICENSE.exllamav3": "27a32b6263fcd96c79d3beeecf221c4366780bdf15ad51986f48650bd7369bff",
+    "vendor/exllamav3_ext/compat.cuh": "dd6038fa6eb8b28df56b184e358e5633421af76eeb40bad4abc522ce6ba54f57",
+    "vendor/exllamav3_ext/ptx.cuh": "8ceacb1b321af5877a9a3d651e038fb1f44b543c3011e2f814f448830efe27ee",
+    "vendor/exllamav3_ext/quant/codebook.cuh": "0e3c63b323f8d3cc15c6a8f2e2b3816efafd71e149a99997b30b2f806375138a",
+    "vendor/exllamav3_ext/quant/exl3_dq.cuh": "7e3009b0f70635e8a98edf8b929832ca0fe16b6a5ad20f13b77ebfa72723feac",
+    "vendor/exllamav3_ext/quant/exl3_gemv_kernel.cuh": "12fadaabf5483b0c3b5c6cfd33eb8b23442c92b928e2813057342ea7a89eb863",
+    "vendor/exllamav3_ext/quant/exl3_kernel_map.cuh": "6db5f3ab7ed173236080d641309076608c32c97c923555fbdeb699e08515729e",
+    "vendor/exllamav3_ext/quant/hadamard_inner.cuh": "8d8e437aced88735e919563301ffac0e4a2aac28cc542ed3f738e1216ea0c36b",
+    "vendor/exllamav3_ext/util.cuh": "1907cea115260db7c3b0de540e375e7733b7ffc9019bec190c1d92abea1d964e",
+    "vendor/exllamav3_ext/util.h": "ba89ac6793bf31cfe123d13baa2e34531a18a24bc3b2ff4add8cf4856b75a1c8"
+  },
+  "kernel_origin_declared_by_mia": "58d4d732",
+  "local_adaptations": {
+    "manifest.py": {
+      "reason": "Bind distributed license notices into the artifact manifest.",
+      "upstream_sha256": "ad03a6377cfb2ccf1bd0b2bc4312000b2c78f1bdfd345fe9fb9c6ecf15a6465b"
+    },
+    "select_policy.py": {
+      "reason": "Require the 468-case matrix including 28 rows and validate frozen numerical metrics.",
+      "upstream_sha256": "a35d8d6c873448857324b61d646a2a736727a3269204edc66995c1f659752d00"
+    },
+    "test_contract.py": {
+      "reason": "Read the explicit JSpark3 EXL3 fixture, include 28 rows, and retain notices in test bundles.",
+      "upstream_sha256": "6599401263574e0e57ce9699dcab91eafe7018a8488ce89a992a36d11d747316"
+    },
+    "test_cuda_integration.py": {
+      "reason": "Qualify exact JSpark3 stage-8 EXL3 and helper, include adaptive 28 rows, and use the 128-row fat threshold.",
+      "upstream_sha256": "fafa909fc414c708922045944fa0b03283e1ad99cb08a5c4f81c756c0c7cd6ff"
+    },
+    "test_geometry2_sanitizer.py": {
+      "reason": "Include all JSpark3 adaptive narrow physical rows and compute replay count from the matrix.",
+      "upstream_sha256": "295cbbe5859232c476d68e883531e836a83c870d43b7750d802ff80cfa5b439c"
+    }
+  },
+  "mia_kernel_upstream_commit": "bc68f310f8d5e941227ce5c93e95bca43b50fd6c",
+  "mia_lineage_commit": "357fce7a976fb835740916151edf2f9325384482",
+  "mia_repository": "https://github.com/MiaAI-Lab/GLM-5.3-Flash-EXL3-2x-DGX-Sparks",
+  "schema_version": 1
+}

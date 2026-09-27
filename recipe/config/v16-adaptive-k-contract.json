@@ -1,0 +1,113 @@
+{
+  "image": {
+    "config": "de01da91a1eefc7b2dee9df78c2e1b7abca64fbb9e19862a7872cc5338b6ce86",
+    "manifest": "a15b3e6056828219cabe19662fd239245e61fb2b45defe3a8e2712b75b925b3f"
+  },
+  "transforms": {
+    "apply_adaptive_k.py": {
+      "sources": {
+        "jspark3_adaptive_k.py": "35c06d967579d8314fc8a7230db6129248bc1a80d6ce4be1ded6c210ef8d83b1",
+        "patch_adaptive_k.py": "aa3398c4254c4cc9adcf82efe10751c9f400cfd7a910bd7883c107a2c85c7625"
+      },
+      "targets": [
+        {
+          "after_sha256": "0d58e688019ddfa5952990be2ea751b71d96bea7a35c4c31c19c672b0890f764",
+          "before_sha256": "0b086dd3cc0febc4924202ca1fef8809b8290b9a59ef15fa80004cef4edeb937",
+          "forbidden_after_seams": [],
+          "installers": [
+            "patch_adaptive_k.py"
+          ],
+          "path": "vllm/v1/core/sched/scheduler.py",
+          "required_after_seams": [
+            {
+              "count": 1,
+              "text": "# [jspark3-v16:adaptive-k scheduler]"
+            },
+            {
+              "count": 1,
+              "text": "_GLM53_ADAPTIVE_K.prepare_batch("
+            },
+            {
+              "count": 1,
+              "text": "_GLM53_ADAPTIVE_K.bind_output("
+            },
+            {
+              "count": 1,
+              "text": "_GLM53_ADAPTIVE_K.observe_output("
+            }
+          ],
+          "required_before_seams": [
+            {
+              "count": 1,
+              "text": "from vllm.compilation.cuda_graph import CUDAGraphStat\n"
+            },
+            {
+              "count": 1,
+              "text": "        # Check if the scheduling constraints are satisfied.\n"
+            }
+          ],
+          "source_sha256": "aa3398c4254c4cc9adcf82efe10751c9f400cfd7a910bd7883c107a2c85c7625"
+        },
+        {
+          "after_sha256": "6b44f24e65e51a0a43c7a5d7d93ef5def8b880cff9cb671ba1e1302a79c757aa",
+          "before_sha256": "c183937e6eb5b9c28c79d98fb4c64f562e7649d5f6d65743e6640b2f378ecf9f",
+          "forbidden_after_seams": [],
+          "installers": [
+            "patch_adaptive_k.py"
+          ],
+          "path": "vllm/v1/worker/gpu/cudagraph_utils.py",
+          "required_after_seams": [
+            {
+              "count": 1,
+              "text": "# [jspark3-v16:adaptive-k target graphs]"
+            },
+            {
+              "count": 1,
+              "text": "def _glm53_adaptive_query_lens("
+            },
+            {
+              "count": 1,
+              "text": "decode_query_lens = _glm53_adaptive_query_lens("
+            },
+            {
+              "count": 1,
+              "text": "def _glm53_adaptive_capture_shape("
+            },
+            {
+              "count": 1,
+              "text": "if not _glm53_adaptive_capture_shape("
+            }
+          ],
+          "required_before_seams": [
+            {
+              "count": 1,
+              "text": "logger = init_logger(__name__)\n\n\n"
+            }
+          ],
+          "source_sha256": "aa3398c4254c4cc9adcf82efe10751c9f400cfd7a910bd7883c107a2c85c7625"
+        },
+        {
+          "after_sha256": "35c06d967579d8314fc8a7230db6129248bc1a80d6ce4be1ded6c210ef8d83b1",
+          "before_sha256": "ABSENT",
+          "forbidden_after_seams": [],
+          "installers": [
+            "jspark3_adaptive_k.py"
+          ],
+          "path": "vllm/v1/core/sched/jspark3_adaptive_k.py",
+          "required_after_seams": [
+            {
+              "count": 1,
+              "text": "class AdaptiveKPolicy"
+            },
+            {
+              "count": 1,
+              "text": "POLICY = AdaptiveKPolicy()"
+            }
+          ],
+          "required_before_seams": [],
+          "source_sha256": "35c06d967579d8314fc8a7230db6129248bc1a80d6ce4be1ded6c210ef8d83b1"
+        }
+      ]
+    }
+  }
+}

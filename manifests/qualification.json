@@ -1,0 +1,9 @@
+{
+  "first_pass_canaries": "recorded-only",
+  "hardware_qualified": false,
+  "historical_stock_cohort": "one QA-profile start; two within-start sweeps; not production qualification",
+  "post_hygiene_canaries": "blocking",
+  "prefill_floor_tok_s": 1100,
+  "production_requirement": "fresh hardware qualification of the exact shipped configuration",
+  "quick": "diagnostic"
+}

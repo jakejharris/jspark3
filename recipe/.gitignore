@@ -1,0 +1,10 @@
+.env
+preflight.json
+jspark3-release-manifest.json
+verify.json
+verify-rank0.log
+__pycache__/
+*.pyc
+# v1.4 display-KV build outputs (binary; pinned by overlays/v14/display_kv/BUILD.json)
+overlays/v14/display_kv/libglm53_display_kv.so
+overlays/v14/display_kv/display_kv_probe

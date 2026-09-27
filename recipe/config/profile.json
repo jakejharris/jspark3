@@ -1,0 +1,152 @@
+{
+  "candidate": "JSpark3 v1.6.0",
+  "grade": "ENGINEERING-EVIDENCE",
+  "hardware": {
+    "architecture": "aarch64",
+    "count": 3,
+    "gpu": "NVIDIA GB10",
+    "sm": "12.1",
+    "system": "NVIDIA DGX Spark"
+  },
+  "image": {
+    "config_digest": "sha256:de01da91a1eefc7b2dee9df78c2e1b7abca64fbb9e19862a7872cc5338b6ce86",
+    "manifest_digest": "sha256:a15b3e6056828219cabe19662fd239245e61fb2b45defe3a8e2712b75b925b3f",
+    "reference": "sha256:de01da91a1eefc7b2dee9df78c2e1b7abca64fbb9e19862a7872cc5338b6ce86"
+  },
+  "runtime": {
+    "observed_system_fingerprint": "vllm-0.1.dev20051+g487ecf187-tp3-ep-ded8abdb",
+    "base_pipeline": "scripts/apply_base_pipeline.py",
+    "patch_contract": "config/patch-contract.json",
+    "overlay": "overlays/trunk_w8a16.py",
+    "loader_patcher": "overlays/patch_base_loader_hook.py",
+    "cadence": {
+      "contract": "config/cadence-contract.json",
+      "modules_dir": "modules/",
+      "import_owner": "modules/zzz_b45.pth",
+      "provenance_label": "jspark3.b45=cadence-reference",
+      "installer": "scripts/install_b45_modules.py",
+      "long_context_witness": "scripts/long_context_witness.py"
+    },
+    "swa_contract": "config/swa-contract.json",
+    "v16_decode": {
+      "profile": "production",
+      "coop": {
+        "env": "JSPARK3_V16_COOP",
+        "modes": [
+          "0",
+          "1"
+        ],
+        "contract": "overlays/v16/coop/INSTALL_CONTRACT.json",
+        "seal_record": "overlays/v16/coop/BUILD.json"
+      },
+      "adaptive_k": {
+        "env": "GLM53_ADAPTIVE_K",
+        "modes": [
+          "off",
+          "ema"
+        ],
+        "epoch_file": "/evidence/adaptive-k-epoch.json",
+        "contract": "config/v16-adaptive-k-contract.json"
+      },
+      "dense_fp8": {
+        "env": "JSPARK3_V16_DENSE_FP8",
+        "production_modes": [
+          "off",
+          "trunk"
+        ],
+        "qa_mode": "negative-coarse",
+        "contract": "config/v16-dense-fp8-contract.json"
+      }
+    }
+  },
+  "topology": {
+    "tensor_parallel": 3,
+    "pipeline_parallel": 1,
+    "expert_parallel": true,
+    "executor": "mp",
+    "nodes": 3,
+    "observed_gid_index": 3,
+    "mtu": 9000,
+    "hcas_per_rank": 2
+  },
+  "server": {
+    "served_model": "glm-5.3-flash",
+    "quantization": "exl3",
+    "gpu_memory_utilization": "explicit profile value: 0.76, 0.78, 0.80 or 0.83",
+    "max_model_len": 1000000,
+    "max_num_seqs": 32,
+    "max_num_batched_tokens": 8192,
+    "kv_cache_dtype": "fp8",
+    "prefix_caching": true,
+    "flashinfer_autotune": false,
+    "cuda_graph_mode": "FULL_DECODE_ONLY",
+    "cuda_graph_capture_sizes": [
+      8,
+      16,
+      24,
+      32,
+      48
+    ],
+    "cuda_graph_capture_sizes_adaptive_ema": [
+      4,
+      8,
+      12,
+      16,
+      20,
+      24,
+      28,
+      32,
+      48
+    ],
+    "tool_call_parser": "glm47",
+    "reasoning_parser": "glm45",
+    "auto_tool_choice": true,
+    "language_model_only": false,
+    "thinking_default": false,
+    "api_port": 8888,
+    "load_format": "instanttensor",
+    "limit_mm_per_prompt": {
+      "image": 8,
+      "video": 0
+    },
+    "mm_encoder_tp_mode": "data",
+    "mm_processor_cache_gb": 0
+  },
+  "speculation": {
+    "method": "dflash",
+    "num_speculative_tokens": 7,
+    "draft_sample_method": "probabilistic",
+    "rejection_sample_method": "standard",
+    "draft_tensor_parallel_size": 1,
+    "attention_backend": "FLASH_ATTN"
+  },
+  "container": {
+    "memory_bytes": 68719476736,
+    "memory_swap_bytes": 68719476736,
+    "memory_swap_max": 0,
+    "shm_bytes": 34359738368,
+    "restart": "no",
+    "network": "host",
+    "ipc": "host",
+    "nofile_soft": 65536,
+    "nofile_hard": 65536
+  },
+  "w8a16_overlay": {
+    "base": "the matched three-Spark control (same recipe, overlay disabled)",
+    "runtime_modules": 169,
+    "logical_tensors": 225,
+    "excluded_kda_fg_runtime_modules": 34,
+    "group_policy": [
+      128,
+      64,
+      32
+    ],
+    "k704_group": 64,
+    "net_bytes_freed_per_rank": 1595392320,
+    "overlay_sha256": "5aeff0cf92e715094d737faded2bf35000f7ce586213c495431b5a4805f7307d",
+    "loader_patcher_sha256": "8a2f74597dc9252a35e7050bbe15c7ea4864c9bfff27ccf50135b5b28048bd9c",
+    "base_loader_before_sha256": "a7e925f232ad3eebbee7ab37d3aba724c24465c3078da29489da0438664c6b08",
+    "base_loader_after_sha256": "8969780b8fa0c7a866bfa74fe16f3fd1133de9c3fb8192f27aa048cf70904802"
+  },
+  "ablit": "explicit 0 control or 1 verified transplant"
+}
