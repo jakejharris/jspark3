@@ -45,8 +45,8 @@
       "changed": true,
       "input_sha256": "17ad9fc5f274886f3a6243287a3431d3dbc1d77b29f20fbb26270e203d61dd08",
       "origin": "release-package-render",
-      "public_sha256": "bbfae7f71068a8e5eb6ce0334dfc645fa31db09fcca8ae4f1c975466ba24cc93",
-      "revision": "v1.8.1-operator-image"
+      "public_sha256": "27458c55eb908e8f316f6d01613cef30ea4f2f9183edd5d28eaf348df977b5bb",
+      "revision": "v1.8.1-operator-native"
     },
     "THIRD_PARTY_NOTICES.md": {
       "changed": true,
@@ -72,11 +72,18 @@
       "origin": "release-package-render",
       "public_sha256": "37368db2e341869babdf091708221fbb6693a97ccdd1239ccb6ac0ae3cbbe714"
     },
+    "docs/COOP_REPRODUCIBILITY.md": {
+      "changed": false,
+      "input_sha256": "803c4a240052f86f21329234b924a53133ca81237e82b41bc45a64cdda807b8c",
+      "origin": "v1.8.1-operator-native",
+      "public_sha256": "803c4a240052f86f21329234b924a53133ca81237e82b41bc45a64cdda807b8c",
+      "revision": "v1.8.1-operator-native"
+    },
     "docs/INSTALL.md": {
       "changed": true,
       "input_sha256": "0a0d871fca9b3369747f1c0117074f4b5b164eca467c727efd88f4f53038bb63",
       "origin": "release-package-render",
-      "public_sha256": "803f1939fcf511ed4faa0ffc3a453cf70cffa354292b7fbc61cf1e01f78e3236",
+      "public_sha256": "cca92f156123bfa0306cb733b7ea0eff38123adb92f34440ff9f6af606eeeebc",
       "revision": "v1.8.1-operator-native"
     },
     "docs/LICENSING.md": {
@@ -150,7 +157,7 @@
       "changed": true,
       "input_sha256": "f968bb8ad61c217d1c955e5a6209b35cebfae065e3f1ef6d3077ed6a07f25739",
       "origin": "release-package-render",
-      "public_sha256": "74d228ca6c4d8beaf48b239dfcfbebad5bc851d33a8c42d7a51d64a001a715e9",
+      "public_sha256": "92e66b226c9c735abac57d6204fdc4fe70e2e4cacd390bbd2dcc5e01681ed22b",
       "revision": "v1.8.1-operator-native"
     },
     "manifests/qualification.json": {
@@ -170,8 +177,8 @@
       "changed": true,
       "input_sha256": "3df598b5f7e73d1a4961e895e33bb9cfcc2bd0cc4a0cf736f7806c0a01de3cea",
       "origin": "release-package-render",
-      "public_sha256": "b636b76695067a5116e0baf88a3399f8f93e7a33da079da8b0716157f5855669",
-      "revision": "v1.8.1-operator-image"
+      "public_sha256": "4dc1be8981af5e25ed23e49623a5216dad72f8613d6bdebc05aa9997b32c65bc",
+      "revision": "v1.8.1-operator-native"
     },
     "manifests/serving-binding.json": {
       "changed": false,
@@ -542,10 +549,11 @@
       "public_sha256": "38d93fdef5c10cece0d97e66fd402d9669598bf09c784af69db706f469cce9da"
     },
     "recipe/overlays/v16/coop/build_repro.sh": {
-      "changed": false,
+      "changed": true,
       "input_sha256": "74b2994b586b25075f945ef55a778f4ef0c5c87852065a7fe2ecf305b3473003",
       "origin": "sealed-source",
-      "public_sha256": "74b2994b586b25075f945ef55a778f4ef0c5c87852065a7fe2ecf305b3473003"
+      "public_sha256": "f7f6789ba5be0682c831e1bb61decf4f99c0985905f80ba0c95f6f0f38efbeb4",
+      "revision": "v1.8.1-operator-native"
     },
     "recipe/overlays/v16/coop/bundle/LICENSE.MIT": {
       "changed": false,
@@ -1373,11 +1381,32 @@
       "origin": "sealed-source",
       "public_sha256": "4c3e5dbe55c3719f09861278a0d81d33b21081a2d5533e8cf17746357be19acd"
     },
+    "tools/v16/diff_native_elf.py": {
+      "changed": false,
+      "input_sha256": "739892d5606991e1df96c32302a074ff5e579ea731758a4a2c798c9766d3a9dd",
+      "origin": "v1.8.1-operator-native",
+      "public_sha256": "739892d5606991e1df96c32302a074ff5e579ea731758a4a2c798c9766d3a9dd",
+      "revision": "v1.8.1-operator-native"
+    },
+    "tools/v16/experiment_coop_build.py": {
+      "changed": false,
+      "input_sha256": "b959f8aa890047fdd90f6e5b75c30c3285716f2c705525e08b6122ef93f4901f",
+      "origin": "v1.8.1-operator-native",
+      "public_sha256": "b959f8aa890047fdd90f6e5b75c30c3285716f2c705525e08b6122ef93f4901f",
+      "revision": "v1.8.1-operator-native"
+    },
     "tools/v16/prefill_gate.py": {
       "changed": true,
       "input_sha256": "6a0b898afd6147df5fbd69e0491db9e969dd3462e4011ce72e0ce794cc9704ed",
       "origin": "sealed-source",
       "public_sha256": "1df9e20a8f1cf78cf7a02267cf78e1ab2f61ccca44834ba98ef7916defb09dde"
+    },
+    "tools/v16/test_coop_experiment.py": {
+      "changed": true,
+      "input_sha256": "5e7aa161fd402b5f30d92fd8aef31be0dde4f3d31d383b8ce0f7404bfcfb3b75",
+      "origin": "v1.8.1-operator-native",
+      "public_sha256": "4935799609c6b1124af8145193027c84b480d90385f10526eef72e24cda475cf",
+      "revision": "v1.8.1-operator-native"
     },
     "tools/v16/v16_common.py": {
       "changed": false,

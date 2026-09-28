@@ -113,8 +113,11 @@ build record, with the same trust boundary as the image receipt, not a signature
 Receipt edits, source/build changes, a different image receipt and binary hash
 mismatches are refused. Keep both receipts and the source export together.
 
-Coop-MoE did **not** reproduce identical bytes across two fresh builds on a real
-DGX Spark. The default build and prepared runtime therefore omit its binary.
+The earlier coop-MoE recipe did **not** reproduce identical bytes across two fresh
+builds on a real DGX Spark. A candidate using stable intermediate filenames and
+shared cudart is available for the [native build experiment](COOP_REPRODUCIBILITY.md);
+it still needs native confirmation and GPU qualification. The default build and
+prepared runtime therefore omit its binary.
 `tools/build_native.py --with-coop` is an experimental opt-in that still requires
 two-build byte identity and may fail; it neither enables coop nor qualifies it.
 Use the default command above for installation.

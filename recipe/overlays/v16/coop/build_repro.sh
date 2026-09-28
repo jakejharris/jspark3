@@ -57,7 +57,7 @@ nvcc=${NVCC:-/usr/local/cuda/bin/nvcc}
 seed=jspark3-v16-coop-357fce7
 flags=(
   -std=c++17 -O3 --use_fast_math -lineinfo --expt-relaxed-constexpr
-  --frandom-seed "$seed"
+  --cudart=shared
   -gencode arch=compute_121a,code=sm_121a
   -Xcompiler=-fPIC
   -Xcompiler=-ffile-prefix-map=/w=.
@@ -69,28 +69,28 @@ flags=(
   "$nvcc" --version
   printf 'source_date_epoch=%s\n' "$SOURCE_DATE_EPOCH"
   printf 'flags='; printf '%q ' "${flags[@]}"; printf '\n'
+  printf 'per_unit_seed=%s-{rows32,rows64,dispatch}\n' "$seed"
+  printf 'intermediates=--keep --keep-dir OUTPUT/keep/{rows32,rows64,dispatch}\n'
 } > "$output/toolchain.txt"
 
-# Serial on purpose: nvcc embeds PID-derived tmpxft names in host stubs, and
-# two concurrent compiles interleave PIDs nondeterministically (the S9 P-step
-# builds differed in exactly those bytes). A fixed process order in a fresh
-# container PID namespace makes both builds byte-identical.
-failed=0
-"$nvcc" "${flags[@]}" -DGLM53_ROWS_MAX=32 -c \
-  "$output/source/native/cooperative_moe.cu" -o "$output/rows32.o" \
-  > "$output/build32.log" 2>&1 || failed=1
-if [[ $failed == 0 ]]; then
-  "$nvcc" "${flags[@]}" -DGLM53_ROWS_MAX=64 -c \
-    "$output/source/native/cooperative_moe.cu" -o "$output/rows64.o" \
-    > "$output/build64.log" 2>&1 || failed=1
-fi
-if [[ $failed != 0 ]]; then
-  sed -n '1,240p' "$output/build32.log" >&2
-  sed -n '1,240p' "$output/build64.log" >&2
-  exit 9
-fi
+# --keep gives host stubs stable basenames instead of PID-derived tmpxft names.
+# Separate directories and seeds distinguish the two capacity translation units.
+# Keep the intermediates for diagnosis; do not rely on container PID allocation
+# or strip/normalize the finished binary to claim reproducibility.
+for rows in 32 64; do
+  mkdir -p "$output/keep/rows$rows"
+  if ! "$nvcc" "${flags[@]}" --frandom-seed "$seed-rows$rows" \
+    --keep --keep-dir "$output/keep/rows$rows" -v -DGLM53_ROWS_MAX="$rows" -c \
+    "$output/source/native/cooperative_moe.cu" -o "$output/rows$rows.o" \
+    > "$output/build$rows.log" 2>&1; then
+    cat "$output/build$rows.log" >&2
+    exit 9
+  fi
+done
 
-"$nvcc" "${flags[@]}" -shared -Xlinker=--build-id=sha1 \
+mkdir -p "$output/keep/dispatch"
+"$nvcc" "${flags[@]}" --frandom-seed "$seed-dispatch" \
+  --keep --keep-dir "$output/keep/dispatch" -v -shared -Xlinker=--build-id=sha1 \
   "$output/source/native/dispatch.cu" "$output/rows32.o" "$output/rows64.o" \
   -o "$output/cooperative_moe.so" > "$output/link.log" 2>&1
 rm "$output/rows32.o" "$output/rows64.o"
