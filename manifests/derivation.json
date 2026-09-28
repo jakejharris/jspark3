@@ -51,8 +51,8 @@
       "changed": true,
       "input_sha256": "17ad9fc5f274886f3a6243287a3431d3dbc1d77b29f20fbb26270e203d61dd08",
       "origin": "release-package-render",
-      "public_sha256": "2838b02be6e1896dc093323164c7534c9ac1edb8542be608383d09ba9b850eef",
-      "revision": "native-display-reproducibility-fix"
+      "public_sha256": "ca7af20e8029347eddc833a46943f152336ce972cf9002ee29e27bc5252f2c09",
+      "revision": "sanitizer-launch-record-fix"
     },
     "THIRD_PARTY_NOTICES.md": {
       "changed": true,
@@ -83,15 +83,15 @@
       "changed": true,
       "input_sha256": "b99e219ae2c3ec2e09349149ae1a6b43fd8335cbd730f9a279a1064b34741fd9",
       "origin": "v1.8.4-offline-implementation",
-      "public_sha256": "f023d945649d0670e2d997d404a83c7faa02be8aa267bf79629564be6659638e",
-      "revision": "native-display-reproducibility-fix"
+      "public_sha256": "54eedbc59c6f111f08e102e5fdcbc26cc0f389b129328673382bc98336418ec4",
+      "revision": "sanitizer-launch-record-fix"
     },
     "docs/COOP_REPRODUCIBILITY.md": {
       "changed": true,
       "input_sha256": "803c4a240052f86f21329234b924a53133ca81237e82b41bc45a64cdda807b8c",
       "origin": "v1.8.1-operator-native",
-      "public_sha256": "e132ced1133a2f826631b9c4a2a2e70b386e3d54d7f8730c1281383ed3bed878",
-      "revision": "v1.8.4-pass1"
+      "public_sha256": "e338724e467c5f6f81fbae932ec2e6cd5283556722f9cf2c25d77cac6c497345",
+      "revision": "sanitizer-launch-record-fix"
     },
     "docs/INSTALL.md": {
       "changed": true,
@@ -170,8 +170,8 @@
       "changed": true,
       "input_sha256": "9830d95de98135c7d36d7ecc66e0f2fbd493a717227059317df57c1f654cbab6",
       "origin": "release-package-render",
-      "public_sha256": "448820ef818ca574cc325ea0f6897dfab220dfe45f9c702c2f35b82974af3653",
-      "revision": "native-display-reproducibility-fix"
+      "public_sha256": "f6086405eb48bb083259db8aaf527c255dd024175bdaebbddf62bf86716da3c6",
+      "revision": "sanitizer-launch-record-fix"
     },
     "manifests/figure-bindings.json": {
       "changed": false,
@@ -204,8 +204,8 @@
       "changed": true,
       "input_sha256": "f968bb8ad61c217d1c955e5a6209b35cebfae065e3f1ef6d3077ed6a07f25739",
       "origin": "release-package-render",
-      "public_sha256": "3f6aead49c13b98cfb649a0c96ee78ae11b4538f257eb4cc12dc892012afbe49",
-      "revision": "native-display-reproducibility-fix"
+      "public_sha256": "479cd7fa1f543cc8befb8fb8985223bc892f2b7ccb073f962900cfb739dbbeec",
+      "revision": "sanitizer-launch-record-fix"
     },
     "manifests/qualification.json": {
       "changed": false,
@@ -237,8 +237,8 @@
       "changed": true,
       "input_sha256": "fad5c997be3187d1ce467088572677544c60652fda500ea822e89392d7f8bca2",
       "origin": "v1.8.3-shared-output-r5",
-      "public_sha256": "55d6f6e3889d2878734936b1da6187a6afb8993e823211524e150019ec50de32",
-      "revision": "native-display-reproducibility-fix"
+      "public_sha256": "c14095d746e5279984c33cc62a6052239bc3c35addc2bc57f853c8e14518e318",
+      "revision": "sanitizer-launch-record-fix"
     },
     "manifests/stock-profile.json": {
       "changed": false,
@@ -1647,19 +1647,26 @@
       "public_sha256": "e86825f2969a6c4ab313db7a93e1d508cccbfcb0d00799520d0a078a36d7205b",
       "revision": "v1.8.4-on-v1.8.3"
     },
+    "tools/v16/check_sanitizer.py": {
+      "changed": false,
+      "input_sha256": "19259620916e63a949f40f89cb88f1a5de7cbe7f1cf2dde07f09c91f682c32ab",
+      "origin": "sanitizer-launch-record-fix",
+      "public_sha256": "19259620916e63a949f40f89cb88f1a5de7cbe7f1cf2dde07f09c91f682c32ab",
+      "revision": "sanitizer-launch-record-fix"
+    },
     "tools/v16/coop_environment.py": {
       "changed": true,
       "input_sha256": "1787d0c2bf1eb26526191e67d7785f6bbcdcf74ec842e467f1356f47aea31475",
       "origin": "v1.8.4-offline-implementation",
-      "public_sha256": "1121b372a34c9f49bcd9049862b377433a55dbe429083c5f9ae2c69141c1a63b",
-      "revision": "v1.8.4-on-v1.8.3"
+      "public_sha256": "a9cc85a327bdb0ba9041230eb2533ebe6b5ec545ec72102667cb55b4da106bb2",
+      "revision": "sanitizer-launch-record-fix"
     },
     "tools/v16/coop_evidence.py": {
       "changed": true,
       "input_sha256": "7d5ad597127038978af7a870f986c1973d794971709d31023f77622390871f66",
       "origin": "v1.8.4-offline-implementation",
-      "public_sha256": "ebfff4fbb0b9f93116bebb4af0362db8f1ca057412e7dc6c4184101608b7f024",
-      "revision": "v1.8.4-on-v1.8.3"
+      "public_sha256": "80093d8cad48683b01c20c45a08a767918f3b170e49f1e2f8a95a8d777229640",
+      "revision": "sanitizer-launch-record-fix"
     },
     "tools/v16/coop_h1_control.py": {
       "changed": true,
@@ -1674,6 +1681,13 @@
       "origin": "v1.8.4-offline-implementation",
       "public_sha256": "d92d16dd86e3e3cae006b4fb8f3a775fd56db2423bdc1555bae40573918b7971",
       "revision": "v1.8.4-on-v1.8.3"
+    },
+    "tools/v16/coop_sanitizer.py": {
+      "changed": false,
+      "input_sha256": "fcb4990977fc0802fdfac43aea1ee9d7f8c46cb322437d58ea424d17e5dd210c",
+      "origin": "sanitizer-launch-record-fix",
+      "public_sha256": "fcb4990977fc0802fdfac43aea1ee9d7f8c46cb322437d58ea424d17e5dd210c",
+      "revision": "sanitizer-launch-record-fix"
     },
     "tools/v16/diff_native_elf.py": {
       "changed": true,
@@ -1707,8 +1721,8 @@
       "changed": true,
       "input_sha256": "3d102d6a6d9fe04faf0c483d0e86f907c05236d93fb39ef79548a933127dde88",
       "origin": "v1.8.4-offline-implementation",
-      "public_sha256": "d77c5179d9a53d32f75e971eec89659409ccf2d8fc50d482817b77268f65bb91",
-      "revision": "v1.8.4-on-v1.8.3"
+      "public_sha256": "3060baa24ba89495c89cb5033c3af8be9500aaf62d2daac91c49535f549a122d",
+      "revision": "sanitizer-launch-record-fix"
     },
     "tools/v16/qualify_runtime.py": {
       "changed": true,
@@ -1716,6 +1730,13 @@
       "origin": "v1.8.3-docs-r2",
       "public_sha256": "b98f7d04b5aee95af7aecb88b0fc3045d89f0f0add1f4a699a00955bd1c4b272",
       "revision": "v1.8.4-on-v1.8.3"
+    },
+    "tools/v16/sanitizer_control.cu": {
+      "changed": false,
+      "input_sha256": "e85467b13efb4c6a7f6ead94da24167aab4e1cb099ab351f5d104f456c3431d7",
+      "origin": "sanitizer-launch-record-fix",
+      "public_sha256": "e85467b13efb4c6a7f6ead94da24167aab4e1cb099ab351f5d104f456c3431d7",
+      "revision": "sanitizer-launch-record-fix"
     },
     "tools/v16/test_coop_cancellation.py": {
       "changed": true,
@@ -1749,8 +1770,15 @@
       "changed": true,
       "input_sha256": "4b3b956349535cae552427aa559ec5552564120cf190866c687cabf10f3719c9",
       "origin": "v1.8.4-offline-implementation",
-      "public_sha256": "e75c21b4fd5f90a472ee25eb8c9d33de9dc7072be7ad31807a4ad0f333632a61",
-      "revision": "v1.8.4-on-v1.8.3"
+      "public_sha256": "b24e88c916161455dda6557d45bdae5a251bab5edb606f65bebecd1ba5100f11",
+      "revision": "sanitizer-launch-record-fix"
+    },
+    "tools/v16/test_coop_sanitizer.py": {
+      "changed": false,
+      "input_sha256": "916a81cf527302fb9771a457f72a33aa10954c31b40ee2021404eedf96229d4f",
+      "origin": "sanitizer-launch-record-fix",
+      "public_sha256": "916a81cf527302fb9771a457f72a33aa10954c31b40ee2021404eedf96229d4f",
+      "revision": "sanitizer-launch-record-fix"
     },
     "tools/v16/test_native_experiment.py": {
       "changed": false,

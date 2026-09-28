@@ -8330,9 +8330,70 @@
         }
       ]
     },
+    "tools/v16/check_sanitizer.py": {
+      "disposition": "Owner-only scoped detector control. Builds with GPUs hidden, then real clean/OOB/clean-racecheck and legacy-count controls on GPU 0 under resource caps, same pinned sanitizer package and operator image. Existing exact-ID cancellation cleanup. Full child/tool/driver output private. Closed control report contains validated numerical outcomes and driver/image/source/tool hashes; no raw paths, addresses or vendor output shared.",
+      "sha256": "19259620916e63a949f40f89cb88f1a5de7cbe7f1cf2dde07f09c91f682c32ab",
+      "sites": [
+        {
+          "function": "inside",
+          "line": 30,
+          "operation": "capture_log"
+        },
+        {
+          "function": "inside",
+          "line": 31,
+          "operation": "run"
+        },
+        {
+          "function": "inside",
+          "line": 37,
+          "operation": "capture_log"
+        },
+        {
+          "function": "inside",
+          "line": 38,
+          "operation": "run"
+        },
+        {
+          "function": "inside",
+          "line": 51,
+          "operation": "capture_log"
+        },
+        {
+          "function": "inside",
+          "line": 52,
+          "operation": "run"
+        },
+        {
+          "function": "inside",
+          "line": 76,
+          "operation": "write_text"
+        },
+        {
+          "function": "host",
+          "line": 105,
+          "operation": "capture_log"
+        },
+        {
+          "function": "host",
+          "line": 111,
+          "operation": "write_text"
+        },
+        {
+          "function": "host",
+          "line": 112,
+          "operation": "print"
+        },
+        {
+          "function": "main",
+          "line": 130,
+          "operation": "report_failure"
+        }
+      ]
+    },
     "tools/v16/coop_environment.py": {
-      "disposition": "Private container setup and import channel captured by controller. Tool command replies retained privately. Shared report uses authenticated checkpoint/bundle identities, exact GB10 capability, fixed checked linkage and hashes of nonempty tool/driver replies. Image receipt schema and container digest validated. CLI exceptions private.",
-      "sha256": "1121b372a34c9f49bcd9049862b377433a55dbe429083c5f9ae2c69141c1a63b",
+      "disposition": "Private environment worker verifies save/read/print-level options in the pinned tool. Exact driver/toolchain identities still hashed by the same projection; arbitrary child output remains in the campaign private capture.",
+      "sha256": "a9cc85a327bdb0ba9041230eb2533ebe6b5ec545ec72102667cb55b4da106bb2",
       "sites": [
         {
           "function": "output",
@@ -8356,24 +8417,24 @@
         },
         {
           "function": "main",
-          "line": 87,
+          "line": 88,
           "operation": "retain"
         },
         {
           "function": "main",
-          "line": 89,
+          "line": 90,
           "operation": "write_text"
         },
         {
           "function": "main",
-          "line": 96,
+          "line": 97,
           "operation": "print"
         }
       ]
     },
     "tools/v16/coop_evidence.py": {
-      "disposition": "Read-only validator and index constructor: consumes closed projected events, hashed toolchain identities, exact bundle/image/command bindings and full policy decisions; rejects extra event/environment/identity fields. Returns fixed index fields and named hashes. No private sidecar read. Exceptions reach protected runner.",
-      "sha256": "ebfff4fbb0b9f93116bebb4af0362db8f1ca057412e7dc6c4184101608b7f024",
+      "disposition": "Separates strict zero-summary validation from saved candidate-launch coverage for the container worker. Existing gate validation still requires both, exact matrix/exit binding and completion. No raw sanitizer strings serialized by this library.",
+      "sha256": "80093d8cad48683b01c20c45a08a767918f3b170e49f1e2f8a95a8d777229640",
       "sites": []
     },
     "tools/v16/coop_h1_control.py": {
@@ -8421,6 +8482,47 @@
       "disposition": "Closed projection boundary: full sanitizer text validated before publishing counted fixed launch markers/clean summaries. Profile and H1 facts use closed schemas, labels, finite numbers and digests. Environment version/driver text hashed; mount sources hashed. Bundle copy includes only manifest assets and two reviewed toolchain report digests; no raw compiler logs or sidecars.",
       "sha256": "d92d16dd86e3e3cae006b4fb8f3a775fd56db2423bdc1555bae40573918b7971",
       "sites": []
+    },
+    "tools/v16/coop_sanitizer.py": {
+      "disposition": "Private container worker. Live instrumented execution keeps error exit 9 and warning/error/fatal reports; full tool text and saved records stay in fresh retained 0700 directories under umask 077. Application output inherits the campaign private channel. CPU readback runs only after zero exit and clean summary. Only fixed candidate placeholders/count and zero summary emitted after successful readback. Errors use private diagnostic boundary.",
+      "sha256": "fcb4990977fc0802fdfac43aea1ee9d7f8c46cb322437d58ea424d17e5dd210c",
+      "sites": [
+        {
+          "function": "run",
+          "line": 35,
+          "operation": "run"
+        },
+        {
+          "function": "run",
+          "line": 43,
+          "operation": "capture_log"
+        },
+        {
+          "function": "run",
+          "line": 44,
+          "operation": "run"
+        },
+        {
+          "function": "run",
+          "line": 51,
+          "operation": "print"
+        },
+        {
+          "function": "run",
+          "line": 52,
+          "operation": "print"
+        },
+        {
+          "function": "main",
+          "line": 62,
+          "operation": "run"
+        },
+        {
+          "function": "main",
+          "line": 64,
+          "operation": "report_failure"
+        }
+      ]
     },
     "tools/v16/diff_native_elf.py": {
       "disposition": "Raw ELF comparison stays in memory/private sidecar; public comparison hashes names and omits arbitrary byte dumps. CLI errors private.",
@@ -8647,8 +8749,8 @@
       ]
     },
     "tools/v16/qualify_coop.py": {
-      "disposition": "Component campaign/seal producer: complete container output in exclusive 0600 capture; only closed projected gate facts are hashed. Plan/execution host mount sources hashed. Copies only manifest-listed assets and digest-approved toolchain reports. Seal index has named artifacts only, no private-file dependency. Failures and uncaught exceptions use diagnostic boundary.",
-      "sha256": "d77c5179d9a53d32f75e971eec89659409ccf2d8fc50d482817b77268f65bb91",
+      "disposition": "All 24 sanitizer matrix entries invoke the same bound private worker. Campaign child status must still be zero before projection; receipt and runner hashes include the worker. Fixed planning/status output and privately captured container output unchanged.",
+      "sha256": "3060baa24ba89495c89cb5033c3af8be9500aaf62d2daac91c49535f549a122d",
       "sites": [
         {
           "function": "write",
@@ -8657,7 +8759,12 @@
         },
         {
           "function": "campaign",
-          "line": 166,
+          "line": 165,
+          "operation": "write"
+        },
+        {
+          "function": "campaign",
+          "line": 182,
           "operation": "write"
         },
         {
@@ -8667,13 +8774,13 @@
         },
         {
           "function": "campaign",
-          "line": 184,
-          "operation": "write"
+          "line": 185,
+          "operation": "print"
         },
         {
           "function": "campaign",
           "line": 186,
-          "operation": "print"
+          "operation": "write"
         },
         {
           "function": "campaign",
@@ -8692,32 +8799,32 @@
         },
         {
           "function": "campaign",
-          "line": 190,
-          "operation": "write"
-        },
-        {
-          "function": "campaign",
-          "line": 197,
+          "line": 196,
           "operation": "capture_log"
         },
         {
           "function": "campaign",
-          "line": 199,
+          "line": 198,
           "operation": "write"
         },
         {
           "function": "campaign",
-          "line": 207,
+          "line": 206,
           "operation": "write_text"
         },
         {
           "function": "campaign",
-          "line": 209,
+          "line": 208,
           "operation": "write"
         },
         {
           "function": "campaign",
-          "line": 220,
+          "line": 219,
+          "operation": "write"
+        },
+        {
+          "function": "campaign",
+          "line": 221,
           "operation": "write"
         },
         {
@@ -8728,36 +8835,31 @@
         {
           "function": "campaign",
           "line": 223,
-          "operation": "write"
-        },
-        {
-          "function": "campaign",
-          "line": 224,
           "operation": "print"
         },
         {
           "function": "seal",
-          "line": 245,
+          "line": 244,
+          "operation": "write"
+        },
+        {
+          "function": "seal",
+          "line": 257,
           "operation": "write"
         },
         {
           "function": "seal",
           "line": 258,
-          "operation": "write"
-        },
-        {
-          "function": "seal",
-          "line": 259,
           "operation": "print"
         },
         {
           "function": "main",
-          "line": 284,
+          "line": 283,
           "operation": "print"
         },
         {
           "function": "main",
-          "line": 299,
+          "line": 298,
           "operation": "report_failure"
         }
       ]
@@ -8835,6 +8937,42 @@
           "function": "main",
           "line": 250,
           "operation": "report_failure"
+        }
+      ]
+    },
+    "tools/v16/sanitizer_control.cu": {
+      "disposition": "Standalone maintenance-only CUDA detector witness, never a candidate bundle input. One filtered stock kernel and one candidate-named kernel, with deliberate one-past allocation store only in oob mode. Prints fixed control mode and numeric CUDA status into controller private capture; deliberately returns zero after negative launch so sanitizer must fail it.",
+      "sha256": "e85467b13efb4c6a7f6ead94da24167aab4e1cb099ab351f5d104f456c3431d7",
+      "sites": [
+        {
+          "function": "<shell>",
+          "line": 3,
+          "operation": "private output/child channel"
+        },
+        {
+          "function": "<shell>",
+          "line": 4,
+          "operation": "private output/child channel"
+        },
+        {
+          "function": "<shell>",
+          "line": 5,
+          "operation": "private output/child channel"
+        },
+        {
+          "function": "<shell>",
+          "line": 17,
+          "operation": "private output/child channel"
+        },
+        {
+          "function": "<shell>",
+          "line": 20,
+          "operation": "private output/child channel"
+        },
+        {
+          "function": "<shell>",
+          "line": 29,
+          "operation": "private output/child channel"
         }
       ]
     },
@@ -9013,8 +9151,8 @@
       ]
     },
     "tools/v16/test_coop_qualification.py": {
-      "disposition": "Synthetic local test output only; never release/qualification evidence. Covers real producers with private sentinels and negative controls.",
-      "sha256": "e75c21b4fd5f90a472ee25eb8c9d33de9dc7072be7ad31807a4ad0f333632a61",
+      "disposition": "Synthetic local test output only. Exercises real publication/refusal and comparison paths, retained private artifacts and opaque diagnostic controls; never hardware evidence.",
+      "sha256": "b24e88c916161455dda6557d45bdae5a251bab5edb606f65bebecd1ba5100f11",
       "sites": [
         {
           "function": "setUp",
@@ -9228,38 +9366,64 @@
         },
         {
           "function": "test_check_only_validates_plan_without_exposing_gpu_or_sealing",
-          "line": 516,
+          "line": 514,
           "operation": "write_text"
         },
         {
           "function": "test_check_only_validates_plan_without_exposing_gpu_or_sealing",
-          "line": 520,
+          "line": 518,
           "operation": "write_text"
         },
         {
           "function": "test_check_only_validates_plan_without_exposing_gpu_or_sealing.execute",
-          "line": 528,
+          "line": 526,
           "operation": "write"
         },
         {
           "function": "test_check_only_validates_plan_without_exposing_gpu_or_sealing.execute",
-          "line": 529,
+          "line": 527,
           "operation": "write"
         },
         {
           "function": "test_policy_uses_all_468_new_cases_and_keeps_nonwinners_stock",
-          "line": 595,
+          "line": 593,
           "operation": "write_text"
         },
         {
           "function": "test_policy_uses_all_468_new_cases_and_keeps_nonwinners_stock",
-          "line": 603,
+          "line": 601,
           "operation": "write_text"
         },
         {
           "function": "test_missing_and_symlinked_raw_campaign_refuses",
-          "line": 609,
+          "line": 607,
           "operation": "write"
+        }
+      ]
+    },
+    "tools/v16/test_coop_sanitizer.py": {
+      "disposition": "Synthetic local test output only. Exercises real publication/refusal and comparison paths, retained private artifacts and opaque diagnostic controls; never hardware evidence.",
+      "sha256": "916a81cf527302fb9771a457f72a33aa10954c31b40ee2021404eedf96229d4f",
+      "sites": [
+        {
+          "function": "execute.child",
+          "line": 31,
+          "operation": "write"
+        },
+        {
+          "function": "execute.child",
+          "line": 33,
+          "operation": "write_text"
+        },
+        {
+          "function": "execute.child",
+          "line": 35,
+          "operation": "write_bytes"
+        },
+        {
+          "function": "execute",
+          "line": 40,
+          "operation": "run"
         }
       ]
     },

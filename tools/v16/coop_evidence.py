@@ -23,13 +23,19 @@ def events(path):
     return rows
 
 
-def sanitizer(text, tool):
+def sanitizer_summary(text, tool):
     summary = ('ERROR SUMMARY: 0 errors' if tool == 'memcheck' else
                'RACECHECK SUMMARY: 0 hazards displayed (0 errors, 0 warnings)')
     summaries = re.findall(r'(?m)^========= (?:ERROR SUMMARY:.*|RACECHECK SUMMARY:.*)$', text)
     need(summaries == ['========= ' + summary], 'sanitizer missing or contradictory summary')
     need(not re.search(r'(?i)internal sanitizer error|didn.t track|no attachable process|no kernels|not supported|========= Error:', text),
          'sanitizer incomplete')
+    return summary
+
+
+def sanitizer_launches(text):
+    need(not re.search(r'(?i)internal sanitizer error|didn.t track|no attachable process|no kernels|not supported|========= Error:', text),
+         'sanitizer launch evidence incomplete')
     # --dump-kernel-launches includes filtered and unfiltered launches. Require
     # candidate launch records explicitly marked not filtered; a zero summary
     # alone (or host-side launch counter) cannot prove instrumentation.
@@ -38,6 +44,11 @@ def sanitizer(text, tool):
                and '(filtered:' not in block.splitlines()[0]]
     need(checked, 'no explicitly instrumented candidate launches; retain output and review tool format')
     return len(checked)
+
+
+def sanitizer(text, tool):
+    sanitizer_summary(text, tool)
+    return sanitizer_launches(text)
 
 
 def validate_environment(path, *, gpu):

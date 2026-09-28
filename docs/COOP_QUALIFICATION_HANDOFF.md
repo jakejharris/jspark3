@@ -355,6 +355,9 @@ All nine logical EP range/geometry pairs run serially on one reserved GB10.
 ```sh
 cd "$SOURCE"
 awk '/^MemAvailable:/ {exit ($2 < 20971520)}' /proc/meminfo
+python3 -B tools/v16/check_sanitizer.py \
+  --image-receipt "$BUILD/operator-image.json" \
+  --sanitizer-root "$QUAL_SANITIZER" --output "$CAMPAIGN/sanitizer-controls"
 python3 -B tools/v16/qualify_coop.py \
   --image-receipt "$BUILD/operator-image.json" --build-root "$BUILD/native" \
   --model-root "$QUAL_MODEL" --fly-root "$QUAL_FLY" --helpers-root "$QUAL_HELPERS" \
@@ -367,7 +370,16 @@ python3 -B tools/v16/qualify_coop.py --seal "$QUAL" --output "$SEALED_OUTPUT" \
 python3 -B tools/v16/qualify_coop.py --check-seal "$SEALED_OUTPUT"
 ```
 
-Success requires 18 H1 invocations (nine baseline/perturb pairs), nine profiles
+The first command after the memory check runs real detector controls on the same
+image, pinned sanitizer and GPU/driver as the campaign. Its deliberate OOB write
+must fail memcheck with exit 9 and an invalid-global-write diagnostic; clean
+memcheck and racecheck must pass with saved candidate-launch coverage. Stop if
+the control runner fails. Its `RESULT.json` driver fingerprint must match the
+campaign's `container-smoke-r0-g0-memcheck/environment.json` GPU driver field.
+See [detector control details](COOP_REPRODUCIBILITY.md). Keep its private logs
+beside the campaign; do not substitute this check for candidate qualification.
+
+Campaign success requires 18 H1 invocations (nine baseline/perturb pairs), nine profiles
 with 468 complete cases, 18 smoke sanitizer runs, six geometry-2 sanitizer runs,
 and three production-policy checks. The selector uses the frozen worst-case
 candidate/stock threshold ≤0.97; unmeasured/nonwinning rows, including row 64 if

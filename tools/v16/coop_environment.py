@@ -70,7 +70,8 @@ def main():
     ldd = output(['ldd', '/campaign/raw-bundle/cooperative_moe.so'])
     need('libcudart.so.13 =>' in ldd and 'not found' not in ldd, 'shared cudart linkage')
     help_text = output(['/sanitizer/compute-sanitizer', '--help'])
-    need('--dump-kernel-launches' in help_text and '--kernel-name' in help_text, 'sanitizer lacks launch evidence support')
+    need(all(flag in help_text for flag in ('--dump-kernel-launches', '--kernel-name', '--print-level', '--save', '--read')),
+         'sanitizer lacks saved launch evidence support')
     report = {'status': 'PASS', 'scope': 'CPU stage-8 imports and fixture shapes; no GPU correctness',
               'checkpoint': checkpoint, 'bundle': bundle,
               'exl3_sha256': gate.EXL3_SHA256, 'fatpath_sha256': gate.FATPATH_SHA256,

@@ -74,15 +74,41 @@ no GPU and starts no service. Its memory and total memory+swap limits are 4 GiB;
 native compilation retains 8 GiB and exclusive GPU gates retain 16 GiB. Use a fresh output name for another check.
 
 Only after the owner drains and stops the bound fleet and reserves one GB10,
-repeat the same command without `--check-only`. The runner serially performs:
+first run the detector controls with the same operator image and pinned tool:
+
+```sh
+python3 -B tools/v16/check_sanitizer.py \
+  --image-receipt "$BUILD/operator-image.json" \
+  --sanitizer-root "$QUAL_SANITIZER" --output "$CAMPAIGN/sanitizer-controls"
+```
+
+The output directory must be new. Compilation hides all GPUs; the controls use
+only GPU 0 in a capped, network-disabled maintenance container. The clean legacy
+command must reproduce launch-record counting, the fixed memcheck and racecheck
+commands must pass with candidate coverage, and a deliberate out-of-bounds CUDA
+write must produce an invalid-global-write report and sanitizer exit 9. The
+negative application deliberately returns zero, so its exit cannot fake detector
+sensitivity. Any mismatch stops the control runner. `RESULT.json` binds the
+image, tool package, driver/GPU fingerprint, source, runner and executable hashes.
+Raw reports and saved records remain private. This is detector validation, not
+candidate qualification. Use this same image, tool and GPU/driver for the campaign.
+
+After these controls pass, repeat the qualification command without `--check-only`.
+The runner serially performs:
 
 - Nine full integration/H1 baselines plus nine bound perturbation controls.
 - Nine complete profiles: 468 timed and numerically checked cases, preserving
   median/min/max; the source fixes five warmups and 25 samples per implementation.
 - Eighteen smoke sanitizer runs and six geometry-2 runs, under memcheck and
   racecheck. The candidate-only filter is `kns=exl3_moe_coop_`. Retain all output;
-  require clean summaries and nonzero unfiltered candidate launch evidence from
-  `--dump-kernel-launches`. Unknown formats or unexplained errors refuse sealing.
+  require clean summaries and nonzero unfiltered candidate launch evidence.
+  The worker keeps `--error-exitcode 9` and explicitly sets `--print-level warn`:
+  the pinned frontend otherwise counts informational launch records as errors.
+  `--save` retains the instrumented execution; a CPU-only `--read` at info level
+  recovers `--dump-kernel-launches` coverage from that same execution. Readback
+  occurs only after the live tool exits zero and its summary is clean. The
+  informational readback summary is not the error gate. Missing records, failed
+  readback, absent candidate coverage or any live failure refuse sealing.
   See [NVIDIA's option documentation](https://docs.nvidia.com/compute-sanitizer/ComputeSanitizer/index.html).
 - Policy selection on a separate bundle and three production-policy GPU checks
   without qualification or geometry overrides. Every row 1–64 is explicit;

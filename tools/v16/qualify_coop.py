@@ -19,7 +19,7 @@ from _image_identity import build_policy
 from _coop_checkpoint import authenticate as fixture
 from _coop_bundle import identity as bundle_identity, verify_bundle
 from experiment_coop_build import run_container, Cancelled
-from coop_evidence import KERNEL_FILTER, validate_campaign, validate_gate, validate_environment
+from coop_evidence import validate_campaign, validate_gate, validate_environment
 import coop_projection as projection
 import _diagnostics as diagnostics
 import coop_h1_control as h1
@@ -34,7 +34,7 @@ def write(path, value):
 
 
 def runner_inputs():
-    paths = ['tools/v16/' + name for name in ('qualify_coop.py', 'coop_environment.py', 'coop_evidence.py', 'coop_projection.py')]
+    paths = ['tools/v16/' + name for name in ('qualify_coop.py', 'coop_environment.py', 'coop_evidence.py', 'coop_projection.py', 'coop_sanitizer.py')]
     paths += ['recipe/scripts/' + name for name in ('_coop_checkpoint.py', '_coop_bundle.py',
                                                    '_coop_qualification.py', 'validate_checkpoint.py', '_diagnostics.py')]
     return {name: sha(regular(ROOT, name)) for name in paths}
@@ -56,8 +56,7 @@ def matrix():
             env = ['env', 'GLM53_COOP_QUALIFICATION=1', f'GLM53_COOP_GEOMETRY={geometry}', f'GLM53_COOP_EP_RANK={rank}']
             commands.append((f'profile-r{rank}-g{geometry}', env + ['python3', '-B', SRC + '/profile_shapes.py']))
             for tool in ('memcheck', 'racecheck'):
-                sanitizer = ['/sanitizer/compute-sanitizer', '--tool', tool, '--error-exitcode', '9', '--print-limit', '0',
-                             '--dump-kernel-launches', '--kernel-name', KERNEL_FILTER]
+                sanitizer = ['python3', '-B', '/src/tools/v16/coop_sanitizer.py', tool]
                 commands.append((f'smoke-r{rank}-g{geometry}-{tool}', env + sanitizer + ['python3', '-B', SRC + '/sanitizer_smoke.py']))
                 if geometry == 2:
                     commands.append((f'geometry2-r{rank}-g{geometry}-{tool}', env + sanitizer + ['python3', '-B', SRC + '/test_geometry2_sanitizer.py']))

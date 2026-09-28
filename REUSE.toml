@@ -280,3 +280,23 @@ SPDX-License-Identifier = "Apache-2.0"
 path = ["tools/v16/test_native_experiment.py"]
 precedence = "aggregate"
 SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ["tools/v16/check_sanitizer.py"]
+precedence = "aggregate"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ["tools/v16/coop_sanitizer.py"]
+precedence = "aggregate"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ["tools/v16/sanitizer_control.cu"]
+precedence = "aggregate"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ["tools/v16/test_coop_sanitizer.py"]
+precedence = "aggregate"
+SPDX-License-Identifier = "Apache-2.0"

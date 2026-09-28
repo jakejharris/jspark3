@@ -499,9 +499,7 @@ class RunnerTests(unittest.TestCase):
                 self.assertNotIn('GLM53_COOP_QUALIFICATION=', text)
                 self.assertNotIn('GLM53_COOP_GEOMETRY=', text)
             if name.startswith(('smoke-', 'geometry2-')):
-                self.assertIn('--error-exitcode 9', text)
-                self.assertIn('--dump-kernel-launches', text)
-                self.assertIn(evidence.KERNEL_FILTER, text)
+                self.assertEqual(command[4:8], ['python3', '-B', '/src/tools/v16/coop_sanitizer.py', name.rsplit('-', 1)[1]])
 
     def test_check_only_validates_plan_without_exposing_gpu_or_sealing(self):
         import argparse
