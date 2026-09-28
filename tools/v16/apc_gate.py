@@ -33,7 +33,17 @@ tokens 0-24 with shared-history logprob spreads up to 0.84 nats (outgoing-boot c
     every cold top-20 -> FAIL.
   - spread: the max warm/cold logprob spread on shared histories exceeds max(0.10, 2x the max
     cold/cold spread) -> FAIL.
-Checker negative controls mutate the real capture and must FAIL.
+  - nondeterminism: a max cold/cold spread above COLD_SPREAD_CEILING (2.0 nats) FAILs instead of
+    widening that limit; the limit never exceeds 2x the ceiling. Of 42 retained captures
+    (2026-09-24..28), 41 stayed at or below 1.684; the one above 2.0 (2.683, a suffix-2047 first
+    token) is refused.
+Checker negative controls mutate the real capture and must FAIL. The limit adapts to cold noise, so
+the logprob control is sized from the capture, not fixed (a fixed 5.0-nat corruption passed under
+a 5.366 limit): limit + SABOTAGE_MARGIN + the corrupted token's own warm/cold offset, which leaves
+the corrupted spread at least 0.5 nats above the limit whichever way the offset points. It is
+NOT_DISCRIMINATING (FAIL) when no warm first token matches its first cold probe, when that size
+exceeds SABOTAGE_MAX (the 5.0-nat corruption this gate has always had to catch), or when the
+corrupted capture does not clear the limit by the margin.
 
 With --baseline (the same fixtures captured on the outgoing boot under --expect legacy), the gate
 also requires Pi-shaped numbers to be net positive: no reuse cell loses cached tokens, and the
@@ -72,6 +82,8 @@ BLOCK = 2560
 FINE = 640
 PRODUCER_TOKENS, PROBE_TOKENS, TOP_K = 96, 64, 20
 MIN_TOL = 0.10
+COLD_SPREAD_CEILING = 2.0
+SABOTAGE_MARGIN, SABOTAGE_MAX = 0.5, 5.0
 SUFFIXES = (4, 37, 639, 640, 641, 2047, 2048, 2049)
 APC_LINE_RE = re.compile(r"\[glm53-apc-per-group\] retention_by_group=\S+ \(global=\S+ swa_env=0 "
                          r"eagle_min_exempt=\[([0-9, ]*)\] low_priority=\[([0-9, ]*)\] ")
@@ -335,8 +347,10 @@ def parity(rows: list[dict]) -> dict:
         cells[row["id"]] = {"parity": label, "warm_agreement": [a["diverge_at"] for a in against],
                             "cold_agreement": [p["diverge_at"] for p in pairs],
                             "warm_spread": max(a["spread"] for a in against)}
-    limit = max(MIN_TOL, 2 * cold_spread)
+    limit = max(MIN_TOL, 2 * min(cold_spread, COLD_SPREAD_CEILING))
     findings = [f"{label}: warm first token absent from every cold top-{TOP_K}" for label in gross]
+    if cold_spread > COLD_SPREAD_CEILING:
+        findings.append(f"nondeterminism: cold/cold logprob spread {cold_spread:.3f} > {COLD_SPREAD_CEILING:.3f} ceiling")
     if len(outliers) * 2 > len(rows):
         findings.append(f"warm is the outlier in {len(outliers)}/{len(rows)} cells: {outliers}")
     if warm_spread > limit:
@@ -401,12 +415,34 @@ def net_positive(baseline: dict, candidate: dict, fixtures_sha256: str) -> dict:
                                   sum(after[label]["hits"]["warm"] for label in reuse)], "cells": cells}
 
 
+def sabotage(doc: dict) -> dict:
+    """Size the shared-token logprob corruption from this capture; reason says why none discriminates."""
+    limit = parity(doc["rows"])["spread_limit"]
+    plan = {"cell": None, "limit": limit, "margin": SABOTAGE_MARGIN, "max": SABOTAGE_MAX,
+            "offset": None, "size": None, "reason": None}
+    row = next((r for r in doc["rows"] if r["warm"]["token_ids"][:1] == r["cold"][0]["token_ids"][:1] != []), None)
+    if row is None:
+        return {**plan, "reason": "no warm first token matches its first cold probe"}
+    offset = abs(row["warm"]["logprobs"][0] - row["cold"][0]["logprobs"][0])
+    size = limit + SABOTAGE_MARGIN + offset
+    plan.update(cell=row["id"], offset=round(offset, 6), size=round(size, 6))
+    if size > SABOTAGE_MAX:
+        plan["reason"] = (f"{size:.3f}-nat corruption needed to clear the {limit:.3f} limit by {SABOTAGE_MARGIN} "
+                          f"exceeds {SABOTAGE_MAX}")
+    return plan
+
+
 def checker_controls(doc: dict) -> dict:
-    """Mutate the real capture; a checker that still passes is broken."""
+    """Mutate the real capture; a checker that still passes is broken.
+
+    The logprob control is NOT_DISCRIMINATING when no sabotage sized from this capture clears its
+    parity limit by the margin (see sabotage)."""
     def mutated(fn):
         broken = copy.deepcopy(doc)
         fn(broken)
-        return analyze(broken)["verdict"]
+        return analyze(broken)
+
+    plan = sabotage(doc)
 
     def token(d):
         warm = d["rows"][0]["warm"]
@@ -416,8 +452,7 @@ def checker_controls(doc: dict) -> dict:
         warm["top_logprobs"][0] = {"\x00not-a-top-token": -0.01}   # a confident, different token
 
     def logprob(d):
-        row = next(r for r in d["rows"] if r["warm"]["token_ids"][:1] == r["cold"][0]["token_ids"][:1])
-        row["warm"]["logprobs"][0] -= 5.0
+        next(r for r in d["rows"] if r["id"] == plan["cell"])["warm"]["logprobs"][0] -= plan["size"]
 
     def outlier_everywhere(d):
         for r in d["rows"]:
@@ -445,7 +480,30 @@ def checker_controls(doc: dict) -> dict:
                 ("false_reuse", false_reuse), ("identity", identity), ("foreign_traffic", foreign)]
     if doc["expect"] in ("lru", "finehit"):
         controls.append(("warm_hit", warm_hit))
-    return {name: mutated(fn) for name, fn in controls}
+
+    def verdict(name, fn):
+        if name != "warm_logprob":
+            return mutated(fn)["verdict"]
+        if plan["reason"]:
+            return "NOT_DISCRIMINATING"
+        broken = mutated(fn)
+        cleared = (broken.get("spread_limit") == plan["limit"]
+                   and broken.get("warm_spread", -1.0) >= plan["limit"] + SABOTAGE_MARGIN - 1e-6)
+        return broken["verdict"] if cleared else "NOT_DISCRIMINATING"
+    return {name: verdict(name, fn) for name, fn in controls}
+
+
+def gate(doc: dict) -> tuple[dict, dict, dict]:
+    """Analysis of the real capture with every checker-control refusal folded into its verdict."""
+    result, plan, controls = analyze(doc), sabotage(doc), checker_controls(doc)
+    if controls["warm_logprob"] == "NOT_DISCRIMINATING":
+        result["findings"].append("sabotage not discriminating: "
+                                  + (plan["reason"] or "corrupted spread did not clear the limit by the margin"))
+    if any(verdict not in ("FAIL", "NOT_DISCRIMINATING") for verdict in controls.values()):
+        result["findings"].append(f"checker negative control passed: {controls}")
+    if any(verdict != "FAIL" for verdict in controls.values()):
+        result["verdict"] = "FAIL"
+    return result, controls, plan
 
 
 # ---------------------------------------------------------------- CLI
@@ -500,18 +558,14 @@ def main(argv: list[str] | None = None) -> int:
            "fixtures": str(args.fixtures), "fixtures_sha256": fixtures["cells_sha256"], "log_sources": sources,
            "apc_identity": identity, "requests_delta": int(get(total, "request_success_total")),
            "cells": fixtures["cells"], "rows": rows}
-    result = analyze(doc)
-    controls = checker_controls(doc)
-    if any(verdict != "FAIL" for verdict in controls.values()):
-        result["findings"].append(f"checker negative control passed: {controls}")
-        result["verdict"] = "FAIL"
+    result, controls, plan = gate(doc)
     if baseline is not None:
         net = net_positive(baseline, result, fixtures["cells_sha256"])
         result["net_positive"] = net
         if net["verdict"] != "PASS":
             result["findings"].extend(f"net: {item}" for item in net["findings"])
             result["verdict"] = "FAIL"
-    doc.update({"analysis": result, "checker_controls": controls})
+    doc.update({"analysis": result, "checker_controls": controls, "sabotage": plan})
     doc.pop("cells")
     doc["receipt_sha256"] = sha256_json(doc)
     write_json(args.out, doc)

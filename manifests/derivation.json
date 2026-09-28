@@ -58,8 +58,8 @@
       "changed": true,
       "input_sha256": "17ad9fc5f274886f3a6243287a3431d3dbc1d77b29f20fbb26270e203d61dd08",
       "origin": "release-package-render",
-      "public_sha256": "300e555ab5ad455cb614f3b1fa509f841530b0862aba2d416ddd05d5453a439d",
-      "revision": "v184-shapleymcg-attribution"
+      "public_sha256": "181a2687454d04dca80fa39b3f9f8fde070c4ed4e79f4947ab6185b9c0c96a53",
+      "revision": "v184-apc-control"
     },
     "THIRD_PARTY_NOTICES.md": {
       "changed": true,
@@ -225,8 +225,8 @@
       "changed": true,
       "input_sha256": "f968bb8ad61c217d1c955e5a6209b35cebfae065e3f1ef6d3077ed6a07f25739",
       "origin": "release-package-render",
-      "public_sha256": "c0ce240d0807340a1035984e1dda898ef34f9908352c6c89ffb9e3c30c778afb",
-      "revision": "v184-post-seal-documentation"
+      "public_sha256": "85240562002c247fb1afefeba6d66cde36373058e31f7921fd9ca431f341b9db",
+      "revision": "v184-apc-control"
     },
     "manifests/qualification.json": {
       "changed": false,
@@ -258,8 +258,8 @@
       "changed": true,
       "input_sha256": "fad5c997be3187d1ce467088572677544c60652fda500ea822e89392d7f8bca2",
       "origin": "v1.8.3-shared-output-r5",
-      "public_sha256": "c0e14a66c72dc9f1a41b01df7d987c0816649d8e5c82eb7f391273fd249f2816",
-      "revision": "v184-entry-seam"
+      "public_sha256": "5ba8fff9fc678b17450bc4982e1bd74e28c08ae2b94fe88b8a4981a5009e0278",
+      "revision": "v184-apc-control"
     },
     "manifests/stock-profile.json": {
       "changed": false,
@@ -1673,8 +1673,8 @@
       "changed": true,
       "input_sha256": "4e30b87423de7207d966affd9dc8fe1b2289f045341ab7ec096a6f1046bc625b",
       "origin": "sealed-source",
-      "public_sha256": "485a87e84d43de98feabc35e4781fbf98b0424c76bbeff9ee6236ade884d442b",
-      "revision": "v1.8.4-on-v1.8.3"
+      "public_sha256": "3abe8934825a9a52740e9e128d1ab9379fc335c565d5ce880dc8e62f01a3a5dc",
+      "revision": "v184-apc-control"
     },
     "tools/v16/build_coop_moe.sh": {
       "changed": true,
@@ -1773,6 +1773,13 @@
       "origin": "sanitizer-launch-record-fix",
       "public_sha256": "e85467b13efb4c6a7f6ead94da24167aab4e1cb099ab351f5d104f456c3431d7",
       "revision": "sanitizer-launch-record-fix"
+    },
+    "tools/v16/test_apc_gate.py": {
+      "changed": false,
+      "input_sha256": "1c03d83088e3a9a6135891ba83cda876e6f30167fa6b0382951649d4ca3ad98e",
+      "origin": "v184-apc-control",
+      "public_sha256": "1c03d83088e3a9a6135891ba83cda876e6f30167fa6b0382951649d4ca3ad98e",
+      "revision": "v184-apc-control"
     },
     "tools/v16/test_coop_cancellation.py": {
       "changed": true,

@@ -8496,37 +8496,37 @@
       ]
     },
     "tools/v16/apc_gate.py": {
-      "disposition": "Shared parity JSON: closed cell IDs, numeric token IDs/logprobs/metrics, hashed token strings/top-token keys/request IDs and fixed usage fields. Raw protocol/logs private. Equality/parity gates retained.",
-      "sha256": "485a87e84d43de98feabc35e4781fbf98b0424c76bbeff9ee6236ade884d442b",
+      "disposition": "Shared parity JSON: closed cell IDs, numeric token IDs/logprobs/metrics, hashed token strings/top-token keys/request IDs and fixed usage fields, plus a numeric sabotage-sizing record with fixed refusal text. Raw protocol/logs private. Equality/parity gates retained; the cold-spread ceiling and capture-derived logprob control only add refusals.",
+      "sha256": "3abe8934825a9a52740e9e128d1ab9379fc335c565d5ce880dc8e62f01a3a5dc",
       "sites": [
         {
           "function": "consume",
-          "line": 244,
+          "line": 256,
           "operation": "retain"
         },
         {
           "function": "main",
-          "line": 472,
+          "line": 530,
           "operation": "print"
         },
         {
           "function": "main",
-          "line": 484,
+          "line": 542,
           "operation": "write_json"
         },
         {
           "function": "main",
-          "line": 497,
+          "line": 555,
           "operation": "report_failure"
         },
         {
           "function": "main",
-          "line": 517,
+          "line": 571,
           "operation": "write_json"
         },
         {
           "function": "main",
-          "line": 518,
+          "line": 572,
           "operation": "print"
         }
       ]
@@ -9267,6 +9267,11 @@
           "operation": "private output/child channel"
         }
       ]
+    },
+    "tools/v16/test_apc_gate.py": {
+      "disposition": "Synthetic local test output only; never release/qualification evidence. Exercises derived-sabotage, not-discriminating and cold-ceiling refusals against the real analysis.",
+      "sha256": "1c03d83088e3a9a6135891ba83cda876e6f30167fa6b0382951649d4ca3ad98e",
+      "sites": []
     },
     "tools/v16/test_coop_cancellation.py": {
       "disposition": "Synthetic local test output only; never release/qualification evidence. Covers real producers with private sentinels and negative controls.",

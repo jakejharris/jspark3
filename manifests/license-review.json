@@ -283,6 +283,7 @@
     "tools/v16/qualify_coop.py": "Apache-2.0",
     "tools/v16/qualify_runtime.py": "Apache-2.0",
     "tools/v16/sanitizer_control.cu": "Apache-2.0",
+    "tools/v16/test_apc_gate.py": "Apache-2.0",
     "tools/v16/test_coop_cancellation.py": "Apache-2.0",
     "tools/v16/test_coop_experiment.py": "Apache-2.0",
     "tools/v16/test_coop_input_auth.py": "Apache-2.0",
