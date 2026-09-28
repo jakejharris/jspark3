@@ -82,6 +82,9 @@ Include the credit, link, notice and citation in the release notes, and retain
 the citation in [`TECHNICAL-REPORT.md`](TECHNICAL-REPORT.md). Jake treats these
 additions as goodwill: the publication kit warns during preparation and dry-run
 planning but does not block staging, approval or publication over attribution.
+The optional HF tag edit parses and serializes YAML, including flow lists with
+a trailing comma. If it cannot safely add the tag, it preserves the captured
+frontmatter and warns; tag insertion must not abort staging or publication.
 Keep `REQUIRED_ATTRIBUTION.md` and its v1.0 pin unchanged unless Jake decides
 to adopt different terms.
 
