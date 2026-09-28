@@ -16,6 +16,35 @@ remain unchanged.
 
 ## Integrate the reviewed component seal
 
+The mechanical fill-in command implements steps 1–4 below. Run it from a clean
+validated clone or archive of this source (without private task files), after
+reviewing the actual campaign. `SEALED_OUTPUT` is the original output of
+`qualify_coop.py --seal`; `SERVING_SOURCE` must be a new directory outside both
+the source and seal:
+
+```sh
+python3 -B tools/integrate_coop_seal.py \
+  --sealed-output "$SEALED_OUTPUT" --output "$SERVING_SOURCE"
+python3 -B "$SERVING_SOURCE/tools/validate_release.py" "$SERVING_SOURCE"
+```
+
+The tool verifies the complete seal and native bytes against this source, copies
+only the listed text assets, and validates the new tree before exposing it.
+The original seal remains unchanged. The original source manifest is retained
+as `QUALIFICATION_SOURCE_MANIFEST.json`; BUILD keeps its qualification-source
+hash and exact compiled-input map while its final source-manifest hash changes.
+The canonical rebound BUILD digest becomes the integration seal identity.
+
+Review and commit the generated source as the integration commit before the
+final-source builds below. The binding and release stage become
+`component-qualified`; the new results stay `pending-measurement`, and admission
+and results digests stay null. Source `hardware_qualified` remains false.
+This state allows private serving and measurement. `--require-final` refuses it
+regardless of stage labels. Publication staging still runs that final validator.
+The publication preparation handoff therefore has an intermediate delivery step:
+prepared → component-qualified → bound/final. Its remaining boot, result, copy,
+inventory and publication requirements still apply.
+
 1. Validate the owner's completed seal with `qualify_coop.py --check-seal` and
    review the underlying campaign, sanitizer controls and independent build
    receipts. Copy the publishable `BUILD.json`, `QUALIFICATION.json`, selected
@@ -41,6 +70,28 @@ remain unchanged.
    Retain the original pre-policy campaign and the final-source build witnesses
    as distinct evidence. The sealed native target is defined in
    [`_coop_qualification.py`](../recipe/scripts/_coop_qualification.py).
+
+Build the operator image for the integration source, then use `build_native.py`
+for two fresh native builds on the first physical machine and an independent
+build on the second. Every cooperative result must retain the target digest.
+Image and native receipts from the pre-integration source cannot describe these
+new source bytes. With the first machine's final-source receipts and build tree,
+prepare the single coop=1 runtime shared by the matched A/B arms:
+
+```sh
+python3 -B "$SERVING_SOURCE/tools/prepare_runtime.py" \
+  --binary-root "$FINAL_BUILD_ROOT" \
+  --image-receipt "$FINAL_IMAGE_RECEIPT" \
+  --native-receipt "$FINAL_BUILD_ROOT/native-build-receipt.json" \
+  --output "$PRIVATE_RUNTIME"
+```
+
+The runtime receipt carries the verified schema-2 component identity and
+`hardware_qualified=false`. Both arms use this same prepared recipe; choose
+coop on/off in their separate boot environments and restart between arms.
+Do not use preparation's diagnostic `--coop-off` option to construct the ON arm.
+The stock release measurement and admission boot remain required before final
+binding, independently of the matched comparison.
 
 ## Bind admission and measurement evidence
 

@@ -404,6 +404,11 @@ The legacy `build_coop_moe.sh ... seal` now refuses profile-only sealing.
 
 Use the [release integration checklist](COOP_RELEASE_CHECKLIST.md) for the exact
 pin, default, admission, measurement, documentation and inventory updates.
+Its `integrate_coop_seal.py --sealed-output` command performs the source-integration
+portions of steps 1–3 into a new validated `component-qualified` source candidate. Commit that integration,
+then perform the final-source builds and private serving measurements below.
+This intermediate state retains null admission/results bindings and refuses
+final release and publication until the real serving evidence is bound.
 
 1. Integrate only publishable source metadata/evidence. Never distribute `.so`,
    raw compiler intermediates, model shards, NVIDIA package contents or private logs.
