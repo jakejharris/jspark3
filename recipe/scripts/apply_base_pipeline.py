@@ -143,7 +143,8 @@ def stage(root: Path, states: list[dict[str, str]]) -> int:
 
 
 def command(args: argparse.Namespace, name: str) -> list[str]:
-    base = [sys.executable, str(Path(__file__).resolve().with_name(name)),
+    base = [sys.executable, *(["-B", "-S"] if sys.flags.no_site else []),
+            str(Path(__file__).resolve().with_name(name)),
             "--vllm-root", str(args.vllm_root), "--contract", str(args.contract),
             "--image-receipt", str(args.image_receipt), "--apply"]
     if name == "apply_tp3_overlay.py":

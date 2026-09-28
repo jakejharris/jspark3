@@ -84,9 +84,14 @@ def inputs(args):
     coop.verify_sources()
     pipeline.verify_sources(args.fly_root, pipeline.contract(ROOT / 'recipe/config/patch-contract.json'))
     helper = read(ROOT / 'recipe/config/coop-helper.json')
+    need({p.name for p in args.helpers_root.iterdir()} == {'test_exl3_overlay.py', 'LICENSE'},
+         'helper directory must contain only the two pinned files; no import shadows or bytecode')
     need(sha(regular(args.helpers_root, 'test_exl3_overlay.py')) == helper['sha256'], 'helper hash')
     need(sha(regular(args.helpers_root, 'LICENSE')) == helper['license_sha256'], 'helper license hash')
     sanitizer = read(ROOT / 'recipe/config/coop-sanitizer.json')
+    need({p.relative_to(args.sanitizer_root).as_posix() for p in args.sanitizer_root.rglob('*')
+          if p.is_file() and 'docs' not in p.relative_to(args.sanitizer_root).parts} == set(sanitizer['files']),
+         'sanitizer executable/support inventory differs')
     for name, expected in sanitizer['files'].items():
         need(sha(regular(args.sanitizer_root, name)) == expected, 'sanitizer package drift')
     image = native.read_operator_record(args.image_receipt)
@@ -98,6 +103,8 @@ def inputs(args):
         need(sha(regular(stage, 'out/cooperative_moe.so')) == TARGET_NATIVE, 'raw build pin')
         need(sha(regular(stage, 'SOURCE_MANIFEST.json')) == sha(COOP / 'SOURCE_MANIFEST.json'), 'raw source manifest')
         need(sha(regular(stage, 'build_repro.sh')) == sha(COOP / 'build_repro.sh'), 'raw builder')
+        need(not any(p.name == '__pycache__' or p.suffix in ('.pyc', '.pyo') or p.is_symlink()
+                     for p in stage.rglob('*')), 'unsafe raw build tree')
         for name, expected in read(COOP / 'SOURCE_MANIFEST.json')['files'].items():
             need(sha(regular(stage / 'source', name)) == expected, 'raw source drift')
     return image, build, helper, fixture(args.model_root)
@@ -108,6 +115,8 @@ def container(args, campaign, stage, image, command, gpu):
                '--cpus', '4', '--memory', '16g', '--memory-swap', '16g', '--pids-limit', '1024']
     if gpu:
         options += ['--gpus', 'device=0']
+    else:
+        options += ['-e', 'NVIDIA_VISIBLE_DEVICES=void', '-e', 'CUDA_VISIBLE_DEVICES=']
     for source, target, mode in [(ROOT, '/src', 'ro'), (campaign / 'recipe', '/recipe', 'ro'),
                                 (args.fly_root, '/sources/fly', 'ro'), (args.helpers_root, '/helpers', 'ro'),
                                 (args.model_root, SNAPSHOT + args.model_root.name, 'ro'), (args.sanitizer_root, '/sanitizer', 'ro'),
@@ -119,7 +128,9 @@ def container(args, campaign, stage, image, command, gpu):
     for key in (*h1.SERVING_ENV_KEYS, 'GLM53_COOP_QUALIFICATION', 'GLM53_COOP_GEOMETRY',
                 'GLM53_COOP_SANITIZER', 'JSPARK3_V16_COOP_MAINTENANCE'):
         clean += ['-u', key]
-    clean += ['PYTHONDONTWRITEBYTECODE=1', 'HF_HUB_OFFLINE=1', 'GLM53_COOP_MAINTENANCE_TEST=1',
+    clean += ['PYTHONDONTWRITEBYTECODE=1', 'HF_HUB_OFFLINE=1',
+              'OMP_NUM_THREADS=1', 'MKL_NUM_THREADS=1', 'OPENBLAS_NUM_THREADS=1',
+              'GLM53_COOP_MAINTENANCE_TEST=1',
               'GLM53_COOP_TEST_HELPERS=/helpers', 'GLM53_COOP_BUNDLE=/campaign/raw-bundle']
     return options + ['--entrypoint', '/usr/bin/env', image['config_digest'], *clean[1:],
                       'python3', '-B', '/src/tools/v16/coop_environment.py', *command]

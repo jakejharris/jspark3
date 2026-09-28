@@ -25,7 +25,7 @@ def main():
     receipt['payload_sha256'] = hashlib.sha256(canonical(receipt)).hexdigest()
     Path('/work/image-receipt.json').write_bytes(canonical(receipt))
     vllm = Path(importlib.util.find_spec('vllm').origin).parent
-    subprocess.run(['python3', '-B', '/recipe/scripts/apply_base_pipeline.py', '--vllm-root', str(vllm),
+    subprocess.run(['python3', '-B', '-S', '/recipe/scripts/apply_base_pipeline.py', '--vllm-root', str(vllm),
                     '--source-root', '/sources/fly', '--asset-root', '/opt/glm53',
                     '--contract', '/recipe/config/patch-contract.json', '--image-receipt', '/work/image-receipt.json',
                     '--apply'], check=True)

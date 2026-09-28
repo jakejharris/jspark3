@@ -239,6 +239,7 @@ class AdmissionTests(unittest.TestCase):
                 atomic_text=fleet.atomic_text, redact_diagnostics=fleet.redact_diagnostics)
             args = argparse.Namespace(recipe=ROOT / 'recipe', env_file=env, manifest=manifest_path, output=out)
             with patch.object(qualification, 'component_identity', side_effect=component_proof), \
+                    patch.object(admission_gate, 'release_component', return_value={k:v for k,v in component.items() if k != 'operator_image_config'}), \
                     patch.object(qualification.subprocess, 'run', side_effect=run), redirect_stdout(io.StringIO()):
                 if failure:
                     with self.assertRaises(qualification.QAError): qualification.run(args, native)
@@ -255,6 +256,27 @@ class AdmissionTests(unittest.TestCase):
         self.workflow(coop=True)
         self.workflow('edited', coop=True)
         self.workflow('component', coop=True)
+
+    def test_coop_on_rejects_placeholders_pending_release_and_wrong_release_identity(self):
+        component = {key: hashlib.sha256(key.encode()).hexdigest() for key in
+                     ('native_sha256', 'policy_sha256', 'component_seal_sha256', 'gate_index_sha256')}
+        component['operator_image_config'] = 'sha256:' + hashlib.sha256(b'image').hexdigest()
+        first = dict(schema=admission_gate.FIRST_SCHEMA, verdict='PASS', producer='qualify_runtime.py',
+                     identity_config={'coop':'on','adaptive-k':'ema','dense-fp8':'trunk'},
+                     stock_profile={'ABLIT':'0','profile':'production-stock','APC':'1'},
+                     boot=[{'container_id':'one'}], manifest_sha256='manifest', component_qualification=component)
+        def evaluate():
+            final = {**first, 'schema':admission_gate.FINAL_SCHEMA,
+                     'input_hashes':{'client_evidence':[{'schema':admission_gate.FIRST_SCHEMA,'sha256':'first'}]}}
+            final['payload_sha256'] = sha256_json(final)
+            return admission_gate.evaluate(first, final, first_sha256='first')
+        self.assertEqual(evaluate()['verdict'], 'FAIL')  # actual pending release
+        with patch.object(admission_gate, 'release_component', return_value={k:v for k,v in component.items() if k != 'operator_image_config'}):
+            self.assertEqual(evaluate()['verdict'], 'PASS')
+            first['component_qualification'] = {**component, 'policy_sha256':hashlib.sha256(b'other').hexdigest()}
+            self.assertEqual(evaluate()['verdict'], 'FAIL')
+            first['component_qualification'] = {**component, 'policy_sha256':'a' * 64}
+            self.assertEqual(evaluate()['verdict'], 'FAIL')
 
     def test_producer_refuses_failed_repeat_hygiene_triar_compile_or_changed_boot(self):
         for failure in ('prefill', 'hygiene', 'triar', 'jit', 'restart'):

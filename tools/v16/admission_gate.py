@@ -8,6 +8,7 @@ import hashlib
 import json
 from pathlib import Path
 import sys
+sys.dont_write_bytecode = True
 
 from v16_common import QAError, json_safe, load_json, sha256_json, write_json
 
@@ -18,6 +19,14 @@ FINAL_SCHEMA = "jspark3-v16-finalize-receipt/1"
 
 def _sha(path: Path) -> str:
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def release_component() -> dict:
+    root = Path(__file__).resolve().parents[2]
+    sys.path.insert(0, str(root / 'recipe/scripts'))
+    from _coop_qualification import read, verify_record
+    coop = root / 'recipe/overlays/v16/coop'
+    return verify_record(read(coop / 'BUILD.json'), coop / 'bundle', coop)
 
 
 def evaluate(first: dict, final: dict, *, first_path: str = "first", final_path: str = "final",
@@ -62,8 +71,16 @@ def evaluate(first: dict, final: dict, *, first_path: str = "first", final_path:
             fields = {'native_sha256', 'policy_sha256', 'component_seal_sha256', 'gate_index_sha256', 'operator_image_config'}
             if (not isinstance(component, dict) or set(component) != fields
                     or any(not re.fullmatch('[0-9a-f]{64}', str(component.get(k, '')).removeprefix('sha256:'))
-                           for k in fields)):
+                           or len(set(str(component.get(k, '')).removeprefix('sha256:'))) < 2 for k in fields)
+                    or not component['operator_image_config'].startswith('sha256:')):
                 findings.append('operator coop-on lacks complete component/native/policy/image identity')
+            else:
+                try:
+                    expected = release_component()
+                    if {k: component[k] for k in expected} != expected:
+                        findings.append('operator component differs from the release qualification')
+                except (OSError, ValueError, KeyError) as exc:
+                    findings.append('release component qualification refused: ' + str(exc))
     if first_identity and first_identity.get("dense-fp8") == "negative-coarse":
         findings.append("test-only negative-coarse cannot open admission")
     return {"schema": SCHEMA, "verdict": "PASS" if not findings else "FAIL",

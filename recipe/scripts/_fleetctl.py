@@ -212,7 +212,7 @@ def validate_env(values: dict[str, str]) -> None:
         "GLM53_COOP_SANITIZER", "GLM53_COOP_EP_RANK", "GLM53_COOP_TEST_HELPERS", "GLM53_COOP_BUNDLE",
         "JSPARK3_V16_COOP_MAINTENANCE", "GLM53_DENSE_FP8", "GLM53_APC_DRAFT_LRU",
     ):
-        if key in os.environ:
+        if key in os.environ or key in values:
             raise Refusal(f"unsupported inherited TP3 override: {key}")
     if "ABLIT" in os.environ and os.environ["ABLIT"] != values["ABLIT"]:
         raise Refusal("inherited ABLIT conflicts with the declared profile")

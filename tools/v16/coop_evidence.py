@@ -60,6 +60,13 @@ def validate_gate(name, root, identity, raw_bundle):
     execution = read(regular(stage_dir, 'execution.json'))
     need(execution.get('exit_code') == 0 and execution.get('command') == read(root / 'plan.json')[name]
          and execution.get('started_at') < execution.get('completed_at'), 'execution binding: ' + name)
+    from qualify_coop import matrix
+    command = execution['command']
+    entry = '/src/tools/v16/coop_environment.py'
+    need(command.count(entry) == 1 and command[command.index(entry) + 1:] == dict(matrix())[name],
+         'gate command does not match reviewed matrix: ' + name)
+    need(command.count('--gpus') == 1 and command[command.index('--gpus') + 1] == 'device=0'
+         and command[command.index('--network') + 1] == 'none', 'gate container scope')
     validate_environment(regular(stage_dir, 'environment.json'), gpu=True)
     rows = events(log)
     if kind == 'h1':

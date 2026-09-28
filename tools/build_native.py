@@ -98,7 +98,8 @@ def build(kind, stage, image):
         shutil.copytree(ROOT / COOP / "source", stage / "source")
         command = ["/w/build_repro.sh", "/w/out"]
     subprocess.run(["docker", "run", "--rm", "--platform", "linux/arm64",
-                    "--network", "none", "--user", f"{os.getuid()}:{os.getgid()}",
+                    "--network", "none", "--cpus", "4", "--memory", "8g", "--memory-swap", "8g",
+                    "-e", "NVIDIA_VISIBLE_DEVICES=void", "-e", "CUDA_VISIBLE_DEVICES=", "--user", f"{os.getuid()}:{os.getgid()}",
                     "-v", f"{stage}:/w", "-w", "/w", "--entrypoint", "bash",
                     image, *command], check=True)
     return {relative: sha(stage / name) for name, relative in OUTPUTS[kind].items()}
