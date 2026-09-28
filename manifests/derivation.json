@@ -1342,8 +1342,8 @@
       "changed": true,
       "input_sha256": "227750b07407b5f6b70f1d3c43b5ae74a3ca94f671297e1e977296041c06d405",
       "origin": "release-package-render",
-      "public_sha256": "009b94a235f199a5b373b76ff9f107bdb6f0fd6a2852eb54d2a304a03956dc03",
-      "revision": "v1.8.3-clone-privacy"
+      "public_sha256": "07e6f3498b96933017ccfe2599b8a34ab02805aa8e10d562da5a0451f8ff7008",
+      "revision": "v1.8.3-release-notes"
     },
     "release/RELEASE-NUMBERS.md": {
       "changed": true,
