@@ -32,6 +32,7 @@
     "docs/RELEASE_TOOLING.md": "Apache-2.0",
     "docs/REPRODUCIBILITY.md": "Apache-2.0",
     "docs/SHARED_OUTPUT.md": "Apache-2.0",
+    "docs/TECHNICAL-REPORT.md": "Apache-2.0",
     "manifests/binaries.json": "Apache-2.0",
     "manifests/composition.json": "Apache-2.0",
     "manifests/dependencies.json": "Apache-2.0",

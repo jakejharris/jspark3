@@ -305,3 +305,8 @@ SPDX-License-Identifier = "Apache-2.0"
 path = ["docs/COOP_RELEASE_CHECKLIST.md"]
 precedence = "aggregate"
 SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ["docs/TECHNICAL-REPORT.md"]
+precedence = "aggregate"
+SPDX-License-Identifier = "Apache-2.0"
