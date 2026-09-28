@@ -5,7 +5,7 @@
   "delivery_candidate": {
     "binding_sha256": "3db940e70ff681014b3f4ae41b3e475910bf58171fbb18144f04d08492e59456",
     "release_version": "v1.8.4",
-    "source_recipe_sha256": "83ff1281bfeadb595c113d096f61285348465c098a30116460dc17438dc1583e",
+    "source_recipe_sha256": "3b53599ecbb376007c0f652d61155ba7b34a4ec9d530167688817cb09f789f6c",
     "state": "pending-component-and-boot-evidence"
   },
   "files": {
@@ -51,7 +51,7 @@
       "changed": true,
       "input_sha256": "17ad9fc5f274886f3a6243287a3431d3dbc1d77b29f20fbb26270e203d61dd08",
       "origin": "release-package-render",
-      "public_sha256": "30987dad6261052fb8e020ec3636f6b463ac601048d7913b36914aca3b6c9c05",
+      "public_sha256": "2bc7c049cf814d80fbe45644b18bc19789dad76487673a09e6e4950166c55fcb",
       "revision": "v1.8.4-pass1"
     },
     "THIRD_PARTY_NOTICES.md": {
@@ -83,7 +83,7 @@
       "changed": true,
       "input_sha256": "803c4a240052f86f21329234b924a53133ca81237e82b41bc45a64cdda807b8c",
       "origin": "v1.8.1-operator-native",
-      "public_sha256": "241f6156bffa9616321c6e6f6fabb2d5e11038a4ce9b1585173bd11ed2a82240",
+      "public_sha256": "e725fff415e1ba2ad4f886e13aabf50c96ebb1b9009ed77572a777a832476a70",
       "revision": "v1.8.4-pass1"
     },
     "docs/INSTALL.md": {
@@ -149,7 +149,7 @@
       "changed": true,
       "input_sha256": "9830d95de98135c7d36d7ecc66e0f2fbd493a717227059317df57c1f654cbab6",
       "origin": "release-package-render",
-      "public_sha256": "f4afcc593fb446e9cf618b2f3feea758aa9a4d4a66c951c07b126facbc5ce783",
+      "public_sha256": "d685d35da316a1947a0f71a97692f2d4849413e609f138e8bb61d297219c037f",
       "revision": "v1.8.4-pass1"
     },
     "manifests/figure-bindings.json": {
@@ -183,7 +183,7 @@
       "changed": true,
       "input_sha256": "f968bb8ad61c217d1c955e5a6209b35cebfae065e3f1ef6d3077ed6a07f25739",
       "origin": "release-package-render",
-      "public_sha256": "87e8c56be4ec28586cc0b6bba277db40c9028c6dbe9060dc1867ed07a4497a73",
+      "public_sha256": "86b6fc6e7cdf2fcdd04fbc531bc9421bd6e0a33fea8bf8b7fa5660c2a998c88c",
       "revision": "v1.8.4-pass1"
     },
     "manifests/qualification.json": {
@@ -203,7 +203,7 @@
       "changed": true,
       "input_sha256": "3df598b5f7e73d1a4961e895e33bb9cfcc2bd0cc4a0cf736f7806c0a01de3cea",
       "origin": "release-package-render",
-      "public_sha256": "2a4628c0a83c4ec0d9857d07e3e23c1114c0cd031647eb88ad723f39d5837bc4",
+      "public_sha256": "8ddade89aa159c434d70f65273876004fccefc76e2fa0aeb209cff5f026b70ce",
       "revision": "v1.8.4-pass1"
     },
     "manifests/serving-binding.json": {
@@ -273,6 +273,13 @@
       "input_sha256": "5f39ea600fa38f2baf8a67caaf4f1a71845637d79a8eeed4afaadc1857c55210",
       "origin": "sealed-source",
       "public_sha256": "5f39ea600fa38f2baf8a67caaf4f1a71845637d79a8eeed4afaadc1857c55210"
+    },
+    "recipe/config/coop-checkpoint.json": {
+      "changed": false,
+      "input_sha256": "931003b67037b3c5bb94b00aa4e378da24a4275fb74c0e45f8939d4c8e4a6f83",
+      "origin": "v1.8.4-offline-implementation",
+      "public_sha256": "931003b67037b3c5bb94b00aa4e378da24a4275fb74c0e45f8939d4c8e4a6f83",
+      "revision": "v1.8.4-pass1"
     },
     "recipe/config/coop-helper.json": {
       "changed": false,
@@ -1008,11 +1015,25 @@
       "origin": "sealed-source",
       "public_sha256": "9739442b3b0b4f0ecca528e774b0ef7daf4f73c3944557ee3635c292df687bed"
     },
+    "recipe/scripts/_coop_bundle.py": {
+      "changed": false,
+      "input_sha256": "f72c8b467a55bd7e0ed24e43f1e6b17231ce0514a3e8dde0a9eca4080207b003",
+      "origin": "v1.8.4-offline-implementation",
+      "public_sha256": "f72c8b467a55bd7e0ed24e43f1e6b17231ce0514a3e8dde0a9eca4080207b003",
+      "revision": "v1.8.4-pass1"
+    },
+    "recipe/scripts/_coop_checkpoint.py": {
+      "changed": false,
+      "input_sha256": "817ce5b765b28d94b206839c9dc51c18acfd2531d94d06fc6ae1a49b78180711",
+      "origin": "v1.8.4-offline-implementation",
+      "public_sha256": "817ce5b765b28d94b206839c9dc51c18acfd2531d94d06fc6ae1a49b78180711",
+      "revision": "v1.8.4-pass1"
+    },
     "recipe/scripts/_coop_qualification.py": {
       "changed": true,
       "input_sha256": "aa13d569b81ec06de96e887b1fea84c5aa3de7ab2b007f6474722b04b8319407",
       "origin": "v1.8.4-offline-implementation",
-      "public_sha256": "1c09dfdfd31e7d9b095e6589c3ee64e6cb3441a44aed766b9247761b420c3779",
+      "public_sha256": "d12acb64600516a5edf403974ab9835c9cb72ffbad51522bd84db91e60c7b7cf",
       "revision": "v1.8.4-pass1"
     },
     "recipe/scripts/_fleetctl.py": {
@@ -1403,7 +1424,7 @@
       "changed": true,
       "input_sha256": "1a55e0a43b073d6a2acb1e155afff4f663144290c7c9e9647a9ff9d851405bff",
       "origin": "export-template",
-      "public_sha256": "e685d44563c83fbc6a3075ec559c9540e9e3d1de83be6b326f4d5dc066a6d164",
+      "public_sha256": "0a0140a64014731c65dd9ed9aec66e02499ecabd06f8f771517cdd1e25fc5813",
       "revision": "v1.8.4-pass1"
     },
     "tools/_release_checks.py": {
@@ -1528,14 +1549,14 @@
       "changed": true,
       "input_sha256": "1787d0c2bf1eb26526191e67d7785f6bbcdcf74ec842e467f1356f47aea31475",
       "origin": "v1.8.4-offline-implementation",
-      "public_sha256": "514891d052161fa064d5e404cf889df773b8d296030098ae48d492533dbdd3e5",
+      "public_sha256": "7fcffbde835ba57b8fb710e5f2a4c511a4646dce566db9533f885421fc7fcf0b",
       "revision": "v1.8.4-pass1"
     },
     "tools/v16/coop_evidence.py": {
       "changed": true,
       "input_sha256": "7d5ad597127038978af7a870f986c1973d794971709d31023f77622390871f66",
       "origin": "v1.8.4-offline-implementation",
-      "public_sha256": "23b0d45d82d17ce3691b8fa32592fcf1799f7a187fca46dbd906a6ac777fb520",
+      "public_sha256": "bb0f23b7bc54768e7a327430c10e4b970c3c06727523bc78e4c37ce75a7c1b7f",
       "revision": "v1.8.4-pass1"
     },
     "tools/v16/coop_h1_control.py": {
@@ -1568,7 +1589,7 @@
       "changed": true,
       "input_sha256": "3d102d6a6d9fe04faf0c483d0e86f907c05236d93fb39ef79548a933127dde88",
       "origin": "v1.8.4-offline-implementation",
-      "public_sha256": "b1ef4e1f145bf2b8a70f4859b26947bac3bb03032b8f8a229875049df78d65d3",
+      "public_sha256": "f5d7cfa5629dd068796293b5fb1dc1e012bf985719883b71f9c13bcaa2040924",
       "revision": "v1.8.4-pass1"
     },
     "tools/v16/qualify_runtime.py": {
@@ -1592,11 +1613,18 @@
       "public_sha256": "c543df17101e048b8c6c575b15cb0be7cf15d934588e290017ec9da798b96fc8",
       "revision": "v1.8.3-coop-cancellation"
     },
+    "tools/v16/test_coop_input_auth.py": {
+      "changed": false,
+      "input_sha256": "12657540c6d5010979577f79c606a040cf343953be6df376a6c9ddb2cb2302b2",
+      "origin": "v1.8.4-offline-implementation",
+      "public_sha256": "12657540c6d5010979577f79c606a040cf343953be6df376a6c9ddb2cb2302b2",
+      "revision": "v1.8.4-pass1"
+    },
     "tools/v16/test_coop_qualification.py": {
       "changed": true,
       "input_sha256": "4b3b956349535cae552427aa559ec5552564120cf190866c687cabf10f3719c9",
       "origin": "v1.8.4-offline-implementation",
-      "public_sha256": "d9fc5d8775ca60cc1280e32e918c007ece3a5f9f11f3e86bed7179611783f70e",
+      "public_sha256": "72fa497cec16446c8ca02c60df9f9e0b9a9b398ebef2a856f139dc61d5f95263",
       "revision": "v1.8.4-pass1"
     },
     "tools/v16/v16_common.py": {

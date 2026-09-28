@@ -110,3 +110,23 @@ SPDX-License-Identifier = "Apache-2.0"
 path = ["tools/v16/test_coop_qualification.py"]
 precedence = "aggregate"
 SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ["recipe/config/coop-checkpoint.json"]
+precedence = "aggregate"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ["recipe/scripts/_coop_bundle.py"]
+precedence = "aggregate"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ["recipe/scripts/_coop_checkpoint.py"]
+precedence = "aggregate"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ["tools/v16/test_coop_input_auth.py"]
+precedence = "aggregate"
+SPDX-License-Identifier = "Apache-2.0"

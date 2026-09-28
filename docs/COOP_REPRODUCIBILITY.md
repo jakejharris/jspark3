@@ -28,9 +28,13 @@ Stage these immutable inputs before reserving a GPU:
   Spark and retain its image/build receipts and machine identity evidence.
 - The exact target checkpoint revision directory from
   `recipe/config/checkpoint-contract.json`. It must contain the original pinned
-  index and the shards holding layer-3 weights for all 288 experts. The runner
+  index, original publication `SHA256SUMS`, and shards holding layer-3 weights
+  for all 288 experts. The ledger must match the existing checkpoint contract;
+  `recipe/config/coop-checkpoint.json` pins the exact required shard subset.
+  The runner compares each complete shard with those trusted digests; merely
+  recording an observed digest never authenticates a fixture. The runner
   mounts only this one snapshot read-only at the HF-cache path expected by the
-  helper, hashes the shards, and checks all three EP ranges and tensor shapes.
+  helper and checks all three EP ranges, full tensor shapes and exact dtypes.
 - Fly sources at the commit in `recipe/config/patch-contract.json`.
 - `test_exl3_overlay.py` and `LICENSE` from the exact repository/revision/file
   hashes in `recipe/config/coop-helper.json`. Dependencies come from the verified
@@ -89,7 +93,13 @@ python3 -B tools/v16/qualify_coop.py --check-seal "$SEALED_OUTPUT"
 
 The seal operation revalidates every gate and profile and regenerates the policy
 from the raw logs before writing new BUILD/bundle/index files. Raw builds and
-campaign outputs are preserved. The legacy shell helper's profile-only seal
+campaign outputs are preserved. Selection may change only the policy and its
+manifest entry. Every policy gate binds its selected bundle, and the seal binds
+both the original and selected identities. The runtime, headers, native bytes,
+licenses and provenance must match trusted source pins; copied source and
+builder files cannot supply their own authority. The checkpoint publication
+authority and expected shard digests remain explicit in the seal.
+The legacy shell helper's profile-only seal
 operation is retired. A check-seal PASS is component evidence, not release
 approval or fleet admission.
 

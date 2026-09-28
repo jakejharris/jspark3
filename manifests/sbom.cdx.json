@@ -141,6 +141,23 @@
       "hashes": [
         {
           "alg": "SHA-256",
+          "content": "931003b67037b3c5bb94b00aa4e378da24a4275fb74c0e45f8939d4c8e4a6f83"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/config/coop-checkpoint.json",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
           "content": "f129e7279742af3dfab8f6f2247764bac1d2dcab01537af08aa484a94c06c6f5"
         }
       ],
@@ -2181,7 +2198,41 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "1c09dfdfd31e7d9b095e6589c3ee64e6cb3441a44aed766b9247761b420c3779"
+          "content": "f72c8b467a55bd7e0ed24e43f1e6b17231ce0514a3e8dde0a9eca4080207b003"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/scripts/_coop_bundle.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "817ce5b765b28d94b206839c9dc51c18acfd2531d94d06fc6ae1a49b78180711"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/scripts/_coop_checkpoint.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "d12acb64600516a5edf403974ab9835c9cb72ffbad51522bd84db91e60c7b7cf"
         }
       ],
       "licenses": [
