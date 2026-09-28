@@ -111,6 +111,14 @@ Missing, wrong or unsealed coop refuses preparation. `--with-coop` is a
 compatibility alias; `build_native.py --display-only` and
 `prepare_runtime.py --coop-off` are explicit diagnostic options.
 
+The display compiler uses stable intermediate filenames and distinct translation
+unit seeds. It does not strip or normalize completed binaries. If a comparison
+fails, the refusal names the artifact and both SHA-256 hashes. Both builds remain
+in the printed private directory (mode 0700), including compiler intermediates;
+no successful native receipt is published. Keep that directory and the private
+diagnostic files for investigation. Historical binary pins remain historical;
+the operator path above verifies the new outputs through their native receipt.
+
 ## 4. Stage the recipe, weights and runtime views on every Spark
 
 Edit `operator.env` with your real hosts, addresses, paths, interfaces, GID and

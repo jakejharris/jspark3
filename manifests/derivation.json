@@ -5,7 +5,7 @@
   "delivery_candidate": {
     "binding_sha256": "3db940e70ff681014b3f4ae41b3e475910bf58171fbb18144f04d08492e59456",
     "release_version": "v1.8.4",
-    "source_recipe_sha256": "04ca4a36be59be66c6a1871f233236ee9415e2581ebbeb2418e16a7e3de3bf56",
+    "source_recipe_sha256": "bee2bb2c305b8cec346339a85bb0d9de1d04dfc1ed20d3a6ba22f3eac26809ec",
     "state": "pending-component-and-boot-evidence"
   },
   "files": {
@@ -51,8 +51,8 @@
       "changed": true,
       "input_sha256": "17ad9fc5f274886f3a6243287a3431d3dbc1d77b29f20fbb26270e203d61dd08",
       "origin": "release-package-render",
-      "public_sha256": "e993966c1c1fd447010e635e8ef61a586598ad3bf631ce2210eaeb5bfb8308d2",
-      "revision": "v1.8.4-on-v1.8.3"
+      "public_sha256": "2838b02be6e1896dc093323164c7534c9ac1edb8542be608383d09ba9b850eef",
+      "revision": "native-display-reproducibility-fix"
     },
     "THIRD_PARTY_NOTICES.md": {
       "changed": true,
@@ -83,8 +83,8 @@
       "changed": true,
       "input_sha256": "b99e219ae2c3ec2e09349149ae1a6b43fd8335cbd730f9a279a1064b34741fd9",
       "origin": "v1.8.4-offline-implementation",
-      "public_sha256": "ead3d4273ca27703608f8f18f001220ed9c776d1fc67d7a9e4973d2261be79d6",
-      "revision": "v1.8.4-pass1"
+      "public_sha256": "f023d945649d0670e2d997d404a83c7faa02be8aa267bf79629564be6659638e",
+      "revision": "native-display-reproducibility-fix"
     },
     "docs/COOP_REPRODUCIBILITY.md": {
       "changed": true,
@@ -97,8 +97,8 @@
       "changed": true,
       "input_sha256": "0a0d871fca9b3369747f1c0117074f4b5b164eca467c727efd88f4f53038bb63",
       "origin": "release-package-render",
-      "public_sha256": "69f8da3081d9702f1d9ffe38b38abd369c1ebb427189dd601a3a21a313ba6ad7",
-      "revision": "v1.8.4-on-v1.8.3"
+      "public_sha256": "88646b40e5e604aaf5313b7ff92654bca40f0a5fd0101ba1386ddf25b1968fb3",
+      "revision": "native-display-reproducibility-fix"
     },
     "docs/LICENSING.md": {
       "changed": true,
@@ -113,6 +113,13 @@
       "origin": "release-package-render",
       "public_sha256": "2537ea5b56268c8a59af04da5d52ce82df76ce63699929aba47a8bbeca2defe4",
       "revision": "v1.8.3-docs-r2"
+    },
+    "docs/NATIVE_REPRODUCIBILITY.md": {
+      "changed": false,
+      "input_sha256": "46aa137d81f6790700f0e06a496c7cd55c506bd10109fdc2ec5d06eb9f07957d",
+      "origin": "native-display-reproducibility-fix",
+      "public_sha256": "46aa137d81f6790700f0e06a496c7cd55c506bd10109fdc2ec5d06eb9f07957d",
+      "revision": "native-display-reproducibility-fix"
     },
     "docs/OPERATIONS.md": {
       "changed": true,
@@ -138,8 +145,8 @@
       "changed": true,
       "input_sha256": "b22fc269caf88fb5e539ea88bedc6a01a4914f0aca0be1784d662cfb0184894c",
       "origin": "v1.8.3-shared-output-r5",
-      "public_sha256": "84675e43e6fa4bf960b2e15721d1c4ad7e67e5b5baf93134a748a12ded362cf1",
-      "revision": "v1.8.4-on-v1.8.3"
+      "public_sha256": "2a3541e445a5cd1a784152913e3dda47d2ace4478063d798344b4211d2314e8e",
+      "revision": "native-display-reproducibility-fix"
     },
     "manifests/binaries.json": {
       "changed": false,
@@ -163,8 +170,8 @@
       "changed": true,
       "input_sha256": "9830d95de98135c7d36d7ecc66e0f2fbd493a717227059317df57c1f654cbab6",
       "origin": "release-package-render",
-      "public_sha256": "b9c473c113d14ffddcb347831d4d88b0c742437a611fd99b3d737de4a9420df2",
-      "revision": "v1.8.4-on-v1.8.3"
+      "public_sha256": "448820ef818ca574cc325ea0f6897dfab220dfe45f9c702c2f35b82974af3653",
+      "revision": "native-display-reproducibility-fix"
     },
     "manifests/figure-bindings.json": {
       "changed": false,
@@ -197,8 +204,8 @@
       "changed": true,
       "input_sha256": "f968bb8ad61c217d1c955e5a6209b35cebfae065e3f1ef6d3077ed6a07f25739",
       "origin": "release-package-render",
-      "public_sha256": "04437bfc8630af3602399a08f04eedf9ba65044ec9389c173d15b8c4e0c737d1",
-      "revision": "v1.8.4-on-v1.8.3"
+      "public_sha256": "3f6aead49c13b98cfb649a0c96ee78ae11b4538f257eb4cc12dc892012afbe49",
+      "revision": "native-display-reproducibility-fix"
     },
     "manifests/qualification.json": {
       "changed": false,
@@ -217,8 +224,8 @@
       "changed": true,
       "input_sha256": "3df598b5f7e73d1a4961e895e33bb9cfcc2bd0cc4a0cf736f7806c0a01de3cea",
       "origin": "release-package-render",
-      "public_sha256": "284f1d03e2fe039f3fa1f1f22c51fc03e4c8b78db93ac714869a951fe8b01d1d",
-      "revision": "v1.8.4-on-v1.8.3"
+      "public_sha256": "24f09659f59e232c494495cacf25e36daa2bd4efac07662513868cf4b0bda0af",
+      "revision": "native-display-reproducibility-fix"
     },
     "manifests/serving-binding.json": {
       "changed": false,
@@ -230,8 +237,8 @@
       "changed": true,
       "input_sha256": "fad5c997be3187d1ce467088572677544c60652fda500ea822e89392d7f8bca2",
       "origin": "v1.8.3-shared-output-r5",
-      "public_sha256": "24f61adcc6c9178970f6aeba1dcfbf82c86d7ed0e5dfbbbe1c37b7f93be43c9a",
-      "revision": "v1.8.4-on-v1.8.3"
+      "public_sha256": "55d6f6e3889d2878734936b1da6187a6afb8993e823211524e150019ec50de32",
+      "revision": "native-display-reproducibility-fix"
     },
     "manifests/stock-profile.json": {
       "changed": false,
@@ -509,6 +516,13 @@
       "input_sha256": "1b748a3751e5d55181dc5e1100d20dcd138441bcce4d19c5c45532ba54a9d0d9",
       "origin": "sealed-source",
       "public_sha256": "ac16fa02980facc09297694c8bfa70339ca31d87d59df3779c28fc3cb09c9ae6"
+    },
+    "recipe/overlays/v14/display_kv/build_repro.sh": {
+      "changed": false,
+      "input_sha256": "836a422e8f3d20d85e42f7d354e0ffe33de2f6d6b013f8524440dcb28ed9c2ec",
+      "origin": "native-display-reproducibility-fix",
+      "public_sha256": "836a422e8f3d20d85e42f7d354e0ffe33de2f6d6b013f8524440dcb28ed9c2ec",
+      "revision": "native-display-reproducibility-fix"
     },
     "recipe/overlays/v14/display_kv/bw_pinned.cu": {
       "changed": true,
@@ -1511,8 +1525,8 @@
       "changed": true,
       "input_sha256": "f7a1042e9ea7c6d6034d46eed737dcabbb224a9b16c82a454640d8d08068a2cc",
       "origin": "v1.8.1-operator-native",
-      "public_sha256": "71092e5f61713b813ea36458a35ed493ebf405931547f03bd862a61d7e359e45",
-      "revision": "v1.8.4-on-v1.8.3"
+      "public_sha256": "e60d390a90e12f25ae788b159b4f9dd133c39bb011eac0f154b9c6aa7556e81a",
+      "revision": "native-display-reproducibility-fix"
     },
     "tools/build_operator_image.py": {
       "changed": true,
@@ -1546,8 +1560,8 @@
       "changed": true,
       "input_sha256": "3c2a88afa4a706483170c9b2e2aa67537b135c167ef2742a58a9b71bef8d7b3b",
       "origin": "v1.8.1-operator-native",
-      "public_sha256": "6edacb5341e43971d57c9ed1aefa8f64cbac717514e85c9f236a150699bb60a7",
-      "revision": "v1.8.4-on-v1.8.3"
+      "public_sha256": "4b2576f4d6a68a448ec12fcb7934b63be1b29cd9a9ea154fbcbe9e1019e54ea1",
+      "revision": "native-display-reproducibility-fix"
     },
     "tools/test_operator_admission.py": {
       "changed": true,
@@ -1609,8 +1623,8 @@
       "changed": true,
       "input_sha256": "2d57b4bc31a5c5e6b55cfc08e9dda70766f139e8fb4ac640888929b4a83356bc",
       "origin": "sealed-source",
-      "public_sha256": "f89fc64541d397905e5187f7b636c61d40cc4ad16e37f03ca0fae101e0842d1d",
-      "revision": "v1.8.4-on-v1.8.3"
+      "public_sha256": "6a40c74b3551a7a1489fc56bec9eb39e1cb3756ddf4ec2d15f70eb98cba6c125",
+      "revision": "native-display-reproducibility-fix"
     },
     "tools/v16/admission_gate.py": {
       "changed": true,
@@ -1675,6 +1689,13 @@
       "public_sha256": "d4e3ad62c14dc7fdd5d1eb246fe1394865bf59d73274134c57c8c8d26810d789",
       "revision": "v1.8.4-on-v1.8.3"
     },
+    "tools/v16/experiment_native_build.py": {
+      "changed": false,
+      "input_sha256": "404fc9ca6e04e1430ed7eeef1d62b63756bc9016e66155219d6346a0469dd224",
+      "origin": "native-display-reproducibility-fix",
+      "public_sha256": "404fc9ca6e04e1430ed7eeef1d62b63756bc9016e66155219d6346a0469dd224",
+      "revision": "native-display-reproducibility-fix"
+    },
     "tools/v16/prefill_gate.py": {
       "changed": true,
       "input_sha256": "6a0b898afd6147df5fbd69e0491db9e969dd3462e4011ce72e0ce794cc9704ed",
@@ -1730,6 +1751,13 @@
       "origin": "v1.8.4-offline-implementation",
       "public_sha256": "e75c21b4fd5f90a472ee25eb8c9d33de9dc7072be7ad31807a4ad0f333632a61",
       "revision": "v1.8.4-on-v1.8.3"
+    },
+    "tools/v16/test_native_experiment.py": {
+      "changed": false,
+      "input_sha256": "1d4bd7379468fc80a2784363c52144f8daaf50912c5d91db6d526fb79ac23f1a",
+      "origin": "native-display-reproducibility-fix",
+      "public_sha256": "1d4bd7379468fc80a2784363c52144f8daaf50912c5d91db6d526fb79ac23f1a",
+      "revision": "native-display-reproducibility-fix"
     },
     "tools/v16/v16_common.py": {
       "changed": true,

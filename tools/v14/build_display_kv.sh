@@ -20,7 +20,7 @@ build_json=$dir/BUILD.json
 identity_args=()
 if [[ -n ${JSPARK_IMAGE_RECEIPT:-} ]]; then identity_args=(--receipt "$JSPARK_IMAGE_RECEIPT"); fi
 image=$(python3 -B "$here/recipe/scripts/_image_identity.py" "${identity_args[@]}")
-sources=(display_kv.c probe_main.cu)
+sources=(display_kv.c probe_main.cu build_repro.sh)
 outputs=(libglm53_display_kv.so display_kv_probe)
 remote=jspark3-v14-display-kv-build-$(date -u +%Y%m%dT%H%M%SZ)
 
@@ -33,12 +33,7 @@ set -euo pipefail
 cd ~/"$1"
 for x in a b; do
     docker run --rm --network none --user "$(id -u):$(id -g)" -v "$PWD/$x:/w" -w /w \
-        --entrypoint bash "$2" -c '
-set -e
-gcc -O2 -fPIC -shared -Wall -I/usr/local/cuda/include -o libglm53_display_kv.so display_kv.c \
-    -L/usr/local/cuda/lib64/stubs -lcuda
-/usr/local/cuda/bin/nvcc -O2 -arch=sm_121 -o display_kv_probe probe_main.cu display_kv.c -lcuda
-{ gcc --version | head -1; /usr/local/cuda/bin/nvcc --version | tail -1; } > toolchain.txt'
+        --entrypoint bash "$2" /w/build_repro.sh
 done
 for f in libglm53_display_kv.so display_kv_probe; do
     cmp -s "a/$f" "b/$f" || { echo "REFUSE: $f is not reproducible" >&2; exit 9; }

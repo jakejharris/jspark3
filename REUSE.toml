@@ -260,3 +260,23 @@ SPDX-License-Identifier = "Apache-2.0"
 path = ["tools/v16/test_coop_projection.py"]
 precedence = "aggregate"
 SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ["recipe/overlays/v14/display_kv/build_repro.sh"]
+precedence = "aggregate"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ["docs/NATIVE_REPRODUCIBILITY.md"]
+precedence = "aggregate"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ["tools/v16/experiment_native_build.py"]
+precedence = "aggregate"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ["tools/v16/test_native_experiment.py"]
+precedence = "aggregate"
+SPDX-License-Identifier = "Apache-2.0"

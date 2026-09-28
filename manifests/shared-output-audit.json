@@ -413,6 +413,42 @@
         }
       ]
     },
+    "recipe/overlays/v14/display_kv/build_repro.sh": {
+      "disposition": "Private compiler stage at fixed /w: stable kept host-stub basename, separate translation-unit seeds, fixed tool environment and named object files. Never runs GPU code or rewrites completed ELFs. Raw compiler output/intermediates are private through parent controller.",
+      "sha256": "836a422e8f3d20d85e42f7d354e0ffe33de2f6d6b013f8524440dcb28ed9c2ec",
+      "sites": [
+        {
+          "function": "<shell>",
+          "line": 8,
+          "operation": "private output/child channel"
+        },
+        {
+          "function": "<shell>",
+          "line": 12,
+          "operation": "private output/child channel"
+        },
+        {
+          "function": "<shell>",
+          "line": 13,
+          "operation": "private output/child channel"
+        },
+        {
+          "function": "<shell>",
+          "line": 15,
+          "operation": "private output/child channel"
+        },
+        {
+          "function": "<shell>",
+          "line": 17,
+          "operation": "private output/child channel"
+        },
+        {
+          "function": "<shell>",
+          "line": 18,
+          "operation": "private output/child channel"
+        }
+      ]
+    },
     "recipe/overlays/v14/display_kv/bw_pinned.cu": {
       "disposition": "Private runtime/build channel: pinned module logs, tensor/native diagnostics and generated build files stay in containers or private build stages. Controllers capture this channel privately and publish only checked facts/hashes. Not a shared evidence bundle.",
       "sha256": "5801acf0b091dda46d7f0db906a6d85b26f1c62f86e33052869e645922d217fe",
@@ -7182,42 +7218,47 @@
       "sites": []
     },
     "tools/build_native.py": {
-      "disposition": "Native receipt writer: exact validated image/source/build identities, closed architecture/GB10 kind and machine/UUID hashes. Absolute root-owned identity executable and clean environment retained; raw inventory private. Compiler children privately captured; four CPU/eight GiB GPU-hidden scope and both builds preserved. Fixed console result and private exception boundary.",
-      "sha256": "71092e5f61713b813ea36458a35ed493ebf405931547f03bd862a61d7e359e45",
+      "disposition": "Native compiler children privately captured. Fixed compared-artifact inventory and validated SHA-256 pairs are the only mismatch facts published. Any failing build workspace is retained in its generated 0700 directory; no success receipt published. Canonical display script is hashed as build input. Original source/image and optional component/host policies preserved.",
+      "sha256": "e60d390a90e12f25ae788b159b4f9dd133c39bb011eac0f154b9c6aa7556e81a",
       "sites": [
         {
           "function": "builder_host",
-          "line": 94,
+          "line": 88,
           "operation": "run"
         },
         {
           "function": "builder_host",
-          "line": 97,
+          "line": 91,
           "operation": "retain"
         },
         {
           "function": "local_docker",
-          "line": 112,
+          "line": 106,
           "operation": "run"
         },
         {
-          "function": "build",
-          "line": 172,
-          "operation": "run_private"
+          "function": "workspace",
+          "line": 120,
+          "operation": "print"
         },
         {
-          "function": "main",
-          "line": 235,
-          "operation": "write_bytes"
-        },
-        {
-          "function": "main",
-          "line": 241,
+          "function": "compare_builds",
+          "line": 136,
           "operation": "print"
         },
         {
           "function": "main",
-          "line": 244,
+          "line": 257,
+          "operation": "write_bytes"
+        },
+        {
+          "function": "main",
+          "line": 263,
+          "operation": "print"
+        },
+        {
+          "function": "main",
+          "line": 266,
           "operation": "report_failure"
         }
       ]
@@ -7452,122 +7493,132 @@
       ]
     },
     "tools/test_native_build.py": {
-      "disposition": "Synthetic local test output only; never release/qualification evidence. Covers real producers with private sentinels and negative controls.",
-      "sha256": "6edacb5341e43971d57c9ed1aefa8f64cbac717514e85c9f236a150699bb60a7",
+      "disposition": "Synthetic local test output only. Exercises real publication/refusal and comparison paths, retained private artifacts and opaque diagnostic controls; never hardware evidence.",
+      "sha256": "4b2576f4d6a68a448ec12fcb7934b63be1b29cd9a9ea154fbcbe9e1019e54ea1",
       "sites": [
         {
           "function": "test_host_namespace_positive_and_isolation_refusals",
-          "line": 96,
+          "line": 97,
           "operation": "write_text"
         },
         {
           "function": "test_host_namespace_positive_and_isolation_refusals",
-          "line": 108,
+          "line": 109,
           "operation": "write_text"
         },
         {
           "function": "test_host_namespace_positive_and_isolation_refusals",
-          "line": 111,
+          "line": 112,
           "operation": "write_text"
         },
         {
           "function": "test_trusted_executable_refuses_writable_or_user_owned_paths",
-          "line": 138,
-          "operation": "write_text"
-        },
-        {
-          "function": "test_path_shim_and_loader_environment_are_not_used",
-          "line": 152,
+          "line": 139,
           "operation": "write_text"
         },
         {
           "function": "test_path_shim_and_loader_environment_are_not_used",
           "line": 153,
+          "operation": "write_text"
+        },
+        {
+          "function": "test_path_shim_and_loader_environment_are_not_used",
+          "line": 154,
           "operation": "embedded output (private worker/test or fixed template)"
         },
         {
           "function": "write",
-          "line": 188,
+          "line": 189,
           "operation": "write_bytes"
         },
         {
           "function": "test_operator_outputs_accepted_without_historical_pin",
-          "line": 193,
+          "line": 194,
           "operation": "write"
         },
         {
           "function": "test_source_and_recipe_drift_refused_even_when_reselfhashed",
-          "line": 203,
+          "line": 205,
           "operation": "write"
         },
         {
           "function": "test_source_image_and_qualification_drift_refused",
-          "line": 211,
+          "line": 213,
           "operation": "write"
         },
         {
           "function": "test_old_receipt_cannot_gain_physical_identity_by_reselfhashing",
-          "line": 217,
+          "line": 219,
           "operation": "write"
         },
         {
           "function": "test_old_receipt_cannot_gain_physical_identity_by_reselfhashing",
-          "line": 222,
+          "line": 224,
           "operation": "write"
         },
         {
           "function": "test_output_inventory_is_exact",
-          "line": 231,
+          "line": 233,
           "operation": "write"
         },
         {
           "function": "test_receipt_tamper_and_symlink_refused",
-          "line": 236,
+          "line": 238,
           "operation": "write"
         },
         {
           "function": "test_receipt_tamper_and_symlink_refused",
-          "line": 237,
+          "line": 239,
           "operation": "write_bytes"
         },
         {
           "function": "test_default_opt_in_and_two_build_refusals.fake_build",
-          "line": 269,
+          "line": 271,
           "operation": "write_bytes"
         },
         {
-          "function": "prepare_and_check",
+          "function": "test_default_opt_in_and_two_build_refusals.fake_build",
+          "line": 274,
+          "operation": "write_bytes"
+        },
+        {
+          "function": "test_compiler_failure_retains_partial_stage_privately.fail",
           "line": 337,
           "operation": "write_bytes"
         },
         {
           "function": "prepare_and_check",
-          "line": 347,
+          "line": 384,
+          "operation": "write_bytes"
+        },
+        {
+          "function": "prepare_and_check",
+          "line": 394,
           "operation": "run"
         },
         {
           "function": "prepare_and_check",
-          "line": 361,
+          "line": 408,
           "operation": "run"
         },
         {
           "function": "prepare_and_check",
-          "line": 402,
+          "line": 449,
           "operation": "embedded output (private worker/test or fixed template)"
         },
         {
           "function": "prepare_and_check",
-          "line": 410,
+          "line": 457,
           "operation": "embedded output (private worker/test or fixed template)"
         },
         {
           "function": "prepare_and_check",
-          "line": 411,
+          "line": 458,
           "operation": "embedded output (private worker/test or fixed template)"
         },
         {
           "function": "prepare_and_check",
-          "line": 413,
+          "line": 460,
           "operation": "run"
         }
       ]
@@ -8061,68 +8112,68 @@
       ]
     },
     "tools/v14/build_display_kv.sh": {
-      "disposition": "Outer legacy builder routes inherited output to private diagnostic capture; inner remote compiler/toolchain/native artifacts remain private. Only fixed exit summary reaches outer console.",
-      "sha256": "f89fc64541d397905e5187f7b636c61d40cc4ad16e37f03ca0fae101e0842d1d",
+      "disposition": "Legacy remote builder uses the same stable display compiler script; raw compiler/toolchain output remains in private diagnostic capture. Historical output checks remain explicit; no automatic repinning.",
+      "sha256": "6a40c74b3551a7a1489fc56bec9eb39e1cb3756ddf4ec2d15f70eb98cba6c125",
       "sites": [
         {
-          "function": "<native/shell/patch>",
+          "function": "<shell>",
           "line": 5,
-          "operation": "output/child channel or source template"
+          "operation": "private output/child channel"
         },
         {
-          "function": "<native/shell/patch>",
+          "function": "<shell>",
+          "line": 8,
+          "operation": "private output/child channel"
+        },
+        {
+          "function": "<shell>",
           "line": 15,
-          "operation": "output/child channel or source template"
+          "operation": "private output/child channel"
         },
         {
-          "function": "<native/shell/patch>",
+          "function": "<shell>",
           "line": 27,
-          "operation": "output/child channel or source template"
+          "operation": "private output/child channel"
         },
         {
-          "function": "<native/shell/patch>",
+          "function": "<shell>",
           "line": 29,
-          "operation": "output/child channel or source template"
+          "operation": "private output/child channel"
         },
         {
-          "function": "<native/shell/patch>",
+          "function": "<shell>",
           "line": 31,
-          "operation": "output/child channel or source template"
+          "operation": "private output/child channel"
         },
         {
-          "function": "<native/shell/patch>",
+          "function": "<shell>",
           "line": 35,
-          "operation": "output/child channel or source template"
+          "operation": "private output/child channel"
         },
         {
-          "function": "<native/shell/patch>",
-          "line": 41,
-          "operation": "output/child channel or source template"
+          "function": "<shell>",
+          "line": 39,
+          "operation": "private output/child channel"
         },
         {
-          "function": "<native/shell/patch>",
-          "line": 44,
-          "operation": "output/child channel or source template"
+          "function": "<shell>",
+          "line": 45,
+          "operation": "private output/child channel"
         },
         {
-          "function": "<native/shell/patch>",
-          "line": 50,
-          "operation": "output/child channel or source template"
+          "function": "<shell>",
+          "line": 60,
+          "operation": "private output/child channel"
         },
         {
-          "function": "<native/shell/patch>",
-          "line": 66,
-          "operation": "output/child channel or source template"
+          "function": "<shell>",
+          "line": 71,
+          "operation": "private output/child channel"
         },
         {
-          "function": "<native/shell/patch>",
-          "line": 76,
-          "operation": "output/child channel or source template"
-        },
-        {
-          "function": "<native/shell/patch>",
-          "line": 78,
-          "operation": "output/child channel or source template"
+          "function": "<shell>",
+          "line": 73,
+          "operation": "private output/child channel"
         }
       ]
     },
@@ -8494,6 +8545,72 @@
         {
           "function": "main",
           "line": 206,
+          "operation": "report_failure"
+        }
+      ]
+    },
+    "tools/v16/experiment_native_build.py": {
+      "disposition": "GPU-hidden local diagnostic experiment: three fresh display and coop builds with deliberately varied process counts. Exact container cleanup uses existing tested runner. Raw stages/compiler/ELF detail private; shared report contains validated artifact/image/source hashes, fixed labels and projected differences. No build/admission receipt or hardware qualification. Cross-host comparison validates report integrity and exact inventories.",
+      "sha256": "404fc9ca6e04e1430ed7eeef1d62b63756bc9016e66155219d6346a0469dd224",
+      "sites": [
+        {
+          "function": "write",
+          "line": 27,
+          "operation": "write_text"
+        },
+        {
+          "function": "run",
+          "line": 86,
+          "operation": "write"
+        },
+        {
+          "function": "run.execute",
+          "line": 100,
+          "operation": "capture_log"
+        },
+        {
+          "function": "run",
+          "line": 106,
+          "operation": "write"
+        },
+        {
+          "function": "run",
+          "line": 114,
+          "operation": "write_text"
+        },
+        {
+          "function": "run",
+          "line": 121,
+          "operation": "write"
+        },
+        {
+          "function": "run",
+          "line": 122,
+          "operation": "print"
+        },
+        {
+          "function": "run",
+          "line": 127,
+          "operation": "record_failure"
+        },
+        {
+          "function": "run",
+          "line": 128,
+          "operation": "write"
+        },
+        {
+          "function": "main",
+          "line": 143,
+          "operation": "print"
+        },
+        {
+          "function": "main",
+          "line": 146,
+          "operation": "run"
+        },
+        {
+          "function": "main",
+          "line": 148,
           "operation": "report_failure"
         }
       ]
@@ -9142,6 +9259,42 @@
         {
           "function": "test_missing_and_symlinked_raw_campaign_refuses",
           "line": 609,
+          "operation": "write"
+        }
+      ]
+    },
+    "tools/v16/test_native_experiment.py": {
+      "disposition": "Synthetic local test output only. Exercises real publication/refusal and comparison paths, retained private artifacts and opaque diagnostic controls; never hardware evidence.",
+      "sha256": "1d4bd7379468fc80a2784363c52144f8daaf50912c5d91db6d526fb79ac23f1a",
+      "sites": [
+        {
+          "function": "run_fixture.docker",
+          "line": 42,
+          "operation": "write_bytes"
+        },
+        {
+          "function": "run_fixture.docker",
+          "line": 43,
+          "operation": "write"
+        },
+        {
+          "function": "test_cross_host_hashes_identity_and_incomplete_or_opaque_reports",
+          "line": 116,
+          "operation": "write"
+        },
+        {
+          "function": "test_cross_host_hashes_identity_and_incomplete_or_opaque_reports",
+          "line": 124,
+          "operation": "write"
+        },
+        {
+          "function": "test_cross_host_hashes_identity_and_incomplete_or_opaque_reports",
+          "line": 131,
+          "operation": "write"
+        },
+        {
+          "function": "test_cross_host_hashes_identity_and_incomplete_or_opaque_reports",
+          "line": 136,
           "operation": "write"
         }
       ]

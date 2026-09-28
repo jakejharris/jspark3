@@ -19,11 +19,15 @@ cannot enter the source tree. Resolve the tag once and use that exact full commi
 on both builders. The archive and resolved revision are retained in staging;
 there is no dependency on a temporary tarball supplied by an implementer.
 
+For an unpublished candidate, use the [Git bundle staging instructions](NATIVE_REPRODUCIBILITY.md#source-transfer)
+to populate a repository on each builder. Preserve its exported `REPO`; the
+commands below require it and never replace it with a default path.
+
 On the first builder:
 
 ```sh
 set -euo pipefail
-export REPO="$HOME/jspark3"
+: "${REPO:?export the existing repository containing the reviewed revision}"
 : "${REV:?set REV to the reviewed tag or full commit}"
 export REV="$(git -C "$REPO" rev-parse --verify "$REV^{commit}")"
 export STAGING="$HOME/jspark3-v184-qualify"
@@ -104,7 +108,10 @@ sha256sum "$BUILD/native/recipe/overlays/v16/coop/bundle/cooperative_moe.so"
 
 Require exactly
 `3212a3b0a308e2ec3673878212fcb0504a463c5f7df84eced5db7bb301cc3c07`.
-Display and coop are each built twice; retain all raw output. Compiler containers
+Display and coop are each built twice; retain all raw output. If diagnosing
+reproducibility, first run the [three-build experiment](NATIVE_REPRODUCIBILITY.md)
+on each host. A mismatch names the artifact and both hashes and preserves both
+compiler stages in the printed private workspace; never discard those stages. Compiler containers
 hide GPUs. The builder reads
 `/usr/bin/nvidia-smi --query-gpu=name,uuid --format=csv,noheader` on the host
 before and after compiling, without launching GPU work. It requires a root-owned,
@@ -146,7 +153,7 @@ repository containing it. Apply the same image-build and headroom policy there:
 
 ```sh
 set -euo pipefail
-export REPO="$HOME/jspark3"
+: "${REPO:?export the existing repository containing the reviewed revision}"
 : "${REV:?set the exact full reviewed commit used on the first builder}"
 export SECOND_STAGING="$HOME/jspark3-v184-second"
 test ! -e "$SECOND_STAGING"

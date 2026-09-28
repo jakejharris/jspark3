@@ -86,3 +86,8 @@ failure paths, full-output sanitizer negatives beyond the diagnostic tail,
 profile selection and numerical failures, and a complete seal after deleting
 private files. Source/receipt hash bindings intentionally require fresh receipts
 after controller changes; this integration does not mint hardware evidence.
+
+Native reproducibility refusals publish fixed artifact labels and validated
+SHA-256 pairs. Failed native workspaces remain private (mode 0700) with both
+builds and compiler intermediates intact; they are never successful build
+receipts or shared evidence dependencies. Completed ELF bytes are not rewritten.

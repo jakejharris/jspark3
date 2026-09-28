@@ -4,6 +4,7 @@
 import sys
 sys.dont_write_bytecode = True
 import argparse
+from contextlib import contextmanager
 import hashlib
 import json
 import os
@@ -23,13 +24,6 @@ sys.path.insert(0, str(ROOT / "recipe/scripts"))
 from _coop_qualification import TARGET_NATIVE, verify_builder_host
 from _image_identity import ImageRefusal, canonical, read_operator_record, sha, verify_local_image
 
-# Same commands and /w paths as tools/v14/build_display_kv.sh. Do not run the
-# resulting probe here: executing its kernels requires the target hardware.
-DISPLAY_BUILD = """set -e
-gcc -O2 -fPIC -shared -Wall -I/usr/local/cuda/include -o libglm53_display_kv.so display_kv.c -L/usr/local/cuda/lib64/stubs -lcuda
-/usr/local/cuda/bin/nvcc -O2 -arch=sm_121 -o display_kv_probe probe_main.cu display_kv.c -lcuda
-{ gcc --version | head -1; /usr/local/cuda/bin/nvcc --version | tail -1; } > toolchain.txt
-"""
 DISPLAY = "recipe/overlays/v14/display_kv"
 COOP = "recipe/overlays/v16/coop"
 OUTPUTS = {"display": {name: f"{DISPLAY}/{name}" for name in
@@ -116,9 +110,39 @@ def local_docker():
     return endpoint
 
 
+@contextmanager
+def workspace(parent):
+    """Publish only on success; preserve private build stages on any refusal."""
+    work = Path(tempfile.mkdtemp(prefix="jspark3-native-private-", dir=parent))
+    try:
+        yield work
+    except BaseException:
+        print("Private native artifacts (do not share): " + str(work), file=sys.stderr)
+        raise
+    else:
+        shutil.rmtree(work)
+
+
+def compare_builds(kind, first, second):
+    expected = set(OUTPUTS[kind].values())
+    if (set(first) != expected or set(second) != expected
+            or any(not isinstance(value, str) or not re.fullmatch('[0-9a-f]{64}', value)
+                   for row in (first, second) for value in row.values())):
+        raise ImageRefusal("native comparison inventory or digest malformed")
+    changed = False
+    for artifact in OUTPUTS[kind].values():
+        if first[artifact] != second[artifact]:
+            changed = True
+            print(json.dumps({'status': 'REFUSE', 'reason': 'reproducibility mismatch',
+                  'artifact': artifact, 'first_sha256': first[artifact], 'second_sha256': second[artifact]},
+                  sort_keys=True), file=sys.stderr)
+    if changed:
+        raise ImageRefusal(kind + ": two native builds differ")
+
+
 def build_inputs():
     paths = [ROOT / "tools/build_native.py", ROOT / "recipe/scripts/_coop_qualification.py", ROOT / DISPLAY / "display_kv.c",
-             ROOT / DISPLAY / "probe_main.cu", ROOT / COOP / "build_repro.sh",
+             ROOT / DISPLAY / "probe_main.cu", ROOT / DISPLAY / "build_repro.sh", ROOT / COOP / "build_repro.sh",
              ROOT / COOP / "SOURCE_MANIFEST.json", *(ROOT / COOP / "source").rglob("*")]
     return {p.relative_to(ROOT).as_posix(): sha(p) for p in sorted(paths) if p.is_file()}
 
@@ -158,18 +182,18 @@ def read_native_record(path, image):
     return record
 
 
-def build(kind, stage, image):
+def build(kind, stage, image, *, execute=None):
     stage.mkdir()
     if kind == "display":
-        for name in ("display_kv.c", "probe_main.cu"):
+        for name in ("display_kv.c", "probe_main.cu", "build_repro.sh"):
             shutil.copyfile(ROOT / DISPLAY / name, stage / name)
-        command = ["-c", DISPLAY_BUILD]
+        command = ["/w/build_repro.sh"]
     else:
         for name in ("build_repro.sh", "SOURCE_MANIFEST.json"):
             shutil.copyfile(ROOT / COOP / name, stage / name)
         shutil.copytree(ROOT / COOP / "source", stage / "source")
         command = ["/w/build_repro.sh", "/w/out"]
-    diagnostics.run_private(["docker", "run", "--rm", "--platform", "linux/arm64",
+    (execute or diagnostics.run_private)(["docker", "run", "--rm", "--platform", "linux/arm64",
                     "--network", "none", "--cpus", "4", "--memory", "8g", "--memory-swap", "8g",
                     "-e", "NVIDIA_VISIBLE_DEVICES=void", "-e", "CUDA_VISIBLE_DEVICES=", "--user", f"{os.getuid()}:{os.getgid()}",
                     "-v", f"{stage}:/w", "-w", "/w", "--entrypoint", "bash",
@@ -201,15 +225,13 @@ def main():
         verify_builder_host(host)
         inputs = build_inputs()
         output.parent.mkdir(parents=True, exist_ok=True)
-        with tempfile.TemporaryDirectory(prefix="jspark3-native-", dir=output.parent) as directory:
-            work = Path(directory)
+        with workspace(output.parent) as work:
             built = work / "artifacts"
             observed = {}
             for kind in (["display"] if args.display_only else ["display", "coop"]):
                 first = build(kind, work / f"{kind}-a", image["config_digest"])
                 second = build(kind, work / f"{kind}-b", image["config_digest"])
-                if first != second:
-                    raise ImageRefusal(f"{kind}: two native builds differ: {first} versus {second}")
+                compare_builds(kind, first, second)
                 if kind == "coop" and first != {next(iter(OUTPUTS["coop"].values())): TARGET_NATIVE}:
                     raise ImageRefusal("matching coop builds differ from the candidate pin")
                 for name, relative in OUTPUTS[kind].items():
