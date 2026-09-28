@@ -1,0 +1,264 @@
+#!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+"""Owner-only component campaign; check-only has no GPU or fleet lifecycle access."""
+import argparse
+from datetime import datetime, timezone
+import json
+import os
+from pathlib import Path
+import shlex
+import shutil
+import subprocess
+import sys
+sys.dont_write_bytecode = True
+ROOT = Path(__file__).resolve().parents[2]
+sys.path[:0] = [str(ROOT / 'tools'), str(ROOT / 'recipe/scripts')]
+import build_native as native
+from _coop_qualification import (TARGET_NATIVE, canonical, compiled_inputs, digest_value,
+                                gate_names, need, read, regular, sha, verify_record)
+from _image_identity import build_policy
+from experiment_coop_build import run_container, Cancelled
+from coop_evidence import KERNEL_FILTER, validate_campaign, validate_gate
+import coop_h1_control as h1
+
+COOP = ROOT / native.COOP
+SRC = '/src/recipe/overlays/v16/coop/source'
+SNAPSHOT = '/root/.cache/huggingface/hub/models--Mia-AiLab--GLM-5.3-Flash-EXL3-TR3-4bpw/snapshots/'
+
+
+def write(path, value):
+    path.write_bytes(canonical(value))
+
+
+def matrix():
+    commands = []
+    for rank in range(3):
+        for geometry in range(3):
+            for mode in ('baseline', 'perturb'):
+                name = f'h1-r{rank}-g{geometry}-{mode}'
+                command = ['python3', '-B', '/src/tools/v16/coop_h1_control.py', '--mode', mode,
+                           '--rank', str(rank), '--geometry', str(geometry), '--test-source', SRC + '/test_cuda_integration.py',
+                           '--source-manifest', '/src/recipe/overlays/v16/coop/SOURCE_MANIFEST.json',
+                           '--bundle', '/campaign/raw-bundle', '--receipt', '/campaign/' + name + '-proof.json']
+                if mode == 'perturb':
+                    command += ['--baseline-receipt', f'/campaign/h1-r{rank}-g{geometry}-baseline-proof.json']
+                commands.append((name, command))
+            env = ['env', 'GLM53_COOP_QUALIFICATION=1', f'GLM53_COOP_GEOMETRY={geometry}', f'GLM53_COOP_EP_RANK={rank}']
+            commands.append((f'profile-r{rank}-g{geometry}', env + ['python3', '-B', SRC + '/profile_shapes.py']))
+            for tool in ('memcheck', 'racecheck'):
+                sanitizer = ['/sanitizer/compute-sanitizer', '--tool', tool, '--error-exitcode', '9', '--print-limit', '0',
+                             '--dump-kernel-launches', '--kernel-name', KERNEL_FILTER]
+                commands.append((f'smoke-r{rank}-g{geometry}-{tool}', env + sanitizer + ['python3', '-B', SRC + '/sanitizer_smoke.py']))
+                if geometry == 2:
+                    commands.append((f'geometry2-r{rank}-g{geometry}-{tool}', env + sanitizer + ['python3', '-B', SRC + '/test_geometry2_sanitizer.py']))
+    commands.append(('select-policy', ['python3', '-B', SRC + '/select_policy.py', '--bundle', '/campaign/selected-bundle',
+                    *[f'/campaign/profiles/rank{r}-geo{g}.jsonl' for r in range(3) for g in range(3)]]))
+    for rank in range(3):
+        commands.append((f'policy-r{rank}', ['env', f'GLM53_COOP_EP_RANK={rank}',
+                        'GLM53_COOP_BUNDLE=/campaign/selected-bundle', 'python3', '-B', SRC + '/test_policy_gpu.py']))
+    return commands
+
+
+def fixture(model):
+    target = read(ROOT / 'recipe/config/checkpoint-contract.json')['target']
+    need(model.name == target['revision'], 'model-root must be the exact single snapshot revision directory')
+    index_path = regular(model, 'model.safetensors.index.json')
+    need(sha(index_path) == target['model_index_sha256'], 'checkpoint index pin differs')
+    index = read(index_path)['weight_map']
+    files = {'model.safetensors.index.json': sha(index_path)}
+    for expert in range(288):
+        for proj in ('gate_proj', 'up_proj', 'down_proj'):
+            for suffix in ('trellis', 'suh', 'svh', 'mcg'):
+                key = f'model.language_model.layers.3.mlp.experts.{expert}.{proj}.{suffix}'
+                name = index[key]
+                if name not in files:
+                    # Streaming hash: a fixture can span large shards.
+                    from _release_checks import sha256
+                    files[name] = sha256(regular(model, name))
+    return {'revision': target['revision'], 'files': files}
+
+
+def inputs(args):
+    import apply_coop_moe as coop
+    import apply_base_pipeline as pipeline
+    coop.verify_sources()
+    pipeline.verify_sources(args.fly_root, pipeline.contract(ROOT / 'recipe/config/patch-contract.json'))
+    helper = read(ROOT / 'recipe/config/coop-helper.json')
+    need(sha(regular(args.helpers_root, 'test_exl3_overlay.py')) == helper['sha256'], 'helper hash')
+    need(sha(regular(args.helpers_root, 'LICENSE')) == helper['license_sha256'], 'helper license hash')
+    sanitizer = read(ROOT / 'recipe/config/coop-sanitizer.json')
+    for name, expected in sanitizer['files'].items():
+        need(sha(regular(args.sanitizer_root, name)) == expected, 'sanitizer package drift')
+    image = native.read_operator_record(args.image_receipt)
+    build = native.read_native_record(regular(args.build_root, 'native-build-receipt.json'), image)
+    for name, expected in build['binary_sha256'].items():
+        need(sha(regular(args.build_root, name)) == expected, 'local native output drift')
+    for run in ('a', 'b'):
+        stage = args.build_root / ('coop-' + run)
+        need(sha(regular(stage, 'out/cooperative_moe.so')) == TARGET_NATIVE, 'raw build pin')
+        need(sha(regular(stage, 'SOURCE_MANIFEST.json')) == sha(COOP / 'SOURCE_MANIFEST.json'), 'raw source manifest')
+        need(sha(regular(stage, 'build_repro.sh')) == sha(COOP / 'build_repro.sh'), 'raw builder')
+        for name, expected in read(COOP / 'SOURCE_MANIFEST.json')['files'].items():
+            need(sha(regular(stage / 'source', name)) == expected, 'raw source drift')
+    return image, build, helper, fixture(args.model_root)
+
+
+def container(args, campaign, stage, image, command, gpu):
+    options = ['docker', 'create', '--platform', 'linux/arm64', '--network', 'none',
+               '--cpus', '4', '--memory', '16g', '--memory-swap', '16g', '--pids-limit', '1024']
+    if gpu:
+        options += ['--gpus', 'device=0']
+    for source, target, mode in [(ROOT, '/src', 'ro'), (campaign / 'recipe', '/recipe', 'ro'),
+                                (args.fly_root, '/sources/fly', 'ro'), (args.helpers_root, '/helpers', 'ro'),
+                                (args.model_root, SNAPSHOT + args.model_root.name, 'ro'), (args.sanitizer_root, '/sanitizer', 'ro'),
+                                (campaign, '/campaign', 'rw'), (stage, '/work', 'rw')]:
+        need(':' not in str(source) and ',' not in str(source), 'unsafe mount path')
+        options += ['-v', f'{source}:{target}:{mode}']
+    # Remove image defaults as well as host overrides. Never use serving entrypoint.
+    clean = ['env']
+    for key in (*h1.SERVING_ENV_KEYS, 'GLM53_COOP_QUALIFICATION', 'GLM53_COOP_GEOMETRY',
+                'GLM53_COOP_SANITIZER', 'JSPARK3_V16_COOP_MAINTENANCE'):
+        clean += ['-u', key]
+    clean += ['PYTHONDONTWRITEBYTECODE=1', 'HF_HUB_OFFLINE=1', 'GLM53_COOP_MAINTENANCE_TEST=1',
+              'GLM53_COOP_TEST_HELPERS=/helpers', 'GLM53_COOP_BUNDLE=/campaign/raw-bundle']
+    return options + ['--entrypoint', '/usr/bin/env', image['config_digest'], *clean[1:],
+                      'python3', '-B', '/src/tools/v16/coop_environment.py', *command]
+
+
+def campaign(args):
+    output = Path(str(args.output) + '.check') if args.check_only else args.output
+    need(not output.exists() and not output.is_symlink() and not output.resolve().is_relative_to(ROOT), 'output must be new outside source')
+    image, build, helper, checkpoint = inputs(args)
+    native.verify_local_image(image)
+    output.mkdir(parents=True)
+    shutil.copytree(ROOT / 'recipe', output / 'recipe')
+    write(output / 'recipe/config/operator-image.json', image)
+    for name in native.OUTPUTS['display'].values():
+        shutil.copyfile(args.build_root / name, output / name)
+    shutil.copytree(args.build_root / 'coop-a/out', output / 'raw-bundle')
+    shutil.copytree(output / 'raw-bundle', output / 'selected-bundle')
+    (output / 'profiles').mkdir()
+    identity = {'native_sha256': TARGET_NATIVE, 'source_manifest_sha256': sha(COOP / 'SOURCE_MANIFEST.json'),
+                'build_artifacts_sha256': {f'coop-{run}/out/{name}': sha(regular(args.build_root, f'coop-{run}/out/{name}'))
+                    for run in ('a', 'b') for name in ('cooperative_moe.so', 'manifest.json', 'toolchain.txt', 'build32.log', 'build64.log', 'link.log')},
+                'image_receipt_sha256': image['payload_sha256'], 'helper': helper, 'checkpoint': checkpoint,
+                'sanitizer': read(ROOT / 'recipe/config/coop-sanitizer.json'),
+                'runner_sha256': {p.name: sha(p) for p in [Path(__file__), Path(__file__).with_name('coop_environment.py'),
+                                                        Path(__file__).with_name('coop_evidence.py')]}}
+    commands = [('environment', []), *matrix()]
+    plan = {name: container(args, output, output / ('container-' + name), image, command, name != 'environment')
+            for name, command in commands}
+    write(output / 'plan.json', plan)
+    for name, command in plan.items():
+        print(name + ': ' + shlex.join(command), flush=True)
+    write(output / 'image.json', image)
+    write(output / 'native-build.json', build)
+    write(output / 'campaign.json', {'schema_version': 1, 'status': 'INCOMPLETE', 'identity': identity})
+    for name, _ in commands:
+        if args.check_only and name != 'environment':
+            continue
+        stage = output / ('container-' + name)
+        stage.mkdir()
+        started = datetime.now(timezone.utc).isoformat()
+        with (output / (name + '.log')).open('w') as log:
+            result = run_container(plan[name], stage, log)
+        write(stage / 'execution.json', {'started_at': started, 'completed_at': datetime.now(timezone.utc).isoformat(),
+                                       'exit_code': result.returncode, 'command': plan[name]})
+        need(result.returncode == 0, name + ' failed; evidence retained')
+        if name in gate_names():
+            write(output / (name + '.json'), {'schema_version': 1, 'name': name, 'kind': gate_names()[name],
+                    'status': 'PASS', 'exit_code': 0, 'identity': identity, 'log_sha256': sha(output / (name + '.log'))})
+            if name.startswith('profile-'):
+                r, g = name[-4], name[-1]
+                # Isolate profile JSONL from stage-8/import diagnostics, retaining
+                # the full container log separately.
+                full = output / (name + '.log')
+                shutil.copyfile(full, stage / 'full.log')
+                rows = [line for line in full.read_text().splitlines() if line.startswith('{')
+                        and json.loads(line).get('stage') in ('profile_identity', 'compare', 'profile', 'profile_complete')]
+                full.write_text('\n'.join(rows) + '\n')
+                write(output / (name + '.json'), {'schema_version': 1, 'name': name, 'kind': 'profile', 'status': 'PASS',
+                      'exit_code': 0, 'identity': identity, 'log_sha256': sha(full)})
+                shutil.copyfile(full, output / f'profiles/rank{r}-geo{g}.jsonl')
+            validate_gate(name, output, identity, output / 'raw-bundle')
+    need(inputs(args) == (image, build, helper, checkpoint), 'qualification inputs changed during run')
+    if args.check_only:
+        write(output / 'check.json', {'status': 'PASS', 'scope': 'GPU-free environment and complete command plan', 'identity': identity})
+    else:
+        write(output / 'campaign.json', {'schema_version': 1, 'status': 'COMPLETE', 'identity': identity})
+        write(output / 'QUALIFICATION.json', validate_campaign(output))
+    print('PASS ' + str(output))
+
+
+def seal(args):
+    index = validate_campaign(args.seal)
+    image = native.read_operator_record(regular(args.seal, 'image.json'))
+    build = native.read_native_record(regular(args.seal, 'native-build.json'), image)
+    need(index['source_manifest_sha256'] == sha(COOP / 'SOURCE_MANIFEST.json'), 'campaign source changed; review before rebinding')
+    need(index['runner_sha256'] == {p.name: sha(p) for p in [Path(__file__), Path(__file__).with_name('coop_environment.py'),
+                                                         Path(__file__).with_name('coop_evidence.py')]}, 'runner changed')
+    output = args.output
+    need(not output.exists() and not output.is_symlink() and not output.resolve().is_relative_to(ROOT), 'seal output must be new outside source')
+    output.mkdir(parents=True)
+    # Preserve raw campaign/build trees; selection and sealing never mutate them.
+    shutil.copytree(COOP / 'source', output / 'source')
+    shutil.copyfile(COOP / 'SOURCE_MANIFEST.json', output / 'SOURCE_MANIFEST.json')
+    shutil.copyfile(COOP / 'build_repro.sh', output / 'build_repro.sh')
+    shutil.copytree(args.seal / 'selected-bundle', output / 'bundle')
+    write(output / 'QUALIFICATION.json', index)
+    manifest = read(output / 'bundle/manifest.json')
+    record = {'schema_version': 2, 'source_manifest_sha256': sha(COOP / 'SOURCE_MANIFEST.json'),
+              'qualification_source_manifest_sha256': index['source_manifest_sha256'],
+              'compiled_inputs': compiled_inputs(COOP), 'builder_sha256': sha(COOP / 'build_repro.sh'),
+              'build_policy_sha256': digest_value(build_policy()), 'qualification_image': image,
+              'helper': index['helper'], 'sanitizer': index['sanitizer'], 'checkpoint': index['checkpoint'],
+              'reproducibility': {'runs': 2, 'comparison': 'bit-identical', 'binary_sha256': TARGET_NATIVE,
+                                  'evidence_sha256': sha(args.seal / 'native-build.json')},
+              'bundle': {'manifest_sha256': sha(output / 'bundle/manifest.json'), 'native_sha256': TARGET_NATIVE,
+                         'runtime_sha256': manifest['files']['runtime.py'], 'dispatch_policy_sha256': manifest['files']['dispatch_policy.json']},
+              'gate_index_sha256': sha(output / 'QUALIFICATION.json')}
+    verify_record(record, output / 'bundle', output, release=False)
+    write(output / 'BUILD.json', record)
+    print('PASS component seal; release integration and final-source rebuilds remain required: ' + str(output))
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--image-receipt', type=Path)
+    parser.add_argument('--build-root', type=Path)
+    parser.add_argument('--model-root', type=Path)
+    parser.add_argument('--fly-root', type=Path)
+    parser.add_argument('--helpers-root', type=Path)
+    parser.add_argument('--sanitizer-root', type=Path, help='pinned NVIDIA package compute-sanitizer directory')
+    parser.add_argument('--output', type=Path)
+    parser.add_argument('--check-only', action='store_true')
+    parser.add_argument('--seal', type=Path, help='completed local campaign to validate and seal into a new directory')
+    parser.add_argument('--check-seal', type=Path, help='validate an existing component seal, without enabling it for release')
+    args = parser.parse_args()
+    try:
+        if args.check_seal:
+            need(not args.seal and not args.check_only, 'choose one operation')
+            record = read(args.check_seal / 'BUILD.json')
+            verify_record(record, args.check_seal / 'bundle', args.check_seal, release=False)
+            for name, expected in read(args.check_seal / 'bundle/manifest.json')['files'].items():
+                need(sha(regular(args.check_seal / 'bundle', name)) == expected, 'sealed artifact changed')
+            print('PASS component seal; this is not release or fleet admission')
+            return 0
+        need(args.output is not None, '--output required')
+        if args.seal:
+            need(not args.check_only, '--check-only applies to the environment phase')
+            seal(args)
+        else:
+            need(all(getattr(args, n) is not None for n in ('image_receipt','build_root','model_root','fly_root','helpers_root','sanitizer_root')), 'all fixture paths required')
+            for name in ('output', 'image_receipt','build_root','model_root','fly_root','helpers_root','sanitizer_root'):
+                path = getattr(args, name)
+                need(path.is_absolute() and not path.is_symlink(), 'absolute non-symlink path required: ' + name)
+            campaign(args)
+    except (OSError, ValueError, KeyError, subprocess.CalledProcessError, Cancelled) as exc:
+        print('REFUSE: ' + str(exc), file=sys.stderr)
+        return 9
+    return 0
+
+
+if __name__ == '__main__':
+    raise SystemExit(main())
