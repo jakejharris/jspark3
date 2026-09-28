@@ -30,7 +30,7 @@ def verify_sources(recipe):
             assert path.is_file() and not path.is_symlink() and sha(path) == expected
     native = manifest['files']['cooperative_moe.so']
     assert record['source_manifest_sha256'] == coop.SOURCE_MANIFEST_SHA256
-    assert record['image'] == {'manifest': coop.IMAGE_MANIFEST, 'config': coop.IMAGE_CONFIG}
+    assert record['image'] == coop.reference_build_image()
     assert record['bundle'] == {'manifest_sha256': sha(bundle / 'manifest.json'), 'native_sha256': native,
         'runtime_sha256': manifest['files']['runtime.py'], 'dispatch_policy_sha256': manifest['files']['dispatch_policy.json']}
     assert record['reproducibility'] == {'runs': 2, 'comparison': 'bit-identical', 'binary_sha256': native}

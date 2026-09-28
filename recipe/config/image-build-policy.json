@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "dockerfile_sha256": "dd42095d69c0f33d94acb26bb5a1f1e3c03b145683968ee1364899ec77dba00b",
+  "base_images": [
+    "ghcr.io/miaai-lab/glm-5.3-flash-2x-dgx-sparks@sha256:447114ee77d14c9b4732ee23978ada2a0ee9027868a231d6fd42700a8b25be1d",
+    "ghcr.io/miaai-lab/glm-5.3-flash-2x-dgx-sparks@sha256:9bb1557a4234fce63d59599e44d10747eabd742beb337eebf9e7070be8a0fd58"
+  ],
+  "instanttensor_files": {
+    "instanttensor-0.2.0.dist-info/METADATA": "ccc3be5795ee869286096a9886e494b90369d1bbfa7bf5ba4df3dfeff2e4b4e2",
+    "instanttensor-0.2.0.dist-info/WHEEL": "0ff5ab1013c270087b2ec4055fd5567cc15c966cfa24eccb41c92e119b5639f7",
+    "instanttensor-0.2.0.dist-info/direct_url.json": "7466547cb5fbfbdb8c21f669e2c054202063e09afde12f3aacbc117893ed7ac2",
+    "instanttensor/_impl.py": "4c5dc40095b859612ff13cb013db1d5f6cfcb21ff2921413cb7cc6c5e0258cb7",
+    "instanttensor/__init__.py": "c907c0eff48f281a47fe2415dc2c6927e5cc2805c0a6e7986083c16fe04dabd8",
+    "instanttensor/_C.cpython-312-aarch64-linux-gnu.so": "b9c16d62cde3fa28f6954d82b9d887e7873e9c4ad31b8915490dafbb26a8d756"
+  }
+}

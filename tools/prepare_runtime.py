@@ -14,6 +14,8 @@ def main():
     parser.add_argument('--binary-root', type=Path, required=True,
                         help='local build tree with every path listed in manifests/binaries.json')
     parser.add_argument('--output', type=Path, required=True, help='new private runtime directory')
+    parser.add_argument('--image-receipt', type=Path,
+                        help='verified local build receipt; omit only for the historical reference image')
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
     output = args.output.resolve()
@@ -21,6 +23,13 @@ def main():
     from validate_release import verify
     if verify(root)['failed']: raise SystemExit('REFUSE: source export failed validation')
     sha = lambda p: hashlib.sha256(p.read_bytes()).hexdigest()
+    sys.path.insert(0, str(root / 'recipe/scripts'))
+    from _image_identity import read_operator_record
+    image_record = None
+    if args.image_receipt:
+        image_record = read_operator_record(args.image_receipt)
+        if image_record['source_recipe_sha256'] != sha(root / 'recipe/SHA256SUMS'):
+            raise SystemExit('REFUSE: image receipt belongs to a different source recipe')
     binaries = json.loads((root / 'manifests/binaries.json').read_text())
     for name, row in binaries.items():
         path = args.binary_root / name
@@ -36,10 +45,13 @@ def main():
     display.verify_sources()
     coop.verify_bundle(coop.DEFAULT_BUNDLE, coop.DEFAULT_BUILD_RECORD)
     recipe = output / 'recipe'
+    if image_record:
+        (recipe / 'config/operator-image.json').write_text(json.dumps(image_record, sort_keys=True) + '\n')
     (recipe / 'SHA256SUMS').write_text(''.join(f'{sha(p)}  {p.relative_to(recipe).as_posix()}\n'
         for p in sorted(recipe.rglob('*')) if p.is_file() and p.name != 'SHA256SUMS'))
     (output / 'runtime-build-receipt.json').write_text(json.dumps({
         'source_tree_sha256': sha(root / 'SHA256SUMS'), 'recipe_manifest_sha256': sha(recipe / 'SHA256SUMS'),
+        'operator_image_receipt_sha256': sha(recipe / 'config/operator-image.json') if image_record else None,
         'binary_sha256': {n: sha(output / n) for n in binaries}, 'hardware_qualified': False}, indent=2) + '\n')
     print('PASS local runtime recipe prepared; hardware admission remains closed')
 

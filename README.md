@@ -1,4 +1,4 @@
-# JSpark3 v1.8.0
+# JSpark3 v1.8.1
 
 Up to 141.7 tok/s code and 90.7 tok/s prose decode at 4 streams on three DGX Sparks, stock weights.
 
@@ -39,7 +39,7 @@ Stock free-form JSON may arrive in a Markdown fence, and code may be formatted w
 
 The single-request grammar-width crash is fixed. Its applicability to v1.1.0 is established by source inspection and reproduction on a later build, not a v1.1.0 hardware reproduction. Greedy near-ties still require controlled parity checks. Prefixes beyond retained replay boundaries may safely recompute.
 
-Native binaries, weights and images are obtained separately. The exact pinned image, native builds, cache preparation and operator hygiene remain installation prerequisites. A fully independent image rebuild has not been demonstrated by this export.
+Native binaries, weights and images are obtained separately. Build and verify your own local image with `python3 -B tools/build_operator_image.py --output ../operator-image.json`, then pass that receipt to runtime preparation as described in [installation](docs/INSTALL.md). There is no JSpark3 image to pull from GHCR; the historical reference digest is not a published image. Native builds, cache preparation and operator hygiene remain installation prerequisites. Hardware qualification remains separate. Performance numbers remain the unchanged v1.8.0 measurements.
 
 Original code and prose are Apache-2.0. Included derivatives retain AGPL-3.0-only and vendored headers retain MIT. The assembled service is not wholly Apache-2.0; per-file SPDX and REUSE records govern. The draft-model dependency retains its non-commercial research/evaluation restriction.
 

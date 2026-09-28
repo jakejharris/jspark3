@@ -20,9 +20,11 @@ import urllib.request
 
 import production_stock
 
-IMAGE = "sha256:de01da91a1eefc7b2dee9df78c2e1b7abca64fbb9e19862a7872cc5338b6ce86"
-IMAGE_CONFIG = "sha256:de01da91a1eefc7b2dee9df78c2e1b7abca64fbb9e19862a7872cc5338b6ce86"
-IMAGE_MANIFEST = "sha256:a15b3e6056828219cabe19662fd239245e61fb2b45defe3a8e2712b75b925b3f"
+from _image_identity import selected_identity
+
+IMAGE_IDENTITY = selected_identity()
+IMAGE = IMAGE_CONFIG = IMAGE_IDENTITY["config_digest"]
+IMAGE_MANIFEST = IMAGE_IDENTITY["manifest_digest"]
 RELEASE_LABEL = "v1.6.0"
 CONTAINER_PREFIX = "jspark3-v16-rank"
 V14_PROFILES = ("full", "display0")

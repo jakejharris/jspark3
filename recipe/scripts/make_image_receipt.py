@@ -12,8 +12,11 @@ import re
 import sys
 import tempfile
 
-MANIFEST = "sha256:a15b3e6056828219cabe19662fd239245e61fb2b45defe3a8e2712b75b925b3f"
-CONFIG = "sha256:de01da91a1eefc7b2dee9df78c2e1b7abca64fbb9e19862a7872cc5338b6ce86"
+from _image_identity import selected_identity
+
+IDENTITY = selected_identity()
+MANIFEST = IDENTITY["manifest_digest"]
+CONFIG = IDENTITY["config_digest"]
 SHA_RE = re.compile(r"[0-9a-f]{64}")
 
 

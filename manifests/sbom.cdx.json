@@ -141,6 +141,23 @@
       "hashes": [
         {
           "alg": "SHA-256",
+          "content": "595b0f8da2316e8364648325bd6bbd828f680da388038ba8d7ecedf1966449d1"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/config/image-build-policy.json",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
           "content": "a15b3e6056828219cabe19662fd239245e61fb2b45defe3a8e2712b75b925b3f"
         }
       ],
@@ -175,7 +192,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "f1b6657e2fe42c542add9d2f0ad3c1538650194fe1d312e8b2b6dd76069e5ce9"
+          "content": "2117846b297757a88242e2e20993da19f0a83cd698cb5e08de75fb369f7aded1"
         }
       ],
       "licenses": [
@@ -192,7 +209,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "de0f91701501592fe22eb64338cd4aaf21a72378a33ed4339a9c8351a33ea7c4"
+          "content": "5e52dc1dfbe1eb1a06d9099152df158bc7ed83c78e437a37dc0f45bb4cb59187"
         }
       ],
       "licenses": [
@@ -260,7 +277,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "a22616e1f04b14afc69fbc587f231721030904289e2f9f0a0508abae70f93548"
+          "content": "94d40519961d3ec1cf1eed1c85a4d7906cdd8670dfb2a02f95cb2f08607945ed"
         }
       ],
       "licenses": [
@@ -277,7 +294,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "6a03b93257bb10ed9198549acff9cb1363dbedf46418bd0da4e00614f910b145"
+          "content": "ff858aad3d8aeb197ae86bad0014ac2b88606f1528d2157405a8d1663c89404e"
         }
       ],
       "licenses": [
@@ -294,7 +311,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "d756f3a38888703cc7ad747ed255aceb8b8368d54f2989bba94a7170e5c21841"
+          "content": "53a9e56d7e21ea9e606c05a795bcde32536f15ce3fbb416aab684304fabd7ad1"
         }
       ],
       "licenses": [
@@ -311,7 +328,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "5cfcf751837cac9a705b0da611bf76b79bb7c124c1730bf63e1f1bc5c7a8c05a"
+          "content": "02e348769638093e516b576e5384179d0840f1fbcb9e6817415d0fe6037c66fb"
         }
       ],
       "licenses": [
@@ -923,7 +940,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "b29d056d38666f1d8db83e90d937efa6da60a99d6cf213d3eb40283335682792"
+          "content": "59656a2727bd2cab97a01518171ae8e73de7bb88e0998a95a35fb4ce5b88104f"
         }
       ],
       "licenses": [
@@ -1977,7 +1994,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "703820079200f547c6fa117560d73e0e5986d401f5a7a880dec7e091f24bec86"
+          "content": "4081c2a5f52cc4e45cd88ccbc02641c3b84d0ed8bf5b3dc677e63ab2e955e184"
         }
       ],
       "licenses": [
@@ -2079,7 +2096,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "71a857e6bf89d13efc7df7db846fda9a5f5d5ca72c1c6e45789cca5ff74de156"
+          "content": "48f777a6f6d9b373b7507e33c0d1a07af71a97bfd7450b8180ef42e786cfab1a"
         }
       ],
       "licenses": [
@@ -2113,7 +2130,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "aba522cd49468c80a000eb73faaa52dd4ead91b3b26a7c05063e54d20cceab57"
+          "content": "b15670ae2570a51b422a197f71974a9177672d0680e9ce108e500b7c458b8a50"
         }
       ],
       "licenses": [
@@ -2124,6 +2141,23 @@
         }
       ],
       "name": "recipe/scripts/_fleetctl.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "8b5db2cb139d358736f0e7e418850b8ab5b84b678067e83004720e488d37956f"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/scripts/_image_identity.py",
       "type": "file"
     },
     {
@@ -2198,7 +2232,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "49d1f7321cf4947dcee10462d1a401b056e45ef28788e4d6b73f1e4f949993f9"
+          "content": "7d1403192e734afbb294fbfe8d059f1348542d7fa4cd3bbbaaea05717c22420a"
         }
       ],
       "licenses": [
@@ -2385,7 +2419,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "b8430fe7e56499bd8ba74bf21bf981ac2d2fa35b372d2b75f50e5988e9e1ee92"
+          "content": "240a6c7a3765f542d964576519eae504ec08759a29979065432a13290f08b6b0"
         }
       ],
       "licenses": [
@@ -2572,7 +2606,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "1772c493a986c4afadd40f7e7586c5b72313e6d4a01b0964ebc4a0a66321f015"
+          "content": "c6ad800a4f955e9bb3a27108e8c207c4b39388f06c3f597ef02dd05a5a1e0097"
         }
       ],
       "licenses": [
@@ -2657,7 +2691,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "589e5868d3c49c3c672be746cac841d1d038027d191d3ac8bdea1dbec80de449"
+          "content": "2c6a1467ba392f5e736baee4a47af5aee2e25c49c302062e102fe6c16c1a3921"
         }
       ],
       "licenses": [

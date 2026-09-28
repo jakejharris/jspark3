@@ -1,7 +1,6 @@
 {
   "image": {
-    "config": "de01da91a1eefc7b2dee9df78c2e1b7abca64fbb9e19862a7872cc5338b6ce86",
-    "manifest": "a15b3e6056828219cabe19662fd239245e61fb2b45defe3a8e2712b75b925b3f"
+    "policy": "verified-local-build-v1"
   },
   "transforms": {
     "apply_triar.py": {

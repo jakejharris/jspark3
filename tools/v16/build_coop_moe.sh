@@ -23,7 +23,9 @@ fi
 
 root=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
 coop=$root/recipe/overlays/v16/coop
-image=sha256:de01da91a1eefc7b2dee9df78c2e1b7abca64fbb9e19862a7872cc5338b6ce86
+identity_args=()
+if [[ -n ${JSPARK_IMAGE_RECEIPT:-} ]]; then identity_args=(--receipt "$JSPARK_IMAGE_RECEIPT"); fi
+image=$(python3 -B "$root/recipe/scripts/_image_identity.py" "${identity_args[@]}")
 remote=jspark3-v16-coop-$campaign
 
 build_remote() {
@@ -127,6 +129,7 @@ REMOTE
   PYTHONDONTWRITEBYTECODE=1 python3 - "$mode" "$coop" "$scratch/bundle" "$logs" <<'PY'
 import hashlib
 import json
+import os
 import shutil
 import sys
 from pathlib import Path
@@ -148,12 +151,14 @@ profiles = {
 }
 if len(profiles) != 9:
     raise SystemExit("REFUSE: expected exactly nine profile hashes")
+sys.path.insert(0, str(coop.parents[2] / "scripts"))
+from _image_identity import read_operator_record, selected_identity
+identity = read_operator_record(Path(os.environ["JSPARK_IMAGE_RECEIPT"])) if os.environ.get("JSPARK_IMAGE_RECEIPT") else selected_identity()
+build_image = {"manifest": identity["manifest_digest"].removeprefix("sha256:"),
+               "config": identity["config_digest"].removeprefix("sha256:")}
 record = {
     "schema_version": 1,
-    "image": {
-        "manifest": "a15b3e6056828219cabe19662fd239245e61fb2b45defe3a8e2712b75b925b3f",
-        "config": "de01da91a1eefc7b2dee9df78c2e1b7abca64fbb9e19862a7872cc5338b6ce86",
-    },
+    "image": build_image,
     "source_manifest_sha256": sha(coop / "SOURCE_MANIFEST.json"),
     "reproducibility": {
         "runs": 2,
@@ -179,7 +184,7 @@ candidate_record = bundle.parent / "BUILD.json"
 candidate_record.write_bytes(record_bytes)
 sys.path.insert(0, str(coop.parents[2] / "scripts"))
 from apply_coop_moe import verify_bundle
-verify_bundle(bundle, candidate_record)
+verify_bundle(bundle, candidate_record, build_image=build_image)
 target_bundle = coop / "bundle"
 target_record = coop / "BUILD.json"
 
@@ -203,9 +208,12 @@ if mode == "--write":
 else:
     if not target_bundle.is_dir() or target_bundle.is_symlink() or tree_hashes(target_bundle) != tree_hashes(bundle):
         raise SystemExit("REFUSE: rebuilt bundle does not match the sealed recipe bundle")
-    if not target_record.is_file() or target_record.is_symlink() or target_record.read_bytes() != record_bytes:
+    if not target_record.is_file() or target_record.is_symlink():
+        raise SystemExit("REFUSE: missing or unsafe BUILD.json")
+    expected_record = json.loads(target_record.read_text())
+    if {k: v for k, v in expected_record.items() if k != "image"} != {k: v for k, v in record.items() if k != "image"}:
         raise SystemExit("REFUSE: rebuilt record does not match BUILD.json")
-print(json.dumps({"status": "PASS", "mode": mode, "native_sha256": native}, sort_keys=True))
+print(json.dumps({"status": "PASS", "mode": mode, "native_sha256": native, "image": build_image}, sort_keys=True))
 PY
 }
 

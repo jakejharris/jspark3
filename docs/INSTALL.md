@@ -2,14 +2,12 @@
 
 Validate the source export before creating a separate private runtime copy.
 The export has no native binaries, model weights, container layers or donor
-weights. Hardware admission remains unqualified. A clean installation from these source
-files alone has not been demonstrated; see the image prerequisite below.
+weights. Hardware admission remains unqualified; see the local image procedure below.
 
 1. Run `sha256sum -c SHA256SUMS` and the validator in the root README.
-2. Obtain the exact model, image and source dependencies identified in
-   `recipe/config/`. The local image recipe is `docker/stock-v13/Dockerfile`;
-   its InstantTensor hash manifest accompanies it. Image/module redistribution
-   is outside this source package's license posture.
+2. Build and verify a local image using the command below. Obtain the exact model
+   and source dependencies identified in `recipe/config/`. Image/module
+   redistribution is outside this source package's license posture.
 3. Build the native artifacts in a separate working copy using the pinned
    image/toolchain. `tools/v14/build_display_kv.sh HOST --check` builds the
    display library and probe twice and compares their expected record.
@@ -21,10 +19,13 @@ files alone has not been demonstrated; see the image prerequisite below.
    Historical build records specify expected outputs; this export did not
    rebuild or requalify them. A mismatch requires a reviewed source/build
    update and fresh qualification, never an automatic acceptance of new hashes.
-4. Run `python3 -B tools/prepare_runtime.py --binary-root BINARY_ROOT --output RUNTIME_DIR`.
+4. Run `python3 -B tools/prepare_runtime.py --binary-root BINARY_ROOT --image-receipt ../operator-image.json --output RUNTIME_DIR`.
    It verifies the source export and all local binary pins, runs native
    artifact checks, copies `recipe/` and writes its runtime checksum inventory.
-   Keep its runtime-build receipt. The source export stays unchanged.
+   Keep its runtime-build receipt. It installs the image receipt as
+   `recipe/config/operator-image.json` and includes it in runtime checksums.
+   The source export stays unchanged. Run the controller from this prepared
+   runtime's `recipe/scripts/`, and copy this same recipe to all three hosts.
 5. Copy the runtime recipe's `.env.example` to a private environment file.
    Replace documentation hosts, addresses, roots, interfaces and device paths.
    Point `JSPARK_RECIPE_ROOT` at the prepared runtime recipe on each host.
@@ -63,14 +64,72 @@ is included.
 
 ## Image prerequisite and local preparation
 
-The Dockerfile copies InstantTensor from a pinned upstream image and verifies
-its file hashes. It does not establish reproducible image-config or layer
-identity. The runtime still requires the exact image identity recorded in
-`recipe/config/image-oci.json`; a locally built image with different metadata
-will be refused even if the InstantTensor files match. Do not replace those
-pins merely to pass preflight. A reproducible image build or a separately
-reviewed identity policy is required before this can be presented as a complete
-outside-operator installation. No image is distributed by this source export.
+Use Python 3 and Docker with Buildx on an ARM64 host (or an ARM64-emulating
+builder). Allow space for both large upstream images and the resulting image.
+From a clean source export, after step 1:
+
+```sh
+python3 -B tools/build_operator_image.py --output ../operator-image.json
+python3 -B recipe/scripts/remote_preflight.py --recipe-root "$PWD/recipe" \
+  --image-only --image-receipt ../operator-image.json
+export JSPARK_IMAGE_RECEIPT="$(realpath ../operator-image.json)"
+```
+
+The build command accepts an optional `--builder NAME`. It builds only
+`docker/stock-v13/Dockerfile`, with its two digest-pinned public GHCR bases,
+without build cache, and loads the result locally. It never pushes. It checks
+the Dockerfile against `recipe/config/image-build-policy.json`, verifies all
+six InstantTensor file hashes by copying them from a stopped container, and
+records the build's manifest digest, local config ID, layer identities and
+source recipe checksum. No GPU is required for this image check. An
+`image-only` PASS does not constitute fleet preflight or hardware admission.
+
+Keep the receipt private and unedited. Receipts from a different source recipe,
+unknown build inputs, changed layers or wrong InstantTensor bytes are refused.
+Self-hashes detect drift; these receipts are local operator records, not signed
+third-party attestations. Use a trusted local Docker daemon and builder.
+
+Use that exact local image on all three hosts. Build once and transfer it within
+your own fleet, subject to the upstream terms; for example, obtain its ID with
+`python3 -B recipe/scripts/_image_identity.py --receipt ../operator-image.json`,
+then use `docker save IMAGE_ID` and `docker load` on your other hosts. Do not
+independently rebuild three times: metadata may differ. Preflight refuses a
+different image on any rank. The native build helpers read `JSPARK_IMAGE_RECEIPT`;
+their source, toolchain and output hash checks still apply.
+
+The prepared runtime selects `config/operator-image.json` everywhere: controller,
+remote preflight, per-container receipts and patch installers. Without that
+file, the original `config/image-oci.json` selects the historical reference
+for existing installations and source-only dry-runs. Its digest is not a GHCR
+artifact. Historical native build records continue to describe their original
+build image; they are not new qualification of the operator image. No image is
+distributed by this source export.
+
+After native preparation, use the prepared runtime controller's `preflight`,
+`start` and `verify` workflow in [operations](OPERATIONS.md). Retain the normal
+checkpoint, hardware, memory, fabric and qualification gates.
+
+After editing the private environment file and staging the exact image, recipe,
+models and sources on each host, run on the controller with traffic blocked:
+
+```sh
+cd RUNTIME_DIR/recipe
+python3 -B scripts/fleetctl.py preflight --env-file ../operator.env --output ../preflight.json
+python3 -B scripts/fleetctl.py start --env-file ../operator.env \
+  --preflight ../preflight.json \
+  --preflight-sha256 "$(sha256sum ../preflight.json | cut -d ' ' -f1)" \
+  --manifest ../service.json --confirm START-JSPARK3
+python3 -B scripts/fleetctl.py verify --env-file ../operator.env \
+  --manifest ../service.json --output ../verify.json --log-output ../verify-rank0.log
+```
+
+Keep traffic blocked until the remaining qualification protocol passes.
+
+### Notes
+
+Reproducible OCI metadata, signed build attestations and portable cache/hygiene
+tooling are follow-ups. This policy does not claim bit-identical image rebuilds
+or new performance measurements.
 
 The qualification protocol also requires user-level page-cache hygiene and
 verified kernel-cache preparation. This package does not ship portable

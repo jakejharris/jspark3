@@ -1,3 +1,12 @@
+# JSpark3 v1.8.1
+
+Outside operators can build the pinned Dockerfile, verify InstantTensor bytes,
+and record their own local image identity. Runtime preparation binds this receipt
+to the source recipe; preflight, lifecycle commands and patch installers use it
+consistently. The unpublished reference image is no longer a prerequisite for
+new installations. Images remain local and are not redistributed. Native artifact
+pins and hardware admission gates remain in force; v1.8.0 results are unchanged.
+
 # JSpark3 v1.8.0
 
 Changes since v1.1.0 include finer prefix reuse and retained replay windows, decode-floor scheduling and aligned prefill chunks, compact drafter KV, optional display-reserve KV, batched/cooperative MoE paths, adaptive draft width, optional dense-trunk FP8, the stock production profile, and grammar/termination fixes. These are source changes; the tables do not assign a speedup to an unmeasured feature.

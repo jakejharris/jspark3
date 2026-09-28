@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Read-only per-rank admission checks for the JSpark3 v1.6 recipe."""
+"""Per-rank admission checks; temporary image checks never start a container."""
 
 from __future__ import annotations
 
@@ -16,9 +16,11 @@ import subprocess
 import sys
 import re
 
-IMAGE = "sha256:de01da91a1eefc7b2dee9df78c2e1b7abca64fbb9e19862a7872cc5338b6ce86"
-IMAGE_CONFIG = "sha256:de01da91a1eefc7b2dee9df78c2e1b7abca64fbb9e19862a7872cc5338b6ce86"
-IMAGE_MANIFEST = "sha256:a15b3e6056828219cabe19662fd239245e61fb2b45defe3a8e2712b75b925b3f"
+from _image_identity import selected_identity, verify_local_image
+
+IMAGE_IDENTITY = selected_identity()
+IMAGE = IMAGE_CONFIG = IMAGE_IDENTITY["config_digest"]
+IMAGE_MANIFEST = IMAGE_IDENTITY["manifest_digest"]
 TARGET_NATIVE = "Mia-AiLab--GLM-5.3-Flash-EXL3-TR3-4bpw-25a44fdb"
 TARGET_RUNTIME = TARGET_NATIVE + "-tp3-runtime"
 DRAFT_NATIVE = "incoai--GLM-5.3-Flash-DFlash2-dc77ff1c-native"
@@ -352,7 +354,10 @@ def display_row(profile: str, card: str | None) -> dict:
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--recipe-only", action="store_true")
+    scope = parser.add_mutually_exclusive_group()
+    scope.add_argument("--recipe-only", action="store_true")
+    scope.add_argument("--image-only", action="store_true", help="local image gate only; no hardware admission")
+    parser.add_argument("--image-receipt", type=Path, help="external build receipt; only with --image-only")
     parser.add_argument("--rank", type=int, choices=(0, 1, 2))
     parser.add_argument("--ifaces")
     parser.add_argument("--cidrs")
@@ -380,6 +385,21 @@ def main() -> int:
         recipe = args.recipe_root.resolve(strict=True)
         if args.recipe_root.is_symlink() or recipe != args.recipe_root:
             raise Refusal("recipe root must be an exact canonical directory")
+        if recipe != Path(__file__).resolve().parents[1]:
+            raise Refusal("run preflight from the selected recipe's own scripts")
+        if args.image_receipt and not args.image_only:
+            raise Refusal("external image receipt is only allowed for the image-only check")
+        if args.image_only:
+            verify_manifest(recipe)
+            from _image_identity import read_operator_record
+            identity = read_operator_record(args.image_receipt) if args.image_receipt else IMAGE_IDENTITY
+            if args.image_receipt and identity["source_recipe_sha256"] != sha(recipe / "SHA256SUMS"):
+                raise Refusal("operator image was built for a different source recipe")
+            verify_local_image(identity)
+            print(json.dumps({"status": "PASS", "scope": "image-only", "hardware_qualified": False,
+                              "image_manifest": identity["manifest_digest"],
+                              "image_config": identity["config_digest"]}, sort_keys=True))
+            return 0
         if args.recipe_only:
             recipe_sha = verify_manifest(recipe)
             if (args.expected_recipe_manifest_sha256 is not None and
@@ -402,14 +422,7 @@ def main() -> int:
         gpu_name, gpu_capability = exact_gpu_inventory(run([
             "nvidia-smi", "--query-gpu=name,compute_cap", "--format=csv,noheader"
         ]))
-        image = json.loads(run(["docker", "image", "inspect", IMAGE]))[0]
-        oci_path = recipe / "config/image-oci.json"
-        oci = json.loads(oci_path.read_text())
-        if (sha(oci_path) != IMAGE_MANIFEST.removeprefix("sha256:") or
-                oci.get("config", {}).get("digest") != IMAGE_CONFIG or
-                image.get("Id") != IMAGE_CONFIG or image.get("Architecture") != "arm64" or
-                image.get("RootFS", {}).get("Layers") != [row["digest"] for row in oci["layers"]]):
-            raise Refusal("local OCI manifest/config/layer identity drift")
+        verify_local_image(IMAGE_IDENTITY)
         name = f"jspark3-v16-rank{args.rank}"
         absent = subprocess.run(["docker", "container", "inspect", name],
                                 stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode != 0

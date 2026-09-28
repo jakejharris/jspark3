@@ -18,8 +18,6 @@ from pathlib import Path
 import sys
 
 from _atomic import (
-    IMAGE_CONFIG,
-    IMAGE_MANIFEST,
     Refusal,
     canonical,
     execute,
@@ -147,7 +145,14 @@ def _safe_bundle_file(root: Path, relative: str) -> Path:
     return path
 
 
-def verify_bundle(bundle: Path, build_record: Path) -> dict:
+def reference_build_image():
+    from _image_identity import reference_identity
+    identity = reference_identity()
+    return {"manifest": identity["manifest_digest"].removeprefix("sha256:"),
+            "config": identity["config_digest"].removeprefix("sha256:")}
+
+
+def verify_bundle(bundle: Path, build_record: Path, *, build_image: dict | None = None) -> dict:
     verify_sources()
     if bundle.is_symlink() or not bundle.is_dir():
         raise Refusal("cooperative-MoE bundle root is missing or symlinked")
@@ -157,7 +162,7 @@ def verify_bundle(bundle: Path, build_record: Path) -> dict:
         "qualification", "bundle",
     } or record.get("schema_version") != 1:
         raise Refusal("cooperative-MoE build record schema drift")
-    if record.get("image") != {"manifest": IMAGE_MANIFEST, "config": IMAGE_CONFIG}:
+    if record.get("image") != (build_image or reference_build_image()):
         raise Refusal("cooperative-MoE build image drift")
     if record.get("source_manifest_sha256") != SOURCE_MANIFEST_SHA256:
         raise Refusal("cooperative-MoE build source drift")

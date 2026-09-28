@@ -13,8 +13,11 @@ import sys
 import tempfile
 from typing import Callable, Iterator, Mapping
 
-IMAGE_MANIFEST = "a15b3e6056828219cabe19662fd239245e61fb2b45defe3a8e2712b75b925b3f"
-IMAGE_CONFIG = "de01da91a1eefc7b2dee9df78c2e1b7abca64fbb9e19862a7872cc5338b6ce86"
+from _image_identity import POLICY, selected_identity
+
+IDENTITY = selected_identity()
+IMAGE_MANIFEST = IDENTITY["manifest_digest"].removeprefix("sha256:")
+IMAGE_CONFIG = IDENTITY["config_digest"].removeprefix("sha256:")
 ABSENT = "ABSENT"
 
 
@@ -91,7 +94,7 @@ def load_contract(
         raise Refusal(f"invalid patch contract: {exc}") from exc
     if section != expected:
         raise Refusal(f"{transform}: contract content drift")
-    if whole.get("image") != {"manifest": IMAGE_MANIFEST, "config": IMAGE_CONFIG}:
+    if whole.get("image") != POLICY:
         raise Refusal("patch contract OCI identity drift")
     return whole, sha_file(path)
 

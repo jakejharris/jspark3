@@ -9,9 +9,9 @@
     "system": "NVIDIA DGX Spark"
   },
   "image": {
-    "config_digest": "sha256:de01da91a1eefc7b2dee9df78c2e1b7abca64fbb9e19862a7872cc5338b6ce86",
-    "manifest_digest": "sha256:a15b3e6056828219cabe19662fd239245e61fb2b45defe3a8e2712b75b925b3f",
-    "reference": "sha256:de01da91a1eefc7b2dee9df78c2e1b7abca64fbb9e19862a7872cc5338b6ce86"
+    "policy": "verified-local-build-v1",
+    "operator_receipt": "config/operator-image.json",
+    "historical_reference": "config/image-oci.json"
   },
   "runtime": {
     "observed_system_fingerprint": "vllm-0.1.dev20051+g487ecf187-tp3-ep-ded8abdb",

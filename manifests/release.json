@@ -4,7 +4,7 @@
   "license_clearance": "approved-per-file-source-posture",
   "publication_authorized": false,
   "qualification": "sanitized derivative requires fresh qualification; inherited measurements do not qualify these bytes",
-  "release_version": "v1.8.0",
+  "release_version": "v1.8.1",
   "repository": "https://github.com/jakejharris/jspark3",
   "schema_version": 1,
   "scope": "recipe-only",

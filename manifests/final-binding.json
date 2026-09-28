@@ -2,7 +2,7 @@
   "candidate_manifest_sha256": "dd8ef472ded8195420d8015a260e6d4fe08ff02f14bbd6d76b849645e6301877",
   "delivery_seal_sha256": "80a21a7f89526691470293cd508ba0c9673bb767f4dbb9843e29b3b7e5403d3f",
   "hardware_qualified": false,
-  "release_version": "v1.8.0",
+  "release_version": "v1.8.1",
   "runtime_settings": {
     "adaptive": "ema",
     "b5": "default",

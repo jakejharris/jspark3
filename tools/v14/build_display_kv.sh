@@ -13,7 +13,9 @@ mode=${2:---check}
 here=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
 dir=$here/recipe/overlays/v14/display_kv
 build_json=$dir/BUILD.json
-image=sha256:de01da91a1eefc7b2dee9df78c2e1b7abca64fbb9e19862a7872cc5338b6ce86
+identity_args=()
+if [[ -n ${JSPARK_IMAGE_RECEIPT:-} ]]; then identity_args=(--receipt "$JSPARK_IMAGE_RECEIPT"); fi
+image=$(python3 -B "$here/recipe/scripts/_image_identity.py" "${identity_args[@]}")
 sources=(display_kv.c probe_main.cu)
 outputs=(libglm53_display_kv.so display_kv_probe)
 remote=jspark3-v14-display-kv-build-$(date -u +%Y%m%dT%H%M%SZ)
@@ -58,11 +60,15 @@ record = {
 }
 if mode == "--write":
     build_json.write_text(json.dumps(record, indent=2, sort_keys=True) + "\n")
-elif json.loads(build_json.read_text()) != record:
-    sys.exit("REFUSE: build does not match BUILD.json")
+else:
+    expected = json.loads(build_json.read_text())
+    # Image metadata may differ under the verified operator policy. All build
+    # inputs, toolchain lines and output bytes must still match the reference.
+    if {k: v for k, v in expected.items() if k != "image"} != {k: v for k, v in record.items() if k != "image"}:
+        sys.exit("REFUSE: build does not match BUILD.json")
 for name in record["outputs"]:
     shutil.copyfile(scratch / name, src / name)
     (src / name).chmod(0o755)
-print("PASS " + json.dumps(record["outputs"], sort_keys=True))
+print("PASS " + json.dumps(record, sort_keys=True))
 PY
 ssh -o BatchMode=yes "$host" "rm -rf ~/$remote"

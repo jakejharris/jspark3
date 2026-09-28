@@ -1,8 +1,7 @@
 {
   "grade": "ENGINEERING-EVIDENCE",
   "image": {
-    "config": "de01da91a1eefc7b2dee9df78c2e1b7abca64fbb9e19862a7872cc5338b6ce86",
-    "manifest": "a15b3e6056828219cabe19662fd239245e61fb2b45defe3a8e2712b75b925b3f"
+    "policy": "verified-local-build-v1"
   },
   "oci_extraction_receipts": {
     "image_targets_sha256": "6f4cd075c4b35ed84fb4f6185c713033b5dbd14c5dc0a95c8e61a02c41041154",

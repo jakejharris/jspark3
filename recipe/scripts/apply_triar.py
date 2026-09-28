@@ -17,7 +17,7 @@ PREFIX = "vllm/distributed/device_communicators/"
 CUDA = PREFIX + "cuda_communicator.py"
 PYNCCL = PREFIX + "pynccl.py"
 MODULES = ("jspark3_triar_arithmetic.py", "jspark3_triar_kernel.py", "jspark3_triar_runtime.py", "jspark3_triar_dual.py")
-CONTRACT_SHA256 = "703820079200f547c6fa117560d73e0e5986d401f5a7a880dec7e091f24bec86"
+CONTRACT_SHA256 = "4081c2a5f52cc4e45cd88ccbc02641c3b84d0ed8bf5b3dc677e63ab2e955e184"
 FOOTER = b'''
 # [jspark3-triar] Installed only when JSPARK3_TRIAR=1 at boot.
 from vllm.distributed.device_communicators.jspark3_triar_runtime import install as _triar_install
