@@ -1,11 +1,11 @@
 {
   "admission_receipt_sha256": null,
-  "component_seal_sha256": null,
+  "component_seal_sha256": "42ea2a36ab5b9de05e7e8b1d690bd1fe7014968ec7381ac4a62516143deb05ec",
   "delivery_id": "v1.8.4-coop",
   "hardware_qualified": false,
   "historical_binding_sha256": "8dd4664cc11dc3c92ce8d2df42f0900b33d0069b24753dabba4af659d4378c9b",
   "native_sha256": "3212a3b0a308e2ec3673878212fcb0504a463c5f7df84eced5db7bb301cc3c07",
-  "policy_sha256": null,
+  "policy_sha256": "3623acda4ea998cb53dbeb24c7ac815240a393a31d2e56997df2ce5291bc316b",
   "release_version": "v1.8.4",
   "results_sha256": null,
   "runtime_settings": {
@@ -25,5 +25,5 @@
     "JSPARK3_V16_DENSE_FP8": "trunk",
     "JSPARK3_V16_PROFILE": "production-stock"
   },
-  "state": "prepared"
+  "state": "component-qualified"
 }

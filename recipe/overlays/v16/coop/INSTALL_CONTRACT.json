@@ -5,7 +5,7 @@
   "transforms": {
     "apply_coop_moe.py": {
       "sources": {
-        "SOURCE_MANIFEST.json": "38d93fdef5c10cece0d97e66fd402d9669598bf09c784af69db706f469cce9da",
+        "SOURCE_MANIFEST.json": "a6e370b612394384a645281386894250e0e3716fb4ceec39156ba01f79ca22ea",
         "source/runtime.py": "65660930bc9965ff7b7379afaa270e0f80f418276bad4c42c10dbdee7ac3d0eb"
       },
       "targets": [

@@ -3,10 +3,11 @@
   "candidate_manifest_sha256": "dd8ef472ded8195420d8015a260e6d4fe08ff02f14bbd6d76b849645e6301877",
   "composition_builder_sha256": "0050e13f12fe482a29e5cda0ee4b3ac53e9c4f95c823b3acc1063d2decf8ebcd",
   "delivery_candidate": {
-    "binding_sha256": "3db940e70ff681014b3f4ae41b3e475910bf58171fbb18144f04d08492e59456",
+    "binding_sha256": "3b0af25e80b7ca9f9f1d8c476021943f7fb869b5b217469bf72aa1deb310f223",
+    "qualification_build_sha256": "8f64afec460986f94cbabd4e578476a5439f849f74495734306bdbdc87b19168",
     "release_version": "v1.8.4",
-    "source_recipe_sha256": "3143fc6ed3e9efd27cbf7480658384f30b153bee32a287bc5ecf843236ce23be",
-    "state": "pending-component-and-boot-evidence"
+    "source_recipe_sha256": "81dff1ded6e3310fbca81a7167c9bdddf98d802579893588ecb9d9f0bfc1b083",
+    "state": "component-qualified"
   },
   "files": {
     ".gitattributes": {
@@ -58,8 +59,8 @@
       "changed": true,
       "input_sha256": "17ad9fc5f274886f3a6243287a3431d3dbc1d77b29f20fbb26270e203d61dd08",
       "origin": "release-package-render",
-      "public_sha256": "181a2687454d04dca80fa39b3f9f8fde070c4ed4e79f4947ab6185b9c0c96a53",
-      "revision": "v184-apc-control"
+      "public_sha256": "3c1a33479ebe7200aec672087c1c922c5bda3ba39556e8dc97f05ef012266bd3",
+      "revision": "v1.8.4-component-qualified"
     },
     "THIRD_PARTY_NOTICES.md": {
       "changed": true,
@@ -170,10 +171,11 @@
       "revision": "v184-shapleymcg-attribution"
     },
     "manifests/binaries.json": {
-      "changed": false,
+      "changed": true,
       "input_sha256": "d238dc084ea7cfa90a9ad38601bd3bc4e02cdd1415d278c67672c7a4f4fa4d1b",
       "origin": "generated",
-      "public_sha256": "d238dc084ea7cfa90a9ad38601bd3bc4e02cdd1415d278c67672c7a4f4fa4d1b"
+      "public_sha256": "e492860eb6ac6cd745dd834ad44355afc46c4be6e738cea122a1ce19a16de9e0",
+      "revision": "v1.8.4-component-qualified"
     },
     "manifests/composition.json": {
       "changed": false,
@@ -211,22 +213,22 @@
       "changed": true,
       "input_sha256": "bc72b806fb419ce47abc215e0fabee37695c194df843a37736b3060c984e3e53",
       "origin": "generated",
-      "public_sha256": "3db940e70ff681014b3f4ae41b3e475910bf58171fbb18144f04d08492e59456",
-      "revision": "v1.8.4-pass1"
+      "public_sha256": "3b0af25e80b7ca9f9f1d8c476021943f7fb869b5b217469bf72aa1deb310f223",
+      "revision": "v1.8.4-component-qualified"
     },
     "manifests/final-catalog.json": {
       "changed": true,
       "input_sha256": "1452e71188ca42470e4701e17e6c48739aad34ea9cabb11c2dd479a4de52f6c8",
       "origin": "generated",
-      "public_sha256": "7000a3dc4d188e00e4800bc4995022179fed0acadf3273e0e05a8b661ddd9321",
-      "revision": "v1.8.4-pass1"
+      "public_sha256": "6c63e27f6d1feb8a74b694466881f5d8d31a73fcf33c3388fa4f4254e240080e",
+      "revision": "v1.8.4-component-qualified"
     },
     "manifests/license-review.json": {
       "changed": true,
       "input_sha256": "f968bb8ad61c217d1c955e5a6209b35cebfae065e3f1ef6d3077ed6a07f25739",
       "origin": "release-package-render",
-      "public_sha256": "85240562002c247fb1afefeba6d66cde36373058e31f7921fd9ca431f341b9db",
-      "revision": "v184-apc-control"
+      "public_sha256": "9e46cd1c1a55ecbb0999938f9f2794b3c6a5fd87d294b2181b043cd9bf6fd896",
+      "revision": "v1.8.4-component-qualified"
     },
     "manifests/qualification.json": {
       "changed": false,
@@ -238,15 +240,15 @@
       "changed": true,
       "input_sha256": "749e7c674aab4461e3e1d9ee1b6c730fb02f99de572b36ee8a25cd6658121907",
       "origin": "generated",
-      "public_sha256": "d5f237ade61952873a77fc14b4158dcb8651c8b28eb8374a9353e63726c18c4c",
-      "revision": "v1.8.4-pass1"
+      "public_sha256": "8abcd9a85271ed6b3483661871f408f718bb7d1ce128afc12d998a96fa160aeb",
+      "revision": "v1.8.4-component-qualified"
     },
     "manifests/sbom.cdx.json": {
       "changed": true,
       "input_sha256": "3df598b5f7e73d1a4961e895e33bb9cfcc2bd0cc4a0cf736f7806c0a01de3cea",
       "origin": "release-package-render",
-      "public_sha256": "0b6dc4110f7ade6cdcc07f2c0881db3c64d7d998dd5ffdf4c72eb7b2d19469ac",
-      "revision": "v184-entry-seam"
+      "public_sha256": "1e271941a8cebe1479e7141812888fa094887e6c3f0ab9eefa76745d7cc2dbb6",
+      "revision": "v1.8.4-component-qualified"
     },
     "manifests/serving-binding.json": {
       "changed": false,
@@ -258,8 +260,8 @@
       "changed": true,
       "input_sha256": "fad5c997be3187d1ce467088572677544c60652fda500ea822e89392d7f8bca2",
       "origin": "v1.8.3-shared-output-r5",
-      "public_sha256": "ccbaa8f03c450d2488d7845d7ca5bf269ec068569d275ff7dd3b78e6c055d69b",
-      "revision": "v184-apc-control"
+      "public_sha256": "3e172029af7ba2dd480cf86ab8062b0475dfef190361dd4b4becaa31f1184066",
+      "revision": "v1.8.4-component-qualified"
     },
     "manifests/stock-profile.json": {
       "changed": false,
@@ -338,11 +340,11 @@
       "revision": "v1.8.4-pass1"
     },
     "recipe/config/coop-release.json": {
-      "changed": false,
+      "changed": true,
       "input_sha256": "43519e602b41e1df748ac488a6af7191cba9a12c7b258dbc34c218faae384f59",
       "origin": "v1.8.4-offline-implementation",
-      "public_sha256": "43519e602b41e1df748ac488a6af7191cba9a12c7b258dbc34c218faae384f59",
-      "revision": "v1.8.4-pass1"
+      "public_sha256": "67ca2157703e4747dfee74962b48f074da45d101bc2c686d083eccb21e602a88",
+      "revision": "v1.8.4-component-qualified"
     },
     "recipe/config/coop-sanitizer.json": {
       "changed": false,
@@ -645,20 +647,36 @@
       "changed": true,
       "input_sha256": "29b93136a35a3cb6f7787d1216713a484febea08b69ceeb5bb72ca3f9603ae02",
       "origin": "sealed-source",
-      "public_sha256": "b8e028fd0fb9ad783614d6902ec8acb0174775d51e0572b8a4b62bb44fd5982b"
+      "public_sha256": "8ee953b627af290e4f4ad001b4d9b5e5e06b1d56dd427a389259bd0dd648c32e",
+      "revision": "v1.8.4-component-qualified"
     },
     "recipe/overlays/v16/coop/INSTALL_CONTRACT.json": {
       "changed": true,
       "input_sha256": "a228af84127b48c282d270ff5867cea3de943e6f3db949ec4a54f76d69834725",
       "origin": "sealed-source",
-      "public_sha256": "59656a2727bd2cab97a01518171ae8e73de7bb88e0998a95a35fb4ce5b88104f",
-      "revision": "v1.8.1-operator-image"
+      "public_sha256": "3b77e5d72a6eea2b58e2862b0fe5b814a7970f74f40e7579b6730008a1d14359",
+      "revision": "v1.8.4-component-qualified"
+    },
+    "recipe/overlays/v16/coop/QUALIFICATION.json": {
+      "changed": false,
+      "input_sha256": "b61da17c39b78f36efcd059251b32c88d2aa5dd2231dd03fbc4e50c8a1d02f92",
+      "origin": "reviewed-component-seal",
+      "public_sha256": "b61da17c39b78f36efcd059251b32c88d2aa5dd2231dd03fbc4e50c8a1d02f92",
+      "revision": "v1.8.4-component-qualified"
+    },
+    "recipe/overlays/v16/coop/QUALIFICATION_SOURCE_MANIFEST.json": {
+      "changed": false,
+      "input_sha256": "38d93fdef5c10cece0d97e66fd402d9669598bf09c784af69db706f469cce9da",
+      "origin": "reviewed-component-seal",
+      "public_sha256": "38d93fdef5c10cece0d97e66fd402d9669598bf09c784af69db706f469cce9da",
+      "revision": "v1.8.4-component-qualified"
     },
     "recipe/overlays/v16/coop/SOURCE_MANIFEST.json": {
       "changed": true,
       "input_sha256": "02953c0ff60ffff71d27aebaf18c3cf14d3f01679be8ac63e83ab0c80c114b41",
       "origin": "sealed-source",
-      "public_sha256": "38d93fdef5c10cece0d97e66fd402d9669598bf09c784af69db706f469cce9da"
+      "public_sha256": "a6e370b612394384a645281386894250e0e3716fb4ceec39156ba01f79ca22ea",
+      "revision": "v1.8.4-component-qualified"
     },
     "recipe/overlays/v16/coop/build_repro.sh": {
       "changed": true,
@@ -692,10 +710,11 @@
       "public_sha256": "0e2c0675077d99e9181d2a8dc276f22db2e7fe1c8477321e614c1aa4aa589d8f"
     },
     "recipe/overlays/v16/coop/bundle/dispatch_policy.json": {
-      "changed": false,
+      "changed": true,
       "input_sha256": "5a914760a9fc80c8b623b4f8c0f624e5cb00a82fe4bcf04e68f786c59d929085",
       "origin": "sealed-source",
-      "public_sha256": "5a914760a9fc80c8b623b4f8c0f624e5cb00a82fe4bcf04e68f786c59d929085"
+      "public_sha256": "3623acda4ea998cb53dbeb24c7ac815240a393a31d2e56997df2ce5291bc316b",
+      "revision": "v1.8.4-component-qualified"
     },
     "recipe/overlays/v16/coop/bundle/headers/compat.cuh": {
       "changed": false,
@@ -767,7 +786,8 @@
       "changed": true,
       "input_sha256": "64dd9057b3e18e9b832f113d23003e39183a6bab6ec96940c3d941039188205d",
       "origin": "sealed-source",
-      "public_sha256": "519c7f28ed629e43b9d595b4b1dc433365e2637381e78696d50a7f962be9209d"
+      "public_sha256": "e8d5ee362c7d6f391d7e36a82cc1b664a9e326b6c0a357ab31cffdd4183adcb1",
+      "revision": "v1.8.4-component-qualified"
     },
     "recipe/overlays/v16/coop/bundle/runtime.py": {
       "changed": false,
@@ -806,10 +826,11 @@
       "public_sha256": "62903607abe42a9d662ac101af91823dcd20f9935b6097a6708602683a5ccec8"
     },
     "recipe/overlays/v16/coop/bundle/toolchain.txt": {
-      "changed": false,
+      "changed": true,
       "input_sha256": "09f5ba5ca19ef6d9e064667fe5059810cc1feb1e05b71b38d0d5c05e58076ce2",
       "origin": "sealed-source",
-      "public_sha256": "09f5ba5ca19ef6d9e064667fe5059810cc1feb1e05b71b38d0d5c05e58076ce2"
+      "public_sha256": "1815f9aaad395bd45a02937234fe15afd2f808c0ea2afcc6417c410580cd6e28",
+      "revision": "v1.8.4-component-qualified"
     },
     "recipe/overlays/v16/coop/source/LICENSE.MIT": {
       "changed": false,
@@ -836,10 +857,11 @@
       "public_sha256": "bc7426013e1ae27031596cd6e150df1184ee65fe4d6ce20dc3284555912fdac5"
     },
     "recipe/overlays/v16/coop/source/dispatch_policy.json": {
-      "changed": false,
+      "changed": true,
       "input_sha256": "2116537249a73a6770ef7a0e83a2c222a069f154d25167b2f1131d5c75c60c47",
       "origin": "sealed-source",
-      "public_sha256": "2116537249a73a6770ef7a0e83a2c222a069f154d25167b2f1131d5c75c60c47"
+      "public_sha256": "3623acda4ea998cb53dbeb24c7ac815240a393a31d2e56997df2ce5291bc316b",
+      "revision": "v1.8.4-component-qualified"
     },
     "recipe/overlays/v16/coop/source/manifest.py": {
       "changed": false,
@@ -1145,8 +1167,8 @@
       "changed": true,
       "input_sha256": "39d1917cf59f113e3b9af31e9b1037d59c81da2c466d8b84d71360a9c7365b5b",
       "origin": "sealed-source",
-      "public_sha256": "09c1741d2dc93c5d28eb7303cc21a53bb5210ac94fc545c3665068cc59db17aa",
-      "revision": "v1.8.4-on-v1.8.3"
+      "public_sha256": "0d406565f5112824b69101d955055e682040565bd6cfd5b45087fce5fe800a13",
+      "revision": "v1.8.4-component-qualified"
     },
     "recipe/scripts/apply_dense_fp8.py": {
       "changed": true,

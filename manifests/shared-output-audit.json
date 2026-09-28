@@ -6086,7 +6086,7 @@
     },
     "recipe/scripts/apply_coop_moe.py": {
       "disposition": "Runtime install receipt and identity line contain verified source/native/policy/component hashes and fixed states. Schema-2 seal and legacy record pins enforced; path/parse exceptions flow through private diagnostic boundary. Runtime transform output remains private container channel.",
-      "sha256": "09c1741d2dc93c5d28eb7303cc21a53bb5210ac94fc545c3665068cc59db17aa",
+      "sha256": "0d406565f5112824b69101d955055e682040565bd6cfd5b45087fce5fe800a13",
       "sites": [
         {
           "function": "_safe_bundle_file",

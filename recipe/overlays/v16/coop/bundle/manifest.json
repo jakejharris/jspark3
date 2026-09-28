@@ -21,8 +21,8 @@
     "LICENSE.exllamav3": "27a32b6263fcd96c79d3beeecf221c4366780bdf15ad51986f48650bd7369bff",
     "LICENSE.upstream-AGPL-3.0": "8486a10c4393cee1c25392769ddd3b2d6c242d6ec7928e1414efff7dfb2f07ef",
     "PROVENANCE.json": "0e2c0675077d99e9181d2a8dc276f22db2e7fe1c8477321e614c1aa4aa589d8f",
-    "cooperative_moe.so": "87706d4d25cc810e3039855a56a673317d20c7a0c6eb69cb33cd98df2f4e2470",
-    "dispatch_policy.json": "5a914760a9fc80c8b623b4f8c0f624e5cb00a82fe4bcf04e68f786c59d929085",
+    "cooperative_moe.so": "3212a3b0a308e2ec3673878212fcb0504a463c5f7df84eced5db7bb301cc3c07",
+    "dispatch_policy.json": "3623acda4ea998cb53dbeb24c7ac815240a393a31d2e56997df2ce5291bc316b",
     "headers/compat.cuh": "dd6038fa6eb8b28df56b184e358e5633421af76eeb40bad4abc522ce6ba54f57",
     "headers/ptx.cuh": "8ceacb1b321af5877a9a3d651e038fb1f44b543c3011e2f814f448830efe27ee",
     "headers/quant/codebook.cuh": "0e3c63b323f8d3cc15c6a8f2e2b3816efafd71e149a99997b30b2f806375138a",
@@ -40,7 +40,7 @@
     "source/native/cooperative_moe_kernel.cuh": "fdd8feb8f0641ef7c8392e78a7eb2d18cf1b3ea68b89cf0e114d4cd6b692132e",
     "source/native/dispatch.cu": "05910a28b3e2613fabb7a6a284a1c89fa8bd3388c1adffe778f4d4b8e4832808",
     "source/native/exl3_moe_coop.cuh": "62903607abe42a9d662ac101af91823dcd20f9935b6097a6708602683a5ccec8",
-    "toolchain.txt": "09f5ba5ca19ef6d9e064667fe5059810cc1feb1e05b71b38d0d5c05e58076ce2"
+    "toolchain.txt": "1815f9aaad395bd45a02937234fe15afd2f808c0ea2afcc6417c410580cd6e28"
   },
   "gpu_validation": "pending; build success is not correctness or performance proof",
   "schema": 1
