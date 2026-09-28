@@ -334,14 +334,17 @@ def ssh_argv(values: dict[str, str], rank: int, remote_argv: list[str]) -> list[
 # -S preserves), so skipping site hooks provably changes nothing but the
 # noise; the strict parsers stay byte-exact with no banner stripping.
 JSON_PYTHON = ("python3", "-S")
+REMOTE_STDERR_LIMIT = 16 * 1024  # Characters retained in failure receipts.
 
 
 def remote(values: dict[str, str], rank: int, argv: list[str], *, check: bool = True) -> subprocess.CompletedProcess[str]:
     process = subprocess.run(ssh_argv(values, rank, argv), text=True,
                              stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False)
     if check and process.returncode:
-        detail = process.stderr.strip().splitlines()[-1:] or ["no detail"]
-        raise Refusal(f"rank{rank} remote command failed: {detail[0]}")
+        detail = process.stderr.strip() or "no detail"
+        if len(detail) > REMOTE_STDERR_LIMIT:
+            detail = "[stderr truncated; tail follows]\n" + detail[-REMOTE_STDERR_LIMIT:]
+        raise Refusal(f"rank{rank} remote command failed (exit {process.returncode}):\n{detail}")
     return process
 
 

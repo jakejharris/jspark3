@@ -1,0 +1,111 @@
+--- a/9AM-COMMANDS.sh
++++ b/9AM-COMMANDS.sh
+@@ -7,4 +7,5 @@
+ FROZEN_PACKAGE="$PACKAGE_ROOT/variants/$COMPARISON_RULE"
+ RELEASE_CHECKOUT="$PACKAGE_ROOT/release-git-$COMPARISON_RULE"
++export HF_HUB_DISABLE_XET="${HF_HUB_DISABLE_XET:-1}"
+
+ python3 -B "$PACKAGE_ROOT/tools/publish_checks.py" "$FROZEN_PACKAGE" \
+@@ -19,9 +20,11 @@
+ git -C "$RELEASE_CHECKOUT" push --atomic --dry-run origin \
+   "$RELEASE_COMMIT:refs/heads/release/$RELEASE_TAG" "refs/tags/$RELEASE_TAG"
+-git -C "$RELEASE_CHECKOUT" push --atomic origin \
+-  "$RELEASE_COMMIT:refs/heads/release/$RELEASE_TAG" "refs/tags/$RELEASE_TAG"
+
+ # One compare-and-swap HF commit containing only the exact allowlisted files.
+ python3 -B "$PACKAGE_ROOT/tools/hf_upload.py" "$FROZEN_PACKAGE" --execute
++
++# Publish refs only after HF succeeds. An HF failure leaves no release tag.
++git -C "$RELEASE_CHECKOUT" push --atomic origin \
++  "$RELEASE_COMMIT:refs/heads/release/$RELEASE_TAG" "refs/tags/$RELEASE_TAG"
+
+ # The GitHub release is the site handoff trigger. Attach the exact checked assets.
+--- a/tools/comparison_variants.py
++++ b/tools/comparison_variants.py
+@@ -29,9 +29,9 @@
+         check(name+' selected comparison',expected in text and other not in text)
+         check(name+' literal c4','86.44 tok/s versus the author-reported 88.4 tok/s' in text)
+-        check(name+' exact approved c4 headline','Up to 141.7 tok/s code and 90.7 tok/s prose decode at 4 streams on three DGX Sparks, stock weights.' in text)
++        check(name+' exact approved c4 headline','Up to 141.7 tok/s code and 90.7 tok/s prose decode at 4 streams on three DGX Sparks, unedited EXL3-quantized GLM-5.3 Flash weights.' in text)
+         check(name+' best-of-two label',BEST_OF_TWO in text)
+         check_headline_copy(text,(out/'github/release/results.json').read_bytes())
+         check(name+' both frozen ranges in same document','| code | 4 | 136.9 to 141.7 |' in text and '| prose | 4 | 83.3 to 90.7 |' in text)
+-        check(name+' protected stock/restart wording','Stock weights (`ABLIT=0`) and `production-stock` are the defaults. Choose stock or edited behavior before launch. Changing modes requires a service restart and recomputes conversation prefixes.' in text)
++        check(name+' protected stock/restart wording',all(phrase in text for phrase in ('EXL3 quantization, unedited (`ABLIT=0`), using `production-stock`', 'Edited weights (`ABLIT=1`) are an explicit opt-in', 'Changing modes requires a service restart and recomputes conversation prefixes.', '`JSPARK3_V16_COOP=1`', '`JSPARK3_V16_COOP=0`')))
+     check('exact frozen results copies',all(p.sha(out/name)==p.FROZEN_RESULTS_SHA256 for name in (
+         'github/release/results.json','github/release/results-v1.8.0.json',
+--- a/tools/hf_upload.py
++++ b/tools/hf_upload.py
+@@ -3,4 +3,8 @@
+ import argparse
+ import json
++import os
++
++# Set before the SDK reads its environment at import time.
++os.environ.setdefault("HF_HUB_DISABLE_XET", "1")
+ from pathlib import Path
+ from huggingface_hub import HfApi, CommitOperationAdd
+--- a/tools/package.py
++++ b/tools/package.py
+@@ -22,5 +22,5 @@
+ sys.path.insert(0, str(EXPORT/'templates/tools'))
+ from validate_release import leaks
+-from render import render, public_prose, check_headline_copy
++from render import render, public_prose, check_headline_copy, check_hf_license
+ import serving
+
+@@ -343,5 +343,5 @@
+             need(not re.search(rb'within\s+2\s*(?:%|percent)',p.read_bytes(),re.I), 'unsupported four-stream proximity claim')
+             if p.suffix=='.md': need('{{' not in p.read_text() and 'CONFIRM' not in p.read_text(),'unfilled public draft')
+-    need((out/'hf/README.md').read_text().startswith('---\nlicense: apache-2.0\n'),'HF license')
++    check_hf_license((out/'hf/README.md').read_text())
+     need(all(name=='README.md' or name.startswith('jspark3/'+(m['tag'] or 'PREFREEZE')+'/') for name in m['hf_files']), 'HF upload scope')
+     run([sys.executable,'-B',root/'tools/validate_release.py',root]+(['--require-final'] if selected else []))
+--- a/tools/render.py
++++ b/tools/render.py
+@@ -3,4 +3,13 @@
+ import re
+ from decimal import Decimal, ROUND_HALF_EVEN
++
++HF_LICENSE_HEADER = ('---\nlicense: other\nlicense_name: shapleymcg-license-1.0\n'
++                     'license_link: LICENSE\n')
++
++
++def check_hf_license(card):
++    if not card.startswith(HF_LICENSE_HEADER):
++        raise ValueError('HF license must match the model LICENSE: ShapleyMcg v1.0')
++
+
+ BEST_OF_TWO = 'Best of two runs. Full ranges in the results below.'
+@@ -23,5 +32,5 @@
+         pieces.append(hi+' tok/s '+workload)
+         ranges += f'| {workload} | 4 | {lo} to {hi} |\n'
+-    return 'Up to '+' and '.join(pieces)+' decode at 4 streams on three DGX Sparks, stock weights.', ranges
++    return 'Up to '+' and '.join(pieces)+' decode at 4 streams on three DGX Sparks, unedited EXL3-quantized GLM-5.3 Flash weights.', ranges
+
+
+@@ -128,5 +137,7 @@
+         if s.get('run_note'): tables += '\n'+public_prose(s['run_note'])+'\n'
+     tables += '\nAll other prompt classes, repetitions, author-protocol rows and evidence hashes remain in '+links+'.\n'
+-    posture = """Stock weights (`ABLIT=0`) and `production-stock` are the defaults. Choose stock or edited behavior before launch. Changing modes requires a service restart and recomputes conversation prefixes. Edited weights remain an explicit opt-in supplied separately; no edited checkpoint is redistributed.
++    posture = """The default is GLM-5.3 Flash with EXL3 quantization, unedited (`ABLIT=0`), using `production-stock`. Here, "stock" means the quantized weights have no donor edits; it does not mean the original full-precision weights. Edited weights (`ABLIT=1`) are an explicit opt-in supplied separately; no edited checkpoint is redistributed. Choose the mode before launch. Changing modes requires a service restart and recomputes conversation prefixes.
++
++The published v1.8.0 headline and ranges were measured with cooperative MoE on (`JSPARK3_V16_COOP=1`). Today's operator-built runtime defaults to cooperative MoE off (`JSPARK3_V16_COOP=0`) until a qualified coop build ships. These historical numbers do not measure or qualify that default configuration.
+
+ The historical measured stock cohort used a validation profile for testing. It does not qualify production admission. This sanitized source distribution retains `hardware_qualified=false`; fresh qualification of the exact shipped configuration is required before production mode-0 admission. Measurements describe the separately identified serving configuration, not a hardware test of this source export.
+@@ -153,7 +164,5 @@
+     notes += f'\nRead [installation]({url}/blob/{ref}/docs/INSTALL.md), [operations]({url}/blob/{ref}/docs/OPERATIONS.md), [limitations]({url}/blob/{ref}/docs/LIMITATIONS.md), and [licensing]({url}/blob/{ref}/docs/LICENSING.md). Source archive, SBOM and checksums accompany this release.\n'
+     readme = f'# JSpark3 {tag}\n\n{headline}{headline_label}\n\n{comparison}{headline_ranges}\nA serving recipe for GLM-5.3 Flash on three DGX Sparks.\n\n'+posture+f'\nRead [installation](docs/INSTALL.md), [operations](docs/OPERATIONS.md), [benchmarks](docs/BENCHMARKS.md), [release notes](release/RELEASE-NOTES.md) and [licensing](docs/LICENSING.md). Verify the source with `python3 -B tools/validate_release.py .`.\n'
+-    card = f'''---
+-license: apache-2.0
+-base_model: zai-org/GLM-5.3-Flash
++    card = f'''{HF_LICENSE_HEADER}base_model: zai-org/GLM-5.3-Flash
+ base_model_relation: quantized
+ library_name: transformers
+@@ -177,5 +186,5 @@
+ {posture}
+
+-The card's Apache-2.0 metadata follows the publication policy. It is not a relicensing of the model files or the assembled service. Existing model license and attribution documents continue to apply.
++The card's license metadata names the ShapleyMcg License v1.0 in LICENSE, which covers the model files. The component licenses above describe the recipe and service code. Existing model license and attribution documents continue to apply.
+
+ See {links}, [the recipe]({url}/tree/{ref}/recipe), and [installation]({url}/blob/{ref}/docs/INSTALL.md).

@@ -32,8 +32,8 @@
       "changed": true,
       "input_sha256": "7ce72ca2930b758a0b6ebb5d85ee0487483d23112f70a379ff1da43613f6c30e",
       "origin": "release-package-render",
-      "public_sha256": "1d7e5de17248084e8f3dd417a4fd2f8f686972dfbaee1edc097b42256d2a5d88",
-      "revision": "v1.8.1-operator-native"
+      "public_sha256": "e5fbf99a2578cf1693c7a3867fe181b283d926165fd98cf10f84b13d000218c7",
+      "revision": "v1.8.3-docs-tooling"
     },
     "REQUIRED_ATTRIBUTION.md": {
       "changed": false,
@@ -45,8 +45,8 @@
       "changed": true,
       "input_sha256": "17ad9fc5f274886f3a6243287a3431d3dbc1d77b29f20fbb26270e203d61dd08",
       "origin": "release-package-render",
-      "public_sha256": "27458c55eb908e8f316f6d01613cef30ea4f2f9183edd5d28eaf348df977b5bb",
-      "revision": "v1.8.1-operator-native"
+      "public_sha256": "e7e1c28c041101cf98665096d4345bdde904d2f44c144b23200dc9c5bfa7aa32",
+      "revision": "v1.8.3-docs-tooling"
     },
     "THIRD_PARTY_NOTICES.md": {
       "changed": true,
@@ -83,8 +83,8 @@
       "changed": true,
       "input_sha256": "0a0d871fca9b3369747f1c0117074f4b5b164eca467c727efd88f4f53038bb63",
       "origin": "release-package-render",
-      "public_sha256": "cca92f156123bfa0306cb733b7ea0eff38123adb92f34440ff9f6af606eeeebc",
-      "revision": "v1.8.1-operator-native"
+      "public_sha256": "e599dce9d6194f1e59bdc0a17f0da22d449233350876e2c2a2b785a13a61a97f",
+      "revision": "v1.8.3-docs-tooling"
     },
     "docs/LICENSING.md": {
       "changed": false,
@@ -103,6 +103,13 @@
       "input_sha256": "468123e9465240a884465ebaa14641cfedeac27d36f8b494ab6c5cb77523611c",
       "origin": "release-package-render",
       "public_sha256": "b3bf10a49879871947d53ad59ac6b08a6a751854ff5602034017bf72f5274b60"
+    },
+    "docs/RELEASE_TOOLING.md": {
+      "changed": true,
+      "input_sha256": "92f7e965ea70130a8aa5296ed8724aecb2a66948e1aae2c69fb11bd578ca2c58",
+      "origin": "v1.8.3-docs-tooling",
+      "public_sha256": "d05d7ecb09a0ddb99b7b2c9cdf3eef22c08e1b2a283938d98ab428a12896bb28",
+      "revision": "v1.8.3-docs-tooling"
     },
     "docs/REPRODUCIBILITY.md": {
       "changed": true,
@@ -157,8 +164,8 @@
       "changed": true,
       "input_sha256": "f968bb8ad61c217d1c955e5a6209b35cebfae065e3f1ef6d3077ed6a07f25739",
       "origin": "release-package-render",
-      "public_sha256": "92e66b226c9c735abac57d6204fdc4fe70e2e4cacd390bbd2dcc5e01681ed22b",
-      "revision": "v1.8.1-operator-native"
+      "public_sha256": "cafd8f4bec4ba1a78fefa2a8fea2e3ef648f332a6dbd2fee8e4f6a20a206b4fd",
+      "revision": "v1.8.3-docs-tooling"
     },
     "manifests/qualification.json": {
       "changed": false,
@@ -177,8 +184,8 @@
       "changed": true,
       "input_sha256": "3df598b5f7e73d1a4961e895e33bb9cfcc2bd0cc4a0cf736f7806c0a01de3cea",
       "origin": "release-package-render",
-      "public_sha256": "4dc1be8981af5e25ed23e49623a5216dad72f8613d6bdebc05aa9997b32c65bc",
-      "revision": "v1.8.1-operator-native"
+      "public_sha256": "a7394666543d08384cd16b6253212a69c0b97c2bc174dd7642cfefbdef0b4b7f",
+      "revision": "v1.8.3-docs-tooling"
     },
     "manifests/serving-binding.json": {
       "changed": false,
@@ -963,8 +970,8 @@
       "changed": true,
       "input_sha256": "4e3de11e9e50b091c274eae480c4080c0f3f452f618eae4d1e5e480826a309b8",
       "origin": "sealed-source",
-      "public_sha256": "b15670ae2570a51b422a197f71974a9177672d0680e9ce108e500b7c458b8a50",
-      "revision": "v1.8.1-operator-image"
+      "public_sha256": "e106d5fad61cacc89f3923bccad23228a0760bd75c4179618ab3dfe438151b0a",
+      "revision": "v1.8.3-docs-tooling"
     },
     "recipe/scripts/_image_identity.py": {
       "changed": true,
@@ -1335,6 +1342,20 @@
       "public_sha256": "e6ff439df0e1aab1affc3c4d378b131d4a07b893f0b419df9b9027f222bd7e34",
       "revision": "v1.8.1-operator-native"
     },
+    "tools/release_packaging.patch": {
+      "changed": true,
+      "input_sha256": "9195587f5e5760fefd45781b2472f6dff44d0d0dfdf5d55f6643444120bec234",
+      "origin": "v1.8.3-docs-tooling",
+      "public_sha256": "272920710f3a6c23df69b3c925bfd88366af01e0793e75d960641eb369b0cdd4",
+      "revision": "v1.8.3-docs-tooling"
+    },
+    "tools/test_fleetctl_errors.py": {
+      "changed": false,
+      "input_sha256": "e3da651d6e69910ba7cad68e30d6a54fe376052b17dbe13796a18e2e47f299f2",
+      "origin": "v1.8.3-docs-tooling",
+      "public_sha256": "e3da651d6e69910ba7cad68e30d6a54fe376052b17dbe13796a18e2e47f299f2",
+      "revision": "v1.8.3-docs-tooling"
+    },
     "tools/test_native_build.py": {
       "changed": true,
       "input_sha256": "3c2a88afa4a706483170c9b2e2aa67537b135c167ef2742a58a9b71bef8d7b3b",
@@ -1348,6 +1369,13 @@
       "origin": "v1.8.1-operator-image",
       "public_sha256": "93b9e59cb887654e9b19e02442b8d6f8cc5f075a3ce8e7bd0d1914d57b265f3e",
       "revision": "v1.8.1-operator-image"
+    },
+    "tools/test_release_tooling.py": {
+      "changed": true,
+      "input_sha256": "d6aeb9dcbbfd6ec8d2894fb8c174942f80448d885aec2c672c026ca9b520b503",
+      "origin": "v1.8.3-docs-tooling",
+      "public_sha256": "598e385aa610a4965ca1b6d3736db84f1bf9e7be59d3740808d2c0582d41ec75",
+      "revision": "v1.8.3-docs-tooling"
     },
     "tools/v14/build_display_kv.sh": {
       "changed": true,

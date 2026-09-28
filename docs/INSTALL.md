@@ -1,5 +1,10 @@
 # Installation
 
+This recipe serves **GLM-5.3 Flash with EXL3 quantization**. The default
+`ABLIT=0` / `production-stock` mode uses unedited quantized weights. "Stock"
+means no donor edits, not the original full-precision weights. Edited weights
+require the explicit `ABLIT=1` opt-in described below.
+
 Validate the source export before creating a separate private runtime copy.
 The export has no native binaries, model weights, container layers or donor
 weights. Hardware admission remains unqualified; see the local image procedure below.
@@ -55,7 +60,7 @@ For display-memory backing, the headless host configuration requires
 `nvidia_drm modeset=1 fbdev=0`. Record and verify that host configuration and
 the selected DRM device at preflight.
 
-Stock mode uses `ABLIT=0`, `JSPARK3_V16_PROFILE=production-stock`, swap disabled,
+Unedited EXL3 stock mode uses `ABLIT=0`, `JSPARK3_V16_PROFILE=production-stock`, swap disabled,
 and all five donor keys absent, including inherited environment keys:
 `ABLIT_METHOD`, `ABLIT_LAYERS`, `ABLIT_INCLUDE_MTP`, `JSPARK_ABLIT_ROOT`, and
 `JSPARK_ABLIT_MANIFEST_SHA256`. Each

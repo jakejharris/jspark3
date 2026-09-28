@@ -1,6 +1,6 @@
 # JSpark3 v1.8.1
 
-Up to 141.7 tok/s code and 90.7 tok/s prose decode at 4 streams on three DGX Sparks, stock weights.
+Up to 141.7 tok/s code and 90.7 tok/s prose decode at 4 streams on three DGX Sparks, unedited EXL3-quantized GLM-5.3 Flash weights.
 
 Best of two runs. Full ranges in the results below.
 
@@ -27,7 +27,9 @@ Four-stream decode, 512 forced tokens, concurrent streams. Full two-run within-s
 
 A serving recipe for GLM-5.3 Flash on three DGX Sparks.
 
-Stock weights (`ABLIT=0`) and `production-stock` are the defaults. Choose stock or edited behavior before launch. Changing modes requires a service restart and recomputes conversation prefixes. Edited weights remain an explicit opt-in supplied separately; no edited checkpoint is redistributed.
+The default is GLM-5.3 Flash with EXL3 quantization, unedited (`ABLIT=0`), using `production-stock`. Here, "stock" means the quantized weights have no donor edits; it does not mean the original full-precision weights. Edited weights (`ABLIT=1`) are an explicit opt-in supplied separately; no edited checkpoint is redistributed. Choose the mode before launch. Changing modes requires a service restart and recomputes conversation prefixes.
+
+The published v1.8.0 headline and ranges above were measured with cooperative MoE **on** (`JSPARK3_V16_COOP=1`). Today's operator-built runtime defaults to cooperative MoE **off** (`JSPARK3_V16_COOP=0`) until a qualified coop build ships. These historical numbers do not measure or qualify that default configuration.
 
 The historical measured stock cohort used a validation profile for testing. It does not qualify production admission. This sanitized source distribution retains `hardware_qualified=false`; fresh qualification of the exact shipped configuration is required before production mode-0 admission. Measurements describe the separately identified serving configuration, not a hardware test of this source export.
 

@@ -45,3 +45,8 @@ SPDX-License-Identifier = "Apache-2.0"
 path = ["docs/COOP_REPRODUCIBILITY.md"]
 precedence = "aggregate"
 SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ["tools/release_packaging.patch", "docs/RELEASE_TOOLING.md"]
+precedence = "aggregate"
+SPDX-License-Identifier = "Apache-2.0"
