@@ -44,10 +44,10 @@ mount their separate host directories at `/w`. The runs deliberately start after
 0, 37 and 74 extra processes to challenge the previous PID assumption. No serving
 container is started, stopped or edited. The experiment retains failed builds.
 
-Ctrl-C (SIGINT) or SIGTERM cancels the experiment and force-removes its current
+Ctrl-C (SIGINT), SIGTERM or a session hangup (SIGHUP) cancels the experiment and force-removes its current
 container by the exact ID retained in that run's `container.cid`. Creation
 finishes before cancellation cleanup, without starting the compile; repeated
-signals cannot interrupt cleanup. The runner exits 130 or 143 after removal.
+signals cannot interrupt cleanup. The runner exits 130, 143 or 129, respectively, after removal.
 The bind-mounted build directory, partial `console.log` and `cleanup.log` survive.
 Completed and failed runs also remove their containers before the next run starts.
 

@@ -82,7 +82,7 @@ class CancellationTests(unittest.TestCase):
             self.assertLess(time.monotonic(), deadline, 'runner did not reach the test barrier')
             time.sleep(0.02)
 
-    def exercise(self, phase, signum=None, group=False):
+    def exercise(self, phase, signum=None, group=False, second_signal=signal.SIGTERM):
         if EVIDENCE:
             work = Path(tempfile.mkdtemp(prefix=phase + '-', dir=EVIDENCE))
         else:
@@ -116,7 +116,7 @@ class CancellationTests(unittest.TestCase):
                         child.send_signal(signum)
                 if phase == 'repeat':
                     self.wait_for((work / 'cleanup-ready').exists, child)
-                    child.send_signal(signal.SIGTERM)
+                    child.send_signal(second_signal)
                 if phase in ('create', 'cleanup', 'repeat'):
                     (work / 'release').touch()
                 code = child.wait(timeout=30)
@@ -136,6 +136,7 @@ class CancellationTests(unittest.TestCase):
                     self.assertFalse((stage / 'evidence.txt').exists(), 'cancelled create started compiling')
                 self.assertEqual(len(ids), 3 if phase == 'failure' else 1, 'cancellation started another run')
                 proof = {'phase': phase, 'signal': signum, 'process_group': group, 'exit_code': code,
+                         'second_signal': second_signal if phase == 'repeat' else None,
                          'running_before_signal': running,
                          'container_ids': ids, 'all_removed': True, 'peer_running': True,
                          'bind_evidence_retained': True,
@@ -156,6 +157,18 @@ class CancellationTests(unittest.TestCase):
 
     def test_terminate_runner_removes_running_container(self):
         self.exercise('running-term', signal.SIGTERM)
+
+    def test_terminal_hangup_removes_running_container(self):
+        self.exercise('running-hup', signal.SIGHUP, group=True)
+
+    def test_hangup_during_create_never_starts_container(self):
+        self.exercise('create', signal.SIGHUP, group=True)
+
+    def test_hangup_during_cleanup_finishes_removal(self):
+        self.exercise('cleanup', signal.SIGHUP, group=True)
+
+    def test_repeated_hangup_does_not_interrupt_cleanup(self):
+        self.exercise('repeat', signal.SIGHUP, group=True, second_signal=signal.SIGHUP)
 
     def test_cancel_during_create_never_starts_container(self):
         self.exercise('create', signal.SIGTERM, group=True)

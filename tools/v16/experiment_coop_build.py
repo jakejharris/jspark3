@@ -53,10 +53,10 @@ def run_container(command, stage, log):
             interruptible = False  # Further signals must not interrupt cleanup.
             raise Cancelled(pending)
 
-    previous = {sig: signal.signal(sig, cancel) for sig in (signal.SIGINT, signal.SIGTERM)}
+    previous = {sig: signal.signal(sig, cancel) for sig in (signal.SIGINT, signal.SIGTERM, signal.SIGHUP)}
     try:
         # Defer cancellation until create finishes; it cannot launch a compile.
-        # A separate session keeps terminal Ctrl-C from killing the Docker client
+        # A separate session keeps terminal signals from killing the Docker client
         # before it writes the ID. No pending create can race the final removal.
         name = 'jspark3-coop-' + uuid.uuid4().hex
         create = command[:2] + ['--name', name, '--cidfile', str(cidfile)] + command[2:]

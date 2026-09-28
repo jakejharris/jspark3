@@ -77,8 +77,8 @@
       "changed": true,
       "input_sha256": "803c4a240052f86f21329234b924a53133ca81237e82b41bc45a64cdda807b8c",
       "origin": "v1.8.1-operator-native",
-      "public_sha256": "53761f257c3cf516eb85e1c9eeebd0ad728689d5a283f1e978bb55f86b3ae79d",
-      "revision": "v1.8.3-coop-cancellation"
+      "public_sha256": "edecefd37a6b690b8e2faf528238b9daecf3fd9fe50186471de5e6e4d842a417",
+      "revision": "v1.8.3-coop-hangup"
     },
     "docs/INSTALL.md": {
       "changed": true,
@@ -1482,8 +1482,8 @@
       "changed": true,
       "input_sha256": "b959f8aa890047fdd90f6e5b75c30c3285716f2c705525e08b6122ef93f4901f",
       "origin": "v1.8.1-operator-native",
-      "public_sha256": "f1fe447854b3c86dc2c8568cafe809b178faa0ee4a91d0f1dcb33f581d6faf43",
-      "revision": "v1.8.3-coop-cancellation"
+      "public_sha256": "70ae9340fe72aee8ac40098c28c5cf17a4ae864bad47faadc9153a84d0063775",
+      "revision": "v1.8.3-coop-hangup"
     },
     "tools/v16/prefill_gate.py": {
       "changed": true,
@@ -1502,8 +1502,8 @@
       "changed": true,
       "input_sha256": "8489b0e6d792a0e29a92a5769549a99c2842a3d604270a2a9bd6ceadaacc09d9",
       "origin": "v1.8.3-coop-cancellation",
-      "public_sha256": "be6c84bddccba5b936c299dd83669b3b225d5f088237d3f96396adf695adae11",
-      "revision": "v1.8.3-coop-cancellation"
+      "public_sha256": "49f40d2de418b7acd86b055396b7d584df50984f7f188f724df56f8223085fa6",
+      "revision": "v1.8.3-coop-hangup"
     },
     "tools/v16/test_coop_experiment.py": {
       "changed": true,
