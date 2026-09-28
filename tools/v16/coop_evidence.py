@@ -9,6 +9,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / 'recipe/scripts'))
 sys.path.insert(0, str(ROOT / 'recipe/overlays/v16/coop/source'))
 from _coop_qualification import TARGET_NATIVE, need, read, regular, sha, gate_names
+from _coop_bundle import identity as bundle_identity, verify_bundle, verify_selection
 import coop_h1_control as h1
 import select_policy
 
@@ -38,6 +39,8 @@ def sanitizer(text, tool):
 
 def validate_environment(path, *, gpu):
     environment = read(path)
+    from _coop_checkpoint import authority
+    need(environment.get('checkpoint') == authority(), 'environment checkpoint authority differs')
     need(environment.get('status') == 'PASS'
          and environment.get('exl3_sha256') == '71e7118bd5af385821d7cb23e96fb154a3f31e1e835599a1082c72abb3aeb174'
          and environment.get('fatpath_sha256') == '69309df5f236502ec8cf55648f72369c20052c646ebd8850cd88272be881b48e'
@@ -52,10 +55,12 @@ def validate_environment(path, *, gpu):
 
 def validate_gate(name, root, identity, raw_bundle):
     kind = gate_names()[name]
+    bundle = root / ('selected-bundle' if kind == 'policy' else 'raw-bundle')
+    binding = bundle_identity(bundle)
     receipt = read(regular(root, name + '.json'))
     log = regular(root, name + '.log')
     need(receipt == {'schema_version': 1, 'name': name, 'kind': kind, 'status': 'PASS',
-                    'exit_code': 0, 'identity': identity, 'log_sha256': sha(log)}, 'gate receipt drift: ' + name)
+                    'exit_code': 0, 'identity': identity, 'bundle': binding, 'log_sha256': sha(log)}, 'gate receipt drift: ' + name)
     stage_dir = root / ('container-' + name)
     execution = read(regular(stage_dir, 'execution.json'))
     need(execution.get('exit_code') == 0 and execution.get('command') == read(root / 'plan.json')[name]
@@ -71,7 +76,8 @@ def validate_gate(name, root, identity, raw_bundle):
     need(image['payload_sha256'] == identity['image_receipt_sha256']
          and command[command.index('--entrypoint') + 1:command.index('--entrypoint') + 3]
          == ['/usr/bin/env', image['config_digest']], 'gate qualification image differs')
-    validate_environment(regular(stage_dir, 'environment.json'), gpu=True)
+    environment = validate_environment(regular(stage_dir, 'environment.json'), gpu=True)
+    need(environment.get('bundle') == binding, 'gate ran against a different bundle: ' + name)
     rows = events(log)
     if kind == 'h1':
         match = re.fullmatch(r'h1-r([0-2])-g([0-2])-(baseline|perturb)', name)
@@ -113,7 +119,7 @@ def validate_gate(name, root, identity, raw_bundle):
         choices = {str(n): policy['rows'].get(str(n), 'stock') for n in (*select_policy.ROWS, 33, 65)}
         need(len(done) == 1 and done[0] == {'stage': 'production_policy_complete', 'pass': True, 'choices': choices},
              'production policy completion/choices')
-    return {'kind': kind, 'status': 'PASS', 'receipt_sha256': sha(root / (name + '.json')), 'log_sha256': sha(log),
+    return {'kind': kind, 'status': 'PASS', 'bundle': binding, 'receipt_sha256': sha(root / (name + '.json')), 'log_sha256': sha(log),
             'environment_sha256': sha(stage_dir / 'environment.json'), 'execution_sha256': sha(stage_dir / 'execution.json')}
 
 
@@ -122,11 +128,18 @@ def validate_campaign(root):
     need(campaign.get('schema_version') == 1 and campaign.get('status') == 'COMPLETE', 'campaign incomplete')
     identity = campaign['identity']
     need(identity['native_sha256'] == TARGET_NATIVE, 'candidate native drift')
+    from _coop_checkpoint import authority
+    need(identity.get('checkpoint') == authority(), 'campaign checkpoint authority differs')
+    for name in ('helper', 'sanitizer'):
+        need(identity.get(name) == read(ROOT / f'recipe/config/coop-{name}.json'), 'campaign ' + name + ' differs')
     raw = root / 'raw-bundle'
-    for bundle in (raw, root / 'selected-bundle'):
-        manifest = read(bundle / 'manifest.json')
-        for name, expected in manifest['files'].items():
-            need(sha(regular(bundle, name)) == expected, 'bundle changed: ' + name)
+    coop = ROOT / 'recipe/overlays/v16/coop'
+    raw_binding = verify_bundle(raw, coop, source_policy=True)
+    selected_binding = verify_bundle(root / 'selected-bundle', coop)
+    raw_manifest = read(raw / 'manifest.json')
+    verify_selection(raw_manifest, read(root / 'selected-bundle/manifest.json'))
+    need(identity.get('raw_bundle') == raw_binding and identity.get('raw_bundle_manifest') == raw_manifest,
+         'raw qualification bundle changed')
     logs = [regular(root, f'profiles/rank{r}-geo{g}.jsonl') for r in range(3) for g in range(3)]
     for path in logs:
         rank, geometry = map(int, re.fullmatch(r'rank([0-2])-geo([0-2]).jsonl', path.name).groups())
@@ -147,5 +160,5 @@ def validate_campaign(root):
         for g in range(3):
             need((root / f'profile-r{r}-g{g}.log').read_bytes() == (root / f'profiles/rank{r}-geo{g}.jsonl').read_bytes(),
                  'profile log copy differs')
-    return {**identity, 'schema_version': 1, 'status': 'PASS', 'gates': gates,
+    return {**identity, 'schema_version': 1, 'status': 'PASS', 'gates': gates, 'selected_bundle': selected_binding,
             'profile_log_sha256': {path.name: sha(path) for path in logs}}

@@ -17,6 +17,8 @@ import build_native as native
 from _coop_qualification import (TARGET_NATIVE, canonical, compiled_inputs, digest_value,
                                 gate_names, need, read, regular, sha, verify_record)
 from _image_identity import build_policy
+from _coop_checkpoint import authenticate as fixture
+from _coop_bundle import identity as bundle_identity, verify_bundle
 from experiment_coop_build import run_container, Cancelled
 from coop_evidence import KERNEL_FILTER, validate_campaign, validate_gate, validate_environment
 import coop_h1_control as h1
@@ -28,6 +30,13 @@ SNAPSHOT = '/root/.cache/huggingface/hub/models--Mia-AiLab--GLM-5.3-Flash-EXL3-T
 
 def write(path, value):
     path.write_bytes(canonical(value))
+
+
+def runner_inputs():
+    paths = ['tools/v16/' + name for name in ('qualify_coop.py', 'coop_environment.py', 'coop_evidence.py')]
+    paths += ['recipe/scripts/' + name for name in ('_coop_checkpoint.py', '_coop_bundle.py',
+                                                   '_coop_qualification.py', 'validate_checkpoint.py')]
+    return {name: sha(regular(ROOT, name)) for name in paths}
 
 
 def matrix():
@@ -59,25 +68,6 @@ def matrix():
     return commands
 
 
-def fixture(model):
-    target = read(ROOT / 'recipe/config/checkpoint-contract.json')['target']
-    need(model.name == target['revision'], 'model-root must be the exact single snapshot revision directory')
-    index_path = regular(model, 'model.safetensors.index.json')
-    need(sha(index_path) == target['model_index_sha256'], 'checkpoint index pin differs')
-    index = read(index_path)['weight_map']
-    files = {'model.safetensors.index.json': sha(index_path)}
-    for expert in range(288):
-        for proj in ('gate_proj', 'up_proj', 'down_proj'):
-            for suffix in ('trellis', 'suh', 'svh', 'mcg'):
-                key = f'model.language_model.layers.3.mlp.experts.{expert}.{proj}.{suffix}'
-                name = index[key]
-                if name not in files:
-                    # Streaming hash: a fixture can span large shards.
-                    from _release_checks import sha256
-                    files[name] = sha256(regular(model, name))
-    return {'revision': target['revision'], 'files': files}
-
-
 def inputs(args):
     import apply_coop_moe as coop
     import apply_base_pipeline as pipeline
@@ -107,6 +97,7 @@ def inputs(args):
                      for p in stage.rglob('*')), 'unsafe raw build tree')
         for name, expected in read(COOP / 'SOURCE_MANIFEST.json')['files'].items():
             need(sha(regular(stage / 'source', name)) == expected, 'raw source drift')
+        verify_bundle(stage / 'out', COOP, source_policy=True)
     return image, build, helper, fixture(args.model_root)
 
 
@@ -123,6 +114,8 @@ def container(args, campaign, stage, image, command, gpu):
                                 (campaign, '/campaign', 'rw'), (campaign / 'raw-bundle', '/campaign/raw-bundle', 'ro'), (stage, '/work', 'rw')]:
         need(':' not in str(source) and ',' not in str(source), 'unsafe mount path')
         options += ['-v', f'{source}:{target}:{mode}']
+    if SRC + '/select_policy.py' not in command:  # only selection writes this copy
+        options += ['-v', f'{campaign / "selected-bundle"}:/campaign/selected-bundle:ro']
     # Remove image defaults as well as host overrides. Never use serving entrypoint.
     clean = ['env']
     for key in (*h1.SERVING_ENV_KEYS, 'GLM53_COOP_QUALIFICATION', 'GLM53_COOP_GEOMETRY',
@@ -150,12 +143,13 @@ def campaign(args):
     shutil.copytree(output / 'raw-bundle', output / 'selected-bundle')
     (output / 'profiles').mkdir()
     identity = {'native_sha256': TARGET_NATIVE, 'source_manifest_sha256': sha(COOP / 'SOURCE_MANIFEST.json'),
+                'raw_bundle': bundle_identity(output / 'raw-bundle'),
+                'raw_bundle_manifest': read(output / 'raw-bundle/manifest.json'),
                 'build_artifacts_sha256': {f'coop-{run}/out/{name}': sha(regular(args.build_root, f'coop-{run}/out/{name}'))
                     for run in ('a', 'b') for name in ('cooperative_moe.so', 'manifest.json', 'toolchain.txt', 'build32.log', 'build64.log', 'link.log')},
                 'image_receipt_sha256': image['payload_sha256'], 'helper': helper, 'checkpoint': checkpoint,
                 'sanitizer': read(ROOT / 'recipe/config/coop-sanitizer.json'),
-                'runner_sha256': {p.name: sha(p) for p in [Path(__file__), Path(__file__).with_name('coop_environment.py'),
-                                                        Path(__file__).with_name('coop_evidence.py')]}}
+                'runner_sha256': runner_inputs()}
     commands = [('environment', []), *matrix()]
     plan = {name: container(args, output, output / ('container-' + name), image, command, name != 'environment')
             for name, command in commands}
@@ -178,8 +172,10 @@ def campaign(args):
         need(result.returncode == 0, name + ' failed; evidence retained')
         validate_environment(regular(stage, 'environment.json'), gpu=name != 'environment')
         if name in gate_names():
+            active_bundle = output / ('selected-bundle' if name.startswith('policy-') else 'raw-bundle')
             write(output / (name + '.json'), {'schema_version': 1, 'name': name, 'kind': gate_names()[name],
-                    'status': 'PASS', 'exit_code': 0, 'identity': identity, 'log_sha256': sha(output / (name + '.log'))})
+                    'status': 'PASS', 'exit_code': 0, 'identity': identity, 'bundle': bundle_identity(active_bundle),
+                    'log_sha256': sha(output / (name + '.log'))})
             if name.startswith('profile-'):
                 r, g = name[-4], name[-1]
                 # Isolate profile JSONL from stage-8/import diagnostics, retaining
@@ -190,7 +186,7 @@ def campaign(args):
                         and json.loads(line).get('stage') in ('profile_identity', 'compare', 'profile', 'profile_complete')]
                 full.write_text('\n'.join(rows) + '\n')
                 write(output / (name + '.json'), {'schema_version': 1, 'name': name, 'kind': 'profile', 'status': 'PASS',
-                      'exit_code': 0, 'identity': identity, 'log_sha256': sha(full)})
+                      'exit_code': 0, 'identity': identity, 'bundle': bundle_identity(active_bundle), 'log_sha256': sha(full)})
                 shutil.copyfile(full, output / f'profiles/rank{r}-geo{g}.jsonl')
             validate_gate(name, output, identity, output / 'raw-bundle')
     need(inputs(args) == (image, build, helper, checkpoint), 'qualification inputs changed during run')
@@ -207,8 +203,7 @@ def seal(args):
     image = native.read_operator_record(regular(args.seal, 'image.json'))
     build = native.read_native_record(regular(args.seal, 'native-build.json'), image)
     need(index['source_manifest_sha256'] == sha(COOP / 'SOURCE_MANIFEST.json'), 'campaign source changed; review before rebinding')
-    need(index['runner_sha256'] == {p.name: sha(p) for p in [Path(__file__), Path(__file__).with_name('coop_environment.py'),
-                                                         Path(__file__).with_name('coop_evidence.py')]}, 'runner changed')
+    need(index['runner_sha256'] == runner_inputs(), 'runner changed')
     need(args.independent_build_root and args.independent_image_receipt, 'seal requires second-machine build and image receipts')
     second_image = native.read_operator_record(args.independent_image_receipt)
     second = native.read_native_record(regular(args.independent_build_root, 'native-build-receipt.json'), second_image)

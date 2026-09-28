@@ -1,0 +1,11 @@
+{
+  "repository": "Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw",
+  "revision": "25a44fdbf16862a46b7cc9921142c6c81350af2f",
+  "publication_ledger_sha256": "cb0da1f97a53aebc3fbc5478f19c82b25586b0bf8533c99fb4ed5321a48f5342",
+  "files": {
+    "model.safetensors.index.json": "2f64d21c67c90bbafeb36c4e9b2f06f54063ed439e9f7cf95962d425a1d8515d",
+    "model-00057-of-00120.safetensors": "9c7e6d5fd6d4138fde51eef51a83ff8a33424294c44d52d1b62b42ddb79ada4d",
+    "model-00058-of-00120.safetensors": "0b73d4dc1f373046f08a000d60484a7cf5335c4b0a1e4588d0cf8089f3ed75f2",
+    "model-00059-of-00120.safetensors": "c5e83b54c3f1912aa5fd35f1c3170415f54708887f6f358cb1eac0b93391394d"
+  }
+}

@@ -15,6 +15,8 @@ sys.dont_write_bytecode = True
 def main():
     sys.path[:0] = ['/recipe/scripts', '/helpers', '/src/recipe/overlays/v16/coop/source']
     from _coop_qualification import need, read, sha
+    from _coop_checkpoint import authenticate, verify_shapes
+    from _coop_bundle import verify_bundle, verify_selection
     from _atomic import canonical
     image = read(Path('/recipe/config/operator-image.json'))
     cid = Path('/work/container.cid').read_text().strip()
@@ -29,6 +31,16 @@ def main():
                     '--source-root', '/sources/fly', '--asset-root', '/opt/glm53',
                     '--contract', '/recipe/config/patch-contract.json', '--image-receipt', '/work/image-receipt.json',
                     '--apply'], check=True)
+    coop = Path('/recipe/overlays/v16/coop')
+    raw = Path('/campaign/raw-bundle')
+    active = Path('/campaign/selected-bundle') if 'GLM53_COOP_BUNDLE=/campaign/selected-bundle' in sys.argv else raw
+    verify_bundle(raw, coop, source_policy=True)
+    bundle = verify_bundle(active, coop)
+    verify_selection(read(raw / 'manifest.json'), read(active / 'manifest.json'))
+    target = read(Path('/recipe/config/checkpoint-contract.json'))['target']
+    snapshot = Path('/root/.cache/huggingface/hub/models--Mia-AiLab--GLM-5.3-Flash-EXL3-TR3-4bpw/snapshots') / target['revision']
+    checkpoint = authenticate(snapshot)
+    verify_shapes(snapshot)
     os.environ.update(GLM53_COOP_QUALIFICATION='1', GLM53_COOP_GEOMETRY='0',
                       GLM53_COOP_BUNDLE='/campaign/raw-bundle')
     import test_cuda_integration as gate
@@ -39,26 +51,10 @@ def main():
     ctypes.CDLL('/campaign/raw-bundle/cooperative_moe.so')
     ldd = subprocess.check_output(['ldd', '/campaign/raw-bundle/cooperative_moe.so'], text=True)
     need('libcudart.so.13 =>' in ldd and 'not found' not in ldd, 'shared cudart linkage')
-    target = read(Path('/recipe/config/checkpoint-contract.json'))['target']
-    snapshot = Path('/root/.cache/huggingface/hub/models--Mia-AiLab--GLM-5.3-Flash-EXL3-TR3-4bpw/snapshots') / target['revision']
-    index = read(snapshot / 'model.safetensors.index.json')['weight_map']
-    # Check every real96 EP range without allocating a CUDA tensor.
-    grouped = {}
-    for expert in range(288):
-        for proj in ('gate_proj', 'up_proj', 'down_proj'):
-            for suffix in ('trellis', 'suh', 'svh', 'mcg'):
-                name = f'model.language_model.layers.3.mlp.experts.{expert}.{proj}.{suffix}'
-                grouped.setdefault(index[name], []).append((name, proj, suffix))
-    for name, tensors in grouped.items():
-        with safe_open(snapshot / name, framework='pt', device='cpu') as handle:
-            for tensor, proj, suffix in tensors:
-                shape = handle.get_slice(tensor).get_shape()
-                need(shape and all(n > 0 for n in shape), 'empty checkpoint tensor')
-                if suffix == 'trellis':
-                    need(shape[:2] == ([128, 256] if proj == 'down_proj' else [256, 128]), 'wrong real-weight shape')
     help_text = subprocess.check_output(['/sanitizer/compute-sanitizer', '--help'], text=True)
     need('--dump-kernel-launches' in help_text and '--kernel-name' in help_text, 'sanitizer lacks launch evidence support')
     report = {'status': 'PASS', 'scope': 'CPU stage-8 imports and fixture shapes; no GPU correctness',
+              'checkpoint': checkpoint, 'bundle': bundle,
               'exl3_sha256': gate.EXL3_SHA256, 'fatpath_sha256': gate.FATPATH_SHA256,
               'torch': torch.__version__, 'cuda': torch.version.cuda, 'ldd': ldd,
               'sanitizer': subprocess.check_output(['/sanitizer/compute-sanitizer', '--version'], text=True),

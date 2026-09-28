@@ -96,6 +96,8 @@ def verify_v184(root, binding, release, require_final):
     import sys
     sys.path.insert(0, str(root / 'recipe/scripts'))
     from _coop_qualification import TARGET_NATIVE
+    from _coop_checkpoint import authority
+    authority()
     assert binding['schema_version'] == 2 and binding['hardware_qualified'] is False
     assert binding['release_version'] == 'v1.8.4' and binding['native_sha256'] == TARGET_NATIVE
     historical = root / 'manifests/final-binding-v1.8.3.json'

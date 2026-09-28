@@ -75,6 +75,7 @@ def compiled_inputs(coop):
 
 
 def verify_record(record, bundle, coop, *, release=True, operator=None):
+    from _coop_bundle import verify_bundle, verify_manifest, verify_selection
     keys = {'schema_version', 'source_manifest_sha256', 'qualification_source_manifest_sha256',
             'compiled_inputs', 'builder_sha256', 'build_policy_sha256', 'qualification_image',
             'helper', 'sanitizer', 'checkpoint', 'reproducibility', 'bundle', 'gate_index_sha256'}
@@ -89,15 +90,15 @@ def verify_record(record, bundle, coop, *, release=True, operator=None):
     need(record['helper'] == helper, 'helper provenance drift')
     need(record['sanitizer'] == read(RECIPE / 'config/coop-sanitizer.json'), 'sanitizer provenance drift')
     checkpoint = record['checkpoint']
-    need(isinstance(checkpoint, dict) and set(checkpoint) == {'revision', 'files'}
-         and re.fullmatch('[0-9a-f]{40}', str(checkpoint['revision']))
-         and checkpoint['files'] and all(hash_ok(h) for h in checkpoint['files'].values()), 'checkpoint binding')
+    from _coop_checkpoint import authority
+    need(checkpoint == authority(), 'checkpoint authority differs')
     for key in ('qualification_source_manifest_sha256', 'gate_index_sha256'):
         need(hash_ok(record[key]), 'missing qualification hash: ' + key)
     rep = record['reproducibility']
     need(isinstance(rep, dict) and set(rep) == {'runs', 'comparison', 'binary_sha256', 'evidence_sha256'}
          and rep['runs'] >= 2 and rep['comparison'] == 'bit-identical'
          and rep['binary_sha256'] == TARGET_NATIVE and hash_ok(rep['evidence_sha256']), 'build evidence')
+    observed_bundle = verify_bundle(bundle, coop, native_required=False)
     manifest = read(bundle / 'manifest.json')
     files = manifest['files']
     need(record['bundle'] == {'manifest_sha256': sha(bundle / 'manifest.json'),
@@ -112,12 +113,23 @@ def verify_record(record, bundle, coop, *, release=True, operator=None):
          and index.get('image_receipt_sha256') == image['payload_sha256']
          and index.get('helper') == helper and index.get('checkpoint') == checkpoint
          and index.get('sanitizer') == record['sanitizer'], 'gate index binding')
+    raw_manifest = index.get('raw_bundle_manifest', {})
+    verify_manifest(raw_manifest, coop)
+    verify_selection(raw_manifest, manifest)
+    raw = index.get('raw_bundle', {})
+    need(set(raw) == set(observed_bundle) and hash_ok(raw.get('manifest_sha256'))
+         and raw.get('native_sha256') == TARGET_NATIVE
+         and raw.get('runtime_sha256') == observed_bundle['runtime_sha256']
+         and raw.get('dispatch_policy_sha256') == raw_manifest['files']['dispatch_policy.json']
+         and index.get('selected_bundle') == observed_bundle, 'original/selected qualification bundle differs')
     independent = index.get('independent_build', {})
     need(set(independent) == {'native_receipt', 'image_receipt'}, 'second-machine evidence missing')
     verify_operator_record(independent['image_receipt'])
     first = index.get('qualification_build', {})
     second = independent['native_receipt']
     for build, build_image in ((first, image), (second, independent['image_receipt'])):
+        inputs = build.get('build_inputs', {})
+        prefix = 'recipe/overlays/v16/coop/'
         need(build.get('payload_sha256') == digest_value({k:v for k,v in build.items() if k != 'payload_sha256'})
              and build.get('image_receipt_sha256') == build_image['payload_sha256']
              and build.get('source_recipe_sha256') == build_image['source_recipe_sha256']
@@ -126,6 +138,11 @@ def verify_record(record, bundle, coop, *, release=True, operator=None):
              and build.get('binary_sha256', {}).get('recipe/overlays/v16/coop/bundle/cooperative_moe.so') == TARGET_NATIVE
              and build.get('builder_host', {}).get('architecture') == 'aarch64'
              and hash_ok(build['builder_host'].get('machine_id_sha256')), 'invalid native build evidence')
+        need(all(inputs.get(prefix + name) == expected for name, expected in record['compiled_inputs'].items())
+             and inputs.get(prefix + 'SOURCE_MANIFEST.json') == record['qualification_source_manifest_sha256']
+             and inputs.get(prefix + 'source/runtime.py') == raw['runtime_sha256']
+             and inputs.get(prefix + 'source/dispatch_policy.json') == raw['dispatch_policy_sha256'],
+             'native receipt differs from qualified source/builder inputs')
     need(first['builder_host']['machine_id_sha256'] != second['builder_host']['machine_id_sha256'],
          'second physical machine required')
     need(record['reproducibility']['evidence_sha256'] == digest_value(first), 'qualification build receipt drift')
@@ -133,8 +150,9 @@ def verify_record(record, bundle, coop, *, release=True, operator=None):
     need(set(gates) == set(gate_names()), 'missing/extra component gates')
     for name, kind in gate_names().items():
         row = gates[name]
-        need(set(row) == {'kind', 'status', 'receipt_sha256', 'log_sha256', 'environment_sha256', 'execution_sha256'}
+        need(set(row) == {'kind', 'status', 'receipt_sha256', 'log_sha256', 'environment_sha256', 'execution_sha256', 'bundle'}
              and row['kind'] == kind and row['status'] == 'PASS'
+             and row['bundle'] == (observed_bundle if kind == 'policy' else raw)
              and all(hash_ok(row[k]) for k in ('receipt_sha256', 'log_sha256', 'environment_sha256', 'execution_sha256')), 'incomplete gate: ' + name)
     profiles = index.get('profile_log_sha256', {})
     need(set(profiles) == {f'rank{r}-geo{g}.jsonl' for r in range(3) for g in range(3)}
