@@ -12,7 +12,7 @@ sys.dont_write_bytecode = True
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--binary-root', type=Path, required=True,
-                        help='local build tree with every path listed in manifests/binaries.json')
+                        help='local build tree with receipted artifacts, or all historical pinned artifacts')
     parser.add_argument('--output', type=Path, required=True, help='new private runtime directory')
     parser.add_argument('--image-receipt', type=Path,
                         help='verified local build receipt; omit only for the historical reference image')
@@ -39,6 +39,8 @@ def main():
         from build_native import read_native_record
         native_record = read_native_record(args.native_receipt, image_record)
     binaries = json.loads((root / 'manifests/binaries.json').read_text())
+    if native_record:
+        binaries = {name: binaries[name] for name in native_record['binary_sha256']}
     for name, row in binaries.items():
         path = args.binary_root / name
         expected = native_record['binary_sha256'][name] if native_record else row['expected_sha256']
@@ -53,7 +55,8 @@ def main():
     import apply_coop_moe as coop
     display.verify_sources()
     coop_native = 'recipe/overlays/v16/coop/bundle/cooperative_moe.so'
-    needs_coop_seal = sha(output / coop_native) != binaries[coop_native]['expected_sha256']
+    needs_coop_seal = (coop_native not in binaries or
+                       sha(output / coop_native) != binaries[coop_native]['expected_sha256'])
     if needs_coop_seal:
         # The receipt proves a source build, not the historical 3x3 GPU profiles.
         # Keep BUILD.json, manifest and row policy unchanged: verify_bundle must
@@ -84,7 +87,7 @@ def main():
     if native_record:
         print('Operator native build: prepared .env.example selects JSPARK3_V16_COOP=0; keep coop disabled')
     if needs_coop_seal:
-        print('Coop-MoE candidate differs from the historical seal; operator coop=1 support requires a future implementation change')
+        print('Coop-MoE is absent or differs from the historical seal; operator coop=1 support requires a future implementation change')
 
 
 if __name__ == '__main__': main()

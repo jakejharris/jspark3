@@ -6,7 +6,10 @@ to the source recipe; preflight, lifecycle commands and patch installers use it
 consistently. The unpublished reference image is no longer a prerequisite for
 new installations. Images remain local and are not redistributed. Native artifacts
 can also be built locally and staged with receipts binding their source, fixed
-build recipe, image and observed output hashes. Historical pins remain the default
+build recipe, image and observed output hashes. The default native build requires
+only the display library and probe, each with two-build byte identity. Coop-MoE
+is an experimental opt-in build because its output was not reproducible on a
+native DGX Spark. Historical pins remain the default
 without a native receipt. Native-receipt preparation explicitly selects coop off
 in the prepared environment; operator coop-on support needs a future implementation
 change. The historical coop-on gate remains intact. Hardware admission gates and

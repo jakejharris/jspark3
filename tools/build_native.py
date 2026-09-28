@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: Apache-2.0
-"""Build the three ARM64 native artifacts and receipt their verified inputs/outputs."""
+"""Build ARM64 display artifacts (optionally coop) and receipt verified inputs/outputs."""
 import argparse
 import hashlib
 import json
@@ -59,8 +59,9 @@ def read_native_record(path, image):
             or record["image_receipt_sha256"] != image["payload_sha256"]):
         raise ImageRefusal("operator native source/image binding drift")
     outputs = record["binary_sha256"]
-    expected = {name for group in OUTPUTS.values() for name in group.values()}
-    if (not isinstance(outputs, dict) or set(outputs) != expected
+    display = set(OUTPUTS["display"].values())
+    with_coop = display | set(OUTPUTS["coop"].values())
+    if (not isinstance(outputs, dict) or set(outputs) not in (display, with_coop)
             or any(not re.fullmatch(r"[0-9a-f]{64}", str(value)) for value in outputs.values())):
         raise ImageRefusal("operator native output inventory drift")
     return record
@@ -88,6 +89,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--image-receipt", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True, help="new BINARY_ROOT outside the source tree")
+    parser.add_argument("--with-coop", action="store_true",
+                        help="also attempt experimental coop builds; may fail byte identity and does not enable coop")
     args = parser.parse_args()
     try:
         output = args.output.resolve()
@@ -106,7 +109,7 @@ def main():
             work = Path(directory)
             built = work / "artifacts"
             observed = {}
-            for kind in OUTPUTS:
+            for kind in (["display", "coop"] if args.with_coop else ["display"]):
                 first = build(kind, work / f"{kind}-a", image["config_digest"])
                 second = build(kind, work / f"{kind}-b", image["config_digest"])
                 if first != second:

@@ -13,9 +13,10 @@ weights. Hardware admission remains unqualified; see the local image procedure b
    `python3 -B tools/build_native.py --image-receipt ../operator-image.json --output ../native-build`.
    No host CUDA compiler or GPU access is needed for compilation. Another ARM64
    Docker host or Docker ARM64 emulation can also build them. It builds the display
-   library, display probe and coop-MoE binary twice in fresh network-disabled
+   library and display probe twice in fresh network-disabled
    containers at `/w`, checks byte identity, and writes a local receipt binding
    the exact source files, build recipe, image receipt and output hashes.
+   Coop is not built or required by default.
 4. Run `python3 -B tools/prepare_runtime.py --binary-root ../native-build --native-receipt ../native-build/native-build-receipt.json --image-receipt ../operator-image.json --output RUNTIME_DIR`.
    It verifies the source export, native receipt and actual output hashes,
    copies `recipe/` and writes its runtime checksum inventory.
@@ -28,6 +29,10 @@ weights. Hardware admission remains unqualified; see the local image procedure b
    With a native receipt, preparation explicitly sets `JSPARK3_V16_COOP=0` in
    the prepared `recipe/.env.example`. Keep that setting; operator coop-on
    support requires a future implementation change.
+   Check the prepared recipe before configuring the fleet:
+   `python3 -B RUNTIME_DIR/recipe/scripts/remote_preflight.py --recipe-root "$(realpath RUNTIME_DIR/recipe)" --recipe-only`.
+   This verifies runtime checksums without contacting GPUs or other hosts;
+   it does not constitute full preflight or admission.
 5. Copy the **prepared runtime recipe's** `.env.example` to a private environment
    file, preserving `JSPARK3_V16_COOP=0` for operator native builds. Do not copy
    the source export's example, which describes the historical coop-on setup.
@@ -101,14 +106,18 @@ independently rebuild three times: metadata may differ. Preflight refuses a
 different image on any rank. The native build helpers read `JSPARK_IMAGE_RECEIPT`;
 their source, toolchain and output hash checks still apply.
 
-An emulated ARM64 rebuild using the pinned GCC/CUDA versions produced identical
-outputs across two fresh builds. The display library matched its historical pin;
-the display probe and coop-MoE binary did not. The operator-native receipt records
-these local outputs without rewriting the published pins or claiming that a
-different binary inherits historical GPU results. It is a self-hashed local
+The display artifacts must match across two fresh local builds. Their operator
+receipt records the actual output hashes without rewriting published pins or
+claiming that different binaries inherit historical GPU results. It is a self-hashed local
 build record, with the same trust boundary as the image receipt, not a signature.
 Receipt edits, source/build changes, a different image receipt and binary hash
 mismatches are refused. Keep both receipts and the source export together.
+
+Coop-MoE did **not** reproduce identical bytes across two fresh builds on a real
+DGX Spark. The default build and prepared runtime therefore omit its binary.
+`tools/build_native.py --with-coop` is an experimental opt-in that still requires
+two-build byte identity and may fail; it neither enables coop nor qualifies it.
+Use the default command above for installation.
 
 Operator-native preparation selects `production-stock` with coop **off** and
 display profile `full`; adaptive-K `ema` and dense FP8 `trunk` remain unchanged.
@@ -116,8 +125,8 @@ The source export's historical example has coop on, so use the prepared example.
 Its environment and native outputs are all bound by the runtime checksum inventory.
 
 The historical BUILD.json, bundle manifest and measured row policy remain intact.
-`coop=1` still requires the historical sealed artifact and is refused for a changed
-operator binary. Enabling coop for operator builds requires a **future implementation
+`coop=1` still requires the historical sealed artifact and is refused for a missing
+or changed operator binary. Enabling coop for operator builds requires a **future implementation
 change**. The current `tools/v16/build_coop_moe.sh` seal procedure is not an
 operator-image enablement route: runtime rejects a BUILD.json carrying the operator
 image with `cooperative-MoE build image drift`, even after fresh profiling. Do not

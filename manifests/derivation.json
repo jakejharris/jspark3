@@ -13,7 +13,7 @@
       "changed": true,
       "input_sha256": "9e1306317b68af4677c2b6d2cd8a40cb3a27d9b13cde6a05264c59d007954814",
       "origin": "release-package-render",
-      "public_sha256": "58a2dd89c35524bb5c7f833f0f4236260dcdb793f8efac7e9e31fe3f9b267afc",
+      "public_sha256": "11aa38bf2629a664316df4557e0d6108853224b593ac0c153b9a91835b650d71",
       "revision": "v1.8.1-operator-native"
     },
     "LICENSE": {
@@ -32,7 +32,7 @@
       "changed": true,
       "input_sha256": "7ce72ca2930b758a0b6ebb5d85ee0487483d23112f70a379ff1da43613f6c30e",
       "origin": "release-package-render",
-      "public_sha256": "b8bd0ed264f251a2c63eaf98a46a3a5b9431a169bd68725321a45bd9f93b7344",
+      "public_sha256": "1d7e5de17248084e8f3dd417a4fd2f8f686972dfbaee1edc097b42256d2a5d88",
       "revision": "v1.8.1-operator-native"
     },
     "REQUIRED_ATTRIBUTION.md": {
@@ -76,7 +76,7 @@
       "changed": true,
       "input_sha256": "0a0d871fca9b3369747f1c0117074f4b5b164eca467c727efd88f4f53038bb63",
       "origin": "release-package-render",
-      "public_sha256": "2e24f0e404588d6dc11c904cf049554ffafddc93da1cdfdcbe770d1db207719f",
+      "public_sha256": "803f1939fcf511ed4faa0ffc3a453cf70cffa354292b7fbc61cf1e01f78e3236",
       "revision": "v1.8.1-operator-native"
     },
     "docs/LICENSING.md": {
@@ -1307,10 +1307,10 @@
       "revision": "v1.8.1-operator-image"
     },
     "tools/build_native.py": {
-      "changed": false,
+      "changed": true,
       "input_sha256": "f7a1042e9ea7c6d6034d46eed737dcabbb224a9b16c82a454640d8d08068a2cc",
       "origin": "v1.8.1-operator-native",
-      "public_sha256": "f7a1042e9ea7c6d6034d46eed737dcabbb224a9b16c82a454640d8d08068a2cc",
+      "public_sha256": "35afca458ad5cab48d2cf481e4a1f9aef5b7e97b74dca75a068ae276da2f5988",
       "revision": "v1.8.1-operator-native"
     },
     "tools/build_operator_image.py": {
@@ -1324,14 +1324,14 @@
       "changed": true,
       "input_sha256": "a92c91c046638271b1988f4e11e7e9e808d8eec29dc815e24192ffa1c205d5fb",
       "origin": "export-template",
-      "public_sha256": "94e68098b4f408937507aaa0cbfbb711b62d280b737dc2de2dbcf414c1500a51",
+      "public_sha256": "e6ff439df0e1aab1affc3c4d378b131d4a07b893f0b419df9b9027f222bd7e34",
       "revision": "v1.8.1-operator-native"
     },
     "tools/test_native_build.py": {
       "changed": true,
       "input_sha256": "3c2a88afa4a706483170c9b2e2aa67537b135c167ef2742a58a9b71bef8d7b3b",
       "origin": "v1.8.1-operator-native",
-      "public_sha256": "ffeb020e4cebbbf3e7d00eef5cacdd1b03690dfd22f50c4c764948fb858b08d2",
+      "public_sha256": "d2f4edcb042748566403b87532be62ee0cfd6f809ae7695fd65dcd1e50ba9f69",
       "revision": "v1.8.1-operator-native"
     },
     "tools/test_operator_image.py": {
