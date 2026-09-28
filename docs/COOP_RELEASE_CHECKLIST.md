@@ -85,6 +85,17 @@ planning but does not block staging, approval or publication over attribution.
 Keep `REQUIRED_ATTRIBUTION.md` and its v1.0 pin unchanged unless Jake decides
 to adopt different terms.
 
+Unfilled publication placeholders block release. The kit checks every defined
+fill-in slot and other bracketed tokens, including digits, lowercase, spaces
+and line breaks, after substitution and again in staged publication payloads.
+Valid Markdown links and structured data arrays remain supported. The check
+includes free-form A/B text, source and landing READMEs, the HF card, release
+notes, titles and published JSON/measurement assets. Do not approve or publish
+a package containing unresolved placeholders, even if its hashes were refreshed.
+Keep the ShapleyMcg notice verbatim in the rendered release notes and standalone
+GitHub release body; the kit's regression checks compare them to the source
+notice in `REQUIRED_ATTRIBUTION.md`.
+
 Refresh `recipe/SHA256SUMS`, the file SBOM, per-file license/REUSE inventory for
 new evidence, executable-output audit for changed writers, derivation records,
 the v1.8.4 documentation hashes and root `SHA256SUMS`. The delivery source-recipe

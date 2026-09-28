@@ -90,8 +90,8 @@
       "changed": true,
       "input_sha256": "f52c33c63ac2b075e46640e687ada0a062cb1f8458a04726870a4dfec983977d",
       "origin": "v184-publish-preparation",
-      "public_sha256": "d66d78c4c7cc4a0700c977738d5e0f36d051045d71d73f18db5e3b389669ba0d",
-      "revision": "v184-shapleymcg-attribution"
+      "public_sha256": "b84a1f58e8357d28b18dc60802f798781e8cb2c6d5054342df1f1ba8856b6f16",
+      "revision": "v184-publish-review-fix"
     },
     "docs/COOP_REPRODUCIBILITY.md": {
       "changed": true,
@@ -184,8 +184,8 @@
       "changed": true,
       "input_sha256": "9830d95de98135c7d36d7ecc66e0f2fbd493a717227059317df57c1f654cbab6",
       "origin": "release-package-render",
-      "public_sha256": "e20af9b3eeb4648a3a7d4f1f1667415a27044f60b44c6f8c778c50ae01b21988",
-      "revision": "v184-shapleymcg-attribution"
+      "public_sha256": "ea94e9b174fc3c0e5dbf428a03156d00c3777ce650da6f9b50dc3dc5708e4ff2",
+      "revision": "v184-publish-review-fix"
     },
     "manifests/figure-bindings.json": {
       "changed": false,
