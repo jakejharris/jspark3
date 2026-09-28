@@ -173,6 +173,11 @@ def verify_bundle(bundle: Path, build_record: Path) -> dict:
             raise Refusal(str(exc)) from exc
         reproducibility = record["reproducibility"]
     else:
+        from _coop_qualification import verify_legacy_record
+        try:
+            verify_legacy_record(record)
+        except ValueError as exc:
+            raise Refusal(str(exc)) from exc
         from _image_identity import selected_identity
         if "build_policy" in selected_identity():
             raise Refusal("operator coop requires a release-pinned schema-2 component seal")

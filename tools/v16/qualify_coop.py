@@ -18,7 +18,7 @@ from _coop_qualification import (TARGET_NATIVE, canonical, compiled_inputs, dige
                                 gate_names, need, read, regular, sha, verify_record)
 from _image_identity import build_policy
 from experiment_coop_build import run_container, Cancelled
-from coop_evidence import KERNEL_FILTER, validate_campaign, validate_gate
+from coop_evidence import KERNEL_FILTER, validate_campaign, validate_gate, validate_environment
 import coop_h1_control as h1
 
 COOP = ROOT / native.COOP
@@ -111,7 +111,7 @@ def container(args, campaign, stage, image, command, gpu):
     for source, target, mode in [(ROOT, '/src', 'ro'), (campaign / 'recipe', '/recipe', 'ro'),
                                 (args.fly_root, '/sources/fly', 'ro'), (args.helpers_root, '/helpers', 'ro'),
                                 (args.model_root, SNAPSHOT + args.model_root.name, 'ro'), (args.sanitizer_root, '/sanitizer', 'ro'),
-                                (campaign, '/campaign', 'rw'), (stage, '/work', 'rw')]:
+                                (campaign, '/campaign', 'rw'), (campaign / 'raw-bundle', '/campaign/raw-bundle', 'ro'), (stage, '/work', 'rw')]:
         need(':' not in str(source) and ',' not in str(source), 'unsafe mount path')
         options += ['-v', f'{source}:{target}:{mode}']
     # Remove image defaults as well as host overrides. Never use serving entrypoint.
@@ -165,6 +165,7 @@ def campaign(args):
         write(stage / 'execution.json', {'started_at': started, 'completed_at': datetime.now(timezone.utc).isoformat(),
                                        'exit_code': result.returncode, 'command': plan[name]})
         need(result.returncode == 0, name + ' failed; evidence retained')
+        validate_environment(regular(stage, 'environment.json'), gpu=name != 'environment')
         if name in gate_names():
             write(output / (name + '.json'), {'schema_version': 1, 'name': name, 'kind': gate_names()[name],
                     'status': 'PASS', 'exit_code': 0, 'identity': identity, 'log_sha256': sha(output / (name + '.log'))})
@@ -197,6 +198,15 @@ def seal(args):
     need(index['source_manifest_sha256'] == sha(COOP / 'SOURCE_MANIFEST.json'), 'campaign source changed; review before rebinding')
     need(index['runner_sha256'] == {p.name: sha(p) for p in [Path(__file__), Path(__file__).with_name('coop_environment.py'),
                                                          Path(__file__).with_name('coop_evidence.py')]}, 'runner changed')
+    need(args.independent_build_root and args.independent_image_receipt, 'seal requires second-machine build and image receipts')
+    second_image = native.read_operator_record(args.independent_image_receipt)
+    second = native.read_native_record(regular(args.independent_build_root, 'native-build-receipt.json'), second_image)
+    for record in (build, second):
+        need(record['builder_host']['architecture'] == 'aarch64', 'seal requires native ARM64 builds')
+    need(build['builder_host']['machine_id_sha256'] != second['builder_host']['machine_id_sha256'], 'independent physical builder required')
+    need(sha(regular(args.independent_build_root, native.COOP + '/bundle/cooperative_moe.so')) == TARGET_NATIVE, 'second-machine native pin')
+    index['qualification_build'] = build
+    index['independent_build'] = {'native_receipt': second, 'image_receipt': second_image}
     output = args.output
     need(not output.exists() and not output.is_symlink() and not output.resolve().is_relative_to(ROOT), 'seal output must be new outside source')
     output.mkdir(parents=True)
@@ -233,6 +243,8 @@ def main():
     parser.add_argument('--output', type=Path)
     parser.add_argument('--check-only', action='store_true')
     parser.add_argument('--seal', type=Path, help='completed local campaign to validate and seal into a new directory')
+    parser.add_argument('--independent-build-root', type=Path)
+    parser.add_argument('--independent-image-receipt', type=Path)
     parser.add_argument('--check-seal', type=Path, help='validate an existing component seal, without enabling it for release')
     args = parser.parse_args()
     try:

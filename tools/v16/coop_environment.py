@@ -3,7 +3,7 @@
 """GPU-free import, fixture-shape and stage-8 checks inside a disposable image."""
 import ctypes
 import hashlib
-import importlib
+import importlib.util
 import json
 import os
 from pathlib import Path

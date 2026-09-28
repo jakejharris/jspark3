@@ -22,8 +22,9 @@ def events(path):
 def sanitizer(text, tool):
     summary = ('ERROR SUMMARY: 0 errors' if tool == 'memcheck' else
                'RACECHECK SUMMARY: 0 hazards displayed (0 errors, 0 warnings)')
-    need(summary in text, 'sanitizer missing clean summary')
-    need(not re.search(r'(?i)internal sanitizer error|didn.t track|no attachable process|no kernels|not supported', text),
+    summaries = re.findall(r'(?m)^========= (?:ERROR SUMMARY:.*|RACECHECK SUMMARY:.*)$', text)
+    need(summaries == ['========= ' + summary], 'sanitizer missing or contradictory summary')
+    need(not re.search(r'(?i)internal sanitizer error|didn.t track|no attachable process|no kernels|not supported|========= Error:', text),
          'sanitizer incomplete')
     # --dump-kernel-launches includes filtered and unfiltered launches. Require
     # candidate launch records explicitly marked not filtered; a zero summary
@@ -33,6 +34,20 @@ def sanitizer(text, tool):
                and '(filtered:' not in block.splitlines()[0]]
     need(checked, 'no explicitly instrumented candidate launches; retain output and review tool format')
     return len(checked)
+
+
+def validate_environment(path, *, gpu):
+    environment = read(path)
+    need(environment.get('status') == 'PASS'
+         and environment.get('exl3_sha256') == '71e7118bd5af385821d7cb23e96fb154a3f31e1e835599a1082c72abb3aeb174'
+         and environment.get('fatpath_sha256') == '69309df5f236502ec8cf55648f72369c20052c646ebd8850cd88272be881b48e'
+         and 'libcudart.so.13 =>' in environment.get('ldd', '') and 'not found' not in environment['ldd']
+         and all(environment.get(k) for k in ('nvcc', 'gcc', 'sanitizer', 'torch', 'cuda')), 'stage-8 environment evidence')
+    need(('gpu' in environment) == gpu, 'environment GPU scope differs')
+    if gpu:
+        need(environment['gpu'].get('name') == 'NVIDIA GB10'
+             and environment['gpu'].get('capability') == [12, 1] and environment['gpu'].get('driver'), 'GB10 identity')
+    return environment
 
 
 def validate_gate(name, root, identity, raw_bundle):
@@ -45,9 +60,7 @@ def validate_gate(name, root, identity, raw_bundle):
     execution = read(regular(stage_dir, 'execution.json'))
     need(execution.get('exit_code') == 0 and execution.get('command') == read(root / 'plan.json')[name]
          and execution.get('started_at') < execution.get('completed_at'), 'execution binding: ' + name)
-    environment = read(regular(stage_dir, 'environment.json'))
-    need(environment.get('status') == 'PASS' and 'libcudart.so.13 =>' in environment.get('ldd', '')
-         and environment.get('gpu', {}).get('name') == 'NVIDIA GB10', 'gate environment/GPU: ' + name)
+    validate_environment(regular(stage_dir, 'environment.json'), gpu=True)
     rows = events(log)
     if kind == 'h1':
         match = re.fullmatch(r'h1-r([0-2])-g([0-2])-(baseline|perturb)', name)
@@ -124,4 +137,4 @@ def validate_campaign(root):
             need((root / f'profile-r{r}-g{g}.log').read_bytes() == (root / f'profiles/rank{r}-geo{g}.jsonl').read_bytes(),
                  'profile log copy differs')
     return {**identity, 'schema_version': 1, 'status': 'PASS', 'gates': gates,
-            'profile_log_sha256': policy['profile_log_sha256']}
+            'profile_log_sha256': {path.name: sha(path) for path in logs}}

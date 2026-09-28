@@ -33,6 +33,8 @@ def verify_sources(recipe):
         from _coop_qualification import verify_record
         verify_record(record, bundle, coop.OVERLAY)
     else:
+        from _coop_qualification import verify_legacy_record
+        verify_legacy_record(record)
         assert record['source_manifest_sha256'] == coop.SOURCE_MANIFEST_SHA256
         assert record['image'] == coop.reference_build_image()
         assert record['bundle'] == {'manifest_sha256': sha(bundle / 'manifest.json'), 'native_sha256': native,

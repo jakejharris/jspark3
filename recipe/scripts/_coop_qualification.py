@@ -14,6 +14,7 @@ from _image_identity import build_policy, canonical, read_operator_record, verif
 
 TARGET_NATIVE = '3212a3b0a308e2ec3673878212fcb0504a463c5f7df84eced5db7bb301cc3c07'
 RECIPE = Path(__file__).resolve().parents[1]
+LEGACY_RECORD_SHA256 = '1f81dd90014951faad19d3eb15dcc1c2c7607dbbe0f268cef3bf65058f8295bf'
 
 
 def need(ok, message):
@@ -44,6 +45,10 @@ def read(path):
     value = json.loads(path.read_text())
     need(isinstance(value, dict), 'expected object')
     return value
+
+
+def verify_legacy_record(record):
+    need(digest_value(record) == LEGACY_RECORD_SHA256, 'historical record differs; legacy seals cannot be reminted')
 
 
 def gate_names():
@@ -107,6 +112,23 @@ def verify_record(record, bundle, coop, *, release=True, operator=None):
          and index.get('image_receipt_sha256') == image['payload_sha256']
          and index.get('helper') == helper and index.get('checkpoint') == checkpoint
          and index.get('sanitizer') == record['sanitizer'], 'gate index binding')
+    independent = index.get('independent_build', {})
+    need(set(independent) == {'native_receipt', 'image_receipt'}, 'second-machine evidence missing')
+    verify_operator_record(independent['image_receipt'])
+    first = index.get('qualification_build', {})
+    second = independent['native_receipt']
+    for build, build_image in ((first, image), (second, independent['image_receipt'])):
+        need(build.get('payload_sha256') == digest_value({k:v for k,v in build.items() if k != 'payload_sha256'})
+             and build.get('image_receipt_sha256') == build_image['payload_sha256']
+             and build.get('source_recipe_sha256') == build_image['source_recipe_sha256']
+             and build.get('reproducibility') == {'runs': 2, 'comparison': 'bit-identical'}
+             and build.get('hardware_qualified') is False
+             and build.get('binary_sha256', {}).get('recipe/overlays/v16/coop/bundle/cooperative_moe.so') == TARGET_NATIVE
+             and build.get('builder_host', {}).get('architecture') == 'aarch64'
+             and hash_ok(build['builder_host'].get('machine_id_sha256')), 'invalid native build evidence')
+    need(first['builder_host']['machine_id_sha256'] != second['builder_host']['machine_id_sha256'],
+         'second physical machine required')
+    need(record['reproducibility']['evidence_sha256'] == digest_value(first), 'qualification build receipt drift')
     gates = index.get('gates', {})
     need(set(gates) == set(gate_names()), 'missing/extra component gates')
     for name, kind in gate_names().items():
@@ -118,7 +140,7 @@ def verify_record(record, bundle, coop, *, release=True, operator=None):
     need(set(profiles) == {f'rank{r}-geo{g}.jsonl' for r in range(3) for g in range(3)}
          and all(hash_ok(h) for h in profiles.values()), 'nine profile hashes required')
     policy = read(bundle / 'dispatch_policy.json')
-    need(policy.get('profile_log_sha256') == profiles and policy.get('native_sha256') == TARGET_NATIVE,
+    need(policy.get('profile_log_sha256') == [profiles[name] for name in sorted(profiles)] and policy.get('native_sha256') == TARGET_NATIVE,
          'policy was not selected from these profiles')
     if release:
         pin = read(RECIPE / 'config/coop-release.json')
