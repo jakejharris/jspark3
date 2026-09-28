@@ -258,7 +258,7 @@
       "changed": true,
       "input_sha256": "fad5c997be3187d1ce467088572677544c60652fda500ea822e89392d7f8bca2",
       "origin": "v1.8.3-shared-output-r5",
-      "public_sha256": "5ba8fff9fc678b17450bc4982e1bd74e28c08ae2b94fe88b8a4981a5009e0278",
+      "public_sha256": "ccbaa8f03c450d2488d7845d7ca5bf269ec068569d275ff7dd3b78e6c055d69b",
       "revision": "v184-apc-control"
     },
     "manifests/stock-profile.json": {
@@ -1673,7 +1673,7 @@
       "changed": true,
       "input_sha256": "4e30b87423de7207d966affd9dc8fe1b2289f045341ab7ec096a6f1046bc625b",
       "origin": "sealed-source",
-      "public_sha256": "3abe8934825a9a52740e9e128d1ab9379fc335c565d5ce880dc8e62f01a3a5dc",
+      "public_sha256": "d97ee0789a5547f33889b06614f51700b047633ee960cc671f4607300d88a81b",
       "revision": "v184-apc-control"
     },
     "tools/v16/build_coop_moe.sh": {
@@ -1776,9 +1776,9 @@
     },
     "tools/v16/test_apc_gate.py": {
       "changed": false,
-      "input_sha256": "1c03d83088e3a9a6135891ba83cda876e6f30167fa6b0382951649d4ca3ad98e",
+      "input_sha256": "ee3e17d280c6c1a821894f2a8ed78fbcaea99f930139ed305e853a39f348d1f7",
       "origin": "v184-apc-control",
-      "public_sha256": "1c03d83088e3a9a6135891ba83cda876e6f30167fa6b0382951649d4ca3ad98e",
+      "public_sha256": "ee3e17d280c6c1a821894f2a8ed78fbcaea99f930139ed305e853a39f348d1f7",
       "revision": "v184-apc-control"
     },
     "tools/v16/test_coop_cancellation.py": {

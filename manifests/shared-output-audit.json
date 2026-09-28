@@ -8497,36 +8497,36 @@
     },
     "tools/v16/apc_gate.py": {
       "disposition": "Shared parity JSON: closed cell IDs, numeric token IDs/logprobs/metrics, hashed token strings/top-token keys/request IDs and fixed usage fields, plus a numeric sabotage-sizing record with fixed refusal text. Raw protocol/logs private. Equality/parity gates retained; the cold-spread ceiling and capture-derived logprob control only add refusals.",
-      "sha256": "3abe8934825a9a52740e9e128d1ab9379fc335c565d5ce880dc8e62f01a3a5dc",
+      "sha256": "d97ee0789a5547f33889b06614f51700b047633ee960cc671f4607300d88a81b",
       "sites": [
         {
           "function": "consume",
-          "line": 256,
+          "line": 259,
           "operation": "retain"
         },
         {
           "function": "main",
-          "line": 530,
+          "line": 548,
           "operation": "print"
         },
         {
           "function": "main",
-          "line": 542,
+          "line": 560,
           "operation": "write_json"
         },
         {
           "function": "main",
-          "line": 555,
+          "line": 573,
           "operation": "report_failure"
         },
         {
           "function": "main",
-          "line": 571,
+          "line": 589,
           "operation": "write_json"
         },
         {
           "function": "main",
-          "line": 572,
+          "line": 590,
           "operation": "print"
         }
       ]
@@ -9270,7 +9270,7 @@
     },
     "tools/v16/test_apc_gate.py": {
       "disposition": "Synthetic local test output only; never release/qualification evidence. Exercises derived-sabotage, not-discriminating and cold-ceiling refusals against the real analysis.",
-      "sha256": "1c03d83088e3a9a6135891ba83cda876e6f30167fa6b0382951649d4ca3ad98e",
+      "sha256": "ee3e17d280c6c1a821894f2a8ed78fbcaea99f930139ed305e853a39f348d1f7",
       "sites": []
     },
     "tools/v16/test_coop_cancellation.py": {

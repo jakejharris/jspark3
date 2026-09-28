@@ -37,6 +37,8 @@ tokens 0-24 with shared-history logprob spreads up to 0.84 nats (outgoing-boot c
     widening that limit; the limit never exceeds 2x the ceiling. Of 42 retained captures
     (2026-09-24..28), 41 stayed at or below 1.684; the one above 2.0 (2.683, a suffix-2047 first
     token) is refused.
+  - non-finite: a NaN or infinite chosen-token logprob anywhere in the capture FAILs before any
+    comparison or sabotage sizing (max() drops NaN and equal infinities subtract to NaN).
 Checker negative controls mutate the real capture and must FAIL. The limit adapts to cold noise, so
 the logprob control is sized from the capture, not fixed (a fixed 5.0-nat corruption passed under
 a 5.366 limit): limit + SABOTAGE_MARGIN + the corrupted token's own warm/cold offset, which leaves
@@ -70,6 +72,7 @@ import argparse
 from datetime import datetime, timezone
 import copy
 import json
+import math
 import re
 import time
 import urllib.request
@@ -359,11 +362,23 @@ def parity(rows: list[dict]) -> dict:
             "warm_spread": round(warm_spread, 6), "spread_limit": round(limit, 6)}
 
 
+def nonfinite(rows: list[dict]) -> list[str]:
+    """Probe runs whose chosen-token logprobs are not all finite numbers."""
+    finite = lambda value: type(value) in (int, float) and math.isfinite(value)  # noqa: E731
+    return [f"{row['id']}/{name}" for row in rows
+            for name, run in (("warm", row["warm"]), *((f"cold{i}", cold) for i, cold in enumerate(row["cold"])))
+            if not all(finite(value) for value in run["logprobs"])]
+
+
 def analyze(doc: dict) -> dict:
     cells, rows, expect = doc["cells"], doc["rows"], doc["expect"]
     findings, report = [], {}
     if [r["id"] for r in rows] != [c["id"] for c in cells]:
         return {"verdict": "FAIL", "findings": ["incomplete fixture coverage"], "cells": {}}
+    bad = nonfinite(rows)
+    if bad:
+        return {"verdict": "FAIL", "findings": [f"non-finite chosen-token logprobs in {len(bad)} runs: {bad[:8]}"],
+                "outliers": [], "cold_spread": None, "warm_spread": None, "spread_limit": None, "cells": {}}
     if not identity_ok(doc.get("apc_identity") or [], expect):
         findings.append(f"coordinator priority line {doc.get('apc_identity')} does not show the {expect} policy")
     sent = sum(2 + len(r["cold"]) for r in rows)
@@ -417,9 +432,12 @@ def net_positive(baseline: dict, candidate: dict, fixtures_sha256: str) -> dict:
 
 def sabotage(doc: dict) -> dict:
     """Size the shared-token logprob corruption from this capture; reason says why none discriminates."""
-    limit = parity(doc["rows"])["spread_limit"]
-    plan = {"cell": None, "limit": limit, "margin": SABOTAGE_MARGIN, "max": SABOTAGE_MAX,
+    plan = {"cell": None, "limit": None, "margin": SABOTAGE_MARGIN, "max": SABOTAGE_MAX,
             "offset": None, "size": None, "reason": None}
+    bad = nonfinite(doc["rows"])
+    if bad:
+        return {**plan, "reason": f"non-finite chosen-token logprobs in {len(bad)} runs"}
+    plan["limit"] = limit = parity(doc["rows"])["spread_limit"]
     row = next((r for r in doc["rows"] if r["warm"]["token_ids"][:1] == r["cold"][0]["token_ids"][:1] != []), None)
     if row is None:
         return {**plan, "reason": "no warm first token matches its first cold probe"}

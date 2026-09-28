@@ -127,5 +127,43 @@ class ColdCeilingTests(unittest.TestCase):
         self.assertAlmostEqual(plan['size'], 5.366392 + apc.SABOTAGE_MARGIN + 0.161336)
 
 
+class NonFiniteTests(unittest.TestCase):
+    """Rows 1+ are never the sabotaged cell (pi-prose, row 0), so only the finite check can refuse."""
+    def assert_refused(self, doc):
+        result, controls, plan = apc.gate(doc)
+        self.assertEqual(result['verdict'], 'FAIL')
+        self.assertTrue(result['findings'][0].startswith('non-finite chosen-token logprobs in '))
+        self.assertIn('sabotage not discriminating: ' + plan['reason'], result['findings'])
+        self.assertEqual((controls['warm_logprob'], plan['size']), ('NOT_DISCRIMINATING', None))
+        self.assertNotIn('PASS', controls.values())
+
+    def test_nan_outside_the_sabotage_cell_refuses(self):
+        doc = capture()
+        run = doc['rows'][1]['cold'][1]  # the review's reproduction
+        run['logprobs'][0] = float('nan')
+        run['top_logprobs'][0][run['token_strs'][0]] = float('nan')
+        self.assert_refused(doc)
+
+    def test_equal_infinities_across_a_cell_refuse(self):
+        for value in (float('inf'), float('-inf')):
+            with self.subTest(value=value):
+                doc = capture()
+                row = doc['rows'][1]
+                for run in (row['warm'], *row['cold']):
+                    run['logprobs'][0] = value
+                    run['top_logprobs'][0][run['token_strs'][0]] = value
+                self.assert_refused(doc)
+
+    def test_non_finite_or_non_numeric_anywhere_refuses(self):
+        # Inside and beyond shared histories, warm and cold, including the last token.
+        for row, run, position, value in ((5, 'warm', 40, float('nan')), (13, 2, 63, float('inf')),
+                                          (3, 0, 10, float('-inf')), (8, 1, 3, None)):
+            with self.subTest(row=row, run=run, position=position, value=value):
+                doc = capture()
+                probe_run = doc['rows'][row]['warm'] if run == 'warm' else doc['rows'][row]['cold'][run]
+                probe_run['logprobs'][position] = value
+                self.assert_refused(doc)
+
+
 if __name__ == '__main__':
     unittest.main()
