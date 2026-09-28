@@ -85,23 +85,35 @@ def prefill_pass(doc, blocking):
         need(any(row['new_tokens'] >= 2500 for row in turns), 'no qualifying long prefill canary')
 
 
+def component_identity(recipe, values):
+    if values['JSPARK3_V16_COOP'] == '0':
+        return None
+    import apply_coop_moe
+    from _image_identity import selected_identity
+    identity = apply_coop_moe.verify_bundle(recipe / 'overlays/v16/coop/bundle',
+                                           recipe / 'overlays/v16/coop/BUILD.json')
+    need('component_seal_sha256' in identity, 'operator admission requires schema-2 coop component qualification')
+    return {**identity, 'operator_image_config': selected_identity()['config_digest']}
+
+
 def run(args, fleet):
     values = fleet.load_env(args.env_file)
     fleet.validate_env(values)
     need(values['JSPARK3_V16_PROFILE'] == 'production-stock' and values['ABLIT'] == '0'
-         and values['JSPARK3_V16_COOP'] == '0' and values['JSPARK3_V16_APC_LRU'] == '1',
-         'operator admission supports production-stock, ABLIT=0, coop=0, APC=1 only')
+         and values['JSPARK3_V16_COOP'] in ('0', '1') and values['JSPARK3_V16_APC_LRU'] == '1',
+         'operator admission supports production-stock, ABLIT=0, sealed coop=1 or diagnostic coop=0, APC=1 only')
     manifest = fleet.bound_manifest(args.manifest, values, require_all=True, require_started=True)
     manifest_sha = fleet.sha_file(args.manifest)
     env_sha = fleet.sha_file(args.env_file)
     for binding in manifest['containers']:
         fleet.verify_remote_recipe(values, binding['rank'], manifest['recipe_manifest_sha256'])
+    component = component_identity(args.recipe, values)
     initial = snapshot(fleet, values, manifest)
     out = args.output
     out.mkdir(parents=True, exist_ok=False)
     base = f"http://{values['JSPARK_MASTER_ADDR']}:{values['JSPARK_API_PORT']}"
     controller = args.recipe / 'scripts/fleetctl.py'
-    identity = {'coop': 'off', 'adaptive-k': values['GLM53_ADAPTIVE_K'], 'dense-fp8': values['JSPARK3_V16_DENSE_FP8']}
+    identity = {'coop': 'on' if values['JSPARK3_V16_COOP'] == '1' else 'off', 'adaptive-k': values['GLM53_ADAPTIVE_K'], 'dense-fp8': values['JSPARK3_V16_DENSE_FP8']}
 
     def command(name, script, arguments, allowed=(0,)):
         proc = subprocess.run([sys.executable, '-B', str(script), *map(str, arguments)],
@@ -120,12 +132,15 @@ def run(args, fleet):
 
     def same_boot():
         need(fleet.sha_file(args.manifest) == manifest_sha and fleet.sha_file(args.env_file) == env_sha
-             and snapshot(fleet, values, manifest) == initial, 'boot, environment or runtime epoch changed during qualification')
+             and snapshot(fleet, values, manifest) == initial
+             and component_identity(args.recipe, values) == component, 'boot, environment or runtime epoch changed during qualification')
 
     verify('verify-first')
     same_boot()
     first = {'schema': admission_gate.FIRST_SCHEMA, 'verdict': 'PASS', 'identity_config': identity,
-             'producer': 'qualify_runtime.py', 'manifest_sha256': manifest_sha, 'boot': initial,
+             'producer': 'qualify_runtime.py', 'component_qualification': component,
+             'stock_profile': {'ABLIT': values['ABLIT'], 'profile': values['JSPARK3_V16_PROFILE'], 'APC': values['JSPARK3_V16_APC_LRU']},
+             'manifest_sha256': manifest_sha, 'boot': initial,
              'correctness': 'fleetctl arithmetic, focused and long-context witnesses', 'evidence_sha256': inputs()}
     write_json(out / 'first-prompt.json', first)
     gate_args = ['--base-url', base, '--env-file', args.env_file]
@@ -172,7 +187,9 @@ def run(args, fleet):
                  'TRIAR inactive attestation failed')
     same_boot()
     final = {'schema': admission_gate.FINAL_SCHEMA, 'verdict': 'PASS', 'identity_config': identity,
-             'producer': 'qualify_runtime.py', 'manifest_sha256': manifest_sha, 'environment_sha256': env_sha,
+             'producer': 'qualify_runtime.py', 'component_qualification': component,
+             'stock_profile': {'ABLIT': values['ABLIT'], 'profile': values['JSPARK3_V16_PROFILE'], 'APC': values['JSPARK3_V16_APC_LRU']},
+             'manifest_sha256': manifest_sha, 'environment_sha256': env_sha,
              'qualification_tools_sha256': {name: fleet.sha_file(Path(__file__).with_name(name)) for name in
                  ('qualify_runtime.py', 'prefill_gate.py', 'apc_gate.py', 'admission_gate.py', 'v16_common.py')},
              'boot': initial, 'triar': inactive, 'completed_at': datetime.now(timezone.utc).isoformat(),

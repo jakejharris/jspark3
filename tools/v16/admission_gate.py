@@ -44,11 +44,26 @@ def evaluate(first: dict, final: dict, *, first_path: str = "first", final_path:
             row.get("sha256") == first_sha256 and row.get("schema") == FIRST_SCHEMA
             for row in final.get("input_hashes", {}).get("client_evidence", [])):
         findings.append("first-prompt receipt was not reconciled in this finalization session")
-    if final.get("producer") == "qualify_runtime.py":
-        if (first.get("producer") != "qualify_runtime.py" or not first.get("boot")
+    if (final.get("producer") == "qualify_runtime.py" or first.get("producer") == "qualify_runtime.py"
+            or valid_identity and first_identity.get("coop") == "on"):
+        if (first.get("producer") != "qualify_runtime.py" or final.get("producer") != "qualify_runtime.py"
+                or not first.get("boot")
                 or first.get("boot") != final.get("boot")
                 or first.get("manifest_sha256") != final.get("manifest_sha256")):
             findings.append("operator receipts belong to different boots")
+        expected_stock = {'ABLIT': '0', 'profile': 'production-stock', 'APC': '1'}
+        if first.get('stock_profile') != expected_stock or final.get('stock_profile') != expected_stock:
+            findings.append('public operator admission requires unchanged stock-only settings')
+        component = first.get('component_qualification')
+        if component != final.get('component_qualification'):
+            findings.append('component qualification changed during admission')
+        if first_identity and first_identity.get('coop') == 'on':
+            import re
+            fields = {'native_sha256', 'policy_sha256', 'component_seal_sha256', 'gate_index_sha256', 'operator_image_config'}
+            if (not isinstance(component, dict) or set(component) != fields
+                    or any(not re.fullmatch('[0-9a-f]{64}', str(component.get(k, '')).removeprefix('sha256:'))
+                           for k in fields)):
+                findings.append('operator coop-on lacks complete component/native/policy/image identity')
     if first_identity and first_identity.get("dense-fp8") == "negative-coarse":
         findings.append("test-only negative-coarse cannot open admission")
     return {"schema": SCHEMA, "verdict": "PASS" if not findings else "FAIL",
@@ -58,7 +73,7 @@ def evaluate(first: dict, final: dict, *, first_path: str = "first", final_path:
 
 
 def self_check() -> dict:
-    identity = {"coop": "on", "adaptive-k": "ema", "dense-fp8": "off"}
+    identity = {"coop": "off", "adaptive-k": "ema", "dense-fp8": "off"}
     first = {"schema": FIRST_SCHEMA, "verdict": "PASS", "identity_config": identity}
     final = {"schema": FINAL_SCHEMA, "verdict": "PASS", "identity_config": identity,
              "input_hashes": {"client_evidence": [{"sha256": "first-fixture", "schema": FIRST_SCHEMA}]}}

@@ -209,6 +209,7 @@ def validate_env(values: dict[str, str]) -> None:
         "GLM53_EXL3_MOE_FAST", "GLM53_COOP_GEOMETRY", "HAREM_KDA_FLASHKDA",
         "GLM53_KDA_BF16_LARGE_M", "GLM53_COOPERATIVE_MOE",
         "GLM53_COOP_QUALIFICATION", "GLM53_COOP_MAINTENANCE_TEST",
+        "GLM53_COOP_SANITIZER", "GLM53_COOP_EP_RANK", "GLM53_COOP_TEST_HELPERS", "GLM53_COOP_BUNDLE",
         "JSPARK3_V16_COOP_MAINTENANCE", "GLM53_DENSE_FP8", "GLM53_APC_DRAFT_LRU",
     ):
         if key in os.environ:
@@ -1773,6 +1774,11 @@ def v16_identity_gate(values: dict[str, str], manifest: dict, rank0_logs: str) -
     }
     if not gate["tp3_rank_census"]:
         return gate
+    component = None
+    if options["coop"] == "1":
+        import apply_coop_moe
+        component = apply_coop_moe.verify_bundle(RECIPE_ROOT / "overlays/v16/coop/bundle",
+                                                RECIPE_ROOT / "overlays/v16/coop/BUILD.json")
     for binding in manifest["containers"]:
         rank = binding["rank"]
         if rank == 0:
@@ -1785,6 +1791,12 @@ def v16_identity_gate(values: dict[str, str], manifest: dict, rank0_logs: str) -
         for option, state in expected.items():
             selected = [(line_rank, observed) for name, line_rank, observed in rows if name == option]
             gate[f"rank{rank}_{option}"] = selected == [(str(rank), state)]
+        if component and "component_seal_sha256" in component:
+            coop_lines = [line for line in text.splitlines() if f"[jspark3-v16:coop] rank={rank} " in line]
+            gate[f"rank{rank}_coop_component"] = len(coop_lines) == 1 and all(
+                f"{key}={component[key]}" in coop_lines[0]
+                for key in ("native_sha256", "policy_sha256", "component_seal_sha256"))
+            gate[f"rank{rank}_coop_prepared"] = "cooperative MoE native prepared: policy_mode=" in text
         gate[f"rank{rank}_dense_fp8_post_load"] = v16_dense_fp8_receipt_ok(
             text, rank, options["dense-fp8"]
         )

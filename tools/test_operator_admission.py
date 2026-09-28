@@ -153,7 +153,7 @@ class AdmissionTests(unittest.TestCase):
             root = Path(directory)
             identity = {'coop': 'off', 'adaptive-k': 'ema', 'dense-fp8': 'trunk'}
             first = dict(schema=admission_gate.FIRST_SCHEMA, verdict='PASS', identity_config=identity,
-                         producer='qualify_runtime.py', boot=[{'container_id': 'one'}], manifest_sha256='manifest')
+                         producer='qualify_runtime.py', stock_profile={'ABLIT':'0','profile':'production-stock','APC':'1'}, boot=[{'container_id': 'one'}], manifest_sha256='manifest')
             write_json(root / 'first-prompt.json', first)
             digest = hashlib.sha256((root / 'first-prompt.json').read_bytes()).hexdigest()
             final = {**first, 'schema': admission_gate.FINAL_SCHEMA, 'evidence_sha256': {'first-prompt.json': digest},
@@ -170,16 +170,23 @@ class AdmissionTests(unittest.TestCase):
                 (root / 'first-prompt.json').write_text((root / 'first-prompt.json').read_text() + '\n')
                 self.assertEqual(admission_gate.main(argv), 1)
 
-    def workflow(self, failure=''):
+    def workflow(self, failure='', coop=False):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             env, manifest_path = root / 'env', root / 'service.json'
             env.write_text('fixture')
             manifest_path.write_text('{}')
             out = root / 'proof'
-            values = dict(JSPARK3_V16_PROFILE='production-stock', ABLIT='0', JSPARK3_V16_COOP='0',
+            values = dict(JSPARK3_V16_PROFILE='production-stock', ABLIT='0', JSPARK3_V16_COOP='1' if coop else '0',
                           JSPARK3_V16_APC_LRU='1', JSPARK_MASTER_ADDR='127.0.0.1', JSPARK_API_PORT='8888',
                           GLM53_ADAPTIVE_K='ema', JSPARK3_V16_DENSE_FP8='trunk', JSPARK3_TRIAR='1')
+            if failure == 'edited':
+                values['ABLIT'] = '1'
+            component = {key: hashlib.sha256(key.encode()).hexdigest() for key in
+                         ('native_sha256','policy_sha256','component_seal_sha256','gate_index_sha256')}
+            component['operator_image_config'] = 'sha256:' + hashlib.sha256(b'image').hexdigest()
+            def component_proof(*args):
+                return ({**component, 'policy_sha256': 'changed'} if failure == 'component' and events else component) if coop else None
             bindings = [dict(rank=r, container_id=str(r) * 64) for r in range(3)]
             manifest = dict(containers=bindings, recipe_manifest_sha256='recipe')
             events = []
@@ -231,7 +238,8 @@ class AdmissionTests(unittest.TestCase):
                 remote=remote, sha_file=fleet.sha_file, sha_bytes=fleet.sha_bytes, canonical=fleet.canonical,
                 atomic_text=fleet.atomic_text, redact_diagnostics=fleet.redact_diagnostics)
             args = argparse.Namespace(recipe=ROOT / 'recipe', env_file=env, manifest=manifest_path, output=out)
-            with patch.object(qualification.subprocess, 'run', side_effect=run), redirect_stdout(io.StringIO()):
+            with patch.object(qualification, 'component_identity', side_effect=component_proof), \
+                    patch.object(qualification.subprocess, 'run', side_effect=run), redirect_stdout(io.StringIO()):
                 if failure:
                     with self.assertRaises(qualification.QAError): qualification.run(args, native)
                     self.assertFalse((out / 'admission.json').exists())
@@ -244,6 +252,9 @@ class AdmissionTests(unittest.TestCase):
 
     def test_producer_drives_real_admission_and_first_pass_failure_is_retained(self):
         self.workflow()
+        self.workflow(coop=True)
+        self.workflow('edited', coop=True)
+        self.workflow('component', coop=True)
 
     def test_producer_refuses_failed_repeat_hygiene_triar_compile_or_changed_boot(self):
         for failure in ('prefill', 'hygiene', 'triar', 'jit', 'restart'):

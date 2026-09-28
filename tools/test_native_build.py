@@ -28,8 +28,9 @@ class NativeReceiptTests(unittest.TestCase):
                        'source_recipe_sha256': self.image['source_recipe_sha256'],
                        'image_receipt_sha256': self.image['payload_sha256'],
                        'build_inputs': native.build_inputs(),
+                       'builder_host': native.builder_host(),
                        'reproducibility': {'runs': 2, 'comparison': 'bit-identical'},
-                       'binary_sha256': {name: '3' * 64 for group in native.OUTPUTS.values() for name in group.values()},
+                       'binary_sha256': {name: (native.TARGET_NATIVE if group == native.OUTPUTS['coop'] else '3' * 64) for group in native.OUTPUTS.values() for name in group.values()},
                        'hardware_qualified': False}
 
     def write(self, record):
@@ -39,7 +40,7 @@ class NativeReceiptTests(unittest.TestCase):
 
     def test_operator_outputs_accepted_without_historical_pin(self):
         for names in (native.OUTPUTS['display'].values(), self.record['binary_sha256']):
-            record = {**self.record, 'binary_sha256': {name: '3' * 64 for name in names}}
+            record = {**self.record, 'binary_sha256': {name: self.record['binary_sha256'][name] for name in names}}
             self.write(record)
             self.assertEqual(native.read_native_record(self.path, self.image)['binary_sha256'],
                              record['binary_sha256'])
@@ -86,35 +87,37 @@ class BuildSelectionTests(unittest.TestCase):
     def test_default_opt_in_and_two_build_refusals(self):
         # Exercise main's selection/publication with compiler and Docker stubs.
         from test_operator_image import fixture, write_record
-        cases = ((False, None, ['display', 'display']),
-                 (True, None, ['display', 'display', 'coop', 'coop']),
-                 (False, 'display', ['display', 'display']),
-                 (True, 'coop', ['display', 'display', 'coop', 'coop']))
-        for with_coop, drift, expected_calls in cases:
-            with self.subTest(with_coop=with_coop, drift=drift), tempfile.TemporaryDirectory() as directory:
+        cases = ((None, None, ['display', 'display', 'coop', 'coop']),
+                 ('--with-coop', None, ['display', 'display', 'coop', 'coop']),
+                 ('--display-only', None, ['display', 'display']),
+                 (None, 'display', ['display', 'display']),
+                 (None, 'coop', ['display', 'display', 'coop', 'coop']),
+                 (None, 'wrong-pin', ['display', 'display', 'coop', 'coop']))
+        for option, drift, expected_calls in cases:
+            with self.subTest(option=option, drift=drift), tempfile.TemporaryDirectory() as directory:
                 work = Path(directory)
                 image_path, output = work / 'image.json', work / 'binaries'
                 write_record(image_path, fixture())
                 calls = []
-
                 def fake_build(kind, stage, image):
                     calls.append(kind)
                     hashes = {}
                     for name, relative in native.OUTPUTS[kind].items():
                         path = stage / name
                         path.parent.mkdir(parents=True, exist_ok=True)
-                        data = b'synthetic output ' + relative.encode()
-                        if kind == drift and calls.count(kind) == 2:
-                            data += b' different second build'
-                        path.write_bytes(data)
-                        hashes[relative] = native.sha(path)
+                        path.write_bytes(b'synthetic compiler output')
+                        value = native.TARGET_NATIVE if kind == 'coop' else native.sha(path)
+                        if kind == drift and calls.count(kind) == 2 or drift == 'wrong-pin' and kind == 'coop':
+                            value = native.sha(path)
+                            value = 'f' * 64
+                        hashes[relative] = value
                     return hashes
-
                 argv = ['build_native.py', '--image-receipt', str(image_path), '--output', str(output)]
-                if with_coop:
-                    argv.append('--with-coop')
+                if option:
+                    argv.append(option)
                 log = io.StringIO()
-                with patch.object(sys, 'argv', argv), patch.object(native, 'verify_local_image'), \
+                with patch.object(native, 'TARGET_NATIVE', hashlib.sha256(b'synthetic compiler output').hexdigest()), \
+                        patch.object(sys, 'argv', argv), patch.object(native, 'verify_local_image'), \
                         patch('validate_release.verify', return_value={'failed': 0}), \
                         patch.object(native, 'build', side_effect=fake_build), \
                         redirect_stdout(log), redirect_stderr(log):
@@ -123,23 +126,24 @@ class BuildSelectionTests(unittest.TestCase):
                 self.assertEqual(status, 9 if drift else 0, log.getvalue())
                 self.assertEqual(output.exists(), drift is None)
                 if drift:
-                    self.assertIn(drift + ': two native builds differ', log.getvalue())
+                    self.assertIn('candidate pin' if drift == 'wrong-pin' else drift + ': two native builds differ', log.getvalue())
                 else:
-                    record = native.read_native_record(output / 'native-build-receipt.json',
-                                                       native.read_operator_record(image_path))
+                    with patch.object(native, 'TARGET_NATIVE', hashlib.sha256(b'synthetic compiler output').hexdigest()):
+                        record = native.read_native_record(output / 'native-build-receipt.json',
+                                                           native.read_operator_record(image_path))
                     expected = {name for kind in set(expected_calls) for name in native.OUTPUTS[kind].values()}
                     self.assertEqual(set(record['binary_sha256']), expected)
-                    self.assertEqual((output / native.COOP / 'bundle/cooperative_moe.so').exists(), with_coop)
+                    self.assertEqual((output / native.COOP / 'bundle/cooperative_moe.so').exists(), option != '--display-only')
 
 
 class DefaultProfileTests(unittest.TestCase):
     def test_prepare_and_default_consumers_with_operator_receipts(self):
         self.prepare_and_check(with_coop=False)
 
-    def test_opt_in_artifact_stays_disabled(self):
-        self.prepare_and_check(with_coop=True)
+    def test_default_refuses_missing_coop(self):
+        self.prepare_and_check(with_coop=False, default_refusal=True)
 
-    def prepare_and_check(self, with_coop):
+    def prepare_and_check(self, with_coop, default_refusal=False):
         # Synthetic receipt/output fixtures exercise the trust policy and real
         # preparation/consumer code. They are not a compiler or GPU test.
         from test_operator_image import fixture, write_record
@@ -166,14 +170,21 @@ class DefaultProfileTests(unittest.TestCase):
             record = {'schema_version': 1, 'verification': 'fixed-native-build-v1',
                       'source_recipe_sha256': image['source_recipe_sha256'],
                       'image_receipt_sha256': image['payload_sha256'], 'build_inputs': native.build_inputs(),
-                      'reproducibility': {'runs': 2, 'comparison': 'bit-identical'},
+                      'builder_host': native.builder_host(),
+                       'reproducibility': {'runs': 2, 'comparison': 'bit-identical'},
                       'binary_sha256': outputs, 'hardware_qualified': False}
             receipt = work / 'native.json'
             write_record(receipt, record)
             process = subprocess.run([sys.executable, str(source / 'tools/prepare_runtime.py'),
                                       '--binary-root', str(binaries), '--image-receipt', str(image_path),
-                                      '--native-receipt', str(receipt), '--output', str(runtime)],
+                                      '--native-receipt', str(receipt), '--output', str(runtime),
+                                      *([] if default_refusal else ['--coop-off'])],
                                      capture_output=True, text=True)
+            if default_refusal:
+                self.assertNotEqual(process.returncode, 0)
+                self.assertIn('default preparation requires the pinned coop native', process.stderr)
+                self.assertFalse(runtime.exists())
+                return
             self.assertEqual(process.returncode, 0, process.stdout + process.stderr)
             self.assertEqual((runtime / native.COOP / 'bundle/cooperative_moe.so').exists(), with_coop)
             process = subprocess.run([sys.executable, str(runtime / 'recipe/scripts/remote_preflight.py'),
@@ -207,7 +218,7 @@ for check in (lambda: fleet.expected_v16_row(values),
     try:
         check()
     except preflight.Refusal as exc:
-        assert 'hardware-sealed' in str(exc) and 'cooperative_moe.so' in str(exc), str(exc)
+        assert 'hardware-sealed' in str(exc) and 'component seal' in str(exc), str(exc)
     else:
         raise AssertionError('coop=1 accepted an unsealed operator binary')
 for name in ('overlays/v14/display_kv/display_kv_probe', 'overlays/v14/display_kv/libglm53_display_kv.so',

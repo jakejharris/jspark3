@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: Apache-2.0
-"""Build ARM64 display artifacts (optionally coop) and receipt verified inputs/outputs."""
+"""Build ARM64 display and pinned coop artifacts by default and receipt verified inputs/outputs."""
 import argparse
 import hashlib
 import json
 import os
+import platform
 from pathlib import Path
 import shutil
 import re
@@ -15,6 +16,7 @@ import tempfile
 sys.dont_write_bytecode = True
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "recipe/scripts"))
+from _coop_qualification import TARGET_NATIVE
 from _image_identity import ImageRefusal, canonical, read_operator_record, sha, verify_local_image
 
 # Same commands and /w paths as tools/v14/build_display_kv.sh. Do not run the
@@ -31,6 +33,13 @@ OUTPUTS = {"display": {name: f"{DISPLAY}/{name}" for name in
            "coop": {"out/cooperative_moe.so": f"{COOP}/bundle/cooperative_moe.so"}}
 
 
+def builder_host():
+    machine = Path('/etc/machine-id')
+    if not machine.is_file() or not machine.read_text().strip():
+        raise ImageRefusal('builder machine identity is unavailable')
+    return {'architecture': platform.machine(), 'machine_id_sha256': sha(machine)}
+
+
 def build_inputs():
     paths = [ROOT / "tools/build_native.py", ROOT / DISPLAY / "display_kv.c",
              ROOT / DISPLAY / "probe_main.cu", ROOT / COOP / "build_repro.sh",
@@ -39,11 +48,13 @@ def build_inputs():
 
 
 def read_native_record(path, image):
+    from _coop_qualification import regular
     if path.is_symlink() or not path.is_file():
         raise ImageRefusal("operator native receipt missing or symlinked")
+    regular(path.parent, path.name)
     record = json.loads(path.read_text())
     keys = {"schema_version", "verification", "source_recipe_sha256", "image_receipt_sha256",
-            "build_inputs", "reproducibility", "binary_sha256", "hardware_qualified", "payload_sha256"}
+            "build_inputs", "builder_host", "reproducibility", "binary_sha256", "hardware_qualified", "payload_sha256"}
     if not isinstance(record, dict) or set(record) != keys:
         raise ImageRefusal("operator native receipt schema drift")
     payload = {k: v for k, v in record.items() if k != "payload_sha256"}
@@ -58,12 +69,20 @@ def read_native_record(path, image):
             or record["source_recipe_sha256"] != image["source_recipe_sha256"]
             or record["image_receipt_sha256"] != image["payload_sha256"]):
         raise ImageRefusal("operator native source/image binding drift")
+    host = record['builder_host']
+    if (not isinstance(host, dict) or set(host) != {'architecture', 'machine_id_sha256'}
+            or host['architecture'] not in ('aarch64', 'x86_64')
+            or not re.fullmatch('[0-9a-f]{64}', str(host['machine_id_sha256']))):
+        raise ImageRefusal('builder host identity malformed')
     outputs = record["binary_sha256"]
     display = set(OUTPUTS["display"].values())
     with_coop = display | set(OUTPUTS["coop"].values())
     if (not isinstance(outputs, dict) or set(outputs) not in (display, with_coop)
             or any(not re.fullmatch(r"[0-9a-f]{64}", str(value)) for value in outputs.values())):
         raise ImageRefusal("operator native output inventory drift")
+    if set(OUTPUTS["coop"].values()) <= set(outputs):
+        if outputs[next(iter(OUTPUTS["coop"].values()))] != TARGET_NATIVE:
+            raise ImageRefusal("coop native differs from the qualification candidate pin")
     return record
 
 
@@ -89,8 +108,9 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--image-receipt", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True, help="new BINARY_ROOT outside the source tree")
-    parser.add_argument("--with-coop", action="store_true",
-                        help="also attempt experimental coop builds; may fail byte identity and does not enable coop")
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument("--with-coop", action="store_true", help="compatibility alias for the default")
+    mode.add_argument("--display-only", action="store_true", help="diagnostic only; cannot prepare coop-on")
     args = parser.parse_args()
     try:
         output = args.output.resolve()
@@ -109,15 +129,19 @@ def main():
             work = Path(directory)
             built = work / "artifacts"
             observed = {}
-            for kind in (["display", "coop"] if args.with_coop else ["display"]):
+            for kind in (["display"] if args.display_only else ["display", "coop"]):
                 first = build(kind, work / f"{kind}-a", image["config_digest"])
                 second = build(kind, work / f"{kind}-b", image["config_digest"])
                 if first != second:
                     raise ImageRefusal(f"{kind}: two native builds differ: {first} versus {second}")
+                if kind == "coop" and first != {next(iter(OUTPUTS["coop"].values())): TARGET_NATIVE}:
+                    raise ImageRefusal("matching coop builds differ from the candidate pin")
                 for name, relative in OUTPUTS[kind].items():
                     target = built / relative
                     target.parent.mkdir(parents=True, exist_ok=True)
                     shutil.copyfile(work / f"{kind}-a" / name, target)
+                    if target.is_symlink() or sha(target) != first[relative]:
+                        raise ImageRefusal("copied native artifact differs from measured build")
                     target.chmod(0o755)
                 observed.update(first)
             if build_inputs() != inputs:
@@ -125,12 +149,16 @@ def main():
             record = {"schema_version": 1, "verification": "fixed-native-build-v1",
                       "source_recipe_sha256": image["source_recipe_sha256"],
                       "image_receipt_sha256": image["payload_sha256"], "build_inputs": inputs,
+                      "builder_host": builder_host(),
                       "reproducibility": {"runs": 2, "comparison": "bit-identical"},
                       "binary_sha256": observed, "hardware_qualified": False}
             record["payload_sha256"] = hashlib.sha256(canonical(record)).hexdigest()
             receipt = built / "native-build-receipt.json"
             receipt.write_bytes(canonical(record))
             read_native_record(receipt, image)
+            for stage in work.glob("*-?"):
+                if stage.is_dir():
+                    shutil.move(str(stage), str(built / stage.name))
             built.rename(output)
         print(f"PASS verified native builds; BINARY_ROOT={output}; hardware qualification remains required")
         return 0
