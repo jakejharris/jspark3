@@ -1,0 +1,480 @@
+# SPDX-License-Identifier: Apache-2.0
+# Deferred Markdown-only release copy; see docs/COOP_RELEASE_CHECKLIST.md.
+
+diff --git a/README.md b/README.md
+--- a/README.md
++++ b/README.md
+@@ -1,4 +1,4 @@
+-# JSpark3 v1.8.4 candidate
++# JSpark3 v1.8.4
+
+ GLM-5.3 Flash on three NVIDIA DGX Sparks, with tensor parallelism across all three GB10s, expert-parallel MoE and DFlash2 speculative decoding, with per-rank identity checks before launch and measured gates before you admit client traffic.
+
+@@ -13,9 +13,9 @@
+
+ The historical v1.8.0 build was faster than the published three-Spark reference build on its own benchmark at one and two streams, in every run.
+
+-MiaAI-Lab publishes three-Spark (TP=3) results for its GLM-5.3 Flash recipe from sparkDash's Decode bench: prose prompts, 512 tokens, thinking off. We ran the same benchmark with those settings, five times per row:
++The published reference reports three-Spark (TP=3) results for its GLM-5.3 Flash recipe from sparkDash's Decode bench: prose prompts, 512 tokens, thinking off. We ran the same benchmark with those settings, five times per row:
+
+-| Streams | JSpark3 median tok/s (range, 5 runs) | MiaAI-Lab, author-reported tok/s |
++| Streams | JSpark3 median tok/s (range, 5 runs) | Published reference, author-reported tok/s |
+ |---|---|---|
+ | 1 | **47.57** (43.34 to 48.6) | 40.1 |
+ | 2 | **64.26** (60.12 to 67.59) | 56.6 |
+@@ -24,29 +24,43 @@
+
+ At three streams, individual runs overlap the reference. At four streams, our median is 86.44 tok/s versus the author-reported 88.4 tok/s. The reference figures are author-reported, from a different fleet and date, and their repetition count and harness commit aren't published ([reference, 3× Spark section](https://github.com/MiaAI-Lab/GLM-5.3-Flash-EXL3-2x-DGX-Sparks/blob/f4970207e9fb2bdeac40d88b7cbef18c98aea310/README.md#3x-spark-tp3)).
+
+-**Coop.** The default native build now compiles display and coop twice and requires
+-coop SHA-256 `3212a3b0a308e2ec3673878212fcb0504a463c5f7df84eced5db7bb301cc3c07`.
+-This candidate is pending component qualification and new stock-boot measurements.
+-Default runtime preparation refuses until the measured policy and complete seal
+-are integrated. The qualified path prepares `JSPARK3_V16_COOP=1`; `--coop-off`
+-selects an explicit diagnostic path. Build reproducibility does not admit a fleet.
++**Coop is on by default.** Operators compile cooperative MoE locally and must
++produce byte-identical copies of the library that passed GPU qualification and
++was sealed for this release. Its SHA-256 is `[PINNED_HASH]`, the component seal
++is `[SEAL_ID]`, and the measured policy is `[POLICY_SHA256]`.
++The [component pin](recipe/config/coop-release.json),
++[BUILD record](recipe/overlays/v16/coop/BUILD.json) and
++[campaign evidence]([WINDOW2_EVIDENCE]) bind those identities. The campaign ran
++memcheck and racecheck with instrumented candidate-launch evidence and a real
++out-of-bounds detector control.
++
++[COOP_DELTA]
++
++The qualified default prepares `JSPARK3_V16_COOP=1`. `prepare_runtime.py --coop-off`
++and `build_native.py --display-only` are explicit diagnostic opt-outs from that
++default. Changing coop requires a restart. Reproducibility and the component
++seal do not admit your fleet: complete the installation and boot
++qualification gates before traffic. The kernel uses shared cudart linkage;
++AGPL-3.0-only component terms, MIT header notices and the separately licensed
++model dependencies remain applicable. See [licensing](docs/LICENSING.md).
++
+ See [installation](docs/INSTALL.md), [component qualification](docs/COOP_REPRODUCIBILITY.md)
+-and the [pending v1.8.4 record](release/results-v1.8.4.json).
++and the [v1.8.4 measurement record](release/results-v1.8.4.json).
+
+
+-**Weights.** The default is GLM-5.3 Flash with EXL3 quantization, unedited (`ABLIT=0`), using `production-stock`. The routed experts are 4-bit (Brandon M. Music's ShapleyMcg EXL3/TR3 checkpoint), and "stock" means unedited, not full precision. At load time the dense trunk uses INT8 weights and the default trunk FP8 path; the KV cache is FP8. Edited weights (`ABLIT=1`) are an explicit opt-in supplied separately; no edited checkpoint is redistributed. Changing modes requires a service restart and recomputes conversation prefixes.
++**Weights.** The default is GLM-5.3 Flash with EXL3 quantization, unedited (`ABLIT=0`), using `production-stock`. The routed experts are 4-bit (EXL3/TR3 checkpoint), and "stock" means unedited, not full precision. At load time the dense trunk uses INT8 weights and the default trunk FP8 path; the KV cache is FP8. Edited weights (`ABLIT=1`) are an explicit opt-in supplied separately; no edited checkpoint is redistributed. Changing modes requires a service restart and recomputes conversation prefixes.
+
+ ## What's in it
+
+ - **A controller that checks each rank.** `fleetctl` won't start until every rank matches its receipts. It checks the image and native builds you made, all 120 checkpoint shards by hash, the RoCE triangle at MTU 9000, the GID index, and memory and no-swap limits. Once the fleet is running, `verify` checks it end to end, down to retrieving a code word from a prompt longer than 32K tokens.
+-- **Three-Spark TP3 with expert parallelism,** built on FlyCockpit's TP3 recipe. TP3's head padding lives in derived runtime views, so the weights you download are never modified. MiaAI-Lab [credits JSpark3 and outstandly](https://github.com/MiaAI-Lab/GLM-5.3-Flash-EXL3-2x-DGX-Sparks/blob/f4970207e9fb2bdeac40d88b7cbef18c98aea310/README.md#3x-spark-tp3) as the route by which that recipe reached its kit.
+-- **Prefix caching for coding agents.** Our LRU retention for DFlash2 drafter windows builds on MiaAI-Lab’s per-group retention to keep agent prefixes reusable. Upstream fine-grained prefix hits ([plotarmordev, MiaAI-Lab PR #251](https://github.com/MiaAI-Lab/GLM-5.3-Flash-EXL3-2x-DGX-Sparks/pull/251)) run with our replay-window fix.
++- **Three-Spark TP3 with expert parallelism.** TP3's head padding lives in derived runtime views, so the weights you download are never modified.
++- **Prefix caching for coding agents.** Per-group LRU retention for DFlash2 drafter windows keeps agent prefixes reusable. Fine-grained prefix hits run with our replay-window fix.
+ - **Warmup before admission.** GLM and DFlash2 variants compile at boot; the shipped qualification command warms request shapes, applies page-cache hygiene and refuses compilation after warmup.
+ - **Speculative decoding that keeps its width.** Adaptive verification selects how many DFlash2 draft tokens to verify. Grammar-constrained requests (`response_format` with `json_schema`) keep the full speculative width.
+-- **A cooperative-MoE decode kernel for TP3,** adapted from MiaAI-Lab's TP2 extension (an ExLlamaV3-derived kernel) to expert-parallel ranks with up to 96 local experts. The historical binary produced the figures above; no performance values are assigned to the new binary yet.
+-- **A release you can audit and rebuild.** Every file is hash-listed and checked by a 17-check validator, with a CycloneDX SBOM and per-file SPDX licensing. You build the serving image and native libraries on your own Spark, and the default native build is compiled twice and must match byte for byte.
++- **A cooperative-MoE decode kernel for TP3,** adapted to expert-parallel ranks with at most 96 local experts. Historical figures above retain their original release scope; the new matched comparison is linked in the coop section.
++- **A release you can audit and rebuild.** Every file is hash-listed and checked by the release validator, with a CycloneDX SBOM and per-file SPDX licensing. You build the serving image and native libraries on your own Spark, and the default native build is compiled twice and must match byte for byte.
+
+-JSpark3 builds on work by Z.AI (GLM-5.3), Brandon M. Music (ShapleyMcg), Inco AI (DFlash2), MiaAI-Lab, FlyCockpit, turboderp (ExLlamaV3), coolbho3k, gabewillen, plotarmordev, the vLLM project and others named in [third-party notices](THIRD_PARTY_NOTICES.md). The ShapleyMcg attribution is in [REQUIRED_ATTRIBUTION.md](REQUIRED_ATTRIBUTION.md). Recipe code is Apache-2.0. A running service also loads AGPL-3.0-only components and always uses the DFlash2 draft model, which is licensed for non-commercial research and evaluation only ([licensing](docs/LICENSING.md)).
++Recipe code is Apache-2.0. A running service also loads AGPL-3.0-only components and always uses the DFlash2 draft model, which is licensed for non-commercial research and evaluation only ([licensing](docs/LICENSING.md)).
+
+ Thirds and active TRIAR are deferred. Leave the prepared TRIAR resident flag at
+ 1; admission proves the inactive Cadence/NCCL graph path. First-pass canaries
+@@ -59,3 +73,15 @@
+ [benchmarks](docs/BENCHMARKS.md), [limitations](docs/LIMITATIONS.md) and
+ [release notes](release/RELEASE-NOTES.md). Validate the export with
+ `python3 -B tools/validate_release.py . --require-final`.
++
++## Credits
++
++JSpark3 builds on work by Z.AI, Inco AI, z-lab, Mia's AI Lab,
++FlyCockpit, vcruz305, sfxnz, Tony, turboderp, coolbho3k, gabewillen,
++plotarmordev, outstandly, the vLLM project and the InstantTensor contributors.
++See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for component contributions,
++source revisions and license notices.
++
++The [ShapleyMcg](https://github.com/brandonmmusic-max/shapleymcg) attribution is reproduced below.
++
++This work includes or was produced using ShapleyMcg, created by Brandon M. Music (https://github.com/brandonmmusic-max/shapleymcg). ShapleyMcg is licensed under the ShapleyMcg License v1.0, an attribution-required license that grants no rights to the person known as "0xSero." Use of ShapleyMcg without this attribution is unlicensed.
+diff --git a/release/RELEASE-NOTES.md b/release/RELEASE-NOTES.md
+--- a/release/RELEASE-NOTES.md
++++ b/release/RELEASE-NOTES.md
+@@ -1,36 +1,50 @@
+-# v1.8.4 candidate: pending component qualification
++# JSpark3 v1.8.4: qualified cooperative MoE by default
+
+-This offline candidate adds the owner qualification/sealing workflow, a separate
+-qualification-image/operator-image schema, default display+coop builds and
+-qualified coop-on preparation/admission. It does not contain a measured policy
+-for the new binary and cannot pass final-release validation yet.
++Cooperative MoE is on by default in the prepared runtime. Operators compile
++the native library locally and must reproduce the same bytes that passed the
++GPU component campaign and were sealed for this release. The source package
++contains the build recipe, measured dispatch policy and qualification metadata;
++it does not contain the compiled library, model weights or a container image.
+
+-Native candidate: `3212a3b0a308e2ec3673878212fcb0504a463c5f7df84eced5db7bb301cc3c07`.
+-The builder, native sources and compiler flags remain unchanged.
++The pinned cooperative-MoE SHA-256 is `[PINNED_HASH]`. The component seal is
++`[SEAL_ID]`, and its measured dispatch policy is `[POLICY_SHA256]`. These values
++come from the [release pin](https://github.com/jakejharris/jspark3/blob/v1.8.4/recipe/config/coop-release.json)
++and [component BUILD record](https://github.com/jakejharris/jspark3/blob/v1.8.4/recipe/overlays/v16/coop/BUILD.json).
+
+-The component campaign, final-source reproduction on two physical machines,
+-ordinary-clone stock boot admission, archive/clone parity and new measurements
+-must pass before release. An edited serving boot requires its separate owner
+-admission. The public producer continues to reject ABLIT=1.
++The completed component campaign ran memcheck and racecheck with candidate
++launch-coverage checks, numerical comparisons, graph replay and policy checks.
++A deliberate out-of-bounds CUDA access verified that the memcheck detector
++still rejects a real invalid access. See the [reviewed campaign evidence]([WINDOW2_EVIDENCE])
++and [qualification index](https://github.com/jakejharris/jspark3/blob/v1.8.4/recipe/overlays/v16/coop/QUALIFICATION.json).
+
+-Builder identities in the seal are operator-attested observations from a trusted
+-operator's two-board determinism check. Host-only collection, a fixed trusted
+-executable and a clean query environment reduce accidental identity mistakes.
+-Receipt self-hashes do not authenticate edits, defend against a malicious
+-operator or provide hardware attestation. Independently rebuilding and comparing
+-the pinned native SHA-256 remains the reproducible artifact integrity check.
+-See the [builder evidence field descriptions](../docs/COOP_REPRODUCIBILITY.md#builder-evidence-fields).
++[COOP_DELTA]
+
+-See [the owner workflow](../docs/COOP_REPRODUCIBILITY.md),
+-[installation](../docs/INSTALL.md) and [measurement scope](MEASUREMENTS-v1.8.4.md).
+-Historical results and notices remain preserved; compiled binaries are excluded.
++The A/B comparison is specific to its recorded workload, weights, settings and
++separate serving starts. Historical measurements remain in their original files
++and are labelled by their original release. Component qualification and byte
++reproducibility do not replace admission of the operator's own boot. Follow the
++[installation guide](https://github.com/jakejharris/jspark3/blob/v1.8.4/docs/INSTALL.md)
++and [operations guide](https://github.com/jakejharris/jspark3/blob/v1.8.4/docs/OPERATIONS.md)
++before serving traffic. `prepare_runtime.py --coop-off` and
++`build_native.py --display-only` are explicit diagnostic opt-outs from the
++qualified coop-on default. Coop changes require a restart.
++
++The cooperative kernel builds with shared CUDA runtime linkage (`--cudart=shared`),
++as recorded in the [builder](https://github.com/jakejharris/jspark3/blob/v1.8.4/recipe/overlays/v16/coop/build_repro.sh).
++Its AGPL-3.0-only derivatives and MIT headers retain their notices and source.
++Original recipe code and prose are Apache-2.0. Shared cudart linkage does not
++change the component licenses or make the assembled service wholly Apache-2.0.
++The target weights and DFlash2 dependency retain their separate terms, including
++DFlash2's non-commercial research/evaluation restriction. See the
++[license review](https://github.com/jakejharris/jspark3/blob/v1.8.4/manifests/license-review.json)
++and [licensing guide](https://github.com/jakejharris/jspark3/blob/v1.8.4/docs/LICENSING.md).
+
+ ## Credits
+
+ JSpark3 builds on work by Z.AI, Inco AI, z-lab, Mia's AI Lab,
+ FlyCockpit, vcruz305, sfxnz, Tony, turboderp, coolbho3k, gabewillen,
+ plotarmordev, outstandly, the vLLM project and the InstantTensor contributors.
+-See [THIRD_PARTY_NOTICES.md](../THIRD_PARTY_NOTICES.md) for component contributions,
++See [THIRD_PARTY_NOTICES.md](https://github.com/jakejharris/jspark3/blob/v1.8.4/THIRD_PARTY_NOTICES.md) for component contributions,
+ source revisions and license notices.
+
+ The [ShapleyMcg](https://github.com/brandonmmusic-max/shapleymcg) attribution is reproduced below.
+diff --git a/docs/INSTALL.md b/docs/INSTALL.md
+--- a/docs/INSTALL.md
++++ b/docs/INSTALL.md
+@@ -2,7 +2,7 @@
+
+ JSpark3 serves GLM-5.3 Flash with EXL3/TR3 quantization across three DGX Sparks.
+ The target's routed experts use 4 bits per weight; "stock" means unedited
+-(`ABLIT=0`), not full precision. The default is `production-stock`, coop off,
++(`ABLIT=0`), not full precision. The default is `production-stock`, coop on,
+ adaptive-K `ema`, dense FP8 `trunk`, and display profile `full`.
+ The required DFlash2 draft model is non-commercial; read [licensing](LICENSING.md)
+ before choosing this stack.
+@@ -37,16 +37,19 @@
+ source and work roots must each have the **same absolute path on every Spark**.
+ Use new, dedicated recipe/work directories for each installation.
+
+-This is the pending v1.8.4 installation path. `--require-final` deliberately
+-refuses this first-pass candidate: no measured component seal or v1.8.4 results
+-have been inserted. The owner uses the pre-seal workflow in
+-[component qualification](COOP_REPRODUCIBILITY.md) before this public flow can pass.
++The v1.8.4 release includes the qualified cooperative-MoE component seal and
++measured dispatch policy. Default installation builds and installs exactly the
++qualified native bytes, with coop on. `--require-final` verifies the bound
++release evidence before installation; missing or mismatched evidence still
++refuses. The component seal does not admit your fleet: complete the same-boot
++checks below before serving traffic. `prepare_runtime.py --coop-off` and
++`build_native.py --display-only` are explicit diagnostic opt-outs.
+
+ ## 1. Obtain and validate the source
+
+ Download the recipe tarball and its distribution `SHA256SUMS` from the
+ [release page](https://github.com/jakejharris/jspark3/releases). Choose the
+-v1.8.4 assets when published; this document describes that source version.
++v1.8.4 assets; this document describes that source version.
+ In the download directory, verify the tarball before extracting it:
+
+ ```sh
+@@ -60,7 +63,7 @@
+ ```
+
+ The exported tarball, `git archive`, and a normal clone checked out at the release
+-tag all work. Once published, the Git alternative is
++tag all work. The Git alternative is
+ `git clone --branch v1.8.4 https://github.com/jakejharris/jspark3.git`.
+ Validation scans the current file names and contents, including untracked files;
+ Git metadata and history are outside the source-export privacy guarantee.
+@@ -103,13 +106,16 @@
+ ```
+
+ Display and coop must each match across two fresh builds. Coop must additionally
+-match `3212a3b0a308e2ec3673878212fcb0504a463c5f7df84eced5db7bb301cc3c07`.
++match the exact GPU-qualified native SHA-256 in the
++[release pin](../recipe/config/coop-release.json); the
++[BUILD record](../recipe/overlays/v16/coop/BUILD.json) binds the component seal
++and measured policy. The release notes show those same filled-in identities.
+ The receipt remains `hardware_qualified=false`. Preparation validates the
+ release-pinned component seal and measured policy, installs your matching binary,
+ and selects `production-stock`, `ABLIT=0`, `JSPARK3_V16_COOP=1`.
+ Missing, wrong or unsealed coop refuses preparation. `--with-coop` is a
+ compatibility alias; `build_native.py --display-only` and
+-`prepare_runtime.py --coop-off` are explicit diagnostic options.
++`prepare_runtime.py --coop-off` are explicit diagnostic opt-outs from the qualified default.
+
+ The display compiler uses stable intermediate filenames and distinct translation
+ unit seeds. It does not strip or normalize completed binaries. If a comparison
+diff --git a/docs/OPERATIONS.md b/docs/OPERATIONS.md
+--- a/docs/OPERATIONS.md
++++ b/docs/OPERATIONS.md
+@@ -85,9 +85,13 @@
+ refuses. The passing state is `INACTIVE_NCCL_B45`; no active TRIAR or thirds
+ performance is claimed, and no activation command is supported here.
+
+-[Final binding](../manifests/final-binding.json) records the historical v1.8.0
+-measured configuration, including coop on. The prepared operator environment
+-has coop off. Epoch changes and mode changes invalidate admission. Keep requests
++[Final binding](../manifests/final-binding.json) identifies the v1.8.4 component,
++policy and release evidence. The prepared operator environment has coop on
++(`JSPARK3_V16_COOP=1`) and uses the exact qualified native bytes.
++`prepare_runtime.py --coop-off` and `build_native.py --display-only` are explicit
++diagnostic opt-outs. Historical v1.8.0 measurements retain their original binary
++and settings; they do not establish performance for this release's binary.
++Epoch changes and mode changes invalidate admission. Keep requests
+ drained and restart/requalify for source, image, weight mode, memory layout or
+ runtime-setting changes. Live stock/edited switching is not qualified.
+
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -1,13 +1,20 @@
++# JSpark3 v1.8.4
++
++Cooperative MoE is on by default. Default builds compile display and coop twice
++and require coop to match the exact native bytes qualified and sealed for this
++release. The [release pin](recipe/config/coop-release.json) and
++[BUILD record](recipe/overlays/v16/coop/BUILD.json) identify the native, component
++seal and measured policy. `prepare_runtime.py --coop-off` and
++`build_native.py --display-only` are explicit diagnostic opt-outs.
++
++The component campaign includes integration/H1, memcheck, racecheck, profile
++and policy checks. Operators must still admit their own exact boot before
++traffic. See the [release notes](release/RELEASE-NOTES.md) for filled-in seal
++identities and the matched on/off comparison, and the
++[v1.8.4 record](release/results-v1.8.4.json) for its serving measurements.
++Frozen v1.8.0 results are unchanged.
++
+ # JSpark3 v1.8.3
+-
+-## v1.8.4 candidate — pending hardware evidence
+-
+-Default builds include display and deterministic coop, each compiled twice.
+-Preparation and stock admission support the release-pinned schema-2 component
+-seal. The owner runner checks fixtures before an exclusive GPU campaign and
+-seals complete integration/H1/sanitizer/profile/policy evidence into a new output.
+-Measured policy, final source rebuilds, clean-room stock admission and v1.8.4
+-numbers remain pending. Frozen v1.8.0 results are unchanged.
+
+ Runnable operator admission with all-rank hygiene, fine-hit prefix-cache gates,
+ readiness waiting and native TRIAR-inactive proof. Complete install/upgrade
+diff --git a/docs/BENCHMARKS.md b/docs/BENCHMARKS.md
+--- a/docs/BENCHMARKS.md
++++ b/docs/BENCHMARKS.md
+@@ -1,6 +1,6 @@
+ # Benchmark records
+
+-v1.8.4 measurements are pending in [the separate record](../release/results-v1.8.4.json).
++v1.8.4 measurements are recorded in [the separate record](../release/results-v1.8.4.json).
+ All numerical results below remain historical and do not qualify the new native binary.
+
+ Decode is the aggregate rate of 1, 2, 4 or 8 code or prose requests (as labeled) started together (this build serves the Pi coding agent), each forced to 512 output tokens at temperature 0 with thinking off and no prefix-cache reuse, counted from the first to the last streamed token; prefill is the range over eight Pi-shaped coding-agent turns, each extending a cached prefix, measured right after a page-cache hygiene step.
+@@ -22,7 +22,10 @@
+
+ Build `v1.8.0`; weight mode `0` (`ABLIT=0`, unedited EXL3/TR3). Measured settings:
+ coop on, adaptive-K `ema`, dense FP8 `trunk`, display `full`, prefix-cache LRU on,
+-TRIAR resident but inactive. The operator default differs: **coop off**. Serving starts: 1; sweeps/repetitions: 2. Bands are within-start ranges, not confidence intervals.
++TRIAR resident but inactive. The v1.8.4 operator default is also coop on, using
++its separately qualified native bytes; these historical rates do not transfer
++to that binary. Serving starts: 1; sweeps/repetitions: 2. Bands are within-start
++ranges, not confidence intervals.
+
+ | Metric | tok/s range |
+ |---|---|
+diff --git a/docs/LIMITATIONS.md b/docs/LIMITATIONS.md
+--- a/docs/LIMITATIONS.md
++++ b/docs/LIMITATIONS.md
+@@ -1,7 +1,8 @@
+ # Limitations
+
+-- Frozen historical benchmark records accompany this export. Exported bytes need
+-  fresh qualification; inherited receipts are historical evidence only.
++- Frozen historical benchmark records accompany this export. The release pins
++  qualified cooperative-MoE bytes; component qualification does not admit a new
++  operator boot or transfer historical throughput to the new binary.
+ - The production-stock policy is integrated and tested offline. Mode-0
+   production admission requires fresh hardware qualification of the exact
+   shipped configuration. Historical validation-profile measurements do not qualify
+@@ -51,16 +52,19 @@
+
+ Operators can build the serving image locally and bind its actual identity with
+ a receipt; bit-identical image rebuilds are not required or claimed. Build once
+-and transfer that image across your fleet. Display artifacts retain the two-build
+-identity check; coop is off. The shipped qualification command now supplies
++and transfer that image across your fleet. Display and coop artifacts must match
++across two fresh builds; coop must also match the exact qualified release pin.
++Coop is on by default. `prepare_runtime.py --coop-off` and
++`build_native.py --display-only` are explicit diagnostic opt-outs.
++The shipped qualification command supplies
+ warmup, page-cache hygiene and admission receipts. See [installation](INSTALL.md)
+ and [operations](OPERATIONS.md).
+
+ One v1.8.2 clean-room fleet passed verify, post-hygiene prefill and fine-hit APC,
+ and measured 49.05 tok/s median single-stream code decode (three repetitions,
+-512 tokens, temperature 0, coop off). It did not run full admission. The new
+-v1.8.3 orchestration is tested offline; a passing gate run on your actual fleet
+-is still required. Source metadata retains `hardware_qualified=false` and
++512 tokens, temperature 0, coop off). It did not run full admission. That
++historical observation does not describe the v1.8.4 coop-on default. A passing
++gate run on your actual fleet is still required. Source metadata retains `hardware_qualified=false` and
+ `hardware_validation=not-performed` for this export. `publication_authorized`
+ describes the export stage, not a claim about later release approval.
+
+diff --git a/docs/COOP_REPRODUCIBILITY.md b/docs/COOP_REPRODUCIBILITY.md
+--- a/docs/COOP_REPRODUCIBILITY.md
++++ b/docs/COOP_REPRODUCIBILITY.md
+@@ -1,14 +1,18 @@
+ # Cooperative MoE: reproducible builds and component qualification
+
+-The unchanged deterministic builder targets
+-`3212a3b0a308e2ec3673878212fcb0504a463c5f7df84eced5db7bb301cc3c07`.
++The deterministic builder must reproduce the exact GPU-qualified native bytes
++identified by the [release pin](../recipe/config/coop-release.json). The
++[BUILD record](../recipe/overlays/v16/coop/BUILD.json) binds the component seal
++and measured policy; the release notes display their filled-in identities.
+ It uses fixed `/w` paths, source timestamps, per-unit seeds and retained compiler
+ intermediates, with shared cudart. It never strips or normalizes completed ELFs.
+ The earlier build experiment remains separate evidence; repeating its old-builder
+-controls is not a release prerequisite. New GPU qualification remains pending.
++controls is not a release prerequisite. The release includes the completed
++component seal. Default preparation selects coop on; `prepare_runtime.py --coop-off`
++and `build_native.py --display-only` are explicit diagnostic opt-outs.
+
+ `tools/build_native.py` builds display and coop twice in fresh, network-disabled
+-containers. Both runs must agree and coop must hit the exact candidate hash.
++containers. Both runs must agree and coop must hit the exact qualified hash.
+ It retains raw build directories and a receipt bound to the current source and
+ operator image. `--with-coop` is a compatibility alias. A failed coop build cannot
+ silently yield a display-only result; `--display-only` is diagnostic.
+@@ -25,11 +29,12 @@
+ Old native receipts must be rebuilt, not edited. Remote Docker builders and
+ emulated x86 builders cannot satisfy independent native qualification.
+
+-Use a clean candidate source export or ordinary clone with no private working
+-files. Run `python3 -B tools/validate_release.py .` for this pending candidate;
+-`--require-final` must refuse until all component, admission and measurement pins
+-are integrated. Build the operator image and native outputs as documented in
+-[installation](INSTALL.md), omitting only that premature final-release assertion.
++The workflow below is for maintainers qualifying a component before release.
++Use a clean prepared candidate export or ordinary clone with no private working
++files. Run `python3 -B tools/validate_release.py .` during that preparation;
++`--require-final` rejects a candidate without integrated component, admission
++and measurement evidence. Users installing published v1.8.4 follow
++[installation](INSTALL.md), including its required `--require-final` check.
+
+ Stage these immutable inputs before reserving a GPU:
+
+@@ -148,7 +153,10 @@
+ compiled-input map is unchanged, then rebuild twice from the final source and
+ repeat on the second physical machine. Only reviewed actual hashes enter
+ `coop-release.json`, the binary inventory and the distinct v1.8.4 delivery.
+-Until then default preparation and final-release validation refuse.
++For an unintegrated candidate, default preparation refuses. A verified
++component-qualified candidate permits private serving; final-release validation
++also requires serving measurements and admission. The published release uses
++the completed binding, while each operator still admits their own boot.
+
+ The schema records the actual qualification image separately from operator image
+ eligibility. Every operator still passes the fixed Dockerfile/InstantTensor policy
+diff --git a/docs/COOP_QUALIFICATION_HANDOFF.md b/docs/COOP_QUALIFICATION_HANDOFF.md
+--- a/docs/COOP_QUALIFICATION_HANDOFF.md
++++ b/docs/COOP_QUALIFICATION_HANDOFF.md
+@@ -1,9 +1,12 @@
+ # v1.8.4 component qualification handoff
+
+-Run this document from the exact reviewed commit, alongside its source. It stages
+-component qualification and produces a separate reviewable seal. It does not
+-schedule or authorize serving changes. Final release validation intentionally
+-refuses until measured component and serving evidence is integrated.
++This maintainer procedure stages component qualification and produces a
++reviewable seal before release. Run it from the exact reviewed candidate commit,
++alongside its source; it does not schedule or authorize serving changes.
++Final validation rejects candidates lacking measured component and serving
++evidence. Published v1.8.4 installation uses the integrated seal and coop-on
++default described in [INSTALL](INSTALL.md), then requires admission of the
++operator's own boot.
+
+ ## 1. Exact source and two independent builders
+
+@@ -423,7 +426,7 @@
+ 3. Pin the actual reviewed BUILD digest, gate index, policy and native in
+    `recipe/config/coop-release.json`, `manifests/binaries.json` and the distinct
+    v1.8.4 delivery binding/catalog. No null, dummy profile hash or old delivery
+-   record may be promoted. The prepared branch presently refuses final release.
++   record may be promoted. A prepared candidate cannot pass final release validation.
+ 4. Finish and review the owner's edited-mode admission handoff and pin/adapt the
+    retained decode benchmark tooling before scheduling the two serving starts.
+    The owner's retained epoch-oriented decode harness must be reviewed for
+diff --git a/docs/REPRODUCIBILITY.md b/docs/REPRODUCIBILITY.md
+--- a/docs/REPRODUCIBILITY.md
++++ b/docs/REPRODUCIBILITY.md
+@@ -33,7 +33,7 @@
+ The validator uses shared inventory helpers, syntax checks, link checks and
+ lifecycle dry-runs from the latest local release-validator lineage, whose
+ hash is recorded in the derivation manifest. This recipe-only profile has
+-seventeen checks. Historic weight-mirror, model-card and result-table checks
++eighteen checks. Historic weight-mirror, model-card and result-table checks
+ belong to the separate final publication validation and are not claimed here.
+
+ ## Final source binding
+diff --git a/docs/RELEASE_TOOLING.md b/docs/RELEASE_TOOLING.md
+--- a/docs/RELEASE_TOOLING.md
++++ b/docs/RELEASE_TOOLING.md
+@@ -53,7 +53,7 @@
+ release body, landing README, HF card and any GitHub-hosted HF-card copy together.
+ They must name/link the release being published, while historical tables retain
+ their v1.8.0 identity. Link the current INSTALL, preserve model license metadata
+-and attribution, disclose coop off beside coop-on numbers, and use the pinned
++and attribution, label historical coop-off results and the qualified coop-on default, and use the pinned
+ weight-download revision. Updating these live pages is a publication step;
+ source edits alone do not change them. Do not re-run the historical frozen
+ assembler as though it were a new v1.8.3 package.
+diff --git a/release/MEASUREMENTS-v1.8.4.md b/release/MEASUREMENTS-v1.8.4.md
+--- a/release/MEASUREMENTS-v1.8.4.md
++++ b/release/MEASUREMENTS-v1.8.4.md
+@@ -1,8 +1,10 @@
+-# v1.8.4 measurement record — pending
++# v1.8.4 measurement record
+
+-No new throughput or quality numbers are available. The structured
+-[record](results-v1.8.4.json) carries null measured fields until the actual GPU
+-campaign. Historical v1.8.0 results remain byte-identical in their existing files.
++The structured [record](results-v1.8.4.json) contains the v1.8.4 serving
++measurements and their source, native, policy and boot identities. The matched
++coop on/off comparison is linked from the [release notes](RELEASE-NOTES.md).
++Historical v1.8.0 results remain byte-identical in their existing files; those
++rates do not transfer to this release's qualified native bytes.
+
+ The admitted stock boot must retain two complete code/prose decode sweeps at
+ c1/c2/c4/c8, 512 output tokens, temperature zero, thinking off, no prefix reuse;

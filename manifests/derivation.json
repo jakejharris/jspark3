@@ -97,8 +97,8 @@
       "changed": true,
       "input_sha256": "f52c33c63ac2b075e46640e687ada0a062cb1f8458a04726870a4dfec983977d",
       "origin": "v184-publish-preparation",
-      "public_sha256": "a5ae76162ca151618a1a94151e4df538514c493ba875c83967797e4c638dda10",
-      "revision": "v184-merge-serving-state"
+      "public_sha256": "3bde9bf8102a8654d3d4d05ee48409f5111296f5143641117091caf725dff841",
+      "revision": "v184-post-seal-documentation"
     },
     "docs/COOP_REPRODUCIBILITY.md": {
       "changed": true,
@@ -191,8 +191,8 @@
       "changed": true,
       "input_sha256": "9830d95de98135c7d36d7ecc66e0f2fbd493a717227059317df57c1f654cbab6",
       "origin": "release-package-render",
-      "public_sha256": "34e71b0efdff4f23beabac90582ebd5543ff3c71e4846d8afb2a2d398d3d27eb",
-      "revision": "v184-merge-serving-state"
+      "public_sha256": "5dddcde2ee657999689dab350641b04502c06b0f8acf1cfb660e2ba623837b77",
+      "revision": "v184-post-seal-documentation"
     },
     "manifests/figure-bindings.json": {
       "changed": false,
@@ -225,8 +225,8 @@
       "changed": true,
       "input_sha256": "f968bb8ad61c217d1c955e5a6209b35cebfae065e3f1ef6d3077ed6a07f25739",
       "origin": "release-package-render",
-      "public_sha256": "ada219e3aa6131f78fea71ad217ddfcb9d5c67848060df5b9e1b5e593ab3bc9a",
-      "revision": "v184-sealed-toolchain-whitespace"
+      "public_sha256": "c0ce240d0807340a1035984e1dda898ef34f9908352c6c89ffb9e3c30c778afb",
+      "revision": "v184-post-seal-documentation"
     },
     "manifests/qualification.json": {
       "changed": false,
@@ -258,8 +258,8 @@
       "changed": true,
       "input_sha256": "fad5c997be3187d1ce467088572677544c60652fda500ea822e89392d7f8bca2",
       "origin": "v1.8.3-shared-output-r5",
-      "public_sha256": "3988b5bd8f3aa742a4952a7d307b6750326b6e5b76c9fe4df2eb6851a62737bf",
-      "revision": "v184-preflight-contract"
+      "public_sha256": "13d9e0e898ddf30491462bb92915436a38140b5a81a819075354b4a4d26c21f5",
+      "revision": "v184-post-seal-documentation"
     },
     "manifests/stock-profile.json": {
       "changed": false,
@@ -1829,6 +1829,13 @@
       "origin": "sealed-source",
       "public_sha256": "eb5b3b6cfb28cd6480635740cc3b44eaf40d1791156e872d7f4484c9c371253e",
       "revision": "v1.8.4-on-v1.8.3"
+    },
+    "tools/v184_post_seal_docs.patch": {
+      "changed": true,
+      "input_sha256": "28f0c44388dbb943391a72663502d3f3c0545996d33a55d4ae81b36036660ee2",
+      "origin": "v184-post-seal-documentation",
+      "public_sha256": "bc1568e07985971dc68e5090478185432fa8dcf571fba0b13f7a0bc565e1a36e",
+      "revision": "v184-post-seal-documentation"
     },
     "tools/validate_release.py": {
       "changed": true,

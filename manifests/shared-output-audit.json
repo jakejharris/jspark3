@@ -9786,6 +9786,11 @@
         }
       ]
     },
+    "tools/v184_post_seal_docs.patch": {
+      "disposition": "Maintainer-only patch changes twelve Markdown documents after evidence integration. No executable, recipe, license notice, pin, result JSON or publication-gate hunk. README/release-note placeholders require the existing real-evidence renderer before publication. Historical numbers and diagnostic opt-outs retained. Applying it emits only local Git patch status; no shared evidence producer.",
+      "sha256": "bc1568e07985971dc68e5090478185432fa8dcf571fba0b13f7a0bc565e1a36e",
+      "sites": []
+    },
     "tools/validate_release.py": {
       "disposition": "Offline identity-contract gate now checks INSTALL_CONTRACT against the installer embedded section using its existing load_contract verifier before accepting source. Failure remains the same structural summary with private diagnostics. Other validation and publication checks unchanged.",
       "sha256": "386d127b9fa4b682aae98da428ac15877a3b78f4faa383e97778f0f10cdc2c97",

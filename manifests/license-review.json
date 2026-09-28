@@ -291,6 +291,7 @@
     "tools/v16/test_coop_sanitizer.py": "Apache-2.0",
     "tools/v16/test_native_experiment.py": "Apache-2.0",
     "tools/v16/v16_common.py": "Apache-2.0",
+    "tools/v184_post_seal_docs.patch": "Apache-2.0",
     "tools/validate_release.py": "Apache-2.0"
   },
   "restrictions": [

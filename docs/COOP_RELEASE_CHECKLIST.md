@@ -119,6 +119,34 @@ binding, independently of the matched comparison.
 
 ## Finish the public copy and source inventories
 
+The prepared [documentation patch](../tools/v184_post_seal_docs.patch) supplies
+the release-time copy for README, INSTALL, OPERATIONS, CHANGELOG, benchmark and
+limitation guidance, reproducibility and maintainer handoff docs, release notes
+and the measurement guide. `integrate_coop_seal.py` does not apply it or edit
+public prose. Apply it after the reviewed seal and required serving evidence
+are integrated, before the final documentation render and inventory refresh:
+
+```sh
+git -C "$FINAL_TREE" apply --check "$FINAL_TREE/tools/v184_post_seal_docs.patch"
+git -C "$FINAL_TREE" apply "$FINAL_TREE/tools/v184_post_seal_docs.patch"
+```
+
+The patch leaves the seal, native, policy, campaign link and matched A/B slots
+in README and release notes for the publication renderer. Fill them from the
+actual integrated records, then copy the rendered README and release notes
+into the source. The HF card uses the same fill-in values. No placeholder may
+reach the tag. If the patch is already applied, review its complete file list
+instead of forcing it over later documentation changes.
+
+This changes only documentation. Preserve every recipe byte, including the
+sealed toolchain metadata and `recipe/SHA256SUMS`, and preserve historical result
+records. Refresh documentation hashes, root derivation and root `SHA256SUMS`
+after applying and rendering; source validation must pass again. Review all
+current installation claims for the qualified coop-on default and both explicit
+diagnostic opt-outs: `prepare_runtime.py --coop-off` and
+`build_native.py --display-only`. Historical coop-off measurements and conditional
+refusals for invalid inputs remain correctly scoped.
+
 Replace pending language in the README, release notes, changelog,
 `release/MEASUREMENTS-v1.8.4.md`, installation, operations, limitations and
 reproducibility documents. Cite the real seal, pinned native bytes, completed
