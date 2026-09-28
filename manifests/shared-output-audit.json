@@ -5483,8 +5483,8 @@
       ]
     },
     "recipe/scripts/_contracts.py": {
-      "disposition": "Library/dispatcher: no independent shared payload producer; exceptions propagate to protected CLI. Any serialization/output callers are separately inventoried.",
-      "sha256": "9739442b3b0b4f0ecca528e774b0ef7daf4f73c3944557ee3635c292df687bed",
+      "disposition": "Static transform contracts. Removed only the stale duplicate cooperative section; the existing installer EXPECTED_SECTION is now the sole cooperative contract authority. No serializer, output channel or transform target changed.",
+      "sha256": "f56185d175788787063df68f36209c95a1801cf15354578f7b6316c6e016d6e7",
       "sites": []
     },
     "recipe/scripts/_coop_bundle.py": {
@@ -6869,8 +6869,8 @@
       "sites": []
     },
     "recipe/scripts/remote_preflight.py": {
-      "disposition": "Embedded/read-only host checks capture protocol privately. Shared PASS row is exact release schema/identities with closed hardware/display values; refusals private.",
-      "sha256": "8b47be456b1f8a26319f9ee3c0e217ccc03eafbc6c3651b69c1c6455ee08dabe",
+      "disposition": "Per-rank preflight uses the exact installer EXPECTED_SECTION instead of a stale duplicate. Complete section equality, source verification, bundle/native/policy verification and private failure capture remain enforced. No gate or output is relaxed; controller expectation calls this same function.",
+      "sha256": "00e30b57059717fbd62e18b06160b8166ddc8d3b437268767d5212cbb8ee78f1",
       "sites": [
         {
           "function": "run",
@@ -6889,92 +6889,92 @@
         },
         {
           "function": "verify_network",
-          "line": 247,
+          "line": 248,
           "operation": "run"
         },
         {
           "function": "verify_network",
-          "line": 271,
+          "line": 272,
           "operation": "run"
         },
         {
           "function": "verify_network",
-          "line": 280,
-          "operation": "run"
-        },
-        {
-          "function": "display_server_running",
-          "line": 303,
+          "line": 281,
           "operation": "run"
         },
         {
           "function": "display_server_running",
           "line": 304,
-          "operation": "retain"
+          "operation": "run"
         },
         {
-          "function": "display_unit_running",
-          "line": 313,
-          "operation": "run"
+          "function": "display_server_running",
+          "line": 305,
+          "operation": "retain"
         },
         {
           "function": "display_unit_running",
           "line": 314,
+          "operation": "run"
+        },
+        {
+          "function": "display_unit_running",
+          "line": 315,
           "operation": "retain"
         },
         {
           "function": "display_row",
-          "line": 341,
+          "line": 342,
           "operation": "run"
         },
         {
           "function": "display_row",
-          "line": 346,
+          "line": 347,
           "operation": "run"
         },
         {
           "function": "main",
-          "line": 403,
+          "line": 404,
           "operation": "print"
         },
         {
           "function": "main",
-          "line": 413,
+          "line": 414,
           "operation": "print"
         },
         {
           "function": "main",
-          "line": 426,
+          "line": 427,
           "operation": "run"
         },
         {
           "function": "main",
-          "line": 431,
+          "line": 432,
           "operation": "run"
         },
         {
           "function": "main",
-          "line": 436,
+          "line": 437,
           "operation": "run"
         },
         {
           "function": "main",
-          "line": 468,
+          "line": 469,
           "operation": "run"
         },
         {
           "function": "main",
-          "line": 475,
+          "line": 476,
           "operation": "retain"
         },
         {
           "function": "main",
-          "line": 481,
+          "line": 482,
           "operation": "print"
         },
         {
           "function": "main",
-          "line": 508,
+          "line": 509,
           "operation": "report_failure"
         }
       ]
@@ -7593,137 +7593,132 @@
       ]
     },
     "tools/test_component_serving.py": {
-      "disposition": "Synthetic temporary source/ELF/receipt fixtures only, with native target substitution confined to temporary trees. Real integration, source validation, component checks and runtime preparation run; only Docker inspection is stubbed. No production pins or hardware evidence written.",
-      "sha256": "177e6bad1b85aa14f178bb18d30f68ac596d14ea1ee24fd75d76609c1f088861",
+      "disposition": "Synthetic local test output only. Exercises real publication/refusal and comparison paths, retained private artifacts and opaque diagnostic controls; never hardware evidence.",
+      "sha256": "32ed74a75ef405ac0857c12d5f9eb2aa44a1ff04cfff5ff74d5475e52266d9c0",
       "sites": [
         {
-          "function": "reviewed source integration/test/validator",
+          "function": "refresh_fixture",
           "line": 33,
           "operation": "write"
         },
         {
-          "function": "reviewed source integration/test/validator",
+          "function": "refresh_fixture",
           "line": 38,
           "operation": "write"
         },
         {
-          "function": "reviewed source integration/test/validator",
+          "function": "refresh_fixture",
           "line": 40,
           "operation": "write_text"
         },
         {
-          "function": "reviewed source integration/test/validator",
+          "function": "refresh_fixture",
           "line": 44,
           "operation": "write"
         },
         {
-          "function": "reviewed source integration/test/validator",
+          "function": "refresh_fixture",
           "line": 45,
           "operation": "write_text"
         },
         {
-          "function": "reviewed source integration/test/validator",
-          "line": 58,
-          "operation": "copy2"
-        },
-        {
-          "function": "reviewed source integration/test/validator",
-          "line": 68,
-          "operation": "copyfile"
-        },
-        {
-          "function": "reviewed source integration/test/validator",
-          "line": 69,
-          "operation": "copyfile"
-        },
-        {
-          "function": "reviewed source integration/test/validator",
+          "function": "setUp",
           "line": 85,
           "operation": "write"
         },
         {
-          "function": "reviewed source integration/test/validator",
+          "function": "setUp",
           "line": 89,
           "operation": "write"
         },
         {
-          "function": "reviewed source integration/test/validator",
+          "function": "setUp",
           "line": 90,
           "operation": "write_bytes"
         },
         {
-          "function": "reviewed source integration/test/validator",
+          "function": "setUp",
           "line": 95,
           "operation": "write_text"
         },
         {
-          "function": "reviewed source integration/test/validator",
+          "function": "setUp",
           "line": 99,
           "operation": "write_text"
         },
         {
-          "function": "reviewed source integration/test/validator",
+          "function": "command",
           "line": 108,
           "operation": "run"
         },
         {
-          "function": "reviewed source integration/test/validator",
-          "line": 139,
-          "operation": "write_record"
-        },
-        {
-          "function": "reviewed source integration/test/validator",
+          "function": "test_integrate_validate_and_prepare_with_real_gates",
           "line": 146,
           "operation": "write_bytes"
         },
         {
-          "function": "reviewed source integration/test/validator",
-          "line": 155,
-          "operation": "write_record"
-        },
-        {
-          "function": "reviewed source integration/test/validator",
+          "function": "test_integrate_validate_and_prepare_with_real_gates",
           "line": 166,
           "operation": "run"
         },
         {
-          "function": "reviewed source integration/test/validator",
-          "line": 192,
+          "function": "test_integrate_validate_and_prepare_with_real_gates.full_contract_gate",
+          "line": 196,
+          "operation": "run"
+        },
+        {
+          "function": "test_integrate_validate_and_prepare_with_real_gates",
+          "line": 214,
           "operation": "write"
         },
         {
-          "function": "reviewed source integration/test/validator",
-          "line": 197,
+          "function": "test_integrate_validate_and_prepare_with_real_gates",
+          "line": 219,
           "operation": "write_bytes"
         },
         {
-          "function": "reviewed source integration/test/validator",
-          "line": 202,
-          "operation": "write_bytes"
-        },
-        {
-          "function": "reviewed source integration/test/validator",
-          "line": 209,
-          "operation": "write"
-        },
-        {
-          "function": "reviewed source integration/test/validator",
-          "line": 220,
-          "operation": "write"
-        },
-        {
-          "function": "reviewed source integration/test/validator",
+          "function": "test_install_contract_drift_refuses_source_validation",
           "line": 226,
           "operation": "write"
         },
         {
-          "function": "reviewed source integration/test/validator",
-          "line": 235,
+          "function": "test_missing_mismatched_foreign_seals_leave_no_output",
+          "line": 244,
           "operation": "write"
         },
         {
-          "function": "reviewed source integration/test/validator",
-          "line": 242,
+          "function": "test_missing_mismatched_foreign_seals_leave_no_output",
+          "line": 249,
+          "operation": "write_bytes"
+        },
+        {
+          "function": "test_policy_mismatch_refuses_after_checksums_refreshed",
+          "line": 254,
+          "operation": "write_bytes"
+        },
+        {
+          "function": "test_policy_mismatch_refuses_after_checksums_refreshed",
+          "line": 261,
+          "operation": "write"
+        },
+        {
+          "function": "test_final_refuses_every_stage_and_bound_without_measurements",
+          "line": 272,
+          "operation": "write"
+        },
+        {
+          "function": "test_final_refuses_every_stage_and_bound_without_measurements",
+          "line": 278,
+          "operation": "write"
+        },
+        {
+          "function": "test_private_state_refuses_inherited_admission",
+          "line": 287,
+          "operation": "write"
+        },
+        {
+          "function": "test_original_qualification_manifest_remains_hash_bound",
+          "line": 294,
           "operation": "write_bytes"
         }
       ]
@@ -9792,8 +9787,8 @@
       ]
     },
     "tools/validate_release.py": {
-      "disposition": "Shared validation report is reviewed Report output. Export scans every shipped byte/name, excludes Git administration. Full check exceptions and subprocess diagnostics private.",
-      "sha256": "4e0025753ff01d8250aa2f59f5209a36628c19b9e5dd81201cb20b5ef8d08638",
+      "disposition": "Offline identity-contract gate now checks INSTALL_CONTRACT against the installer embedded section using its existing load_contract verifier before accepting source. Failure remains the same structural summary with private diagnostics. Other validation and publication checks unchanged.",
+      "sha256": "386d127b9fa4b682aae98da428ac15877a3b78f4faa383e97778f0f10cdc2c97",
       "sites": [
         {
           "function": "git_admin",
@@ -9802,22 +9797,22 @@
         },
         {
           "function": "verify.contracts",
-          "line": 197,
+          "line": 198,
           "operation": "run"
         },
         {
           "function": "verify.contracts",
-          "line": 198,
+          "line": 199,
           "operation": "retain"
         },
         {
           "function": "main",
-          "line": 283,
+          "line": 284,
           "operation": "write_text"
         },
         {
           "function": "main",
-          "line": 284,
+          "line": 285,
           "operation": "print"
         }
       ]

@@ -503,65 +503,8 @@ V15_FATPATH = {
 # remains the exact eight-stage v1.5 pipeline.  The v1.6 entrypoint applies
 # these independent, conditional transactions around the existing installs.
 
-V16_COOP = {
-    "sources": {
-        "SOURCE_MANIFEST.json": "38d93fdef5c10cece0d97e66fd402d9669598bf09c784af69db706f469cce9da",
-        "source/runtime.py": "65660930bc9965ff7b7379afaa270e0f80f418276bad4c42c10dbdee7ac3d0eb"
-    },
-    "targets": [
-        {
-            "after_sha256": "89111aaf1d3082dd62c76ecb8c378fabf3f98619bee5124ee4ac3622e1e2eb4f",
-            "before_sha256": "71e7118bd5af385821d7cb23e96fb154a3f31e1e835599a1082c72abb3aeb174",
-            "forbidden_after_seams": [],
-            "path": "vllm/model_executor/layers/quantization/exl3.py",
-            "required_after_seams": [
-                {
-                    "count": 1,
-                    "text": "# [jspark3-v16-coop]"
-                },
-                {
-                    "count": 1,
-                    "text": "_jspark3_coop_setup[\"install\"](\n"
-                },
-                {
-                    "count": 1,
-                    "text": "_jspark3_fatpath.probe("
-                },
-                {
-                    "count": 1,
-                    "text": "_jspark3_fatpath.dispatch(\n"
-                },
-                {
-                    "count": 2,
-                    "text": "_exl3_expert_map_device"
-                }
-            ],
-            "required_before_seams": [
-                {
-                    "count": 1,
-                    "text": "def apply_exl3_fused_moe(\n"
-                },
-                {
-                    "count": 1,
-                    "text": "    def process_weights_after_loading(self, layer: torch.nn.Module) -> None:\n"
-                },
-                {
-                    "count": 1,
-                    "text": "_jspark3_fatpath.probe("
-                },
-                {
-                    "count": 1,
-                    "text": "_jspark3_fatpath.dispatch(\n"
-                },
-                {
-                    "count": 2,
-                    "text": "_exl3_expert_map_device"
-                }
-            ]
-        }
-    ]
-}
-
+# The cooperative contract lives in apply_coop_moe.EXPECTED_SECTION, whose
+# source-manifest pin is rebound by the component seal integrator.
 
 V16_ADAPTIVE_K = {
     "sources": {

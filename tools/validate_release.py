@@ -181,6 +181,7 @@ v=json.loads((r/'config/patch-contract.json').read_text())
 assert v['transforms']==c.SECTIONS
 states,_=p.snapshots(v)
 core.verify_sources(); fat.verify_sources()
+coop.load_contract(coop.INSTALL_CONTRACT, coop.TRANSFORM, coop.EXPECTED_SECTION)
 sys.path.insert(0,str(r.parent/"tools"))
 from _source_contracts import verify_sources
 verify_sources(r)

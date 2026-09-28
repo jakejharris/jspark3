@@ -147,7 +147,6 @@ def v16_artifacts(
     if dense == "negative-coarse" and profile != "qa":
         raise Refusal("negative-coarse is forbidden outside the qa profile")
     try:
-        import _contracts
         import apply_coop_moe
 
         try:
@@ -157,7 +156,9 @@ def v16_artifacts(
         install_contract = json.loads(
             apply_coop_moe.INSTALL_CONTRACT.read_text(encoding="utf-8")
         )["transforms"][apply_coop_moe.TRANSFORM]
-        if install_contract != _contracts.V16_COOP:
+        # Share the installer's embedded authority, including its source pin
+        # rebound during seal integration. Do not maintain a second copy.
+        if install_contract != apply_coop_moe.EXPECTED_SECTION:
             raise Refusal("cooperative-MoE contract differs from its embedded seal")
     except (OSError, UnicodeError, json.JSONDecodeError, ImportError, AttributeError) as exc:
         raise Refusal(f"v1.6 cooperative-MoE source/contract unreadable: {exc}") from exc

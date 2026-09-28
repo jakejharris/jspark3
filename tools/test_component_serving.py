@@ -178,6 +178,58 @@ with patch('_image_identity.verify_local_image'):
         preflight = self.command(runtime, 'recipe/scripts/remote_preflight.py', '--recipe-only',
                                  '--recipe-root', runtime / 'recipe')
         self.assertEqual(preflight.returncode, 0, preflight.stdout + preflight.stderr)
+        # Recipe-only preflight does not run this full per-rank contract/bundle
+        # gate. Exercise the actual remote gate and controller expectation with
+        # fresh imports from the prepared runtime; no gate or Docker stub here.
+        program = '''import sys
+from pathlib import Path
+recipe = Path(sys.argv[1])
+sys.path.insert(0, str(recipe / 'scripts'))
+import _fleetctl as fleet
+import remote_preflight as preflight
+row = preflight.v16_artifacts(recipe, 'production-stock', '1', 'ema', 'trunk')
+assert row['coop'] == 'on'
+assert row == fleet.expected_v16_row(fleet.load_env(recipe / '.env.example'))
+assert preflight.verify_manifest(recipe)
+'''
+        def full_contract_gate():
+            return subprocess.run([sys.executable, '-B', '-c', program, str(runtime / 'recipe')],
+                                  capture_output=True, text=True, timeout=30)
+        preflight = full_contract_gate()
+        self.assertEqual(preflight.returncode, 0, preflight.stdout + preflight.stderr)
+        contract_path = runtime / integration.COOP / 'INSTALL_CONTRACT.json'
+        original = contract_path.read_bytes()
+        for mutation in ('source', 'runtime', 'before', 'after', 'seam'):
+            with self.subTest(contract_drift=mutation):
+                contract = json.loads(original)
+                section = contract['transforms'][installer.TRANSFORM]
+                if mutation in ('source', 'runtime'):
+                    name = 'SOURCE_MANIFEST.json' if mutation == 'source' else 'source/runtime.py'
+                    section['sources'][name] = '0' * 64
+                elif mutation in ('before', 'after'):
+                    section['targets'][0][mutation + '_sha256'] = '0' * 64
+                else:
+                    section['targets'][0]['required_after_seams'][0]['count'] += 1
+                try:
+                    integration.write(contract_path, contract)
+                    refused = full_contract_gate()
+                    self.assertNotEqual(refused.returncode, 0)
+                    self.assertIn('cooperative-MoE contract differs from its embedded seal', refused.stderr)
+                finally:
+                    contract_path.write_bytes(original)
+
+    def test_install_contract_drift_refuses_source_validation(self):
+        self.integrate()
+        path = self.output / integration.COOP / 'INSTALL_CONTRACT.json'
+        contract = q.read(path)
+        contract['transforms'][installer.TRANSFORM]['sources']['SOURCE_MANIFEST.json'] = '0' * 64
+        integration.write(path, contract)
+        refresh_fixture(self.output)
+        report = self.root / 'contract-drift.json'
+        result = self.validate('--report', report)
+        self.assertNotEqual(result.returncode, 0)
+        failures = [row['check'] for row in q.read(report)['checks'] if row['status'] == 'FAIL']
+        self.assertEqual(failures, ['identity-contracts'])
 
     def test_missing_mismatched_foreign_seals_leave_no_output(self):
         path = self.seal / 'BUILD.json'
