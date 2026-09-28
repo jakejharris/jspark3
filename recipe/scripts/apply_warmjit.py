@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 """Install the sealed S9.11 worker-startup warmup after the base pipeline."""
 from __future__ import annotations
+import sys
+sys.dont_write_bytecode = True
+import _diagnostics as diagnostics
 
 import argparse
 from pathlib import Path
-import sys
 
 from _atomic import Refusal, execute, print_receipt, safe_target, sha_file
 from _contracts import V16_WARMJIT
@@ -78,9 +80,10 @@ def main():
             apply=args.apply, script_path=Path(__file__)))
         return 0
     except (OSError, ValueError, Refusal) as exc:
-        print(f"REFUSE: {exc}", file=sys.stderr)
+        diagnostics.report_failure(exc)
         return 9
 
 
 if __name__ == "__main__":
+    diagnostics.install_exception_hook()
     raise SystemExit(main())

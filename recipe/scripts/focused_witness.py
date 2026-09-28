@@ -2,6 +2,9 @@
 """Run the exact one-warmup/three-score JSpark3 v1 health witness with no retries."""
 
 from __future__ import annotations
+import sys
+sys.dont_write_bytecode = True
+import _diagnostics as diagnostics
 
 import argparse
 from concurrent.futures import ThreadPoolExecutor
@@ -12,7 +15,6 @@ import re
 import shlex
 import statistics
 import subprocess
-import sys
 import time
 import urllib.error
 import urllib.request
@@ -60,6 +62,7 @@ def counter_snapshot(host: str, hcas: tuple[str, str]) -> dict[str, dict[str, in
     process = subprocess.run([
         "ssh", "-o", "BatchMode=yes", "-o", "ConnectTimeout=5", "--", host, command,
     ], text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False, timeout=15)
+    diagnostics.retain(process.stdout + process.stderr)
     if process.returncode:
         raise Refusal("rank counter snapshot failed")
     value = json.loads(process.stdout)
@@ -95,7 +98,7 @@ def one_request(url: str, api_key: str) -> float:
     with urllib.request.urlopen(request, timeout=180) as response:
         if response.status != 200:
             raise Refusal("witness response is not HTTP 200")
-        for wire in response:
+        for wire in diagnostics.private_lines(response):
             line = wire.decode("utf-8").strip()
             if not line.startswith("data:"):
                 continue
@@ -169,9 +172,10 @@ def main() -> int:
         return 0
     except (OSError, ValueError, KeyError, TypeError, UnicodeError, json.JSONDecodeError,
             urllib.error.URLError, subprocess.TimeoutExpired, Refusal) as exc:
-        print(f"REFUSE: {exc}", file=sys.stderr)
+        diagnostics.report_failure(exc)
         return 9
 
 
 if __name__ == "__main__":
+    diagnostics.install_exception_hook()
     raise SystemExit(main())

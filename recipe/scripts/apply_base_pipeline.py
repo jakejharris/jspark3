@@ -7,6 +7,9 @@ the v1.5 EXL3 fat-expert path.
 """
 
 from __future__ import annotations
+import sys
+sys.dont_write_bytecode = True
+import _diagnostics as diagnostics
 
 import argparse
 import hashlib
@@ -15,7 +18,6 @@ import json
 import os
 from pathlib import Path
 import subprocess
-import sys
 import tempfile
 
 from _atomic import (ABSENT, Refusal, canonical, compiled, observed,
@@ -177,6 +179,7 @@ def run_stage(args: argparse.Namespace, name: str, mode: str) -> dict:
         environment["JSPARK3_RECEIPT_OUT"] = str(receipt_path)
         process = subprocess.run(command(args, name), text=True, stdout=subprocess.PIPE,
                                  stderr=subprocess.PIPE, check=False, env=environment)
+        diagnostics.retain(process.stdout + process.stderr)
         if process.returncode:
             raise Refusal(f"{name}: transaction {mode} failed: {process.stderr.strip()}")
         try:
@@ -254,9 +257,10 @@ def main() -> int:
         sys.stdout.buffer.write(canonical(result))
         return 0
     except (OSError, SyntaxError, ValueError, KeyError, TypeError, json.JSONDecodeError, Refusal) as exc:
-        print(f"REFUSE: {exc}", file=sys.stderr)
+        diagnostics.report_failure(exc)
         return 9
 
 
 if __name__ == "__main__":
+    diagnostics.install_exception_hook()
     raise SystemExit(main())

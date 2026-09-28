@@ -2,13 +2,15 @@
 """Apply the JSpark3 v1.6 adaptive verification-width overlay exactly once."""
 
 from __future__ import annotations
+import sys
+sys.dont_write_bytecode = True
+import _diagnostics as diagnostics
 
 import argparse
 import hashlib
 import importlib.util
 import os
 from pathlib import Path
-import sys
 
 from _atomic import Refusal, canonical, execute, read_image_receipt, safe_target
 
@@ -154,9 +156,10 @@ def main() -> int:
         sys.stdout.buffer.write(canonical(receipt))
         return 0
     except (OSError, SyntaxError, ValueError, UnicodeError, KeyError, Refusal) as exc:
-        print(f"REFUSE: {exc}", file=sys.stderr)
+        diagnostics.report_failure(exc)
         return 9
 
 
 if __name__ == "__main__":
+    diagnostics.install_exception_hook()
     raise SystemExit(main())

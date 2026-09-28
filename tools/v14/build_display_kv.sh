@@ -8,6 +8,10 @@
 # only if they match BUILD.json. --write records new hashes (sources changed).
 # Both outputs stay out of git (binary); recipe/SHA256SUMS lists them.
 set -euo pipefail
+if [[ ${JSPARK_PRIVATE_BUILD_LOG:-0} != 1 ]]; then
+  diagnostic_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
+  exec python3 -B "$diagnostic_root/recipe/scripts/_diagnostics.py" "$0" "$@"
+fi
 host=${1:?ssh host}
 mode=${2:---check}
 here=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)

@@ -47,6 +47,10 @@ class ReleasePrivacyTests(unittest.TestCase):
         subprocess.run(['git', 'clone', '--no-local', '--branch', 'release-test', str(origin), str(cls.clone)],
                        check=True, capture_output=True, text=True)
 
+    def private_diagnostic(self, console):
+        name = console.split('Private diagnostics (do not share): ', 1)[1].splitlines()[0]
+        return Path(name).read_text()
+
     def validate(self, root):
         report = self.work / 'validation.json'
         proc = subprocess.run([sys.executable, '-B', str(root / 'tools/validate_release.py'), str(root),
@@ -62,7 +66,7 @@ class ReleasePrivacyTests(unittest.TestCase):
         proc, report = self.validate(self.clone)
         self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
         self.assertEqual(report['failed'], 0)
-        self.assertEqual(len(report['checks']), 17)
+        self.assertEqual(len(report['checks']), 18)
 
         executables = self.work / 'bin'
         executables.mkdir()
@@ -73,14 +77,17 @@ class ReleasePrivacyTests(unittest.TestCase):
                                '--output', str(self.work / 'image.json')], capture_output=True, text=True,
                               env={**os.environ, 'PATH': str(executables) + os.pathsep + os.environ['PATH']})
         self.assertEqual(proc.returncode, 9)
-        self.assertIn('IMAGE_BUILD_REACHED', proc.stderr)
+        self.assertNotIn('IMAGE_BUILD_REACHED', proc.stderr)
+        private = self.private_diagnostic(proc.stderr)
+        child = private.split('Complete private child output: ', 1)[1].splitlines()[0]
+        self.assertIn('IMAGE_BUILD_REACHED', Path(child).read_text())
         self.assertNotIn('source export failed validation', proc.stderr)
         self.assertFalse((self.work / 'image.json').exists())
         proc = subprocess.run([sys.executable, '-B', str(self.clone / 'tools/prepare_runtime.py'),
                                '--binary-root', str(self.work / 'absent-binaries'),
                                '--output', str(self.work / 'runtime')], capture_output=True, text=True)
         self.assertNotEqual(proc.returncode, 0)
-        self.assertIn('missing or mismatched local build', proc.stderr)
+        self.assertIn('missing or mismatched local build', self.private_diagnostic(proc.stderr))
         self.assertNotIn('source export failed validation', proc.stderr)
         self.assertFalse((self.work / 'runtime').exists())
 
@@ -100,7 +107,7 @@ class ReleasePrivacyTests(unittest.TestCase):
                         self.assertNotEqual(proc.returncode, 0)
                         privacy = next(row for row in report['checks'] if row['check'] == 'privacy-scan')
                         self.assertEqual(privacy['status'], 'FAIL')
-                        self.assertIn(name, privacy['detail'])
+                        self.assertIn(name, Path(privacy['private_diagnostic']).read_text())
                         self.assertNotIn(secret, proc.stdout + proc.stderr)
                     finally:
                         if original is None:

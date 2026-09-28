@@ -123,7 +123,9 @@ class BuildSelectionTests(unittest.TestCase):
                 self.assertEqual(status, 9 if drift else 0, log.getvalue())
                 self.assertEqual(output.exists(), drift is None)
                 if drift:
-                    self.assertIn(drift + ': two native builds differ', log.getvalue())
+                    self.assertNotIn(drift + ': two native builds differ', log.getvalue())
+                    private = log.getvalue().split('Private diagnostics (do not share): ', 1)[1].splitlines()[0]
+                    self.assertIn(drift + ': two native builds differ', Path(private).read_text())
                 else:
                     record = native.read_native_record(output / 'native-build-receipt.json',
                                                        native.read_operator_record(image_path))

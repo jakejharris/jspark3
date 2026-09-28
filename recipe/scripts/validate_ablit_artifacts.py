@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Validate the immutable, explicitly scoped donor artifact (stdlib only)."""
 from __future__ import annotations
+import sys
+sys.dont_write_bytecode = True
 import argparse
 import hashlib
 import json
@@ -87,4 +89,6 @@ def main():
 
 
 if __name__ == '__main__':
+    import _diagnostics as diagnostics
+    diagnostics.install_exception_hook()
     main()

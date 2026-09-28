@@ -1,17 +1,19 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: Apache-2.0
 """Build the pinned local image and record its verified identity. Never pushes."""
+import sys
+sys.dont_write_bytecode = True
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "recipe/scripts"))
+import _diagnostics as diagnostics
 import argparse
 import hashlib
 import json
 import os
-from pathlib import Path
 import shutil
 import subprocess
-import sys
 import tempfile
 
-sys.dont_write_bytecode = True
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "recipe/scripts"))
 from _image_identity import (ImageRefusal, build_policy, canonical, inspect_image,
@@ -46,7 +48,7 @@ def main():
                        "--metadata-file", str(metadata), "--progress", "plain"]
             if args.builder:
                 command += ["--builder", args.builder]
-            subprocess.run([*command, str(work)], check=True)
+            diagnostics.run_private([*command, str(work)], check=True)
             built = json.loads(metadata.read_text())
             config = built["containerimage.config.digest"]
             item = inspect_image(config)
@@ -72,9 +74,10 @@ def main():
         print(f"PASS verified local image {config}; receipt {args.output}")
         return 0
     except (OSError, ValueError, KeyError, subprocess.CalledProcessError) as exc:
-        print(f"REFUSE: {exc}", file=sys.stderr)
+        diagnostics.report_failure(exc)
         return 9
 
 
 if __name__ == "__main__":
+    diagnostics.install_exception_hook()
     raise SystemExit(main())

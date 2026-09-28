@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """Compose TRIAR with either thirds setting, preserving the sealed base entry."""
+import sys
+sys.dont_write_bytecode = True
+import _diagnostics as diagnostics
 import os
 from pathlib import Path
-import sys
 import thirds_entry
 
 ANCHOR = 'overlay_source=$recipe/overlays/trunk_w8a16.py\n'
@@ -35,4 +37,5 @@ def main():
 
 
 if __name__ == '__main__':
+    diagnostics.install_exception_hook()
     main()

@@ -11,6 +11,10 @@
 # complete rank{0..2}-geo{0..2}.jsonl profiles, binds a newly selected policy to
 # that binary, and then writes/checks the local recipe artifact record.
 set -euo pipefail
+if [[ ${JSPARK_PRIVATE_BUILD_LOG:-0} != 1 ]]; then
+  diagnostic_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
+  exec python3 -B "$diagnostic_root/recipe/scripts/_diagnostics.py" "$0" "$@"
+fi
 export PYTHONDONTWRITEBYTECODE=1
 
 host=${1:?ssh host required}
@@ -30,7 +34,7 @@ remote=jspark3-v16-coop-$campaign
 
 build_remote() {
   ssh -o BatchMode=yes "$host" "mkdir ~/$remote"
-  scp -q "$root/tools/v16/coop_h1_control.py" "$host:$remote/"
+  scp -q "$root/tools/v16/coop_h1_control.py" "$root/recipe/scripts/_diagnostics.py" "$host:$remote/"
   for run in a b; do
     ssh -o BatchMode=yes "$host" "mkdir ~/$remote/$run"
     scp -q "$coop/build_repro.sh" "$coop/SOURCE_MANIFEST.json" "$host:$remote/$run/"

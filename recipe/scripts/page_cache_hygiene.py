@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: Apache-2.0
 """Advise DONTNEED for regular files below explicit roots; never delete files."""
+import sys
+sys.dont_write_bytecode = True
+import _diagnostics as diagnostics
 import argparse
 from datetime import datetime, timezone
 import json
@@ -14,10 +17,12 @@ def evict(roots):
               'roots': [str(root) for root in roots], 'files': 0, 'bytes': 0, 'errors': []}
     seen = set()
     def error(exc):
-        report['errors'].append({'path': str(exc.filename), 'errno': exc.errno})
+        diagnostics.retain(repr(exc))
+        report['errors'].append({'errno': exc.errno})
     for root in roots:
         if root.is_symlink() or not root.is_dir():
-            report['errors'].append({'path': str(root), 'reason': 'root is not a real directory'})
+            diagnostics.retain(str(root))
+            report['errors'].append({'reason': 'root is not a real directory'})
             continue
         for directory, dirs, files in os.walk(root, onerror=error, followlinks=False):
             dirs[:] = [name for name in dirs if not (Path(directory) / name).is_symlink()]
@@ -58,4 +63,5 @@ def main():
 
 
 if __name__ == '__main__':
+    diagnostics.install_exception_hook()
     raise SystemExit(main())

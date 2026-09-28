@@ -195,7 +195,9 @@ else:
             write_record(record_path, record)
             process = subprocess.run(command, capture_output=True, text=True)
             self.assertEqual(process.returncode, 9)
-            self.assertIn('recipe manifest mismatch', process.stderr)
+            self.assertNotIn('recipe manifest mismatch', process.stderr)
+            private = process.stderr.split('Private diagnostics (do not share): ', 1)[1].splitlines()[0]
+            self.assertIn('recipe manifest mismatch', Path(private).read_text())
 
     def test_image_only_rejects_different_source(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -206,7 +208,9 @@ else:
                                       "--recipe-root", str(ROOT / "recipe"), "--image-only",
                                       "--image-receipt", str(receipt)], capture_output=True, text=True)
             self.assertEqual(process.returncode, 9)
-            self.assertIn("different source recipe", process.stderr)
+            self.assertNotIn('different source recipe', process.stderr)
+            private = process.stderr.split('Private diagnostics (do not share): ', 1)[1].splitlines()[0]
+            self.assertIn('different source recipe', Path(private).read_text())
 
 
 if __name__ == "__main__":

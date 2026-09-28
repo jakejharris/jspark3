@@ -9,6 +9,8 @@ import subprocess
 import sys
 import xml.dom.minidom
 sys.dont_write_bytecode = True
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "recipe/scripts"))
+import _diagnostics as diagnostics
 
 
 class Report:
@@ -22,8 +24,9 @@ class Report:
 
     def fail(self, name: str, detail: str) -> None:
         self.failed += 1
-        self.checks.append({"check": name, "status": "FAIL", "detail": detail})
-        print(f"FAIL {name}: {detail}")
+        record = diagnostics.record_failure(detail if isinstance(detail, BaseException) else ValueError(detail))
+        self.checks.append({"check": name, "status": "FAIL", **record})
+        print(f"FAIL {name}: " + record["reason"])
 
 def sha256(path: Path) -> str:
     value = hashlib.sha256()
@@ -93,7 +96,8 @@ def check_syntax(root: Path, files: list[Path], report: Report) -> None:
                 xml.dom.minidom.parse(str(path))
                 counts["svg"] += 1
         except Exception as exc:  # noqa: BLE001
-            problems.append(f"{rel}: {type(exc).__name__}: {str(exc)[:80]}")
+            diagnostics.retain(__import__("traceback").format_exc())
+            problems.append(f"{rel}: syntax refused")
     if problems:
         report.fail("syntax", "; ".join(problems[:10]))
     else:
@@ -147,6 +151,7 @@ def check_dry_runs(root: Path, report: Report) -> None:
         process = subprocess.run([sys.executable, "-B", str(recipe / "scripts/fleetctl.py"), command,
                                   "--env-file", str(env), "--dry-run"], cwd=recipe, capture_output=True, text=True, timeout=30,
                                  env=dict(os.environ, PYTHONDONTWRITEBYTECODE="1"))
+        diagnostics.retain(process.stdout + process.stderr)
         ran += 1
         if process.returncode or "DRY-RUN" not in process.stdout:
             problems.append(f"{command}: rc={process.returncode} {process.stderr.strip()[-120:]}")
@@ -154,6 +159,7 @@ def check_dry_runs(root: Path, report: Report) -> None:
         process = subprocess.run([str(recipe / "scripts" / wrapper), "--env-file", str(env), "--dry-run"],
                                  cwd=recipe, capture_output=True, text=True, timeout=30,
                                  env=dict(os.environ, PYTHONDONTWRITEBYTECODE="1"))
+        diagnostics.retain(process.stdout + process.stderr)
         ran += 1
         if process.returncode or "DRY-RUN" not in process.stdout:
             problems.append(f"{wrapper}: rc={process.returncode} {process.stderr.strip()[-120:]}")

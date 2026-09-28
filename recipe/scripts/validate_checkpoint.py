@@ -2,6 +2,9 @@
 """Validate exact JSpark3 v1 serving bytes; never claim redistribution completeness."""
 
 from __future__ import annotations
+import sys
+sys.dont_write_bytecode = True
+import _diagnostics as diagnostics
 
 import argparse
 from concurrent.futures import ThreadPoolExecutor
@@ -168,11 +171,12 @@ def main() -> int:
             "draft": validate_draft(args.draft_root.absolute(), args.draft_runtime.absolute()),
         }
     except (OSError, ValueError, json.JSONDecodeError, Refusal) as exc:
-        print(f"REFUSE: serving checkpoint validation failed: {exc}")
+        diagnostics.report_failure(exc)
         return 9
     print(json.dumps(result, sort_keys=True))
     return 0
 
 
 if __name__ == "__main__":
+    diagnostics.install_exception_hook()
     raise SystemExit(main())

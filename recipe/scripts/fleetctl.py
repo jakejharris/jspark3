@@ -7,6 +7,7 @@ and verifies its effective state immediately after container start.
 """
 import sys
 sys.dont_write_bytecode = True
+import _diagnostics as diagnostics
 
 import _fleetctl as native
 import resource_scope
@@ -19,4 +20,5 @@ def __getattr__(name):
 
 
 if __name__ == '__main__':
+    diagnostics.install_exception_hook()
     raise SystemExit(native.main())

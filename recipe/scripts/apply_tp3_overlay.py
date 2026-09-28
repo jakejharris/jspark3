@@ -2,11 +2,13 @@
 """Construct the exact base-recipe TP3 overlay from hash-pinned Fly sources."""
 
 from __future__ import annotations
+import sys
+sys.dont_write_bytecode = True
+import _diagnostics as diagnostics
 
 import argparse
 import ast
 from pathlib import Path
-import sys
 
 from _atomic import Refusal, execute, print_receipt, safe_target, sha_file
 from _contracts import TP3
@@ -215,9 +217,10 @@ def main() -> int:
         print_receipt(receipt)
         return 0
     except (OSError, SyntaxError, ValueError, UnicodeError, Refusal) as exc:
-        print(f"REFUSE: {exc}", file=sys.stderr)
+        diagnostics.report_failure(exc)
         return 9
 
 
 if __name__ == "__main__":
+    diagnostics.install_exception_hook()
     raise SystemExit(main())

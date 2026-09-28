@@ -1,18 +1,20 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: Apache-2.0
 """Build ARM64 display artifacts (optionally coop) and receipt verified inputs/outputs."""
+import sys
+sys.dont_write_bytecode = True
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "recipe/scripts"))
+import _diagnostics as diagnostics
 import argparse
 import hashlib
 import json
 import os
-from pathlib import Path
 import shutil
 import re
 import subprocess
-import sys
 import tempfile
 
-sys.dont_write_bytecode = True
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "recipe/scripts"))
 from _image_identity import ImageRefusal, canonical, read_operator_record, sha, verify_local_image
@@ -78,7 +80,7 @@ def build(kind, stage, image):
             shutil.copyfile(ROOT / COOP / name, stage / name)
         shutil.copytree(ROOT / COOP / "source", stage / "source")
         command = ["/w/build_repro.sh", "/w/out"]
-    subprocess.run(["docker", "run", "--rm", "--platform", "linux/arm64",
+    diagnostics.run_private(["docker", "run", "--rm", "--platform", "linux/arm64",
                     "--network", "none", "--user", f"{os.getuid()}:{os.getgid()}",
                     "-v", f"{stage}:/w", "-w", "/w", "--entrypoint", "bash",
                     image, *command], check=True)
@@ -135,9 +137,10 @@ def main():
         print(f"PASS verified native builds; BINARY_ROOT={output}; hardware qualification remains required")
         return 0
     except (OSError, ValueError, KeyError, subprocess.CalledProcessError) as exc:
-        print(f"REFUSE: {exc}", file=sys.stderr)
+        diagnostics.report_failure(exc)
         return 9
 
 
 if __name__ == "__main__":
+    diagnostics.install_exception_hook()
     raise SystemExit(main())

@@ -2,11 +2,13 @@
 """Hash- and seam-bound GLM5-Next f_b/g_b batched projection patch."""
 
 from __future__ import annotations
+import sys
+sys.dont_write_bytecode = True
+import _diagnostics as diagnostics
 
 import argparse
 import hashlib
 from pathlib import Path
-import sys
 import tempfile
 
 from _atomic import Refusal, execute, print_receipt, safe_target, sha_bytes
@@ -280,9 +282,10 @@ def main() -> int:
         print_receipt(receipt)
         return 0
     except (OSError, ValueError, UnicodeError, Refusal) as exc:
-        print(f"REFUSE: {exc}", file=sys.stderr)
+        diagnostics.report_failure(exc)
         return 9
 
 
 if __name__ == "__main__":
+    diagnostics.install_exception_hook()
     raise SystemExit(main())

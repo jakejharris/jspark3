@@ -19,13 +19,15 @@ stage refuses before it runs.
 """
 
 from __future__ import annotations
+import sys
+sys.dont_write_bytecode = True
+import _diagnostics as diagnostics
 
 import argparse
 import hashlib
 import os
 from pathlib import Path
 import subprocess
-import sys
 import tempfile
 
 from _atomic import Refusal, execute, print_receipt, safe_target
@@ -89,7 +91,7 @@ def run_installers(stage_root: Path) -> None:
         try:
             require_overrides(OVERLAYS / name, {*targets, *(a for a in argv if a.startswith("--"))})
         except ValueError as exc:
-            raise Refusal(str(exc)) from None
+            raise Refusal(str(exc)) from exc
         env = {
             "PATH": os.environ.get("PATH", "/usr/bin:/bin"),
             "LC_ALL": "C.UTF-8",
@@ -102,6 +104,7 @@ def run_installers(stage_root: Path) -> None:
             env=env, cwd=stage_root, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
             check=False,
         )
+        diagnostics.retain(process.stdout + process.stderr)
         if process.returncode:
             tail = (process.stderr or process.stdout).strip().splitlines()[-3:]
             raise Refusal(f"{name}: installer refused: {' | '.join(tail)}")
@@ -141,9 +144,10 @@ def main() -> int:
         print_receipt(receipt)
         return 0
     except (OSError, ValueError, UnicodeError, Refusal) as exc:
-        print(f"REFUSE: {exc}", file=sys.stderr)
+        diagnostics.report_failure(exc)
         return 9
 
 
 if __name__ == "__main__":
+    diagnostics.install_exception_hook()
     raise SystemExit(main())

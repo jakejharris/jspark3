@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: Apache-2.0
 """Read-only proof of the resident TRIAR code's inactive Cadence graph path."""
+import sys
+sys.dont_write_bytecode = True
+import _diagnostics as diagnostics
 import argparse
 from datetime import datetime
 import hashlib
 import json
 from pathlib import Path
 import subprocess
-import sys
 
 
 def need(value, reason):
@@ -89,12 +91,14 @@ def main():
     args = parser.parse_args()
     expected = expected_sources(Path(__file__).resolve().parents[1])
     proc = subprocess.run([sys.executable, '-B', '-S', '-c', PROBE, json.dumps(sorted(expected))],
-                          check=True, text=True, stdout=subprocess.PIPE)
+                          check=True, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    diagnostics.retain(proc.stdout + proc.stderr)
     value = json.loads(proc.stdout)
     result = evaluate(value, int(__import__('os').environ['NODE_RANK']), expected, args.started_at)
     print(json.dumps({'schema': 'jspark3-triar-inactive/1', 'verdict': 'PASS', 'triar': 'INACTIVE_NCCL_B45',
-                      'attestation': result, 'raw': value}, sort_keys=True))
+                      'attestation': result, 'raw_sha256': diagnostics.fingerprint(value)}, sort_keys=True))
 
 
 if __name__ == '__main__':
+    diagnostics.install_exception_hook()
     main()

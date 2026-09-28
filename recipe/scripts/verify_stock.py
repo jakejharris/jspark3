@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 """Verify the common v1.3-v1.5 runtime plus the selected sealed v1.6 overlays."""
+import sys
+sys.dont_write_bytecode = True
+import _diagnostics as diagnostics
 import hashlib
 import json
 import os
@@ -154,14 +157,23 @@ def main():
     assert os.environ['EXL3_FAT_GROUPED'] == '0'
     for name in ('GLM53_EXL3_MOE_FAST', 'GLM53_COOP_GEOMETRY', 'HAREM_KDA_FLASHKDA'):
         assert name not in os.environ, name
-    print(json.dumps({'status': 'PASS', 'ablit': mode, 'rank': int(os.environ['NODE_RANK']),
+    record = {'status': 'PASS', 'ablit': mode, 'rank': int(os.environ['NODE_RANK']),
                       'ablation': ablation, 'loaders': loaders,
                       'loader_memory': loader_memory,
                       'swa_targets': expected, 'swa_contract_sha256': receipt['contract_sha256'],
                       'instanttensor': '0.2.0', 'native_exllama': 'exact-v11',
                       'optional_arms': (options if 'JSPARK3_V16_PROFILE' in os.environ
-                                        else 'off')}, sort_keys=True))
+                                        else 'off')}
+    diagnostics.retain(json.dumps(record, sort_keys=True))
+    shared = {'status': 'PASS', 'ablit': mode, 'rank': record['rank'],
+              'evidence_sha256': diagnostics.fingerprint(record)}
+    if mode == 0:
+        from production_stock import disabled_receipt
+        disabled_receipt(ablation, record['rank'])
+        shared['ablation'] = ablation
+    print(json.dumps(shared, sort_keys=True))
 
 
 if __name__ == '__main__':
+    diagnostics.install_exception_hook()
     main()

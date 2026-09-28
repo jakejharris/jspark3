@@ -202,8 +202,9 @@ On failure, `verify.json` and the console contain a structural summary: remote
 rank, command label, exit code, recognized exception types and file:line frames.
 Command arguments and free-form remote messages stay out of shared output.
 The receipt names a separate `*.may-contain-secrets-do-not-share.log` next to it:
-this mode-0600 file holds the last 16 KiB of decoded stderr characters. Inspect
-it locally for the full error message; **do not upload it**. Unknown filenames
+the mode-0600 tail holds the last 16 KiB of decoded stderr characters, and
+`private_diagnostic` retains the full failure separately when longer. Inspect
+private diagnostics locally; **do not upload it**. Unknown filenames
 and exception names remain private. `verify-rank0.log` is also a summary with a
 pointer to its private tail. See [operations](OPERATIONS.md) for retention and
 failure handling.

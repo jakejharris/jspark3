@@ -5,11 +5,13 @@ Off delegates directly to the sealed entry script. On runs those exact stages
 and adds one thirds stage immediately before the final vllm exec. No copy of
 the served script or any sealed runtime source is edited on disk.
 """
+import sys
+sys.dont_write_bytecode = True
+import _diagnostics as diagnostics
 
 import hashlib
 import os
 from pathlib import Path
-import sys
 
 # Sealed v1.6 entry, and the same entry with the Lab D TRIAR stage appended
 # after adaptive-k (JSPARK3_TRIAR-gated; off leaves the served tree unpatched).
@@ -43,4 +45,5 @@ def main():
 
 
 if __name__ == "__main__":
+    diagnostics.install_exception_hook()
     main()

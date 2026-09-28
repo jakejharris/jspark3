@@ -2,6 +2,9 @@
 """Create the self-hashed identity receipt consumed by source transforms."""
 
 from __future__ import annotations
+import sys
+sys.dont_write_bytecode = True
+import _diagnostics as diagnostics
 
 import argparse
 import hashlib
@@ -9,10 +12,8 @@ import json
 import os
 from pathlib import Path
 import re
-import sys
 import tempfile
 
-sys.dont_write_bytecode = True
 from _image_identity import selected_identity
 
 IDENTITY = selected_identity()
@@ -76,9 +77,10 @@ def main() -> int:
                 pass
         return 0
     except (OSError, Refusal) as exc:
-        print(f"REFUSE: {exc}", file=sys.stderr)
+        diagnostics.report_failure(exc)
         return 9
 
 
 if __name__ == "__main__":
+    diagnostics.install_exception_hook()
     raise SystemExit(main())

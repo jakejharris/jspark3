@@ -126,18 +126,24 @@ known to the controller source or its selected Python script are shared;
 unknown names are replaced. Arbitrary exception messages, JSON fields and
 unknown exception names are available only in the private tail.
 
-The receipt's `private_stderr_tail` is a filename relative to its directory.
-These unique `*.may-contain-secrets-do-not-share.log` files are created with
-mode 0600 and retain at most 16 KiB of decoded characters, without masking or
-rewriting diagnostics. They can contain credentials. Inspect them locally,
+The receipt's `private_stderr_tail` contains at most 16 KiB of decoded
+characters. `private_diagnostic` preserves the complete failure, including the
+part before that tail. Unique `*.may-contain-secrets-do-not-share.log` files
+are created with mode 0600. Pointers beside an explicit output are relative to
+that output; standalone commands use a private temporary directory. Captured
+protocol responses and build output also stay private; failure reports identify
+the directory through `private_protocol_directory`. Inspect these files locally,
 exclude them from shared bundles, and delete them when no longer needed.
-The ordinary rank-log and qualification `.log` files contain structural
-summaries with pointers to the same kind of private tail. Full logs remain on
-the serving hosts; gates still evaluate complete captured logs in memory.
-If private-file creation fails, the console reports it and the refusal receipt
-has a null pointer. Receipt-write errors also refuse without echoing error text.
-Other lifecycle failures keep their private tail next to the selected output
-receipt or service manifest. Dry runs do not write diagnostic files.
+Full capture uses space proportional to the output; it is not a retention quota.
+If storage fails, the report states that diagnostics could not be written.
+
+Ordinary rank, qualification and experiment logs contain structural summaries.
+Qualification hashes an explicit inventory of shared gate receipts and summaries;
+private files and build directories are never admission dependencies. A shared
+qualification bundle still passes admission after all private sidecars are removed.
+Source, numeric gate criteria, receipt hashes and hardware admission remain checked.
+Dry runs do not write diagnostic files. See [shared output](SHARED_OUTPUT.md) for
+the writer inventory and mandatory review guard.
 
 Effective `memory.swap.max` must stay zero. Reverify after service-manager
 changes; daemon reloads can reset limits. On hosts using snapd and runc 1.2.5,
@@ -147,14 +153,14 @@ hold automatic refreshes during the serving window with `sudo snap refresh
 
 | Refusal | Action |
 |---|---|
-| Source privacy scan | Inspect the named file, including untracked files; keep private work/evidence outside the source. Git history does not affect this check. |
+| Source privacy scan | Inspect the private diagnostic for affected files, including untracked files; keep private work/evidence outside the source. Git history does not affect this check. |
 | `scripts/__pycache__` in recipe | Use a fresh prepared recipe; wrappers now disable bytecode writes. Do not edit checksum inventories. |
-| Checkpoint serving-byte gate | Run the four-path `validate_checkpoint.py` command in INSTALL on the failing rank; its stderr identifies the missing view, ledger or shard. |
+| Checkpoint serving-byte gate | Run the four-path `validate_checkpoint.py` command in INSTALL on the failing rank; its private diagnostic identifies the missing view, ledger or shard. |
 | Display host state | Make `full` hosts headless as INSTALL specifies, or choose `display0` and remove all DRM keys before a fresh start. |
 | Coop seal/build-image drift | Restore the prepared `JSPARK3_V16_COOP=0`; operator coop-on is not supported. |
 | Readiness timeout | Inspect `status` and the retained rank log; raise `--ready-timeout` only for a still-loading healthy boot. |
 | First prefill dip | Retain it; hygiene and the repeat decide. A repeat below 1100 still blocks admission. |
-| Hygiene errors | Inspect per-rank paths/errors; fix missing mounts/read access and repeat the whole qualification into a new output directory. |
+| Hygiene errors | Inspect the private per-rank paths/errors; fix missing mounts/read access and repeat the whole qualification into a new output directory. |
 | APC fails in `lru` mode | Use `finehit`; it matches the shipped cache granularity. |
 | Existing name/service manifest | Stop/remove with the old bound manifest, archive it, then start fresh. |
 | TRIAR-inactive proof fails | Retain the proof/logs and keep admission closed; do not enable TRIAR or weaken the graph checks. |

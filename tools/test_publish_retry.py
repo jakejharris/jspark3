@@ -177,8 +177,8 @@ class RetryTests(unittest.TestCase):
     def hf_api(self, failure=''):
         class Fake:
             def __init__(self):
-                self.head = 'old'
-                self.states = {'old': {'README.md': b'old card', 'model.safetensors': b'weights'}}
+                self.head = '1' * 40
+                self.states = {'1' * 40: {'README.md': b'old card', 'model.safetensors': b'weights'}}
                 self.commits = 0
                 self.fail = failure
             def model_info(self, repo, revision=None, files_metadata=False):
@@ -194,7 +194,7 @@ class RetryTests(unittest.TestCase):
                     raise OSError('failed before commit')
                 data = dict(self.states[self.head])
                 data.update({op.path_in_repo: op.path_or_fileobj for op in kwargs['operations']})
-                self.head = 'new'
+                self.head = '2' * 40
                 self.states[self.head] = data
                 self.commits += 1
                 if self.fail == 'after':
@@ -229,10 +229,22 @@ class RetryTests(unittest.TestCase):
             (self.root / 'hf-upload-plan.json').unlink(missing_ok=True)
             api = self.hf_api('before')
             with self.assertRaises(OSError): self.hf.reconcile(self.root, api, api.read)
-            api.states['conflict'] = {**api.states['old'], name: b'conflict'}
-            api.head = 'conflict'
+            api.states['3' * 40] = {**api.states['1' * 40], name: b'conflict'}
+            api.head = '3' * 40
             with self.assertRaises(ValueError): self.hf.reconcile(self.root, api, api.read)
             self.assertEqual(api.commits, 0)
+
+    def test_hub_shared_plan_hashes_opaque_remote_metadata(self):
+        self.hf_payload()
+        api = self.hf_api()
+        secret = 'opaqueRemoteFilenameCredentialValue'
+        api.states[api.head][secret] = b'unrelated remote bytes'
+        self.hf.reconcile(self.root, api, api.read)
+        self.hf.reconcile(self.root, api, api.read)
+        for name in ('hf-upload-plan.json', 'hf-published.json'):
+            self.assertNotIn(secret, (self.root / name).read_text())
+        self.assertEqual(api.commits, 1)
+        self.assertEqual(api.states[api.head][secret], b'unrelated remote bytes')
 
     def test_actual_preflight_cli_sets_xet_before_sdk_import(self):
         # Execute the real CLI block and imports, replacing only remote/local IO.

@@ -16,13 +16,15 @@ Refusals exit 9 with a REFUSE line on stderr, matching the house style.
 """
 
 from __future__ import annotations
+import sys
+sys.dont_write_bytecode = True
+import _diagnostics as diagnostics
 
 import argparse
 import hashlib
 import json
 import os
 from pathlib import Path
-import sys
 import tempfile
 
 
@@ -166,9 +168,10 @@ def main() -> int:
               f"pth=1 out={out_dir}", flush=True)
         return 0
     except Refusal as exc:
-        print(f"REFUSE: {exc}", file=sys.stderr)
+        diagnostics.report_failure(exc)
         return 9
 
 
 if __name__ == "__main__":
+    diagnostics.install_exception_hook()
     raise SystemExit(main())
