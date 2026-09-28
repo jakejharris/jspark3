@@ -8,6 +8,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path[:0] = [str(ROOT / 'tools/v16'), str(ROOT / 'recipe/scripts')]
 import copy
 import json
+import os
 import shutil
 import subprocess
 import tempfile
@@ -197,6 +198,72 @@ assert preflight.verify_manifest(recipe)
                                   capture_output=True, text=True, timeout=30)
         preflight = full_contract_gate()
         self.assertEqual(preflight.returncode, 0, preflight.stdout + preflight.stderr)
+        # Run the shipped entry's __main__ with each real controller environment.
+        # Stop only at its final exec boundary: no Docker, GPUs or model imports.
+        entry_program = r'''import os, runpy, subprocess, sys
+from pathlib import Path
+recipe = Path(sys.argv[1])
+sys.path.insert(0, str(recipe / 'scripts'))
+import _fleetctl as fleet
+values = fleet.load_env(recipe / '.env.example')
+values = {k: v.replace('.example.invalid', '.test').replace('198.51.100.', '10.0.0.').replace('192.0.2.', '10.1.0.') for k, v in values.items()}
+fleet.validate_env(values)
+assert values['JSPARK3_V16_COOP'] == values['JSPARK3_TRIAR'] == '1'
+class Handoff(BaseException):
+    pass
+captured = []
+def observe(event, args):
+    if event == 'os.exec':
+        executable, argv, env = args
+        assert executable == '/bin/bash' and argv[:2] == ['bash', '-c']
+        captured.append(argv)
+        raise Handoff
+sys.addaudithook(observe)
+for rank in range(3):
+    rank_environment = dict(item.split('=', 1) for item in fleet.rank_env(values, rank))
+    os.environ.clear()
+    os.environ.update(rank_environment, PATH='/usr/bin:/bin', CUDA_VISIBLE_DEVICES='', NVIDIA_VISIBLE_DEVICES='void')
+    assert 'GLM53_CYCLIC_THIRDS' not in os.environ
+    server = fleet.server_argv(values, rank)
+    sys.argv = [str(recipe / 'scripts/triar_entry.py'), *server]
+    try:
+        runpy.run_path(sys.argv[0], run_name='__main__')
+    except Handoff:
+        pass
+    else:
+        raise AssertionError('production entry did not reach exec')
+    argv = captured[-1]
+    assert argv[3:] == ['triar-entry', *server]
+    script = argv[2]
+    stages = ['apply_base_pipeline.py', 'apply_grammar_fsm.py', 'apply_warmjit.py',
+              'apply_coop_moe.py', 'apply_adaptive_k.py', 'apply_triar.py',
+              'patch_loader_audit.py', 'apply_swa.py', 'install_b45_modules.py',
+              'apply_dense_fp8.py', 'final_container_preflight.py', 'exec vllm serve']
+    offsets = [script.index(name) for name in stages]
+    assert offsets == sorted(offsets)
+    assert all(script.count(name) == 1 for name in stages)
+    assert 'apply_cyclic_thirds.py' not in script
+    subprocess.run(['/bin/bash', '-n'], input=script, text=True, check=True)
+    print('ENTRY_EXEC_HANDOFF_PASS rank=' + str(rank))
+assert len(captured) == 3
+'''
+        def production_entry():
+            return subprocess.run([sys.executable, '-B', '-S', '-c', entry_program, str(runtime / 'recipe')],
+                                  capture_output=True, text=True, timeout=30,
+                                  env=dict(os.environ, CUDA_VISIBLE_DEVICES='', NVIDIA_VISIBLE_DEVICES='void'))
+        entry = production_entry()
+        self.assertEqual(entry.returncode, 0, entry.stdout + entry.stderr)
+        self.assertEqual(entry.stdout.splitlines(), ['ENTRY_EXEC_HANDOFF_PASS rank=' + str(r) for r in range(3)])
+        entry_path = runtime / 'recipe/scripts/container_entry.sh'
+        entry_bytes = entry_path.read_bytes()
+        try:
+            entry_path.write_bytes(entry_bytes + b'\n# unapproved entry drift\n')
+            refused = production_entry()
+            self.assertNotEqual(refused.returncode, 0)
+            self.assertNotIn('ENTRY_EXEC_HANDOFF_PASS', refused.stdout)
+            self.assertIn('thirds_entry.py', refused.stderr)
+        finally:
+            entry_path.write_bytes(entry_bytes)
         contract_path = runtime / integration.COOP / 'INSTALL_CONTRACT.json'
         original = contract_path.read_bytes()
         for mutation in ('source', 'runtime', 'before', 'after', 'seam'):
@@ -217,6 +284,17 @@ assert preflight.verify_manifest(recipe)
                     self.assertIn('cooperative-MoE contract differs from its embedded seal', refused.stderr)
                 finally:
                     contract_path.write_bytes(original)
+
+    def test_entry_drift_refuses_source_validation_after_rehash(self):
+        self.integrate()
+        path = self.output / 'recipe/scripts/container_entry.sh'
+        path.write_bytes(path.read_bytes() + b'\n# unapproved entry drift\n')
+        refresh_fixture(self.output)
+        report = self.root / 'entry-drift.json'
+        result = self.validate('--report', report)
+        self.assertNotEqual(result.returncode, 0)
+        failures = [row['check'] for row in q.read(report)['checks'] if row['status'] == 'FAIL']
+        self.assertEqual(failures, ['identity-contracts'])
 
     def test_install_contract_drift_refuses_source_validation(self):
         self.integrate()

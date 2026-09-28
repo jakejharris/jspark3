@@ -7021,8 +7021,8 @@
       "sites": []
     },
     "recipe/scripts/thirds_entry.py": {
-      "disposition": "Validated source/checkpoint/install receipt producer: fixed states, numeric counts, expected names and SHA identities; source writes confined to runtime setup. CLI exceptions use private boundary; container worker output captured by controller.",
-      "sha256": "3eed9c649ed36223adb9d8ff3533dfa7d08a7c9bb0c8ff57dc53b775a3a7d642",
+      "disposition": "Exact entry allowlist advances to reviewed maintenance-denylist entry bytes. No runtime gate removed; unapproved entry bytes still refuse before exec. No shared output changes.",
+      "sha256": "1bd8ab26e6d76df624db0935bad307c38d5862a2e7e84e101a9b7d3ab4329dd9",
       "sites": []
     },
     "recipe/scripts/triar_entry.py": {
@@ -7213,8 +7213,8 @@
       ]
     },
     "tools/_source_contracts.py": {
-      "disposition": "Read-only contract validation with schema-2 component and fixed legacy pins; no independent writer. Exceptions flow to protected validator.",
-      "sha256": "40e4573b1532bfc76168330b1c53895c118d29bc6329b19dc80509cfe3b5c9e3",
+      "disposition": "Source-only validation composes the real TRIAR entry for both thirds states to reject stale entry hashes and seams before packaging. Exceptions retain the existing private validation boundary; no hardware/admission claim.",
+      "sha256": "24217bb3a79d77ec1cf2a8b17394c7b4306ac696233b8acdaeae3f140c60ddae",
       "sites": []
     },
     "tools/build_native.py": {
@@ -7594,131 +7594,156 @@
     },
     "tools/test_component_serving.py": {
       "disposition": "Synthetic local test output only. Exercises real publication/refusal and comparison paths, retained private artifacts and opaque diagnostic controls; never hardware evidence.",
-      "sha256": "32ed74a75ef405ac0857c12d5f9eb2aa44a1ff04cfff5ff74d5475e52266d9c0",
+      "sha256": "b904c04397e7d69a10eb24839f10e13c6fe09a7eec26ee6e3a69c273f05c7dd1",
       "sites": [
         {
           "function": "refresh_fixture",
-          "line": 33,
+          "line": 34,
           "operation": "write"
         },
         {
           "function": "refresh_fixture",
-          "line": 38,
+          "line": 39,
           "operation": "write"
         },
         {
           "function": "refresh_fixture",
-          "line": 40,
+          "line": 41,
           "operation": "write_text"
-        },
-        {
-          "function": "refresh_fixture",
-          "line": 44,
-          "operation": "write"
         },
         {
           "function": "refresh_fixture",
           "line": 45,
+          "operation": "write"
+        },
+        {
+          "function": "refresh_fixture",
+          "line": 46,
           "operation": "write_text"
         },
         {
           "function": "setUp",
-          "line": 85,
-          "operation": "write"
-        },
-        {
-          "function": "setUp",
-          "line": 89,
+          "line": 86,
           "operation": "write"
         },
         {
           "function": "setUp",
           "line": 90,
+          "operation": "write"
+        },
+        {
+          "function": "setUp",
+          "line": 91,
           "operation": "write_bytes"
         },
         {
           "function": "setUp",
-          "line": 95,
+          "line": 96,
           "operation": "write_text"
         },
         {
           "function": "setUp",
-          "line": 99,
+          "line": 100,
           "operation": "write_text"
         },
         {
           "function": "command",
-          "line": 108,
+          "line": 109,
           "operation": "run"
         },
         {
           "function": "test_integrate_validate_and_prepare_with_real_gates",
-          "line": 146,
+          "line": 147,
           "operation": "write_bytes"
         },
         {
           "function": "test_integrate_validate_and_prepare_with_real_gates",
-          "line": 166,
+          "line": 167,
           "operation": "run"
         },
         {
           "function": "test_integrate_validate_and_prepare_with_real_gates.full_contract_gate",
-          "line": 196,
+          "line": 197,
           "operation": "run"
         },
         {
           "function": "test_integrate_validate_and_prepare_with_real_gates",
-          "line": 214,
+          "line": 247,
+          "operation": "embedded output (private worker/test or fixed template)"
+        },
+        {
+          "function": "test_integrate_validate_and_prepare_with_real_gates.production_entry",
+          "line": 251,
+          "operation": "run"
+        },
+        {
+          "function": "test_integrate_validate_and_prepare_with_real_gates",
+          "line": 260,
+          "operation": "write_bytes"
+        },
+        {
+          "function": "test_integrate_validate_and_prepare_with_real_gates",
+          "line": 266,
+          "operation": "write_bytes"
+        },
+        {
+          "function": "test_integrate_validate_and_prepare_with_real_gates",
+          "line": 281,
           "operation": "write"
         },
         {
           "function": "test_integrate_validate_and_prepare_with_real_gates",
-          "line": 219,
+          "line": 286,
+          "operation": "write_bytes"
+        },
+        {
+          "function": "test_entry_drift_refuses_source_validation_after_rehash",
+          "line": 291,
           "operation": "write_bytes"
         },
         {
           "function": "test_install_contract_drift_refuses_source_validation",
-          "line": 226,
+          "line": 304,
           "operation": "write"
         },
         {
           "function": "test_missing_mismatched_foreign_seals_leave_no_output",
-          "line": 244,
+          "line": 322,
           "operation": "write"
         },
         {
           "function": "test_missing_mismatched_foreign_seals_leave_no_output",
-          "line": 249,
+          "line": 327,
           "operation": "write_bytes"
         },
         {
           "function": "test_policy_mismatch_refuses_after_checksums_refreshed",
-          "line": 254,
+          "line": 332,
           "operation": "write_bytes"
         },
         {
           "function": "test_policy_mismatch_refuses_after_checksums_refreshed",
-          "line": 261,
+          "line": 339,
           "operation": "write"
         },
         {
           "function": "test_final_refuses_every_stage_and_bound_without_measurements",
-          "line": 272,
+          "line": 350,
           "operation": "write"
         },
         {
           "function": "test_final_refuses_every_stage_and_bound_without_measurements",
-          "line": 278,
+          "line": 356,
           "operation": "write"
         },
         {
           "function": "test_private_state_refuses_inherited_admission",
-          "line": 287,
+          "line": 365,
           "operation": "write"
         },
         {
           "function": "test_original_qualification_manifest_remains_hash_bound",
-          "line": 294,
+          "line": 372,
           "operation": "write_bytes"
         }
       ]

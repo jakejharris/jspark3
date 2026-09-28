@@ -47,7 +47,10 @@ def verify_sources(recipe):
         assert artifacts[(display.OVERLAY / name).relative_to(recipe.parent).as_posix()]['expected_sha256'] == expected
     if (recipe/'scripts/apply_triar.py').exists():
         import apply_triar
+        import triar_entry
         apply_triar.section()
+        for thirds in (False, True):
+            triar_entry.compose((recipe/'scripts/container_entry.sh').read_bytes(), thirds)
     if (recipe/'scripts/apply_cyclic_thirds.py').exists():
         import apply_cyclic_thirds
         apply_cyclic_thirds.verify_sources()

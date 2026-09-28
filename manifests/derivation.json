@@ -5,7 +5,7 @@
   "delivery_candidate": {
     "binding_sha256": "3db940e70ff681014b3f4ae41b3e475910bf58171fbb18144f04d08492e59456",
     "release_version": "v1.8.4",
-    "source_recipe_sha256": "7ea680d071e9e9861c01fc7f441902983923ca20463aa10375d2e2dd6ad5d073",
+    "source_recipe_sha256": "3143fc6ed3e9efd27cbf7480658384f30b153bee32a287bc5ecf843236ce23be",
     "state": "pending-component-and-boot-evidence"
   },
   "files": {
@@ -245,8 +245,8 @@
       "changed": true,
       "input_sha256": "3df598b5f7e73d1a4961e895e33bb9cfcc2bd0cc4a0cf736f7806c0a01de3cea",
       "origin": "release-package-render",
-      "public_sha256": "7823101d5ef2deb7b96a86992d61b17a5919bbaed0bb3506810213582f35cfb4",
-      "revision": "v184-preflight-contract"
+      "public_sha256": "0b6dc4110f7ade6cdcc07f2c0881db3c64d7d998dd5ffdf4c72eb7b2d19469ac",
+      "revision": "v184-entry-seam"
     },
     "manifests/serving-binding.json": {
       "changed": false,
@@ -258,8 +258,8 @@
       "changed": true,
       "input_sha256": "fad5c997be3187d1ce467088572677544c60652fda500ea822e89392d7f8bca2",
       "origin": "v1.8.3-shared-output-r5",
-      "public_sha256": "13d9e0e898ddf30491462bb92915436a38140b5a81a819075354b4a4d26c21f5",
-      "revision": "v184-post-seal-documentation"
+      "public_sha256": "c0e14a66c72dc9f1a41b01df7d987c0816649d8e5c82eb7f391273fd249f2816",
+      "revision": "v184-entry-seam"
     },
     "manifests/stock-profile.json": {
       "changed": false,
@@ -1375,8 +1375,8 @@
       "changed": true,
       "input_sha256": "2ad96dfb54dcd471acb89734a33b7a071463b92a7ed45cbff96bf448e1f2225b",
       "origin": "sealed-source",
-      "public_sha256": "3eed9c649ed36223adb9d8ff3533dfa7d08a7c9bb0c8ff57dc53b775a3a7d642",
-      "revision": "v1.8.4-on-v1.8.3"
+      "public_sha256": "1bd8ab26e6d76df624db0935bad307c38d5862a2e7e84e101a9b7d3ab4329dd9",
+      "revision": "v184-entry-seam"
     },
     "recipe/scripts/triar_entry.py": {
       "changed": true,
@@ -1540,8 +1540,8 @@
       "changed": true,
       "input_sha256": "86daee4cc54e4caaa310680884d4cdd3125a2805f4861d4d7e0aa72309405671",
       "origin": "export-template",
-      "public_sha256": "40e4573b1532bfc76168330b1c53895c118d29bc6329b19dc80509cfe3b5c9e3",
-      "revision": "v1.8.4-pass1"
+      "public_sha256": "24217bb3a79d77ec1cf2a8b17394c7b4306ac696233b8acdaeae3f140c60ddae",
+      "revision": "v184-entry-seam"
     },
     "tools/build_native.py": {
       "changed": true,
@@ -1582,8 +1582,8 @@
       "changed": true,
       "input_sha256": "392cdc93c6d90a4f7c1fa03387d76c30b1271502564e328f73f996df4f32f0da",
       "origin": "v184-private-serving-source",
-      "public_sha256": "32ed74a75ef405ac0857c12d5f9eb2aa44a1ff04cfff5ff74d5475e52266d9c0",
-      "revision": "v184-preflight-contract"
+      "public_sha256": "b904c04397e7d69a10eb24839f10e13c6fe09a7eec26ee6e3a69c273f05c7dd1",
+      "revision": "v184-entry-seam"
     },
     "tools/test_fleetctl_errors.py": {
       "changed": true,

@@ -13,9 +13,9 @@ import hashlib
 import os
 from pathlib import Path
 
-# Sealed v1.6 entry, and the same entry with the Lab D TRIAR stage appended
-# after adaptive-k (JSPARK3_TRIAR-gated; off leaves the served tree unpatched).
-ENTRY_SHA256 = {'b830b123102777aea3080bfda50acd8b17417f8b8e370a77daf328c4a3b75aec'}
+# Reviewed base entry including the cooperative maintenance-override refusals.
+# TRIAR and thirds compose their stages only over these exact source bytes.
+ENTRY_SHA256 = {'35e2256f6be0032c5b4fdcdc1ec5cccb7b56251bdfd5fa59b3029fcbeff3a374'}
 ANCHOR = 'exec vllm serve "$JSPARK_TARGET_RUNTIME" "$@"\n'
 STAGE = '''python3 -S "$recipe/scripts/apply_cyclic_thirds.py" --vllm-root "$vllm" \\
   --state 1 --image-receipt "$receipt" --apply
