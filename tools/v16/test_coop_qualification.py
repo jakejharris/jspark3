@@ -19,6 +19,8 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path[:0] = [str(ROOT / 'recipe/scripts'), str(ROOT / 'tools'), str(Path(__file__).parent)]
 import _coop_qualification as q
 import _image_identity as images
+import _coop_checkpoint as checkpoint
+import _coop_bundle as bundles
 import coop_evidence as evidence
 import qualify_coop as runner
 from test_operator_image import fixture, write_record
@@ -59,6 +61,12 @@ class RecordTests(unittest.TestCase):
                   'profile_log_sha256': [self.profiles[n] for n in sorted(self.profiles)], 'rows': {str(n): 'stock' for n in range(1, 65)}}
         runner.write(self.bundle / 'dispatch_policy.json', policy)
         shutil.copyfile(self.bundle / 'dispatch_policy.json', self.coop / 'source/dispatch_policy.json')
+        source_manifest = q.read(self.coop / 'SOURCE_MANIFEST.json')
+        source_manifest['files']['dispatch_policy.json'] = q.sha(self.coop / 'source/dispatch_policy.json')
+        runner.write(self.coop / 'SOURCE_MANIFEST.json', source_manifest)
+        source_pin = patch('apply_coop_moe.SOURCE_MANIFEST_SHA256', q.sha(self.coop / 'SOURCE_MANIFEST.json'))
+        source_pin.start()
+        self.addCleanup(source_pin.stop)
         manifest = q.read(self.bundle / 'manifest.json')
         manifest['files']['dispatch_policy.json'] = q.sha(self.bundle / 'dispatch_policy.json')
         manifest['files']['cooperative_moe.so'] = q.TARGET_NATIVE
@@ -69,15 +77,21 @@ class RecordTests(unittest.TestCase):
         image['diff_ids'] = ['sha256:' + hashed('layer')]
         write_record(self.root / 'image.json', image)
         image = images.read_operator_record(self.root / 'image.json')
-        checkpoint = {'revision': '25a44fdbf16862a46b7cc9921142c6c81350af2f', 'files': {'index': hashed('checkpoint')}}
+        checkpoint_pin = checkpoint.authority()
         self.index = {'schema_version': 1, 'status': 'PASS', 'native_sha256': q.TARGET_NATIVE,
             'source_manifest_sha256': q.sha(self.coop / 'SOURCE_MANIFEST.json'),
             'image_receipt_sha256': image['payload_sha256'], 'helper': q.read(self.recipe / 'config/coop-helper.json'),
-            'sanitizer': q.read(self.recipe / 'config/coop-sanitizer.json'), 'checkpoint': checkpoint,
+            'sanitizer': q.read(self.recipe / 'config/coop-sanitizer.json'), 'checkpoint': checkpoint_pin,
+            'raw_bundle_manifest': copy.deepcopy(manifest), 'raw_bundle': bundles.identity(self.bundle),
+            'selected_bundle': bundles.identity(self.bundle),
             'profile_log_sha256': self.profiles,
-            'gates': {name: {'kind': kind, 'status': 'PASS', **{key: hashed(name + key) for key in
+            'gates': {name: {'kind': kind, 'status': 'PASS', 'bundle':bundles.identity(self.bundle), **{key: hashed(name + key) for key in
                 ('receipt_sha256', 'log_sha256', 'environment_sha256', 'execution_sha256')}} for name, kind in q.gate_names().items()}}
         second = {'image_receipt_sha256': image['payload_sha256'],
+                  'build_inputs':{**{runner.native.COOP + '/' + name:value for name,value in q.compiled_inputs(self.coop).items()},
+                                  runner.native.COOP + '/SOURCE_MANIFEST.json':q.sha(self.coop / 'SOURCE_MANIFEST.json'),
+                                  runner.native.COOP + '/source/runtime.py':q.sha(self.coop / 'source/runtime.py'),
+                                  runner.native.COOP + '/source/dispatch_policy.json':q.sha(self.coop / 'source/dispatch_policy.json')},
                   'source_recipe_sha256': image['source_recipe_sha256'],
                   'reproducibility': {'runs': 2, 'comparison': 'bit-identical'}, 'hardware_qualified': False,
                   'binary_sha256': {'recipe/overlays/v16/coop/bundle/cooperative_moe.so': q.TARGET_NATIVE},
@@ -93,7 +107,7 @@ class RecordTests(unittest.TestCase):
             'qualification_source_manifest_sha256': self.index['source_manifest_sha256'],
             'compiled_inputs': q.compiled_inputs(self.coop), 'builder_sha256': q.sha(self.coop / 'build_repro.sh'),
             'build_policy_sha256': q.digest_value(images.build_policy()), 'qualification_image': image,
-            'helper': self.index['helper'], 'sanitizer': self.index['sanitizer'], 'checkpoint': checkpoint,
+            'helper': self.index['helper'], 'sanitizer': self.index['sanitizer'], 'checkpoint': checkpoint_pin,
             'reproducibility': {'runs': 2, 'comparison': 'bit-identical', 'binary_sha256': q.TARGET_NATIVE,
                                 'evidence_sha256': q.digest_value(first)},
             'bundle': {'manifest_sha256': q.sha(self.bundle / 'manifest.json'), 'native_sha256': q.TARGET_NATIVE,
@@ -175,8 +189,40 @@ class RecordTests(unittest.TestCase):
         self.pin_fixture()
         with self.assertRaisesRegex(ValueError, 'build policy drift'): self.verify()
 
+    def test_checkpoint_and_original_bundle_cannot_be_reminted(self):
+        self.record['checkpoint'] = copy.deepcopy(self.record['checkpoint'])
+        self.record['checkpoint']['files']['model-00057-of-00120.safetensors'] = hashed('substituted shard')
+        with self.assertRaisesRegex(ValueError, 'checkpoint authority'):
+            q.verify_record(self.record, self.bundle, self.coop, release=False)
+        self.record['checkpoint'] = checkpoint.authority()
+        for rank in range(3):
+            value = copy.deepcopy(self.index)
+            value['gates'][f'policy-r{rank}']['bundle']['runtime_sha256'] = hashed('other adapter')
+            runner.write(self.coop / 'QUALIFICATION.json', value)
+            self.record['gate_index_sha256'] = q.sha(self.coop / 'QUALIFICATION.json')
+            with self.assertRaisesRegex(ValueError, 'incomplete gate'):
+                q.verify_record(self.record, self.bundle, self.coop, release=False)
+
+    def test_copied_source_and_builder_cannot_define_their_own_pins(self):
+        for name in ('source/runtime.py', 'build_repro.sh'):
+            other = self.root / ('altered-' + name.replace('/', '-'))
+            shutil.copytree(self.coop, other)
+            (other / name).write_bytes((other / name).read_bytes() + b'\n# substituted\n')
+            manifest = q.read(other / 'SOURCE_MANIFEST.json')
+            manifest['files']['runtime.py'] = q.sha(other / 'source/runtime.py')
+            runner.write(other / 'SOURCE_MANIFEST.json', manifest)
+            record = {**self.record, 'source_manifest_sha256':q.sha(other / 'SOURCE_MANIFEST.json'),
+                      'builder_sha256':q.sha(other / 'build_repro.sh'), 'compiled_inputs':q.compiled_inputs(other)}
+            with self.assertRaisesRegex(ValueError, 'trusted recipe'):
+                q.verify_record(record, other / 'bundle', other, release=False)
+
     def test_complete_synthetic_campaign_seals_without_mutating_raw_evidence(self):
         import argparse
+        shutil.copytree(ROOT / 'tools', self.root / 'tools')
+        for obj, key, value in ((runner, 'COOP', self.coop), (runner.native, 'ROOT', self.root), (evidence, 'ROOT', self.root)):
+            control = patch.object(obj, key, value)
+            control.start()
+            self.addCleanup(control.stop)
         raw = self.root / 'campaign'
         raw.mkdir()
         (raw / 'profiles').mkdir()
@@ -196,8 +242,9 @@ class RecordTests(unittest.TestCase):
         runner.write(raw / 'selected-bundle/manifest.json', manifest)
         identity = {k:self.index[k] for k in ('native_sha256','source_manifest_sha256','image_receipt_sha256',
                                              'helper','checkpoint','sanitizer')}
-        identity['runner_sha256'] = {name:q.sha(ROOT / 'tools/v16' / name) for name in
-                                     ('qualify_coop.py','coop_environment.py','coop_evidence.py')}
+        identity.update(raw_bundle=bundles.identity(raw / 'raw-bundle'),
+                        raw_bundle_manifest=q.read(raw / 'raw-bundle/manifest.json'))
+        identity['runner_sha256'] = runner.runner_inputs()
         image = self.record['qualification_image']
         runner.write(raw / 'image.json', image)
         args = argparse.Namespace(fly_root=self.root / 'fly', helpers_root=self.root / 'helpers',
@@ -206,13 +253,15 @@ class RecordTests(unittest.TestCase):
                 for name, cmd in runner.matrix()}
         runner.write(raw / 'plan.json', plan)
         env = {'status':'PASS','exl3_sha256':'71e7118bd5af385821d7cb23e96fb154a3f31e1e835599a1082c72abb3aeb174',
+               'checkpoint':checkpoint.authority(),
                'fatpath_sha256':'69309df5f236502ec8cf55648f72369c20052c646ebd8850cd88272be881b48e',
                'ldd':'libcudart.so.13 => synthetic','nvcc':'fixture','gcc':'fixture','sanitizer':'fixture',
                'torch':'fixture','cuda':'fixture','gpu':{'name':'NVIDIA GB10','capability':[12,1],'driver':'fixture'}}
         for name, kind in q.gate_names().items():
             stage = raw / ('container-' + name)
             stage.mkdir()
-            runner.write(stage / 'environment.json', env)
+            binding = bundles.identity(raw / ('selected-bundle' if kind == 'policy' else 'raw-bundle'))
+            runner.write(stage / 'environment.json', {**env, 'bundle':binding})
             runner.write(stage / 'execution.json', {'exit_code':0,'command':plan[name],'started_at':'1','completed_at':'2'})
             rank = int(name.split('-')[1][1:])
             if kind == 'profile':
@@ -247,7 +296,7 @@ class RecordTests(unittest.TestCase):
                     {str(n):policy['rows'].get(str(n),'stock') for n in (*evidence.select_policy.ROWS,33,65)}}) + '\n'
             (raw / (name + '.log')).write_text(text)
             runner.write(raw / (name + '.json'), {'schema_version':1,'name':name,'kind':kind,'status':'PASS',
-                         'exit_code':0,'identity':identity,'log_sha256':q.sha(raw / (name + '.log'))})
+                         'exit_code':0,'identity':identity,'bundle':binding,'log_sha256':q.sha(raw / (name + '.log'))})
         runner.write(raw / 'campaign.json', {'schema_version':1,'status':'COMPLETE','identity':identity})
         second = self.root / 'second'
         binary = second / runner.native.COOP / 'bundle/cooperative_moe.so'
@@ -269,6 +318,31 @@ class RecordTests(unittest.TestCase):
             runner.seal(args)
             record = q.read(args.output / 'BUILD.json')
             q.verify_record(record,args.output / 'bundle',args.output,release=False)
+            # Review P2: mutate only the selected copy after every gate, then
+            # repair its own manifest. Neither campaign validation nor sealing
+            # may adopt the replacement, even with internally consistent hashes.
+            selected = raw / 'selected-bundle'
+            original_manifest = (selected / 'manifest.json').read_bytes()
+            for relative in ('runtime.py', 'headers/compat.cuh', 'toolchain.txt'):
+                path = selected / relative
+                original = path.read_bytes()
+                path.write_bytes(original + b'\n# post-gate mutation\n')
+                changed = q.read(selected / 'manifest.json')
+                changed['files'][relative] = q.sha(path)
+                runner.write(selected / 'manifest.json', changed)
+                with self.assertRaises(ValueError): evidence.validate_campaign(raw)
+                with self.assertRaises(ValueError): runner.seal(argparse.Namespace(**{**vars(args),'output':self.root / 'bad-seal'}))
+                self.assertFalse((self.root / 'bad-seal').exists())
+                path.write_bytes(original)
+                (selected / 'manifest.json').write_bytes(original_manifest)
+            for rank in range(3):
+                path = raw / f'container-policy-r{rank}/environment.json'
+                original = path.read_bytes()
+                env_changed = q.read(path)
+                env_changed['bundle']['manifest_sha256'] = hashed('other policy-tested bundle')
+                runner.write(path, env_changed)
+                with self.assertRaisesRegex(ValueError, 'different bundle'): evidence.validate_campaign(raw)
+                path.write_bytes(original)
             name = 'policy-r0'
             saved = copy.deepcopy(plan[name])
             plan[name][plan[name].index(image['config_digest'])] = 'sha256:' + hashed('wrong image')
@@ -406,6 +480,7 @@ class RunnerTests(unittest.TestCase):
             def execute(command, stage, log):
                 calls.append(command)
                 runner.write(stage / 'environment.json', {'status': 'PASS',
+                    'checkpoint':checkpoint.authority(),
                     'exl3_sha256': '71e7118bd5af385821d7cb23e96fb154a3f31e1e835599a1082c72abb3aeb174',
                     'fatpath_sha256': '69309df5f236502ec8cf55648f72369c20052c646ebd8850cd88272be881b48e',
                     'ldd': 'libcudart.so.13 => synthetic', 'torch': 'fixture', 'cuda': 'fixture',
