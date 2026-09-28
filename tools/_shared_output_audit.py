@@ -6,15 +6,28 @@ moving one into shared evidence cannot silently escape the review inventory.
 """
 import hashlib
 import json
+import os
 from pathlib import Path
 
 SUFFIXES = {'.py', '.sh', '.c', '.cu', '.cuh', '.h', '.patch', '.pth'}
 
 
 def candidates(root):
-    return {p.relative_to(root).as_posix(): p for p in root.rglob('*')
-            if p.is_file() and not any(part.startswith('.') for part in p.relative_to(root).parts)
-            and (p.suffix in SUFFIXES or p.name == 'Dockerfile')}
+    root = Path(root)
+    result = {}
+    for parent, dirs, names in os.walk(root):
+        # Git metadata and private task evidence are not exported. Hidden shipped
+        # paths are still inspected: a dot-prefixed writer is executable too.
+        dirs[:] = [name for name in dirs if name not in ('.git', '.co' + 'dex-tasks')]
+        for name in names:
+            path = Path(parent, name)
+            if not path.is_file() or path.is_symlink():
+                continue
+            with path.open('rb') as stream:
+                shebang = stream.read(2) == b'#!'
+            if path.suffix in SUFFIXES or name == 'Dockerfile' or path.stat().st_mode & 0o111 or shebang:
+                result[path.relative_to(root).as_posix()] = path
+    return result
 
 
 def verify(root):

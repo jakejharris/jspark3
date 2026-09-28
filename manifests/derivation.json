@@ -105,8 +105,8 @@
       "changed": true,
       "input_sha256": "468123e9465240a884465ebaa14641cfedeac27d36f8b494ab6c5cb77523611c",
       "origin": "release-package-render",
-      "public_sha256": "ff90055cb42d49ae42e9bd9480276f287d51574dd6b93bb87c70434cdc764743",
-      "revision": "v1.8.3-shared-output-r5"
+      "public_sha256": "a2cd6074a178d605123d80bff19f011aaa4f439925965075d9eda6a38e56cb0f",
+      "revision": "v1.8.3-projection-consumers-r6"
     },
     "docs/RELEASE_TOOLING.md": {
       "changed": true,
@@ -122,11 +122,11 @@
       "public_sha256": "e2f78386aa068723381ab99a23fa736cfa25bb45fc3a84997617906cfeadc8aa"
     },
     "docs/SHARED_OUTPUT.md": {
-      "changed": false,
+      "changed": true,
       "input_sha256": "b22fc269caf88fb5e539ea88bedc6a01a4914f0aca0be1784d662cfb0184894c",
       "origin": "v1.8.3-shared-output-r5",
-      "public_sha256": "b22fc269caf88fb5e539ea88bedc6a01a4914f0aca0be1784d662cfb0184894c",
-      "revision": "v1.8.3-shared-output-r5"
+      "public_sha256": "a20578069518354c93d8fe7756eca0730f7692f6000a79c98c9d9bb2e508150c",
+      "revision": "v1.8.3-projection-consumers-r6"
     },
     "manifests/binaries.json": {
       "changed": false,
@@ -196,8 +196,8 @@
       "changed": true,
       "input_sha256": "3df598b5f7e73d1a4961e895e33bb9cfcc2bd0cc4a0cf736f7806c0a01de3cea",
       "origin": "release-package-render",
-      "public_sha256": "bfb072cda9930db008a5b4705545fecd2fdec36bc92955e77a36936e8b400a87",
-      "revision": "v1.8.3-shared-output-r5"
+      "public_sha256": "9699e4cbfa02c2ad17fbbd58eacba979f9c82be997743c5cb18e81587b9e9c1a",
+      "revision": "v1.8.3-projection-consumers-r6"
     },
     "manifests/serving-binding.json": {
       "changed": false,
@@ -209,8 +209,8 @@
       "changed": true,
       "input_sha256": "fad5c997be3187d1ce467088572677544c60652fda500ea822e89392d7f8bca2",
       "origin": "v1.8.3-shared-output-r5",
-      "public_sha256": "90b638a54cccced02deadf9a55bf691c577d71cabde2d5d4e6a8150de7e55586",
-      "revision": "v1.8.3-shared-output-r5"
+      "public_sha256": "791a66913bd034d796ecc337058355cb5a255bf5cffa9636910f63e19128314d",
+      "revision": "v1.8.3-projection-consumers-r6"
     },
     "manifests/stock-profile.json": {
       "changed": false,
@@ -998,8 +998,8 @@
       "changed": true,
       "input_sha256": "4e3de11e9e50b091c274eae480c4080c0f3f452f618eae4d1e5e480826a309b8",
       "origin": "sealed-source",
-      "public_sha256": "de4dcbef75e017c3628bc0f1c73dd013496450dd8c78e8932e134a3c7eccf479",
-      "revision": "v1.8.3-shared-output-r5"
+      "public_sha256": "e415ccd07650320119ab2bdbe69b4c4b33fc3a5e28691dedad2ca8432b1b328e",
+      "revision": "v1.8.3-projection-consumers-r6"
     },
     "recipe/scripts/_image_identity.py": {
       "changed": true,
@@ -1197,8 +1197,8 @@
       "changed": true,
       "input_sha256": "22d61e7e36cb7c363ef6048b9847cd54b4b72ee27f26779d608853a9987e98fd",
       "origin": "v1.8.3-docs-r2",
-      "public_sha256": "b10753b372c7ed9f3f9e1a02d7ebd12bee952a9196c2048f05a0028f89c83f8c",
-      "revision": "v1.8.3-shared-output-r5"
+      "public_sha256": "5a502343a71d5d332aec153b2c7849ec0beb58f23de6171c18ed5842016943c8",
+      "revision": "v1.8.3-projection-consumers-r6"
     },
     "recipe/scripts/patch_loader_audit.py": {
       "changed": false,
@@ -1220,10 +1220,11 @@
       "revision": "v1.8.3-shared-output-r5"
     },
     "recipe/scripts/production_stock.py": {
-      "changed": false,
+      "changed": true,
       "input_sha256": "a01109a7aab19d99a2f496ff55acffddc5bc2510a25ad216e271435c7cde2ca7",
       "origin": "sealed-source",
-      "public_sha256": "a01109a7aab19d99a2f496ff55acffddc5bc2510a25ad216e271435c7cde2ca7"
+      "public_sha256": "a31f7330b2c005862d88d76ccbee6c63657b5a84a0bfd42da9b64a4dd2ef9e2c",
+      "revision": "v1.8.3-projection-consumers-r6"
     },
     "recipe/scripts/remote_preflight.py": {
       "changed": true,
@@ -1314,8 +1315,8 @@
       "changed": true,
       "input_sha256": "369108af9b703f6da027c90ccddfb245c4146c46b59f096cabf6718906b5ac6c",
       "origin": "sealed-source",
-      "public_sha256": "4387ab273e6b4eea719451635156c020174ddaed5d23ce319bc509e94be2df1d",
-      "revision": "v1.8.3-shared-output-r5"
+      "public_sha256": "f34e8b8f342860d934f0c4de2310807b4281fc0e87c711ef92c9ccd4af227d2a",
+      "revision": "v1.8.3-projection-consumers-r6"
     },
     "recipe/transforms/README.md": {
       "changed": false,
@@ -1407,11 +1408,11 @@
       "revision": "v1.8.3-shared-output-r5"
     },
     "tools/_shared_output_audit.py": {
-      "changed": false,
+      "changed": true,
       "input_sha256": "121adc719b01aa2edfa14508646c71c8316dc35c5c6aa85b10b086084920e5b2",
       "origin": "v1.8.3-shared-output-r5",
-      "public_sha256": "121adc719b01aa2edfa14508646c71c8316dc35c5c6aa85b10b086084920e5b2",
-      "revision": "v1.8.3-shared-output-r5"
+      "public_sha256": "ece395e5ddfd587216299fdbd0120ec932e7532f97e841b9102d66a9f5fe683e",
+      "revision": "v1.8.3-projection-consumers-r6"
     },
     "tools/_source_contracts.py": {
       "changed": true,
@@ -1476,6 +1477,13 @@
       "public_sha256": "ea38b128d9bc5eb368950c3d1091a6b1475e62235bc36d9c59bb0757f4e0b3e9",
       "revision": "v1.8.3-shared-output-r5"
     },
+    "tools/test_projection_consumers.py": {
+      "changed": false,
+      "input_sha256": "f3a82dfdc42912121def2ff62b69c444e28607f1ab7c9462c4bed98aa2cdc20f",
+      "origin": "v1.8.3-projection-consumers-r6",
+      "public_sha256": "f3a82dfdc42912121def2ff62b69c444e28607f1ab7c9462c4bed98aa2cdc20f",
+      "revision": "v1.8.3-projection-consumers-r6"
+    },
     "tools/test_publish_retry.py": {
       "changed": true,
       "input_sha256": "d693274a56852a1c1d2d12a0042c7b7493ff4bef306ff4424a285cddc129664f",
@@ -1503,6 +1511,13 @@
       "origin": "v1.8.3-shared-output-r5",
       "public_sha256": "5120859918211fe214774fc2b180b05750708b16f82b915a2b3662d17fef647f",
       "revision": "v1.8.3-shared-output-r5"
+    },
+    "tools/test_verify_healthy.py": {
+      "changed": false,
+      "input_sha256": "91cea50e669531e20ac5fd74a459b1ad2f110d783e0023784d7e3315f1d09420",
+      "origin": "v1.8.3-projection-consumers-r6",
+      "public_sha256": "91cea50e669531e20ac5fd74a459b1ad2f110d783e0023784d7e3315f1d09420",
+      "revision": "v1.8.3-projection-consumers-r6"
     },
     "tools/v14/build_display_kv.sh": {
       "changed": true,

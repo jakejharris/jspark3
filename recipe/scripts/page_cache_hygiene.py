@@ -10,19 +10,21 @@ import json
 import os
 from pathlib import Path
 import stat
+import traceback
 
 
 def evict(roots):
     report = {'schema': 'jspark3-page-cache-hygiene/1', 'started_at': datetime.now(timezone.utc).isoformat(),
               'roots': [str(root) for root in roots], 'files': 0, 'bytes': 0, 'errors': []}
     seen = set()
-    def error(exc):
-        diagnostics.retain(repr(exc))
-        report['errors'].append({'errno': exc.errno})
+    def error(exc, path=None):
+        context = '' if path is None else 'Affected file: ' + str(path) + '\n'
+        private = diagnostics.retain(context + ''.join(traceback.format_exception(type(exc), exc, exc.__traceback__)))
+        report['errors'].append({'errno': exc.errno, 'private_diagnostic': private})
     for root in roots:
         if root.is_symlink() or not root.is_dir():
-            diagnostics.retain(str(root))
-            report['errors'].append({'reason': 'root is not a real directory'})
+            private = diagnostics.retain('root is not a real directory: ' + str(root))
+            report['errors'].append({'reason': 'root is not a real directory', 'private_diagnostic': private})
             continue
         for directory, dirs, files in os.walk(root, onerror=error, followlinks=False):
             dirs[:] = [name for name in dirs if not (Path(directory) / name).is_symlink()]
@@ -47,7 +49,7 @@ def evict(roots):
                     finally:
                         os.close(fd)
                 except OSError as exc:
-                    error(exc)
+                    error(exc, path)
     report['completed_at'] = datetime.now(timezone.utc).isoformat()
     report['verdict'] = 'PASS' if report['files'] and not report['errors'] else 'FAIL'
     return report

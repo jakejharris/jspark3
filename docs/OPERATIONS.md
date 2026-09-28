@@ -145,6 +145,12 @@ Source, numeric gate criteria, receipt hashes and hardware admission remain chec
 Dry runs do not write diagnostic files. See [shared output](SHARED_OUTPUT.md) for
 the writer inventory and mandatory review guard.
 
+Each hygiene error includes a `private_diagnostic` pointer on the rank where
+the walk ran. It preserves the affected filename and full exception privately.
+The qualification hygiene summary points to a local private capture of that
+rank's response; open it to find the rank-local pointer. These files remain
+optional diagnostics, outside admission's shared evidence inventory.
+
 Effective `memory.swap.max` must stay zero. Reverify after service-manager
 changes; daemon reloads can reset limits. On hosts using snapd and runc 1.2.5,
 hold automatic refreshes during the serving window with `sudo snap refresh

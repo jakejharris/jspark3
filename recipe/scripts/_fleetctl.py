@@ -1454,6 +1454,7 @@ def runtime_identity(values: dict[str, str], binding: dict, manifest: dict) -> d
     else:
         stock_summary = {"status": "PASS", "rank": rank, "ablit": 1}
     stock_summary["evidence_sha256"] = sha_bytes(canonical(stock))
+    stock_summary["loaders"] = production_stock.loader_facts(stock.get("loaders"))
     cadence = b45_identity(values, binding)
     result = {**configs, "transform_pipeline_state": pipeline_value.get("state"),
               "transform_target_set_sha256": pipeline_value.get("target_set_sha256"),

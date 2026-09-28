@@ -5549,7 +5549,7 @@
     },
     "recipe/scripts/_fleetctl.py": {
       "disposition": "Shared preflight/service/status/verify producers: fixed schemas, exact identities, typed numbers/booleans and hashes. Remote protocol bytes retained privately; nested/top-level failures use diagnostic boundary. Embedded worker stdout is private RPC. Dry-run argv is local operator configuration.",
-      "sha256": "de4dcbef75e017c3628bc0f1c73dd013496450dd8c78e8932e134a3c7eccf479",
+      "sha256": "e415ccd07650320119ab2bdbe69b4c4b33fc3a5e28691dedad2ca8432b1b328e",
       "sites": [
         {
           "function": "sha_file",
@@ -5828,102 +5828,102 @@
         },
         {
           "function": "cmd_status",
-          "line": 1515,
+          "line": 1516,
           "operation": "record_failure"
         },
         {
           "function": "cmd_status",
-          "line": 1516,
+          "line": 1517,
           "operation": "print"
         },
         {
           "function": "cmd_stop",
-          "line": 1542,
+          "line": 1543,
           "operation": "print"
         },
         {
           "function": "preserve_rank0_logs",
-          "line": 1576,
+          "line": 1577,
           "operation": "save_diagnostics"
         },
         {
           "function": "witness_summary",
-          "line": 1834,
+          "line": 1835,
           "operation": "retain"
         },
         {
           "function": "_verify_bound",
-          "line": 1867,
+          "line": 1868,
           "operation": "str"
         },
         {
           "function": "_verify_bound",
-          "line": 1882,
+          "line": 1883,
           "operation": "save_diagnostics"
         },
         {
           "function": "_verify_bound",
-          "line": 1910,
+          "line": 1911,
           "operation": "run"
         },
         {
           "function": "_verify_bound",
-          "line": 1912,
+          "line": 1913,
           "operation": "retain"
         },
         {
           "function": "_verify_bound",
-          "line": 1916,
+          "line": 1917,
           "operation": "run"
         },
         {
           "function": "_verify_bound",
-          "line": 1918,
+          "line": 1919,
           "operation": "retain"
-        },
-        {
-          "function": "_verify_bound",
-          "line": 1936,
-          "operation": "atomic_json"
         },
         {
           "function": "_verify_bound",
           "line": 1937,
+          "operation": "atomic_json"
+        },
+        {
+          "function": "_verify_bound",
+          "line": 1938,
           "operation": "print"
         },
         {
           "function": "wait_ready",
-          "line": 1962,
+          "line": 1963,
           "operation": "record_failure"
         },
         {
           "function": "cmd_verify",
-          "line": 1983,
+          "line": 1984,
           "operation": "report_failure"
         },
         {
           "function": "main",
-          "line": 2029,
+          "line": 2030,
           "operation": "record_failure"
         },
         {
           "function": "main",
-          "line": 2041,
+          "line": 2042,
           "operation": "atomic_json"
         },
         {
           "function": "main",
-          "line": 2043,
+          "line": 2044,
           "operation": "print"
         },
         {
           "function": "main",
-          "line": 2044,
+          "line": 2045,
           "operation": "report_failure"
         },
         {
           "function": "main",
-          "line": 2045,
+          "line": 2046,
           "operation": "print"
         }
       ]
@@ -6724,27 +6724,27 @@
       ]
     },
     "recipe/scripts/page_cache_hygiene.py": {
-      "disposition": "Shared file/byte counts and fixed errno failures; filesystem paths/exception messages retained privately. Roots are explicit local operator configuration.",
-      "sha256": "b10753b372c7ed9f3f9e1a02d7ebd12bee952a9196c2048f05a0028f89c83f8c",
+      "disposition": "Shared file/byte counts and fixed errno failures with actionable private pointers; full filenames/tracebacks retained privately. Roots are explicit local operator configuration.",
+      "sha256": "5a502343a71d5d332aec153b2c7849ec0beb58f23de6171c18ed5842016943c8",
       "sites": [
         {
           "function": "evict.error",
-          "line": 20,
+          "line": 22,
           "operation": "retain"
         },
         {
           "function": "evict",
-          "line": 24,
+          "line": 26,
           "operation": "retain"
         },
         {
           "function": "evict",
-          "line": 35,
+          "line": 37,
           "operation": "open"
         },
         {
           "function": "main",
-          "line": 61,
+          "line": 63,
           "operation": "print"
         }
       ]
@@ -6788,7 +6788,7 @@
     },
     "recipe/scripts/production_stock.py": {
       "disposition": "Library/dispatcher: no independent shared payload producer; exceptions propagate to protected CLI. Any serialization/output callers are separately inventoried.",
-      "sha256": "a01109a7aab19d99a2f496ff55acffddc5bc2510a25ad216e271435c7cde2ca7",
+      "sha256": "a31f7330b2c005862d88d76ccbee6c63657b5a84a0bfd42da9b64a4dd2ef9e2c",
       "sites": []
     },
     "recipe/scripts/remote_preflight.py": {
@@ -7032,8 +7032,8 @@
       "sites": []
     },
     "recipe/scripts/verify_stock.py": {
-      "disposition": "Full validated loader/ablation response retained privately; shared stock receipt only fixed status, typed rank/mode, exact DISABLED receipt and evidence hash.",
-      "sha256": "4387ab273e6b4eea719451635156c020174ddaed5d23ce319bc509e94be2df1d",
+      "disposition": "Full validated loader/ablation response retained privately; shared stock receipt preserves checked COMPLETE loader states and header census hashes, fixed status/rank/mode, exact DISABLED receipt and full evidence hash.",
+      "sha256": "f34e8b8f342860d934f0c4de2310807b4281fc0e87c711ef92c9ccd4af227d2a",
       "sites": [
         {
           "function": "main",
@@ -7042,7 +7042,7 @@
         },
         {
           "function": "main",
-          "line": 174,
+          "line": 175,
           "operation": "print"
         }
       ]
@@ -7120,8 +7120,14 @@
     },
     "tools/_shared_output_audit.py": {
       "disposition": "Library/dispatcher: no independent shared payload producer; exceptions propagate to protected CLI. Any serialization/output callers are separately inventoried.",
-      "sha256": "121adc719b01aa2edfa14508646c71c8316dc35c5c6aa85b10b086084920e5b2",
-      "sites": []
+      "sha256": "ece395e5ddfd587216299fdbd0120ec932e7532f97e841b9102d66a9f5fe683e",
+      "sites": [
+        {
+          "function": "candidates",
+          "line": 26,
+          "operation": "open"
+        }
+      ]
     },
     "tools/_source_contracts.py": {
       "disposition": "Library/dispatcher: no independent shared payload producer; exceptions propagate to protected CLI. Any serialization/output callers are separately inventoried.",
@@ -7616,6 +7622,57 @@
         }
       ]
     },
+    "tools/test_projection_consumers.py": {
+      "disposition": "Synthetic local test output only; never release/qualification evidence. Covers real producers with private sentinels and negative controls.",
+      "sha256": "f3a82dfdc42912121def2ff62b69c444e28607f1ab7c9462c4bed98aa2cdc20f",
+      "sites": [
+        {
+          "function": "test_hygiene_errors_retain_filename_errno_trace_and_qualification_pointer",
+          "line": 111,
+          "operation": "write_text"
+        },
+        {
+          "function": "test_hygiene_errors_retain_filename_errno_trace_and_qualification_pointer",
+          "line": 135,
+          "operation": "run"
+        },
+        {
+          "function": "test_hygiene_errors_retain_filename_errno_trace_and_qualification_pointer.child",
+          "line": 147,
+          "operation": "write_json"
+        },
+        {
+          "function": "test_hygiene_errors_retain_filename_errno_trace_and_qualification_pointer",
+          "line": 155,
+          "operation": "run"
+        },
+        {
+          "function": "test_audit_discovers_exec_shebang_and_hidden_writers",
+          "line": 167,
+          "operation": "write_text"
+        },
+        {
+          "function": "test_audit_discovers_exec_shebang_and_hidden_writers",
+          "line": 168,
+          "operation": "embedded output (private worker/test or fixed template)"
+        },
+        {
+          "function": "test_audit_discovers_exec_shebang_and_hidden_writers",
+          "line": 170,
+          "operation": "embedded output (private worker/test or fixed template)"
+        },
+        {
+          "function": "test_audit_discovers_exec_shebang_and_hidden_writers",
+          "line": 171,
+          "operation": "embedded output (private worker/test or fixed template)"
+        },
+        {
+          "function": "test_audit_discovers_exec_shebang_and_hidden_writers",
+          "line": 173,
+          "operation": "write_text"
+        }
+      ]
+    },
     "tools/test_publish_retry.py": {
       "disposition": "Synthetic local test output only; never release/qualification evidence. Covers real producers with private sentinels and negative controls.",
       "sha256": "3ec426e779f5b10a3d94a63d8e956b15d6a31fbc08d7c75464d4aa1f6c8f3211",
@@ -7867,6 +7924,37 @@
           "function": "test_audit_refuses_changed_writer_and_new_output_path",
           "line": 232,
           "operation": "embedded output (private worker/test or fixed template)"
+        }
+      ]
+    },
+    "tools/test_verify_healthy.py": {
+      "disposition": "Synthetic local test output only; never release/qualification evidence. Covers real producers with private sentinels and negative controls.",
+      "sha256": "91cea50e669531e20ac5fd74a459b1ad2f110d783e0023784d7e3315f1d09420",
+      "sites": [
+        {
+          "function": "__init__",
+          "line": 53,
+          "operation": "write_text"
+        },
+        {
+          "function": "__init__",
+          "line": 76,
+          "operation": "write_bytes"
+        },
+        {
+          "function": "remote",
+          "line": 215,
+          "operation": "retain"
+        },
+        {
+          "function": "test_three_rank_verify_through_real_stock_and_every_gate",
+          "line": 270,
+          "operation": "run"
+        },
+        {
+          "function": "test_verify_refuses_lost_facts_and_real_gate_failures",
+          "line": 296,
+          "operation": "run"
         }
       ]
     },

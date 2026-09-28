@@ -41,3 +41,8 @@ static taint proof. Do not regenerate the inventory merely to make a check pass:
 review each changed producer, its consumers, error handling and bundle inventory.
 Add a regression containing opaque unexpected text, exercise the actual writer,
 and prove both absence in shared output and presence in private diagnostics.
+
+Discovery includes executable permission bits and shebangs as well as known
+source suffixes, including extensionless and hidden shipped files. Git
+administration and private task evidence are excluded from this executable
+inventory; release validation separately refuses private evidence in exports.

@@ -166,7 +166,8 @@ def main():
                                         else 'off')}
     diagnostics.retain(json.dumps(record, sort_keys=True))
     shared = {'status': 'PASS', 'ablit': mode, 'rank': record['rank'],
-              'evidence_sha256': diagnostics.fingerprint(record)}
+              'evidence_sha256': diagnostics.fingerprint(record),
+              'loaders': production_stock.loader_facts(loaders)}
     if mode == 0:
         from production_stock import disabled_receipt
         disabled_receipt(ablation, record['rank'])
