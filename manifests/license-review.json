@@ -10,6 +10,7 @@
   },
   "file_audit_sha256": "65334bd0054cf3a8f78fb2667b020899547bed668c49b5b50d6a06044f90403f",
   "files": {
+    ".gitattributes": "Apache-2.0",
     ".gitignore": "Apache-2.0",
     "CHANGELOG.md": "Apache-2.0",
     "LICENSE": "LicenseRef-Retained-Notice",

@@ -9,6 +9,13 @@
     "state": "pending-component-and-boot-evidence"
   },
   "files": {
+    ".gitattributes": {
+      "changed": false,
+      "input_sha256": "907face5354b2b2524dcf9def6dabc6adc5cdb31cbf5f9233409b0544b516987",
+      "origin": "v184-sealed-toolchain-whitespace",
+      "public_sha256": "907face5354b2b2524dcf9def6dabc6adc5cdb31cbf5f9233409b0544b516987",
+      "revision": "v184-sealed-toolchain-whitespace"
+    },
     ".gitignore": {
       "changed": false,
       "input_sha256": "e343d3c5c330901447c26e54ba3fd198ca5fd003ea3b669f2078e4e4d4ec1df4",
@@ -218,8 +225,8 @@
       "changed": true,
       "input_sha256": "f968bb8ad61c217d1c955e5a6209b35cebfae065e3f1ef6d3077ed6a07f25739",
       "origin": "release-package-render",
-      "public_sha256": "68ee60c4d3d6a84e51471b7ed6013a2e9c36229118340be04074910f0e3f873c",
-      "revision": "v184-private-serving-source"
+      "public_sha256": "ada219e3aa6131f78fea71ad217ddfcb9d5c67848060df5b9e1b5e593ab3bc9a",
+      "revision": "v184-sealed-toolchain-whitespace"
     },
     "manifests/qualification.json": {
       "changed": false,
