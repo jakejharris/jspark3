@@ -13,6 +13,14 @@ ordinary-clone stock boot admission, archive/clone parity and new measurements
 must pass before release. An edited serving boot requires its separate owner
 admission. The public producer continues to reject ABLIT=1.
 
+Builder identities in the seal are operator-attested observations from a trusted
+operator's two-board determinism check. Host-only collection, a fixed trusted
+executable and a clean query environment reduce accidental identity mistakes.
+Receipt self-hashes do not authenticate edits, defend against a malicious
+operator or provide hardware attestation. Independently rebuilding and comparing
+the pinned native SHA-256 remains the reproducible artifact integrity check.
+See the [builder evidence field descriptions](../docs/COOP_REPRODUCIBILITY.md#builder-evidence-fields).
+
 See [the owner workflow](../docs/COOP_REPRODUCIBILITY.md),
 [installation](../docs/INSTALL.md) and [measurement scope](MEASUREMENTS-v1.8.4.md).
 Historical results and notices remain preserved; compiled binaries are excluded.

@@ -105,8 +105,13 @@ sha256sum "$BUILD/native/recipe/overlays/v16/coop/bundle/cooperative_moe.so"
 Require exactly
 `3212a3b0a308e2ec3673878212fcb0504a463c5f7df84eced5db7bb301cc3c07`.
 Display and coop are each built twice; retain all raw output. Compiler containers
-hide GPUs. The builder reads `nvidia-smi --query-gpu=name,uuid --format=csv,noheader`
-on the host before and after compiling, without launching GPU work. NVIDIA
+hide GPUs. The builder reads
+`/usr/bin/nvidia-smi --query-gpu=name,uuid --format=csv,noheader` on the host
+before and after compiling, without launching GPU work. It requires a root-owned,
+non-writable-by-group/others executable and parent directories (including resolved
+symlink targets), supplies only a fixed system PATH and `LC_ALL=C`, and uses `/`
+as its working directory. Inherited PATH shims, loader variables and GPU overrides
+are not used for this query. NVIDIA
 [documents GPU UUIDs as immutable identifiers](https://docs.nvidia.com/deploy/nvidia-smi/).
 The integrated GB10 identifies the physical Spark board. The owner independently
 observed distinct UUIDs despite identical cloned `/etc/machine-id` values.
@@ -117,7 +122,24 @@ ARM64 execution are required for independent qualification. Use a local Docker
 Unix socket, including a local rootless socket; remote Docker contexts are
 refused so a client's hardware cannot stand in for the actual build host. x86
 emulation remains diagnostic and cannot satisfy the independent-builder check.
-Both hosts must rebuild old schema-1 receipts; they cannot be upgraded by editing.
+Run the collector directly in the ordinary host shell, outside containers,
+`unshare`/`nsenter` sessions, chroots and service sandboxes. It requires the initial
+Linux PID/user/IPC/UTS/cgroup/time namespaces, PID 1's root mount view and the
+initial network namespace. Missing, unreadable or unsupported namespace evidence
+refuses collection rather than issuing an identity. These are collection hygiene
+checks on the supported Spark Linux environment; no root escalation is needed.
+Both hosts must rebuild receipts from this reviewed source, even if their previous
+receipts already used schema 2. Do not upgrade evidence by editing it.
+
+Builder identity is **operator-attested**. The trusted operator runs the two-board
+determinism check on their own hardware and reports that each compiled the same
+pinned bytes. The checks catch accidental duplicate identity, PATH substitution
+and collection from an isolated environment. Receipt self-hashes detect drift;
+they cannot authenticate an edited receipt or establish physical provenance
+against a malicious operator. No hardware attestation is claimed. Anyone can
+independently rebuild the source and compare its output with the pinned native
+SHA-256 above. See the [seal field descriptions](COOP_REPRODUCIBILITY.md#builder-evidence-fields)
+for the precise scope of that evidence.
 
 On a **second physical Spark**, use the same full `REV` from `revision.txt` and a
 repository containing it. Apply the same image-build and headroom policy there:

@@ -9,6 +9,8 @@ import platform
 from pathlib import Path
 import shutil
 import re
+import socket
+import stat
 import subprocess
 import sys
 import tempfile
@@ -32,6 +34,50 @@ OUTPUTS = {"display": {name: f"{DISPLAY}/{name}" for name in
                        ("libglm53_display_kv.so", "display_kv_probe")},
            "coop": {"out/cooperative_moe.so": f"{COOP}/bundle/cooperative_moe.so"}}
 
+# Linux initial namespace inode numbers (include/linux/proc_ns.h). Unlike
+# /proc/1/ns, these self links are readable by an ordinary operator. Unknown
+# layouts refuse collection; never infer host execution from machine()/uname.
+INITIAL_NAMESPACES = {'ipc': 0xEFFFFFFF, 'uts': 0xEFFFFFFE, 'user': 0xEFFFFFFD,
+                      'pid': 0xEFFFFFFC, 'pid_for_children': 0xEFFFFFFC,
+                      'cgroup': 0xEFFFFFFB, 'time': 0xEFFFFFFA, 'time_for_children': 0xEFFFFFFA}
+IDENTITY_ENV = {'PATH': '/usr/sbin:/usr/bin:/sbin:/bin', 'LC_ALL': 'C'}
+
+
+def require_host():
+    """Collection hygiene on the supported Linux host, not hardware attestation."""
+    if any(Path(name).exists() for name in ('/.dockerenv', '/run/.containerenv', '/run/systemd/container')):
+        raise ImageRefusal('physical identity collection requires the host, not a container')
+    for name, inode in INITIAL_NAMESPACES.items():
+        if Path('/proc/self/ns/' + name).stat().st_ino != inode:
+            raise ImageRefusal('physical identity collection requires the initial ' + name + ' namespace')
+    # Mount namespaces have no stable initial inode on the supported kernels.
+    # Cloning one allocates new mount IDs; compare the root mount with PID 1.
+    roots = []
+    for process in ('1', 'self'):
+        rows = [line.split()[:5] for line in Path('/proc/' + process + '/mountinfo').read_text().splitlines()]
+        roots.append([row for row in rows if len(row) == 5 and row[4] == '/'])
+    if len(roots[0]) != 1 or roots[0] != roots[1]:
+        raise ImageRefusal('physical identity collection requires the host mount namespace/root')
+    # Linux initializes init_net first, with cookie 1. Reading SO_NETNS_COOKIE
+    # on an unbound socket emits no traffic and needs no access to PID 1's ns.
+    with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as probe:
+        cookie = int.from_bytes(probe.getsockopt(1, 71, 8), sys.byteorder)  # Linux socket level, SO_NETNS_COOKIE
+    if cookie != 1:
+        raise ImageRefusal('physical identity collection requires the initial network namespace')
+
+
+def trusted_nvidia_smi():
+    executable = Path('/usr/bin/nvidia-smi')
+    resolved = executable.resolve(strict=True)
+    for path in {executable, resolved, *executable.parents, *resolved.parents}:
+        info = path.stat()
+        if info.st_uid != 0 or info.st_mode & 0o022:
+            raise ImageRefusal('physical identity executable/path must be root-owned and not group/world writable')
+    info = resolved.stat()
+    if not stat.S_ISREG(info.st_mode) or not info.st_mode & 0o111:
+        raise ImageRefusal('physical identity executable is not a regular executable')
+    return str(executable)
+
 
 def builder_host():
     machine = Path('/etc/machine-id')
@@ -40,10 +86,12 @@ def builder_host():
     architecture = platform.machine()
     physical = None
     if architecture == 'aarch64':
+        require_host()
         # Read-only NVML inventory, without creating a CUDA context or exposing
         # any GPU to the compiler containers. One integrated GB10 per board.
-        query = subprocess.run(['nvidia-smi', '--query-gpu=name,uuid', '--format=csv,noheader'],
-                               check=True, capture_output=True, text=True, timeout=10)
+        query = subprocess.run([trusted_nvidia_smi(), '--query-gpu=name,uuid', '--format=csv,noheader'],
+                               check=True, capture_output=True, text=True, timeout=10,
+                               env=IDENTITY_ENV, cwd='/', stdin=subprocess.DEVNULL)
         rows = [line.strip().split(',') for line in query.stdout.splitlines() if line.strip()]
         if (len(rows) != 1 or len(rows[0]) != 2 or rows[0][0].strip() != 'NVIDIA GB10'
                 or not re.fullmatch(r'GPU-[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}', rows[0][1].strip())):

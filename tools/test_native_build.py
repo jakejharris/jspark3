@@ -27,10 +27,15 @@ def diagnostic_host():
 class PhysicalBuilderTests(unittest.TestCase):
     def host(self, uuid, architecture='aarch64'):
         with patch.object(native.platform, 'machine', return_value=architecture), \
+                patch.object(native, 'require_host'), \
+                patch.object(native, 'trusted_nvidia_smi', return_value='/usr/bin/nvidia-smi'), \
                 patch.object(native.subprocess, 'run', return_value=subprocess.CompletedProcess([], 0, f'NVIDIA GB10, {uuid}\n')) as query:
             result = native.builder_host()
         if architecture == 'aarch64':
-            self.assertEqual(query.call_args.args[0], ['nvidia-smi', '--query-gpu=name,uuid', '--format=csv,noheader'])
+            self.assertEqual(query.call_args.args[0], ['/usr/bin/nvidia-smi', '--query-gpu=name,uuid', '--format=csv,noheader'])
+            self.assertEqual(query.call_args.kwargs['env'], {'PATH': '/usr/sbin:/usr/bin:/sbin:/bin', 'LC_ALL': 'C'})
+            self.assertEqual(query.call_args.kwargs['cwd'], '/')
+            self.assertEqual(query.call_args.kwargs['stdin'], subprocess.DEVNULL)
         else:
             query.assert_not_called()
         return result
@@ -52,6 +57,8 @@ class PhysicalBuilderTests(unittest.TestCase):
                        'NVIDIA other, GPU-12345678-1234-1234-1234-123456789abc',
                        'NVIDIA GB10, GPU-12345678-1234-1234-1234-123456789abc\n' * 2):
             with self.subTest(output=output), patch.object(native.platform, 'machine', return_value='aarch64'), \
+                    patch.object(native, 'require_host'), \
+                    patch.object(native, 'trusted_nvidia_smi', return_value='/usr/bin/nvidia-smi'), \
                     patch.object(native.subprocess, 'run', return_value=subprocess.CompletedProcess([], 0, output)):
                 with self.assertRaisesRegex(ValueError, 'exactly one physical GB10'):
                     native.builder_host()
@@ -67,6 +74,96 @@ class PhysicalBuilderTests(unittest.TestCase):
                 native.local_docker()
         with patch.dict(os.environ, {'DOCKER_HOST': 'unix:///run/user/1000/docker.sock', 'DOCKER_CONTEXT': ''}):
             self.assertEqual(native.local_docker(), 'unix:///run/user/1000/docker.sock')
+
+
+class HostCollectionTests(unittest.TestCase):
+    def test_host_namespace_positive_and_isolation_refusals(self):
+        # A readable procfs fixture exercises the guard as an ordinary user.
+        # No privileged reads of /proc/1/ns or namespace-changing commands.
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            def mapped(path):
+                return root / str(path).lstrip('/')
+            initial = {}
+            for name in native.INITIAL_NAMESPACES:
+                path = mapped('/proc/self/ns/' + name)
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.touch()
+                initial[name] = path.stat().st_ino
+            for process in ('1', 'self'):
+                path = mapped('/proc/' + process + '/mountinfo')
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text('42 1 8:1 / / rw - ext4 /dev/root rw\n')
+            with patch.object(native, 'Path', side_effect=mapped), \
+                    patch.object(native, 'INITIAL_NAMESPACES', initial), \
+                    patch.object(native.socket, 'socket') as socket:
+                network = socket.return_value.__enter__.return_value
+                network.getsockopt.return_value = (1).to_bytes(8, sys.byteorder)
+                native.require_host()
+                for name in initial:
+                    with self.subTest(namespace=name), patch.dict(initial, {name: initial[name] + 1}):
+                        with self.assertRaisesRegex(ValueError, 'initial ' + name + ' namespace'):
+                            native.require_host()
+                mountinfo = mapped('/proc/self/mountinfo')
+                mountinfo.write_text('43 1 8:1 / / rw - ext4 /dev/root rw\n')
+                with self.assertRaisesRegex(ValueError, 'host mount namespace'):
+                    native.require_host()
+                mountinfo.write_text('42 1 8:1 / / rw - ext4 /dev/root rw\n')
+                network.getsockopt.return_value = (2).to_bytes(8, sys.byteorder)
+                with self.assertRaisesRegex(ValueError, 'initial network namespace'):
+                    native.require_host()
+                network.getsockopt.return_value = (1).to_bytes(8, sys.byteorder)
+                for marker in ('/.dockerenv', '/run/.containerenv', '/run/systemd/container'):
+                    path = mapped(marker)
+                    path.parent.mkdir(parents=True, exist_ok=True)
+                    path.touch()
+                    with self.assertRaisesRegex(ValueError, 'not a container'):
+                        native.require_host()
+                    path.unlink()
+                mapped('/proc/self/ns/pid').unlink()
+                with self.assertRaises(OSError):
+                    native.require_host()
+
+    def test_container_refusal_happens_before_gpu_query(self):
+        with patch.object(native.platform, 'machine', return_value='aarch64'), \
+                patch.object(native, 'require_host', side_effect=native.ImageRefusal('not a container')), \
+                patch.object(native.subprocess, 'run') as query:
+            with self.assertRaisesRegex(ValueError, 'not a container'):
+                native.builder_host()
+            query.assert_not_called()
+
+    def test_trusted_executable_refuses_writable_or_user_owned_paths(self):
+        with tempfile.TemporaryDirectory() as directory:
+            executable = Path(directory) / 'nvidia-smi'
+            executable.write_text('#!/bin/sh\nexit 0\n')
+            executable.chmod(0o755)
+            with patch.object(native, 'Path', return_value=executable):
+                with self.assertRaisesRegex(ValueError, 'root-owned and not group/world writable'):
+                    native.trusted_nvidia_smi()
+        # A root-owned system binary (including distro symlinks) passes the
+        # permission policy; this does not claim it is an NVIDIA executable.
+        with patch.object(native, 'Path', return_value=Path('/bin/true')):
+            self.assertEqual(native.trusted_nvidia_smi(), '/bin/true')
+
+    def test_path_shim_and_loader_environment_are_not_used(self):
+        with tempfile.TemporaryDirectory() as directory:
+            shim = Path(directory) / 'nvidia-smi'
+            marker = Path(directory) / 'executed'
+            shim.write_text('#!/bin/sh\ntouch "' + str(marker) + '"\nprintf "%s\\n" "NVIDIA GB10, GPU-12345678-1234-1234-1234-123456789abc"\n')
+            shim.chmod(0o755)
+            with patch.dict(os.environ, {'PATH': directory + ':/usr/bin', 'LD_PRELOAD': '/missing/shim.so',
+                                         'LD_LIBRARY_PATH': directory, 'CUDA_VISIBLE_DEVICES': '0'}), \
+                    patch.object(native.platform, 'machine', return_value='aarch64'), \
+                    patch.object(native, 'require_host'), \
+                    patch.object(native, 'trusted_nvidia_smi', return_value='/bin/true'):
+                # Real subprocess, fixed absolute stand-in emits no UUID. A
+                # PATH-based call would execute the shim and incorrectly pass.
+                with self.assertRaisesRegex(ValueError, 'exactly one physical GB10'):
+                    native.builder_host()
+                self.assertFalse(marker.exists())
+                # Also inspect the GPU query's exact environment on a valid
+                # synthetic host; it contains none of the inherited overrides.
+                PhysicalBuilderTests().host('GPU-12345678-1234-1234-1234-123456789abc')
 
 
 class NativeReceiptTests(unittest.TestCase):

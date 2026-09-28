@@ -31,6 +31,13 @@ def hash_ok(value):
 
 
 def verify_builder_host(host):
+    """Validate operator-attested QUALIFICATION build fields, not their authenticity.
+
+    A trusted operator collects these for a two-board determinism check. Receipt
+    self-hashes detect drift; they do not authenticate edits or prove execution
+    against a malicious operator. Outsiders reproduce and compare TARGET_NATIVE.
+    Field descriptions: docs/COOP_REPRODUCIBILITY.md, Builder evidence fields.
+    """
     need(isinstance(host, dict) and set(host) == {'architecture', 'machine_id_sha256', 'physical_identity'}
          and host['architecture'] in ('aarch64', 'x86_64')
          and hash_ok(host['machine_id_sha256']), 'builder host identity malformed; rebuild old receipts')

@@ -19,8 +19,9 @@ Follow the tracked [operator handoff](COOP_QUALIFICATION_HANDOFF.md) for exact
 source archives, writable paths, second-builder transfer, numeric memory guards
 and timing allowances. `TARGET_SNAPSHOT` can be the existing serving model
 directory; only read access is required. Native builders identify their integrated
-GB10 by a read-only GPU UUID query. Cloned machine-ids are accepted; duplicate
-physical boards are refused before check-only/campaign execution and at sealing.
+GB10 by a read-only GPU UUID query from a checked host environment and fixed
+root-owned executable. Builder identity is operator-attested: cloned machine-ids
+are accepted; duplicate collected board identities are refused before check-only/campaign execution and at sealing.
 Old native receipts must be rebuilt, not edited. Remote Docker builders and
 emulated x86 builders cannot satisfy independent native qualification.
 
@@ -135,6 +136,39 @@ The stock-only producer binds the seal/native/policy and actual operator image
 through first and final evidence; ABLIT=1 needs a separate owner admission.
 Record new measurements in [the v1.8.4 record](../release/results-v1.8.4.json).
 Historical throughput and quality do not transfer to the new native bytes.
+
+## Builder evidence fields
+
+The seal's `QUALIFICATION.json` contains `qualification_build.builder_host` and
+`independent_build.native_receipt.builder_host`. Both are **operator-attested**
+observations used for a trusted operator's two-board determinism check:
+
+| Field | Meaning and authority |
+| --- | --- |
+| `architecture` | Locally observed architecture; independent qualification requires native `aarch64`. |
+| `machine_id_sha256` | Hash of `/etc/machine-id`, retained as diagnostic metadata. Cloned OS identities may match. |
+| `physical_identity.kind` | `gb10-gpu-uuid`: the observation concerns the single integrated GB10. |
+| `physical_identity.uuid_sha256` | SHA-256 of the trimmed, lower-case GPU UUID collected on the host before and after building. The two collected values must differ. |
+| Native receipt `payload_sha256` | Integrity check over canonical receipt contents. It is not a signature or independent authority for those contents. |
+
+With honest collection, the record answers whether two different physical boards
+compiled the same pinned bytes. It does not authenticate receipt edits, prove
+execution against a malicious operator, or supply cryptographic hardware
+attestation. Anyone consuming the artifact can independently reproduce and
+compare the pinned native hash; editable builder identity is not that artifact's
+integrity authority. GPU correctness and measured performance still require the
+separate component gates.
+
+Collection uses `/usr/bin/nvidia-smi`, validates root ownership and write
+permissions along the executable path, and clears the query's inherited
+environment. It refuses containers and non-host namespace/root views, retaining
+before/after sampling. These checks prevent accidental collection mistakes; the
+host operating system and operator remain trusted. The collector uses Linux's
+[initial namespace identifiers](https://github.com/torvalds/linux/blob/v6.8/include/linux/proc_ns.h),
+PID 1's root mount ID, and the initial network namespace's cookie, assigned first
+by [Linux network namespace initialization](https://github.com/torvalds/linux/blob/v6.8/net/core/net_namespace.c).
+Unsupported or unavailable host evidence refuses. No controller, SSH, signing or
+lifecycle operation is added to the component runner.
 
 ## Source-only distribution
 
