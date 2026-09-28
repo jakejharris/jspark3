@@ -45,7 +45,10 @@ def build_policy():
 def read_operator_record(path):
     if path.is_symlink() or not path.is_file():
         raise ImageRefusal("operator image receipt missing or symlinked")
-    record = json.loads(path.read_text())
+    return verify_operator_record(json.loads(path.read_text()))
+
+
+def verify_operator_record(record):
     keys = {"schema_version", "verification", "manifest_digest", "config_digest",
             "diff_ids", "build_policy", "source_recipe_sha256", "payload_sha256"}
     if not isinstance(record, dict) or set(record) != keys:

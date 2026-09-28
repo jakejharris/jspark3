@@ -29,12 +29,16 @@ def verify_sources(recipe):
         else:
             assert path.is_file() and not path.is_symlink() and sha(path) == expected
     native = manifest['files']['cooperative_moe.so']
-    assert record['source_manifest_sha256'] == coop.SOURCE_MANIFEST_SHA256
-    assert record['image'] == coop.reference_build_image()
-    assert record['bundle'] == {'manifest_sha256': sha(bundle / 'manifest.json'), 'native_sha256': native,
-        'runtime_sha256': manifest['files']['runtime.py'], 'dispatch_policy_sha256': manifest['files']['dispatch_policy.json']}
-    assert record['reproducibility'] == {'runs': 2, 'comparison': 'bit-identical', 'binary_sha256': native}
-    assert json.loads((bundle / 'dispatch_policy.json').read_text())['native_sha256'] == native
+    if record.get('schema_version') == 2:
+        from _coop_qualification import verify_record
+        verify_record(record, bundle, coop.OVERLAY)
+    else:
+        assert record['source_manifest_sha256'] == coop.SOURCE_MANIFEST_SHA256
+        assert record['image'] == coop.reference_build_image()
+        assert record['bundle'] == {'manifest_sha256': sha(bundle / 'manifest.json'), 'native_sha256': native,
+            'runtime_sha256': manifest['files']['runtime.py'], 'dispatch_policy_sha256': manifest['files']['dispatch_policy.json']}
+        assert record['reproducibility'] == {'runs': 2, 'comparison': 'bit-identical', 'binary_sha256': native}
+        assert json.loads((bundle / 'dispatch_policy.json').read_text())['native_sha256'] == native
     build = json.loads((display.OVERLAY / 'BUILD.json').read_text())
     for name, expected in build['sources'].items(): assert sha(display.OVERLAY / name) == expected
     for name, expected in build['outputs'].items():

@@ -1,0 +1,16 @@
+{
+  "repository": "https://github.com/MiaAI-Lab/GLM-5.3-Flash-EXL3-2x-DGX-Sparks",
+  "revision": "2fb09425ab644f30c6b61fe3da2d567b99b36464",
+  "path": "tests/test_exl3_overlay.py",
+  "sha256": "5814b64fbac04b04a770e78b6d3efd4601a0e6dc9be686fa0c3f00697be6b837",
+  "license": "AGPL-3.0-only",
+  "license_path": "LICENSE",
+  "license_sha256": "8d56b405468aad11f87ab5763f901e276e08d9646ff5c8481b1762b6b789e9ed",
+  "dependencies": [
+    "Python standard library",
+    "torch",
+    "vllm stage-8 EXL3",
+    "exllamav3_ext",
+    "safetensors"
+  ]
+}

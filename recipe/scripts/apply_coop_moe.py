@@ -133,6 +133,11 @@ def verify_sources() -> None:
 
 
 def _safe_bundle_file(root: Path, relative: str) -> Path:
+    from _coop_qualification import regular
+    try:
+        regular(root, relative)
+    except ValueError as exc:
+        raise Refusal(str(exc)) from exc
     rel = Path(relative)
     if rel.is_absolute() or not rel.parts or ".." in rel.parts:
         raise Refusal(f"unsafe bundle path: {relative}")
@@ -152,44 +157,58 @@ def reference_build_image():
             "config": identity["config_digest"].removeprefix("sha256:")}
 
 
-def verify_bundle(bundle: Path, build_record: Path, *, build_image: dict | None = None) -> dict:
+def verify_bundle(bundle: Path, build_record: Path) -> dict:
     verify_sources()
     if bundle.is_symlink() or not bundle.is_dir():
         raise Refusal("cooperative-MoE bundle root is missing or symlinked")
     record = _object(build_record, "cooperative-MoE build record")
-    if set(record) != {
-        "schema_version", "image", "source_manifest_sha256", "reproducibility",
-        "qualification", "bundle",
-    } or record.get("schema_version") != 1:
-        raise Refusal("cooperative-MoE build record schema drift")
-    if record.get("image") != (build_image or reference_build_image()):
-        raise Refusal("cooperative-MoE build image drift")
-    if record.get("source_manifest_sha256") != SOURCE_MANIFEST_SHA256:
-        raise Refusal("cooperative-MoE build source drift")
+    component = None
+    if record.get("schema_version") == 2:
+        from _coop_qualification import verify_record
+        operator = OVERLAY.parents[2] / "config/operator-image.json"
+        try:
+            component = verify_record(record, bundle, OVERLAY,
+                                      operator=operator if operator.exists() else None)
+        except ValueError as exc:
+            raise Refusal(str(exc)) from exc
+        reproducibility = record["reproducibility"]
+    else:
+        from _image_identity import selected_identity
+        if "build_policy" in selected_identity():
+            raise Refusal("operator coop requires a release-pinned schema-2 component seal")
+        if set(record) != {
+            "schema_version", "image", "source_manifest_sha256", "reproducibility",
+            "qualification", "bundle",
+        } or record.get("schema_version") != 1:
+            raise Refusal("cooperative-MoE build record schema drift")
+        if record.get("image") != reference_build_image():
+            raise Refusal("cooperative-MoE build image drift")
+        if record.get("source_manifest_sha256") != SOURCE_MANIFEST_SHA256:
+            raise Refusal("cooperative-MoE build source drift")
 
-    reproducibility = record.get("reproducibility")
-    if (
-        not isinstance(reproducibility, dict)
-        or set(reproducibility) != {"runs", "comparison", "binary_sha256"}
-        or reproducibility.get("runs") != 2
-        or reproducibility.get("comparison") != "bit-identical"
-        or not is_sha256(reproducibility.get("binary_sha256"))
-    ):
-        raise Refusal("cooperative-MoE binary lacks two-build bit identity")
-    qualification = record.get("qualification")
-    profiles = qualification.get("profile_log_sha256") if isinstance(qualification, dict) else None
-    if (
-        not isinstance(qualification, dict)
-        or set(qualification) != {"ep_ranks", "geometries", "cases", "profile_log_sha256"}
-        or not isinstance(profiles, dict)
-        or set(profiles) != {f"rank{rank}-geo{geometry}.jsonl"
-                             for rank in range(3) for geometry in range(3)}
-        or not all(is_sha256(value) for value in profiles.values())
-        or qualification.get("cases") != 468
-        or qualification.get("ep_ranks") != [0, 1, 2]
-        or qualification.get("geometries") != [0, 1, 2]
-    ):
-        raise Refusal("cooperative-MoE build lacks complete 3x3 profile qualification")
+        reproducibility = record.get("reproducibility")
+        if (
+            not isinstance(reproducibility, dict)
+            or set(reproducibility) != {"runs", "comparison", "binary_sha256"}
+            or reproducibility.get("runs") != 2
+            or reproducibility.get("comparison") != "bit-identical"
+            or not is_sha256(reproducibility.get("binary_sha256"))
+        ):
+            raise Refusal("cooperative-MoE binary lacks two-build bit identity")
+        qualification = record.get("qualification")
+        profiles = qualification.get("profile_log_sha256") if isinstance(qualification, dict) else None
+        if (
+            not isinstance(qualification, dict)
+            or set(qualification) != {"ep_ranks", "geometries", "cases", "profile_log_sha256"}
+            or not isinstance(profiles, dict)
+            or set(profiles) != {f"rank{rank}-geo{geometry}.jsonl"
+                                 for rank in range(3) for geometry in range(3)}
+            or not all(is_sha256(value) for value in profiles.values())
+            or qualification.get("cases") != 468
+            or qualification.get("ep_ranks") != [0, 1, 2]
+            or qualification.get("geometries") != [0, 1, 2]
+        ):
+            raise Refusal("cooperative-MoE build lacks complete 3x3 profile qualification")
 
     manifest_path = _safe_bundle_file(bundle, "manifest.json")
     manifest = _object(manifest_path, "cooperative-MoE bundle manifest")
@@ -253,7 +272,7 @@ def verify_bundle(bundle: Path, build_record: Path, *, build_image: dict | None 
         or reproducibility.get("binary_sha256") != native
     ):
         raise Refusal("cooperative-MoE build record does not bind the served bundle")
-    return {"native_sha256": native, "policy_sha256": files["dispatch_policy.json"]}
+    return component or {"native_sha256": native, "policy_sha256": files["dispatch_policy.json"]}
 
 
 def compose(before: bytes) -> bytes:
@@ -265,10 +284,10 @@ def compose(before: bytes) -> bytes:
     return result
 
 
-def identity(rank: int, state: str, exl3_sha: str, native: str = "none") -> None:
+def identity(rank: int, state: str, exl3_sha: str, native: str = "none", policy: str = "none", seal: str = "none") -> None:
     print(
         f"[jspark3-v16:coop] rank={rank} state={state} boot_time_only=1 "
-        f"exl3_sha256={exl3_sha} native_sha256={native}",
+        f"exl3_sha256={exl3_sha} native_sha256={native} policy_sha256={policy} component_seal_sha256={seal}",
         flush=True,
     )
 
@@ -336,7 +355,8 @@ def main() -> int:
             script_path=Path(__file__),
         )
         observed = digest(exl3)
-        identity(rank, "on", observed, bundle_identity["native_sha256"])
+        identity(rank, "on", observed, bundle_identity["native_sha256"],
+                 bundle_identity["policy_sha256"], bundle_identity.get("component_seal_sha256", "legacy"))
         sys.stdout.buffer.write(canonical(receipt_out))
         return 0
     except (OSError, ValueError, UnicodeError, KeyError, Refusal) as exc:

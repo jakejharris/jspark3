@@ -1,0 +1,7 @@
+{
+  "schema_version": 1,
+  "status": "pending-component-qualification",
+  "native_sha256": "3212a3b0a308e2ec3673878212fcb0504a463c5f7df84eced5db7bb301cc3c07",
+  "build_sha256": null,
+  "gate_index_sha256": null
+}
