@@ -83,15 +83,15 @@
       "changed": true,
       "input_sha256": "b99e219ae2c3ec2e09349149ae1a6b43fd8335cbd730f9a279a1064b34741fd9",
       "origin": "v1.8.4-offline-implementation",
-      "public_sha256": "e0cc7de816a0e9c34ca8e201a1933add2c93d19fc9e490c36493226ec6f67c37",
-      "revision": "v184-publish-preparation"
+      "public_sha256": "c8d641f97647c816b6ed17e4c2141770ce4c48acad9b5f9d39a987989aa3c6c9",
+      "revision": "v184-private-serving-source"
     },
     "docs/COOP_RELEASE_CHECKLIST.md": {
       "changed": true,
       "input_sha256": "f52c33c63ac2b075e46640e687ada0a062cb1f8458a04726870a4dfec983977d",
       "origin": "v184-publish-preparation",
-      "public_sha256": "b84a1f58e8357d28b18dc60802f798781e8cb2c6d5054342df1f1ba8856b6f16",
-      "revision": "v184-publish-review-fix"
+      "public_sha256": "aa70faee83d3842b883c048088b2e86fa84a820b746cd6b9c27ca0e3c560f328",
+      "revision": "v184-private-serving-source"
     },
     "docs/COOP_REPRODUCIBILITY.md": {
       "changed": true,
@@ -184,8 +184,8 @@
       "changed": true,
       "input_sha256": "9830d95de98135c7d36d7ecc66e0f2fbd493a717227059317df57c1f654cbab6",
       "origin": "release-package-render",
-      "public_sha256": "ea94e9b174fc3c0e5dbf428a03156d00c3777ce650da6f9b50dc3dc5708e4ff2",
-      "revision": "v184-publish-review-fix"
+      "public_sha256": "095f25fcf9e9b56eca359e5dfebdc84b22a28bce8b62f899767fdf6b4f203b9a",
+      "revision": "v184-private-serving-source"
     },
     "manifests/figure-bindings.json": {
       "changed": false,
@@ -218,8 +218,8 @@
       "changed": true,
       "input_sha256": "f968bb8ad61c217d1c955e5a6209b35cebfae065e3f1ef6d3077ed6a07f25739",
       "origin": "release-package-render",
-      "public_sha256": "23b173f8c2ad9269499aa1b7c8718096cc7cbe79969db902c2a5ad413af0a0d1",
-      "revision": "v184-shapleymcg-attribution"
+      "public_sha256": "68ee60c4d3d6a84e51471b7ed6013a2e9c36229118340be04074910f0e3f873c",
+      "revision": "v184-private-serving-source"
     },
     "manifests/qualification.json": {
       "changed": false,
@@ -251,8 +251,8 @@
       "changed": true,
       "input_sha256": "fad5c997be3187d1ce467088572677544c60652fda500ea822e89392d7f8bca2",
       "origin": "v1.8.3-shared-output-r5",
-      "public_sha256": "c14095d746e5279984c33cc62a6052239bc3c35addc2bc57f853c8e14518e318",
-      "revision": "sanitizer-launch-record-fix"
+      "public_sha256": "1498f4b496aa6bcdca2ccc6bdcb181d78300288d85b7d7fed41845ea158ad218",
+      "revision": "v184-private-serving-source"
     },
     "manifests/stock-profile.json": {
       "changed": false,
@@ -1511,8 +1511,8 @@
       "changed": true,
       "input_sha256": "1a55e0a43b073d6a2acb1e155afff4f663144290c7c9e9647a9ff9d851405bff",
       "origin": "export-template",
-      "public_sha256": "0a0140a64014731c65dd9ed9aec66e02499ecabd06f8f771517cdd1e25fc5813",
-      "revision": "v1.8.4-pass1"
+      "public_sha256": "b294b5618d1985c426736d9cc67c63a44214b1262f33a754711549b73e0a17e4",
+      "revision": "v184-private-serving-source"
     },
     "tools/_release_checks.py": {
       "changed": true,
@@ -1549,6 +1549,13 @@
       "public_sha256": "d86cf36a7e969ace41ec0a4d7f82ec5e1e2bf384452c65f802746001e6dac905",
       "revision": "v1.8.4-on-v1.8.3"
     },
+    "tools/integrate_coop_seal.py": {
+      "changed": true,
+      "input_sha256": "e3f52f5b4f54417d391538181bac9324d1356ec649280409b12f5383d868e327",
+      "origin": "v184-private-serving-source",
+      "public_sha256": "f9af5a1df5cba81db6e0c2ba5fa46770c3842cb13dfbea3d8662914fbf0f5ed3",
+      "revision": "v184-private-serving-source"
+    },
     "tools/prepare_runtime.py": {
       "changed": true,
       "input_sha256": "a92c91c046638271b1988f4e11e7e9e808d8eec29dc815e24192ffa1c205d5fb",
@@ -1562,6 +1569,13 @@
       "origin": "v1.8.3-docs-tooling",
       "public_sha256": "e4d7b9580ccabbea78f6351b18b2609926dbe2a2afa6fa14cff7684f78dae5f0",
       "revision": "v1.8.4-on-v1.8.3"
+    },
+    "tools/test_component_serving.py": {
+      "changed": true,
+      "input_sha256": "392cdc93c6d90a4f7c1fa03387d76c30b1271502564e328f73f996df4f32f0da",
+      "origin": "v184-private-serving-source",
+      "public_sha256": "177e6bad1b85aa14f178bb18d30f68ac596d14ea1ee24fd75d76609c1f088861",
+      "revision": "v184-private-serving-source"
     },
     "tools/test_fleetctl_errors.py": {
       "changed": true,

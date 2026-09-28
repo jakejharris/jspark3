@@ -121,14 +121,23 @@ def verify_v184(root, binding, release, require_final):
         assert results['status'] == 'pending-measurement' and all(results[key] is None for key in
                ('candidate_commit', 'component_seal_sha256', 'policy_sha256', 'stock', 'edited'))
         return
-    assert binding['state'] == 'bound' and release['stage'] == 'final'
+    assert binding['state'] in ('component-qualified', 'bound'), 'unknown v1.8.4 binding state'
     from _coop_qualification import verify_record
     coop = root / 'recipe/overlays/v16/coop'
     record = load(root, 'recipe/overlays/v16/coop/BUILD.json')
     component = verify_record(record, coop / 'bundle', coop)
+    assert hashlib.sha256((coop / 'QUALIFICATION_SOURCE_MANIFEST.json').read_bytes()).hexdigest() == record['qualification_source_manifest_sha256']
     assert binding['component_seal_sha256'] == component['component_seal_sha256']
     assert binding['policy_sha256'] == component['policy_sha256']
     assert load(root, 'manifests/binaries.json')['recipe/overlays/v16/coop/bundle/cooperative_moe.so']['expected_sha256'] == TARGET_NATIVE
+    if binding['state'] == 'component-qualified':
+        assert not require_final, 'component-qualified source lacks serving measurements and admission'
+        assert release['stage'] == 'component-qualified', 'private serving stage differs'
+        assert binding['admission_receipt_sha256'] is None and binding['results_sha256'] is None
+        assert results['status'] == 'pending-measurement' and all(results[key] is None for key in
+               ('candidate_commit', 'component_seal_sha256', 'policy_sha256', 'stock', 'edited'))
+        return
+    assert release['stage'] == 'final'
     assert results['status'] == 'measured' and re.fullmatch('[0-9a-f]{40}', results['candidate_commit'])
     assert results['component_seal_sha256'] == binding['component_seal_sha256']
     assert results['policy_sha256'] == binding['policy_sha256']

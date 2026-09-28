@@ -7130,12 +7130,12 @@
       "sites": []
     },
     "tools/_qualification.py": {
-      "disposition": "Read-only release contract validator: exact pending/final identity, stock settings and component/admission hashes; child admission stdout/stderr captured. Exceptions flow to protected release validator. No new shared payload writer.",
-      "sha256": "0a0140a64014731c65dd9ed9aec66e02499ecabd06f8f771517cdd1e25fc5813",
+      "disposition": "Read-only release contract validator: component-qualified state reuses exact release-pinned schema-2 seal checks, requires null serving evidence, and refuses final validation regardless of stage. Admission subprocess remains captured privately. No new output writer.",
+      "sha256": "b294b5618d1985c426736d9cc67c63a44214b1262f33a754711549b73e0a17e4",
       "sites": [
         {
-          "function": "verify_v184",
-          "line": 148,
+          "function": "reviewed source integration/test/validator",
+          "line": 157,
           "operation": "run"
         }
       ]
@@ -7291,6 +7291,142 @@
           "function": "main",
           "line": 77,
           "operation": "report_failure"
+        }
+      ]
+    },
+    "tools/integrate_coop_seal.py": {
+      "disposition": "Local component integration into a fresh staged source directory only. Input source, complete sealed bundle/native bytes and original qualification source verified; copies only validated manifest-listed text and indexed evidence. Only installer constant changes automatically refresh its existing output audit. Other executable changes require independent review. Full source/privacy validator runs before destination exposure. Fixed console summary and private diagnostic failure boundary; no network, hardware, publication or admission producer.",
+      "sha256": "f9af5a1df5cba81db6e0c2ba5fa46770c3842cb13dfbea3d8662914fbf0f5ed3",
+      "sites": [
+        {
+          "function": "reviewed source integration/test/validator",
+          "line": 30,
+          "operation": "write_text"
+        },
+        {
+          "function": "reviewed source integration/test/validator",
+          "line": 40,
+          "operation": "write"
+        },
+        {
+          "function": "reviewed source integration/test/validator",
+          "line": 42,
+          "operation": "write_text"
+        },
+        {
+          "function": "reviewed source integration/test/validator",
+          "line": 48,
+          "operation": "write"
+        },
+        {
+          "function": "reviewed source integration/test/validator",
+          "line": 59,
+          "operation": "write"
+        },
+        {
+          "function": "reviewed source integration/test/validator",
+          "line": 61,
+          "operation": "write_text"
+        },
+        {
+          "function": "reviewed source integration/test/validator",
+          "line": 81,
+          "operation": "write"
+        },
+        {
+          "function": "reviewed source integration/test/validator",
+          "line": 82,
+          "operation": "write_text"
+        },
+        {
+          "function": "reviewed source integration/test/validator",
+          "line": 114,
+          "operation": "copy2"
+        },
+        {
+          "function": "reviewed source integration/test/validator",
+          "line": 119,
+          "operation": "copyfile"
+        },
+        {
+          "function": "reviewed source integration/test/validator",
+          "line": 120,
+          "operation": "copyfile"
+        },
+        {
+          "function": "reviewed source integration/test/validator",
+          "line": 121,
+          "operation": "copyfile"
+        },
+        {
+          "function": "reviewed source integration/test/validator",
+          "line": 122,
+          "operation": "copyfile"
+        },
+        {
+          "function": "reviewed source integration/test/validator",
+          "line": 124,
+          "operation": "write"
+        },
+        {
+          "function": "reviewed source integration/test/validator",
+          "line": 131,
+          "operation": "write_text"
+        },
+        {
+          "function": "reviewed source integration/test/validator",
+          "line": 134,
+          "operation": "write"
+        },
+        {
+          "function": "reviewed source integration/test/validator",
+          "line": 138,
+          "operation": "write"
+        },
+        {
+          "function": "reviewed source integration/test/validator",
+          "line": 141,
+          "operation": "write"
+        },
+        {
+          "function": "reviewed source integration/test/validator",
+          "line": 146,
+          "operation": "write"
+        },
+        {
+          "function": "reviewed source integration/test/validator",
+          "line": 148,
+          "operation": "write"
+        },
+        {
+          "function": "reviewed source integration/test/validator",
+          "line": 151,
+          "operation": "write"
+        },
+        {
+          "function": "reviewed source integration/test/validator",
+          "line": 155,
+          "operation": "write"
+        },
+        {
+          "function": "reviewed source integration/test/validator",
+          "line": 159,
+          "operation": "run"
+        },
+        {
+          "function": "reviewed source integration/test/validator",
+          "line": 161,
+          "operation": "retain"
+        },
+        {
+          "function": "reviewed source integration/test/validator",
+          "line": 164,
+          "operation": "rename"
+        },
+        {
+          "function": "reviewed source integration/test/validator",
+          "line": 173,
+          "operation": "print"
         }
       ]
     },
@@ -7453,6 +7589,142 @@
           "function": "<native/shell/patch>",
           "line": 578,
           "operation": "output/child channel or source template"
+        }
+      ]
+    },
+    "tools/test_component_serving.py": {
+      "disposition": "Synthetic temporary source/ELF/receipt fixtures only, with native target substitution confined to temporary trees. Real integration, source validation, component checks and runtime preparation run; only Docker inspection is stubbed. No production pins or hardware evidence written.",
+      "sha256": "177e6bad1b85aa14f178bb18d30f68ac596d14ea1ee24fd75d76609c1f088861",
+      "sites": [
+        {
+          "function": "reviewed source integration/test/validator",
+          "line": 33,
+          "operation": "write"
+        },
+        {
+          "function": "reviewed source integration/test/validator",
+          "line": 38,
+          "operation": "write"
+        },
+        {
+          "function": "reviewed source integration/test/validator",
+          "line": 40,
+          "operation": "write_text"
+        },
+        {
+          "function": "reviewed source integration/test/validator",
+          "line": 44,
+          "operation": "write"
+        },
+        {
+          "function": "reviewed source integration/test/validator",
+          "line": 45,
+          "operation": "write_text"
+        },
+        {
+          "function": "reviewed source integration/test/validator",
+          "line": 58,
+          "operation": "copy2"
+        },
+        {
+          "function": "reviewed source integration/test/validator",
+          "line": 68,
+          "operation": "copyfile"
+        },
+        {
+          "function": "reviewed source integration/test/validator",
+          "line": 69,
+          "operation": "copyfile"
+        },
+        {
+          "function": "reviewed source integration/test/validator",
+          "line": 85,
+          "operation": "write"
+        },
+        {
+          "function": "reviewed source integration/test/validator",
+          "line": 89,
+          "operation": "write"
+        },
+        {
+          "function": "reviewed source integration/test/validator",
+          "line": 90,
+          "operation": "write_bytes"
+        },
+        {
+          "function": "reviewed source integration/test/validator",
+          "line": 95,
+          "operation": "write_text"
+        },
+        {
+          "function": "reviewed source integration/test/validator",
+          "line": 99,
+          "operation": "write_text"
+        },
+        {
+          "function": "reviewed source integration/test/validator",
+          "line": 108,
+          "operation": "run"
+        },
+        {
+          "function": "reviewed source integration/test/validator",
+          "line": 139,
+          "operation": "write_record"
+        },
+        {
+          "function": "reviewed source integration/test/validator",
+          "line": 146,
+          "operation": "write_bytes"
+        },
+        {
+          "function": "reviewed source integration/test/validator",
+          "line": 155,
+          "operation": "write_record"
+        },
+        {
+          "function": "reviewed source integration/test/validator",
+          "line": 166,
+          "operation": "run"
+        },
+        {
+          "function": "reviewed source integration/test/validator",
+          "line": 192,
+          "operation": "write"
+        },
+        {
+          "function": "reviewed source integration/test/validator",
+          "line": 197,
+          "operation": "write_bytes"
+        },
+        {
+          "function": "reviewed source integration/test/validator",
+          "line": 202,
+          "operation": "write_bytes"
+        },
+        {
+          "function": "reviewed source integration/test/validator",
+          "line": 209,
+          "operation": "write"
+        },
+        {
+          "function": "reviewed source integration/test/validator",
+          "line": 220,
+          "operation": "write"
+        },
+        {
+          "function": "reviewed source integration/test/validator",
+          "line": 226,
+          "operation": "write"
+        },
+        {
+          "function": "reviewed source integration/test/validator",
+          "line": 235,
+          "operation": "write"
+        },
+        {
+          "function": "reviewed source integration/test/validator",
+          "line": 242,
+          "operation": "write_bytes"
         }
       ]
     },
