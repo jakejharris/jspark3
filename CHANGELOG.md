@@ -1,3 +1,17 @@
+# JSpark3 v1.8.3
+
+Runnable operator admission with all-rank hygiene, fine-hit prefix-cache gates,
+readiness waiting and native TRIAR-inactive proof. Complete install/upgrade
+instructions and explicit coop-on/coop-off measurement scope. Credentials are
+redacted before failure diagnostics are saved. Publication resumes exact approved
+refs and assets after partial failures; standalone HF clients default Xet off.
+Experimental coop build containers are removed on cancellation.
+
+# JSpark3 v1.8.2
+
+Local native builds and receipt-verified runtime preparation. Operator builds
+run coop off and require only the display library/probe, with two-build identity.
+
 # JSpark3 v1.8.1
 
 Outside operators can build the pinned Dockerfile, verify InstantTensor bytes,

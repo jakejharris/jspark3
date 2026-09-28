@@ -41,6 +41,8 @@ class ReleaseToolingTests(unittest.TestCase):
                                                'license_name: shapleymcg-license-1.0\n'
                                                'license_link: LICENSE\n'))
                 self.render.check_hf_license(card)
+                self.assertNotIn('library_name: transformers', card)
+                self.assertIn('CC BY-NC-ND 4.0', card)
                 self.assertNotIn("Apache-2.0 metadata follows", card)
                 for bad in (card.replace('license: other', 'license: apache-2.0'),
                             card.replace('license_link: LICENSE\n', ''),
@@ -114,6 +116,7 @@ if name == 'python3':
     if any('comparison_variants.py' in x for x in args): event = 'choose'
     elif any('publish_checks.py' in x for x in args): event = 'preflight'
     elif any('hf_upload.py' in x for x in args): event = 'hf-upload'
+    elif any('publish_release.py' in x for x in args): event = 'github-reconcile'
     elif 'package.json' in args[-1]: event = 'tag'
     elif 'git-plan.json' in args[-1]: event = 'commit'
     else: raise RuntimeError(args)
@@ -153,7 +156,7 @@ if event == 'commit': print('a' * 40)
         self.assertEqual(process.returncode, 0, process.stderr)
         names = [event[0] for event in events]
         self.assertLess(names.index('hf-upload'), names.index('git-push'))
-        self.assertLess(names.index('git-push'), names.index('gh-release-create'))
+        self.assertLess(names.index('git-push'), names.index('github-reconcile'))
         self.assertIn(['hf-upload', '1'], events)
 
     def test_preflight_and_dry_run_failures_stop_before_upload(self):
@@ -168,7 +171,7 @@ if event == 'commit': print('a' * 40)
         import builtins
         real_import = builtins.__import__
         sdk = types.ModuleType('huggingface_hub')
-        sdk.HfApi = sdk.CommitOperationAdd = object
+        sdk.HfApi = sdk.CommitOperationAdd = sdk.hf_hub_download = object
         imported = []
 
         def checked_import(name, *args, **kwargs):

@@ -5,6 +5,9 @@ The native controller remains in _fleetctl.py. All native resource, receipt
 and correctness gates still apply; this wrapper adds the systemd annotation
 and verifies its effective state immediately after container start.
 """
+import sys
+sys.dont_write_bytecode = True
+
 import _fleetctl as native
 import resource_scope
 

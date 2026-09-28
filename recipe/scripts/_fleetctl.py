@@ -8,6 +8,7 @@ import base64
 import hashlib
 import ipaddress
 import json
+import math
 import os
 from pathlib import Path
 import re
@@ -15,8 +16,11 @@ import shlex
 import subprocess
 import sys
 import tempfile
+import time
 import urllib.error
 import urllib.request
+
+sys.dont_write_bytecode = True
 
 import production_stock
 
@@ -310,7 +314,7 @@ def validate_env(values: dict[str, str]) -> None:
         if key != "JSPARK_WORK_ROOT" and (work in path.parents or path in work.parents):
             raise Refusal("work root must not contain or be contained by an immutable root")
     joined = "\n".join(values.values())
-    if ".example.invalid" in joined or "198.51.100." in joined or "192.0.2." in joined:
+    if ".example.invalid" in joined or "198.51.100." in joined or "192.0.2." in joined or "203.0.113." in joined:
         raise Refusal("documentation placeholder remains in env")
 
 
@@ -337,11 +341,30 @@ JSON_PYTHON = ("python3", "-S")
 REMOTE_STDERR_LIMIT = 16 * 1024  # Characters retained in failure receipts.
 
 
+def redact_diagnostics(text: str, values: dict[str, str] | None = None) -> str:
+    """Remove known secrets and credential-bearing diagnostic forms before storage."""
+    sensitive = r"token|secret|password|passwd|api[-_]?key|access[-_]?key|private[-_]?key|authorization|credential"
+    known = {str(value) for key, value in {**os.environ, **(values or {})}.items()
+             if value and re.search(sensitive, key, re.I)}
+    for value in sorted(known, key=len, reverse=True):
+        for form in (json.dumps(value), repr(value), value):
+            text = text.replace(form, '[REDACTED]')
+    text = re.sub(r'(?i)\b(Bearer|Basic)\s+[A-Za-z0-9._~+/=-]+', r'\1 [REDACTED]', text)
+    # Handles env assignments, shell flags, JSON and Python argv reprs. Quoted
+    # values may contain spaces; remove the whole value, not just its first word.
+    quoted_value = r'"(?:\\.|[^"\\\r\n])*"|\'(?:\\.|[^\'\\\r\n])*\''
+    pattern = (rf"(?i)(?<![\w-])((?:--)?[\w-]*(?:{sensitive})[\w-]*[\"']?"
+               r"(?:\s*[:=,]\s*|\s+))(?:" + quoted_value + r"|[^\s,;]+)")
+    text = re.sub(pattern, r'\1[REDACTED]', text)
+    text = re.sub(r'(?i)(https?://)[^\s/@:]+:[^\s/@]+@', r'\1[REDACTED]@', text)
+    return text
+
+
 def remote(values: dict[str, str], rank: int, argv: list[str], *, check: bool = True) -> subprocess.CompletedProcess[str]:
     process = subprocess.run(ssh_argv(values, rank, argv), text=True,
                              stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False)
     if check and process.returncode:
-        detail = process.stderr.strip() or "no detail"
+        detail = redact_diagnostics(process.stderr, values).strip() or "no detail"
         if len(detail) > REMOTE_STDERR_LIMIT:
             detail = "[stderr truncated; tail follows]\n" + detail[-REMOTE_STDERR_LIMIT:]
         raise Refusal(f"rank{rank} remote command failed (exit {process.returncode}):\n{detail}")
@@ -1523,7 +1546,7 @@ def preserve_rank0_logs(
     logs = process.stdout + process.stderr
     if not logs:
         logs = f"docker logs returned exit {process.returncode} without output\n"
-    atomic_text(output, logs)
+    atomic_text(output, redact_diagnostics(logs, values))
 
 
 def focused_witness_argv(values: dict[str, str], base: str) -> list[str]:
@@ -1814,7 +1837,7 @@ def _verify_bound(
     rank0 = manifest["containers"][0]
     log_process = remote(values, 0, ["docker", "logs", rank0["container_id"]])
     logs = log_process.stdout + log_process.stderr
-    atomic_text(args.log_output, logs)
+    atomic_text(args.log_output, redact_diagnostics(logs, values))
     load = load_gate(logs, runtime)
     if not all(load.values()):
         raise Refusal("load/graph/cadence receipt gate failed")
@@ -1870,6 +1893,34 @@ def _verify_bound(
     print(f"PASS verify receipt={args.output} sha256={sha_file(args.output)}")
 
 
+def wait_ready(values: dict[str, str], manifest: dict, timeout: float) -> None:
+    """Wait only for startup; retain the full verifier's once-ready refusals."""
+    if not math.isfinite(timeout) or timeout < 0:
+        raise Refusal('ready timeout must be finite and nonnegative')
+    deadline = time.monotonic() + timeout
+    base = f"http://{values['JSPARK_MASTER_ADDR']}:{values['JSPARK_API_PORT']}"
+    while True:
+        rows = collect_status(values, manifest)
+        if len(rows) != 3 or any(not row['running'] or row['oom_killed'] or row['restart_count'] != 0
+                                 for row in rows):
+            raise Refusal('startup rank stopped, restarted or OOM-killed; inspect rank logs')
+        try:
+            with urllib.request.urlopen(base + '/health', timeout=10) as response:
+                healthy = response.status == 200
+            if healthy:
+                with urllib.request.urlopen(base + '/v1/models', timeout=10) as response:
+                    code, models = response.status, strict_object(response.read().decode(), 'models response')
+                if code == 200:
+                    if model_identities(models) != ['glm-5.3-flash']:
+                        raise Refusal('served-model identity drift during readiness')
+                    return
+        except (OSError, urllib.error.URLError):
+            pass
+        if time.monotonic() >= deadline:
+            raise Refusal(f'readiness timeout after {timeout:g}s; health/model not ready')
+        time.sleep(min(5, max(0, deadline - time.monotonic())))
+
+
 def cmd_verify(args: argparse.Namespace, values: dict[str, str]) -> None:
     if args.dry_run:
         render_dry_run("verify", values)
@@ -1879,12 +1930,13 @@ def cmd_verify(args: argparse.Namespace, values: dict[str, str]) -> None:
     manifest = bound_manifest(args.manifest, values, require_all=True, require_started=True,
                               candidate_recipe_sha256=candidate)
     try:
+        wait_ready(values, manifest, args.ready_timeout)
         _verify_bound(args, values, manifest, candidate)
     except Exception:
         try:
             preserve_rank0_logs(values, manifest, args.log_output)
         except Exception as log_exc:
-            print(f"VERIFY LOG PRESERVATION REFUSED: {log_exc}", file=sys.stderr)
+            print(f"VERIFY LOG PRESERVATION REFUSED: {redact_diagnostics(str(log_exc), values)}", file=sys.stderr)
         raise
 
 
@@ -1908,6 +1960,8 @@ def parser() -> argparse.ArgumentParser:
             command.add_argument("--remove", action="store_true")
             command.add_argument("--remove-confirm", default="")
         elif name == "verify":
+            command.add_argument('--ready-timeout', type=float, default=1200,
+                                 help='seconds to wait for health/model readiness before verification')
             command.add_argument("--output", type=Path, default=Path("verify.json"))
             command.add_argument("--log-output", type=Path, default=Path("verify-rank0.log"))
             command.add_argument("--candidate-recipe-manifest-sha256", default="",
@@ -1927,13 +1981,14 @@ def main() -> int:
         functions[args.command](args, values)
         return 0
     except Exception as exc:
+        reason = redact_diagnostics(str(exc), values)
         if (getattr(args, "command", None) == "verify" and
                 not getattr(args, "dry_run", False) and values is not None):
             failure = {
                 "schema_version": 1, "grade": "ENGINEERING-EVIDENCE",
                 "manifest_sha256": (sha_file(args.manifest) if args.manifest.is_file() else None),
                 "rank0_log_path": (str(args.log_output) if args.log_output.is_file() else None),
-                "reason": str(exc), "status": "VERIFY_REFUSED",
+                "reason": reason, "status": "VERIFY_REFUSED",
                 "operator_direction": "Inspect the bound IDs, then use stop.sh with the exact manifest if safety requires shutdown.",
             }
             failure["payload_sha256"] = sha_bytes(canonical(failure))
@@ -1941,7 +1996,7 @@ def main() -> int:
                 atomic_json(args.output, failure)
             except OSError as write_exc:
                 print(f"REFUSE: failure receipt write failed: {write_exc}", file=sys.stderr)
-        print(f"REFUSE: {exc}", file=sys.stderr)
+        print(f"REFUSE: {reason}", file=sys.stderr)
         return 9
 
 

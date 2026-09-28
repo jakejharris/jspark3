@@ -105,7 +105,7 @@ def run_request(url: str, body: bytes, api_key: str, timeout: int) -> tuple[int,
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--base-url", required=True, help="for example http://controller-address:8000")
+    parser.add_argument("--base-url", required=True, help="for example http://RANK0_ADDR:8888")
     parser.add_argument("--api-key-env", default="OPENAI_API_KEY")
     parser.add_argument("--timeout", type=int, default=900)
     parser.add_argument("--min-prompt-tokens", type=int, default=MIN_PROMPT_TOKENS,

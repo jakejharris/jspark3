@@ -445,8 +445,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--container-prefix", default="jspark3-v16-rank")
     parser.add_argument("--fixtures", type=Path, required=True,
                         help="frozen rendered fixtures; created from the served template if absent")
-    parser.add_argument("--expect", choices=("lru", "legacy", "finehit"), default="lru",
-                        help="lru gates the new policy; legacy records the outgoing boot (mechanism control)")
+    parser.add_argument("--expect", choices=("lru", "legacy", "finehit"), default="finehit",
+                        help="finehit gates this release (640-token hits); lru/legacy are historical controls")
     parser.add_argument("--baseline", type=Path,
                         help="outgoing boot's legacy report; adds the net-positive Pi-shaped check")
     parser.add_argument("--out", type=Path, required=True)

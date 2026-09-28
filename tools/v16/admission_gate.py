@@ -44,6 +44,11 @@ def evaluate(first: dict, final: dict, *, first_path: str = "first", final_path:
             row.get("sha256") == first_sha256 and row.get("schema") == FIRST_SCHEMA
             for row in final.get("input_hashes", {}).get("client_evidence", [])):
         findings.append("first-prompt receipt was not reconciled in this finalization session")
+    if final.get("producer") == "qualify_runtime.py":
+        if (first.get("producer") != "qualify_runtime.py" or not first.get("boot")
+                or first.get("boot") != final.get("boot")
+                or first.get("manifest_sha256") != final.get("manifest_sha256")):
+            findings.append("operator receipts belong to different boots")
     if first_identity and first_identity.get("dense-fp8") == "negative-coarse":
         findings.append("test-only negative-coarse cannot open admission")
     return {"schema": SCHEMA, "verdict": "PASS" if not findings else "FAIL",
@@ -87,6 +92,15 @@ def main(argv: list[str] | None = None) -> int:
             report = evaluate(load_json(args.first_prompt), load_json(args.finalize),
                               first_path=str(args.first_prompt), final_path=str(args.finalize),
                               first_sha256=_sha(args.first_prompt))
+            final = load_json(args.finalize)
+            if final.get('producer') == 'qualify_runtime.py':
+                evidence = final.get('evidence_sha256', {})
+                if not evidence or 'first-prompt.json' not in evidence:
+                    raise QAError('operator evidence inventory is missing')
+                for name, expected in evidence.items():
+                    path = args.finalize.parent / name
+                    if Path(name).name != name or path.is_symlink() or _sha(path) != expected:
+                        raise QAError('operator evidence changed: ' + name)
             report["input_sha256"] = {"first_prompt": _sha(args.first_prompt),
                                       "finalize": _sha(args.finalize)}
         except (OSError, ValueError, QAError) as exc:

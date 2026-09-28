@@ -68,7 +68,7 @@ def stream_call(url: str, payload: dict, api_key: str) -> dict:
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--base-url", required=True, help="for example http://controller-address:8000")
+    parser.add_argument("--base-url", required=True, help="for example http://RANK0_ADDR:8888")
     parser.add_argument("--api-key-env", default="OPENAI_API_KEY")
     args = parser.parse_args()
     base = args.base_url.rstrip("/")

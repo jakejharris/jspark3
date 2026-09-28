@@ -50,3 +50,8 @@ SPDX-License-Identifier = "Apache-2.0"
 path = ["tools/release_packaging.patch", "docs/RELEASE_TOOLING.md"]
 precedence = "aggregate"
 SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ["release/RELEASE-NOTES-v1.8.0.md", "release/operator-cleanroom-v1.8.2.json"]
+precedence = "aggregate"
+SPDX-License-Identifier = "Apache-2.0"

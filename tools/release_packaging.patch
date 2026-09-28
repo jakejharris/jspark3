@@ -6,7 +6,7 @@
 +export HF_HUB_DISABLE_XET="${HF_HUB_DISABLE_XET:-1}"
 
  python3 -B "$PACKAGE_ROOT/tools/publish_checks.py" "$FROZEN_PACKAGE" \
-@@ -19,9 +20,11 @@
+@@ -19,21 +20,14 @@
  git -C "$RELEASE_CHECKOUT" push --atomic --dry-run origin \
    "$RELEASE_COMMIT:refs/heads/release/$RELEASE_TAG" "refs/tags/$RELEASE_TAG"
 -git -C "$RELEASE_CHECKOUT" push --atomic origin \
@@ -14,37 +14,173 @@
 
  # One compare-and-swap HF commit containing only the exact allowlisted files.
  python3 -B "$PACKAGE_ROOT/tools/hf_upload.py" "$FROZEN_PACKAGE" --execute
-+
+
+-# The GitHub release is the site handoff trigger. Attach the exact checked assets.
+-gh release create "$RELEASE_TAG" \
+-  "$FROZEN_PACKAGE/assets/jspark3-recipe-$RELEASE_TAG.tar.gz" \
+-  "$FROZEN_PACKAGE/assets/jspark3.sbom.cdx.json" \
+-  "$FROZEN_PACKAGE/assets/results-$RELEASE_TAG.json" \
+-  "$FROZEN_PACKAGE/assets/RELEASE-NUMBERS.md" \
+-  "$FROZEN_PACKAGE/assets/SHA256SUMS" \
+-  --repo jakejharris/jspark3 --verify-tag --target "$RELEASE_COMMIT" \
+-  --title "JSpark3 $RELEASE_TAG" --notes-file "$FROZEN_PACKAGE/release-body.md" --latest
 +# Publish refs only after HF succeeds. An HF failure leaves no release tag.
 +git -C "$RELEASE_CHECKOUT" push --atomic origin \
 +  "$RELEASE_COMMIT:refs/heads/release/$RELEASE_TAG" "refs/tags/$RELEASE_TAG"
 
- # The GitHub release is the site handoff trigger. Attach the exact checked assets.
---- a/tools/comparison_variants.py
-+++ b/tools/comparison_variants.py
-@@ -29,9 +29,9 @@
-         check(name+' selected comparison',expected in text and other not in text)
-         check(name+' literal c4','86.44 tok/s versus the author-reported 88.4 tok/s' in text)
--        check(name+' exact approved c4 headline','Up to 141.7 tok/s code and 90.7 tok/s prose decode at 4 streams on three DGX Sparks, stock weights.' in text)
-+        check(name+' exact approved c4 headline','Up to 141.7 tok/s code and 90.7 tok/s prose decode at 4 streams on three DGX Sparks, unedited EXL3-quantized GLM-5.3 Flash weights.' in text)
-         check(name+' best-of-two label',BEST_OF_TWO in text)
-         check_headline_copy(text,(out/'github/release/results.json').read_bytes())
-         check(name+' both frozen ranges in same document','| code | 4 | 136.9 to 141.7 |' in text and '| prose | 4 | 83.3 to 90.7 |' in text)
--        check(name+' protected stock/restart wording','Stock weights (`ABLIT=0`) and `production-stock` are the defaults. Choose stock or edited behavior before launch. Changing modes requires a service restart and recomputes conversation prefixes.' in text)
-+        check(name+' protected stock/restart wording',all(phrase in text for phrase in ('EXL3 quantization, unedited (`ABLIT=0`), using `production-stock`', 'Edited weights (`ABLIT=1`) are an explicit opt-in', 'Changing modes requires a service restart and recomputes conversation prefixes.', '`JSPARK3_V16_COOP=1`', '`JSPARK3_V16_COOP=0`')))
-     check('exact frozen results copies',all(p.sha(out/name)==p.FROZEN_RESULTS_SHA256 for name in (
-         'github/release/results.json','github/release/results-v1.8.0.json',
---- a/tools/hf_upload.py
-+++ b/tools/hf_upload.py
-@@ -3,4 +3,8 @@
- import argparse
- import json
-+import os
+-# The release notes already credit the contributor. No automated comment/message.
+-gh pr close 9 --repo jakejharris/jspark3
+-gh release view "$RELEASE_TAG" --repo jakejharris/jspark3 --json tagName,name,url,assets
++# Reconcile draft/published release assets and notes; retries never clobber conflicts.
++python3 -B "$PACKAGE_ROOT/tools/publish_release.py" "$FROZEN_PACKAGE" \
++  --checkout "$RELEASE_CHECKOUT" --go "$PACKAGE_ROOT/JAKE-GO.json" \
++  --variants "$PACKAGE_ROOT/variants"
+--- a/tools/render.py
++++ b/tools/render.py
+@@ -4,24 +4,39 @@
+ from decimal import Decimal, ROUND_HALF_EVEN
+
+-BEST_OF_TWO = 'Best of two runs. Full ranges in the results below.'
++HF_LICENSE_HEADER = ('---\nlicense: other\nlicense_name: shapleymcg-license-1.0\n'
++                     'license_link: LICENSE\n')
 +
-+# Set before the SDK reads its environment at import time.
-+os.environ.setdefault("HF_HUB_DISABLE_XET", "1")
- from pathlib import Path
- from huggingface_hub import HfApi, CommitOperationAdd
++
++def check_hf_license(card):
++    if not card.startswith(HF_LICENSE_HEADER):
++        raise ValueError('HF license must match the model LICENSE: ShapleyMcg v1.0')
++
++
++BEST_OF_TWO = 'Measured on one serving start across two sweeps. Ranges span both sweeps.'
+
+
+ def headline_parts(n, field):
+     release = n['sets']['release_m0']
+-    assert int(release['sweeps']) == 2, 'best-of-two requires two sweeps'
+-    pieces = []
+-    ranges = '\nFour-stream decode, 512 forced tokens, concurrent streams. Full two-run within-start ranges (not confidence intervals):\n\n| Workload | Streams | tok/s range |\n|---|---|---|\n'
+-    for cid, workload in [('decode_c4', 'code'), ('decode_prose_c4', 'prose')]:
+-        if cid not in release['cells'] and workload == 'prose': continue
+-        cell = release['cells'][cid]
+-        assert int(cell['n']) == 2, 'best-of-two requires two measurements per cell'
+-        assert cell['instrument'] == f'stream-span decode ladder, 512 forced tokens, streams started together, {workload} prompts', 'headline workload mismatch'
+-        prefix = 'sets.release_m0.cells.'+cid
+-        lo, hi = field(prefix+'.lo'), field(prefix+'.hi')
+-        for endpoint, token in [('lo', lo), ('hi', hi)]:
+-            assert Decimal(cell[endpoint+'_exact']).quantize(Decimal('0.1'), rounding=ROUND_HALF_EVEN) == Decimal(token), 'headline display token differs from exact sweep endpoint'
+-        pieces.append(hi+' tok/s '+workload)
+-        ranges += f'| {workload} | 4 | {lo} to {hi} |\n'
+-    return 'Up to '+' and '.join(pieces)+' decode at 4 streams on three DGX Sparks, stock weights.', ranges
++    assert int(release['sweeps']) == 2 and int(release['serving_starts']) == 1, 'ranges require one start and two sweeps'
++    bands = {}
++    for workload in ('code', 'prose'):
++        for count in (4, 8):
++            cid = ('decode_c' if workload == 'code' else 'decode_prose_c') + str(count)
++            if cid not in release['cells'] and workload == 'prose':
++                continue
++            cell = release['cells'][cid]
++            assert int(cell['n']) == 2, 'ranges require two measurements per cell'
++            assert cell['instrument'] == f'stream-span decode ladder, 512 forced tokens, streams started together, {workload} prompts', 'headline workload mismatch'
++            prefix = 'sets.release_m0.cells.' + cid
++            lo, hi = field(prefix + '.lo'), field(prefix + '.hi')
++            for endpoint, token in [('lo', lo), ('hi', hi)]:
++                assert Decimal(cell[endpoint + '_exact']).quantize(Decimal('0.1'), rounding=ROUND_HALF_EVEN) == Decimal(token), 'headline display token differs from exact sweep endpoint'
++            bands[workload, count] = lo + ' to ' + hi
++    prefill = field('sets.release_m0.cells.prefill.lo') + ' to ' + field('sets.release_m0.cells.prefill.hi')
++    headline = ('**Measured: ' + bands['code', 4] + ' tok/s code decode at 4 streams and ' + bands['code', 8]
++                + ' tok/s at 8, on unedited EXL3-quantized GLM-5.3 Flash weights.**')
++    prose = ('\n- Prose decode: ' + bands['prose', 4] + ' tok/s at 4 streams, ' + bands['prose', 8] + ' tok/s at 8\n') if all(('prose', count) in bands for count in (4, 8)) else '\n'
++    ranges = (prose + '- Prefill: ' + prefill + ' tok/s across eight Pi coding-agent turns extending a cached prefix, after page-cache hygiene\n')
++    return headline, ranges
+
+
+@@ -34,11 +49,11 @@
+     headline, ranges = headline_parts(n, field)
+     if BEST_OF_TWO not in text:
+-        raise ValueError('unlabelled up to: exact best-of-two label required')
+-    if re.findall(r'(?im)^.*\bup to\b.*tok/s.*$', text) != [headline]:
+-        raise ValueError('up to headline differs from frozen c4 maxima')
+-    if headline+'\n\n'+BEST_OF_TWO not in text:
+-        raise ValueError('best-of-two label must immediately follow headline')
++        raise ValueError('two-sweep measurement scope required')
++    if text.count(headline) != 1 or re.search(r'(?im)^.*\bup to\b.*tok/s.*$', text):
++        raise ValueError('headline differs from frozen ranges')
++    if headline + '\n\n' + BEST_OF_TWO not in text:
++        raise ValueError('measurement scope must immediately follow headline')
+     if ranges not in text:
+-        raise ValueError('best-of-two full ranges required in the same document')
++        raise ValueError('full ranges required in the same document')
+
+
+@@ -108,8 +123,8 @@
+                 for count,cid,cell,mia in rows:
+                     field('sets.release_m0.cells.'+cid+('.lo' if comparison_rule=='strict' else '.median'))
+-            comparison += '\nThese are protocol-matched stock-weight prose medians from separate fleets and dates. The reference is author-reported, with unknown repetition count and exact harness commit. Individual runs can overlap the reference. No cross-protocol speedup is implied.\n\n| Streams | Our median tok/s | Author-reported tok/s | Source |\n|---|---|---|---|\n'
++            comparison += '\nThese are protocol-matched stock-weight prose medians from separate fleets and dates. The reference is author-reported, with unknown repetition count and exact harness commit. Individual runs can overlap the reference. No cross-protocol speedup is implied.\n\n| Streams | Our median tok/s (range) | Author-reported tok/s | Source |\n|---|---|---|---|\n'
+             for count, cid, cell, mia in rows:
+                 prefix = f'sets.release_m0.cells.{cid}'
+-                comparison += f"| {count} | {field(prefix+'.median')} | {field(prefix+'.mia.lo')} | [reference]({mia['source']}) |\n"
++                comparison += f"| {count} | {field(prefix+'.median')} ({field(prefix+'.lo')} to {field(prefix+'.hi')}; 5 runs) | {field(prefix+'.mia.lo')} | [reference]({mia['source']}#3x-spark-tp3) |\n"
+             # The requested within-2-percent claim is unsupported by the current
+             # 86.4/88.4 draft. Keep literal medians; never round a gap into a bound.
+@@ -128,7 +143,9 @@
+         if s.get('run_note'): tables += '\n'+public_prose(s['run_note'])+'\n'
+     tables += '\nAll other prompt classes, repetitions, author-protocol rows and evidence hashes remain in '+links+'.\n'
+-    posture = """Stock weights (`ABLIT=0`) and `production-stock` are the defaults. Choose stock or edited behavior before launch. Changing modes requires a service restart and recomputes conversation prefixes. Edited weights remain an explicit opt-in supplied separately; no edited checkpoint is redistributed.
+-
+-The historical measured stock cohort used a validation profile for testing. It does not qualify production admission. This sanitized source distribution retains `hardware_qualified=false`; fresh qualification of the exact shipped configuration is required before production mode-0 admission. Measurements describe the separately identified serving configuration, not a hardware test of this source export.
++    posture = """The default is GLM-5.3 Flash with EXL3 quantization, unedited (`ABLIT=0`), using `production-stock`. Here, "stock" means the quantized weights have no donor edits; it does not mean the original full-precision weights. Edited weights (`ABLIT=1`) are an explicit opt-in supplied separately; no edited checkpoint is redistributed. Choose the mode before launch. Changing modes requires a service restart and recomputes conversation prefixes.
++
++Decode rates combine all streams, each forced to 512 tokens at temperature 0 with thinking off. The published v1.8.0 headline and ranges were measured with cooperative MoE on (`JSPARK3_V16_COOP=1`). Today's operator-built runtime defaults to cooperative MoE off (`JSPARK3_V16_COOP=0`) until a qualified coop build ships. These historical numbers do not measure or qualify that default configuration.
++
++The headline cohort used production-stock with coop on; a separate v1.7.4 stock cohort used the qa test profile. Neither qualifies your fleet. This sanitized source distribution retains `hardware_qualified=false`; fresh qualification of the exact shipped configuration is required before production mode-0 admission. Measurements describe the separately identified serving configuration, not a hardware test of this source export.
+
+ Thirds and active TRIAR are deferred to the next release. No TRIAR speedup is claimed. {resident}
+@@ -144,4 +161,5 @@
+ Original code and prose are Apache-2.0. Included derivatives retain AGPL-3.0-only and vendored headers retain MIT. The assembled service is not wholly Apache-2.0; per-file SPDX and REUSE records govern. The draft-model dependency retains its non-commercial research/evaluation restriction.
+ """.format(resident=('The selected source retains TRIAR code resident but inactive under the NCCL graph path. Do not enable it; the startup resident flag is distinct from the runtime OFF state. The full positive inactive-path attestation and native qualification are required.' if variant == 'b' else 'This fallback has no resident TRIAR or thirds implementation enabled; optional screens are not inherited.'))
++    engineering = "\n## What's in it\n\n\n- **A controller that checks each rank.** `fleetctl` won't start until every rank matches its receipts. It checks the image and native builds you made, all 120 checkpoint shards by hash, the RoCE triangle at MTU 9000, the GID index, and memory and no-swap limits. Once the fleet is running, `verify` checks it end to end, down to retrieving a code word from a prompt longer than 32K tokens.\n- **Three-Spark TP3 with expert parallelism,** built on FlyCockpit's TP3 recipe. TP3's head padding lives in derived runtime views, so the weights you download are never modified. MiaAI-Lab [credits JSpark3 and outstandly](https://github.com/MiaAI-Lab/GLM-5.3-Flash-EXL3-2x-DGX-Sparks/blob/f4970207e9fb2bdeac40d88b7cbef18c98aea310/README.md#3x-spark-tp3) as the route by which that recipe reached its kit.\n- **Prefix caching for coding agents.** Our LRU retention for DFlash2 drafter windows builds on MiaAI-Lab’s per-group retention to keep agent prefixes reusable. Upstream fine-grained prefix hits ([plotarmordev, MiaAI-Lab PR #251](https://github.com/MiaAI-Lab/GLM-5.3-Flash-EXL3-2x-DGX-Sparks/pull/251)) run with our replay-window fix.\n- **Warmup before admission.** GLM and DFlash2 variants compile at boot; the prefill gate warms request shapes and refuses compilation after warmup.\n- **Speculative decoding that keeps its width.** Adaptive verification selects how many DFlash2 draft tokens to verify. Grammar-constrained requests (`response_format` with `json_schema`) keep the full speculative width.\n- **A cooperative-MoE decode kernel for TP3,** adapted from MiaAI-Lab's TP2 extension (an ExLlamaV3-derived kernel) to expert-parallel ranks with up to 96 local experts. It produced the figures above; builds you make yourself leave it off for now.\n- **A release you can audit and rebuild.** Every file is hash-listed and checked by a 17-check validator, with a CycloneDX SBOM and per-file SPDX licensing. You build the serving image and native libraries on your own Spark, and the default native build is compiled twice and must match byte for byte.\n\nJSpark3 builds on work by Z.AI (GLM-5.3), Brandon M. Music (ShapleyMcg), Inco AI (DFlash2), MiaAI-Lab, FlyCockpit, turboderp (ExLlamaV3), coolbho3k, gabewillen, plotarmordev, the vLLM project and others named in [third-party notices](THIRD_PARTY_NOTICES.md). The ShapleyMcg attribution is in [REQUIRED_ATTRIBUTION.md](REQUIRED_ATTRIBUTION.md). Recipe code is Apache-2.0. A running service also loads AGPL-3.0-only components and always uses the DFlash2 draft model, which is licensed for non-commercial research and evaluation only ([licensing](docs/LICENSING.md)).\n"
+     changes = """Changes since v1.1.0 include finer prefix reuse and retained replay windows, decode-floor scheduling and aligned prefill chunks, compact drafter KV, optional display-reserve KV, batched/cooperative MoE paths, adaptive draft width, optional dense-trunk FP8, the stock production profile, and grammar/termination fixes. These are source changes; the tables do not assign a speedup to an unmeasured feature.
+
+@@ -153,9 +171,6 @@
+     notes += f'\nRead [installation]({url}/blob/{ref}/docs/INSTALL.md), [operations]({url}/blob/{ref}/docs/OPERATIONS.md), [limitations]({url}/blob/{ref}/docs/LIMITATIONS.md), and [licensing]({url}/blob/{ref}/docs/LICENSING.md). Source archive, SBOM and checksums accompany this release.\n'
+     readme = f'# JSpark3 {tag}\n\n{headline}{headline_label}\n\n{comparison}{headline_ranges}\nA serving recipe for GLM-5.3 Flash on three DGX Sparks.\n\n'+posture+f'\nRead [installation](docs/INSTALL.md), [operations](docs/OPERATIONS.md), [benchmarks](docs/BENCHMARKS.md), [release notes](release/RELEASE-NOTES.md) and [licensing](docs/LICENSING.md). Verify the source with `python3 -B tools/validate_release.py .`.\n'
+-    card = f'''---
+-license: apache-2.0
+-base_model: zai-org/GLM-5.3-Flash
++    card = f'''{HF_LICENSE_HEADER}base_model: zai-org/GLM-5.3-Flash
+ base_model_relation: quantized
+-library_name: transformers
+ pipeline_tag: image-text-to-text
+ language:
+@@ -170,5 +185,13 @@
+ # JSpark3 {tag}
+
++License metadata covers the mirrored weights (ShapleyMcg v1.0). Recipe code:
++Apache-2.0 with AGPL-3.0-only parts. Required DFlash2 draft: CC BY-NC-ND 4.0,
++non-commercial research/evaluation without separate permission.
++
+ {headline}{headline_label}
++
++These frozen headline measurements used coop on; operator builds use coop off.
++Download serving weights from Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw at
++25a44fdbf16862a46b7cc9921142c6c81350af2f; card edits can change this mirror's ledger.
+
+ {comparison}{headline_ranges}
+@@ -177,8 +200,13 @@
+ {posture}
+
+-The card's Apache-2.0 metadata follows the publication policy. It is not a relicensing of the model files or the assembled service. Existing model license and attribution documents continue to apply.
++The card's license metadata names the ShapleyMcg License v1.0 in LICENSE, which covers the model files. The component licenses above describe the recipe and service code. Existing model license and attribution documents continue to apply.
+
+ See {links}, [the recipe]({url}/tree/{ref}/recipe), and [installation]({url}/blob/{ref}/docs/INSTALL.md).
+ '''
++    for relative in ('THIRD_PARTY_NOTICES.md', 'REQUIRED_ATTRIBUTION.md', 'docs/LICENSING.md'):
++        engineering = engineering.replace('](' + relative + ')', '](' + url + '/blob/' + ref + '/' + relative + ')')
++    readme += engineering
++    notes += engineering
++    card += engineering
+     return {'README.md': readme, 'release/RELEASE-NOTES.md': notes,
+             'CHANGELOG.md': f'# JSpark3 {tag}\n\n'+changes+'\n'+posture,
 --- a/tools/package.py
 +++ b/tools/package.py
 @@ -22,5 +22,5 @@
@@ -61,51 +197,380 @@
 +    check_hf_license((out/'hf/README.md').read_text())
      need(all(name=='README.md' or name.startswith('jspark3/'+(m['tag'] or 'PREFREEZE')+'/') for name in m['hf_files']), 'HF upload scope')
      run([sys.executable,'-B',root/'tools/validate_release.py',root]+(['--require-final'] if selected else []))
---- a/tools/render.py
-+++ b/tools/render.py
-@@ -3,4 +3,13 @@
- import re
- from decimal import Decimal, ROUND_HALF_EVEN
+--- a/tools/comparison_variants.py
++++ b/tools/comparison_variants.py
+@@ -29,9 +29,9 @@
+         check(name+' selected comparison',expected in text and other not in text)
+         check(name+' literal c4','86.44 tok/s versus the author-reported 88.4 tok/s' in text)
+-        check(name+' exact approved c4 headline','Up to 141.7 tok/s code and 90.7 tok/s prose decode at 4 streams on three DGX Sparks, stock weights.' in text)
++        check(name+' exact approved c4 headline','**Measured: 136.9 to 141.7 tok/s code decode at 4 streams and 174.0 to 179.7 tok/s at 8, on unedited EXL3-quantized GLM-5.3 Flash weights.**' in text)
+         check(name+' best-of-two label',BEST_OF_TWO in text)
+         check_headline_copy(text,(out/'github/release/results.json').read_bytes())
+-        check(name+' both frozen ranges in same document','| code | 4 | 136.9 to 141.7 |' in text and '| prose | 4 | 83.3 to 90.7 |' in text)
+-        check(name+' protected stock/restart wording','Stock weights (`ABLIT=0`) and `production-stock` are the defaults. Choose stock or edited behavior before launch. Changing modes requires a service restart and recomputes conversation prefixes.' in text)
++        check(name+' both frozen ranges in same document','136.9 to 141.7 tok/s code' in text and '83.3 to 90.7 tok/s at 4' in text)
++        check(name+' protected stock/restart wording',all(phrase in text for phrase in ('EXL3 quantization, unedited (`ABLIT=0`), using `production-stock`', 'Edited weights (`ABLIT=1`) are an explicit opt-in', 'Changing modes requires a service restart and recomputes conversation prefixes.', '`JSPARK3_V16_COOP=1`', '`JSPARK3_V16_COOP=0`')))
+     check('exact frozen results copies',all(p.sha(out/name)==p.FROZEN_RESULTS_SHA256 for name in (
+         'github/release/results.json','github/release/results-v1.8.0.json',
+--- a/tools/hf_upload.py
++++ b/tools/hf_upload.py
+@@ -2,7 +2,13 @@
+ """Plan an exact HF documentation upload offline; explicit execution at release."""
+ import argparse
++from dataclasses import asdict, is_dataclass
++import hashlib
+ import json
++import os
 +
-+HF_LICENSE_HEADER = ('---\nlicense: other\nlicense_name: shapleymcg-license-1.0\n'
-+                     'license_link: LICENSE\n')
++# Set before the SDK reads its environment at import time.
++os.environ.setdefault("HF_HUB_DISABLE_XET", "1")
+ from pathlib import Path
+-from huggingface_hub import HfApi, CommitOperationAdd
++from huggingface_hub import HfApi, CommitOperationAdd, hf_hub_download
+ import package
+
+@@ -14,4 +20,72 @@
+
+
++def inventory(info):
++    rows = {}
++    for item in info.siblings:
++        package.need(item.rfilename not in rows, 'duplicate HF path')
++        rows[item.rfilename] = {'size': item.size, 'blob_id': item.blob_id,
++                               'lfs': asdict(item.lfs) if is_dataclass(item.lfs) else item.lfs}
++    return rows
 +
 +
-+def check_hf_license(card):
-+    if not card.startswith(HF_LICENSE_HEADER):
-+        raise ValueError('HF license must match the model LICENSE: ShapleyMcg v1.0')
++def save_atomic(path, value):
++    temporary = path.with_name(path.name + '.tmp')
++    package.save(temporary, value)
++    os.replace(temporary, path)
 +
-
- BEST_OF_TWO = 'Best of two runs. Full ranges in the results below.'
-@@ -23,5 +32,5 @@
-         pieces.append(hi+' tok/s '+workload)
-         ranges += f'| {workload} | 4 | {lo} to {hi} |\n'
--    return 'Up to '+' and '.join(pieces)+' decode at 4 streams on three DGX Sparks, stock weights.', ranges
-+    return 'Up to '+' and '.join(pieces)+' decode at 4 streams on three DGX Sparks, unedited EXL3-quantized GLM-5.3 Flash weights.', ranges
-
-
-@@ -128,5 +137,7 @@
-         if s.get('run_note'): tables += '\n'+public_prose(s['run_note'])+'\n'
-     tables += '\nAll other prompt classes, repetitions, author-protocol rows and evidence hashes remain in '+links+'.\n'
--    posture = """Stock weights (`ABLIT=0`) and `production-stock` are the defaults. Choose stock or edited behavior before launch. Changing modes requires a service restart and recomputes conversation prefixes. Edited weights remain an explicit opt-in supplied separately; no edited checkpoint is redistributed.
-+    posture = """The default is GLM-5.3 Flash with EXL3 quantization, unedited (`ABLIT=0`), using `production-stock`. Here, "stock" means the quantized weights have no donor edits; it does not mean the original full-precision weights. Edited weights (`ABLIT=1`) are an explicit opt-in supplied separately; no edited checkpoint is redistributed. Choose the mode before launch. Changing modes requires a service restart and recomputes conversation prefixes.
 +
-+The published v1.8.0 headline and ranges were measured with cooperative MoE on (`JSPARK3_V16_COOP=1`). Today's operator-built runtime defaults to cooperative MoE off (`JSPARK3_V16_COOP=0`) until a qualified coop build ships. These historical numbers do not measure or qualify that default configuration.
++def reconcile(out, api=None, read=None):
++    api = api or HfApi()
++    repo = 'jakejharris/jspark3'
++    manifest = package.load(out / 'package.json')
++    expected = manifest['hf_files']
++    payload = {name: (out / 'hf' / name).read_bytes() for name in expected}
++    package.need({name: hashlib.sha256(data).hexdigest() for name, data in payload.items()} == expected,
++                 'HF byte snapshot differs from approved package')
++    if read is None:
++        def read(revision, name):
++            return Path(hf_hub_download(repo, name, repo_type='model', revision=revision,
++                                       token=api.token)).read_bytes()
++    before = api.model_info(repo, files_metadata=True)
++    card = before.card_data or {}
++    package.need(card.get('license') == 'apache-2.0' or
++                 (card.get('license') == 'other' and card.get('license_name') == 'shapleymcg-license-1.0'),
++                 'remote HF card license differs; stop for reconciliation')
++    current = inventory(before)
++    untouched = {name: row for name, row in current.items() if name not in expected}
++    plan_path = out / 'hf-upload-plan.json'
++    if plan_path.exists():
++        plan = package.load(plan_path)
++        package.need(plan['package_sha256'] == package.sha(out / 'package.json')
++                     and plan['payload'] == expected and plan['untouched'] == untouched,
++                     'HF retry plan or non-payload inventory differs')
++    else:
++        plan = {'package_sha256': package.sha(out / 'package.json'), 'parent': before.sha,
++                'payload': expected, 'untouched': untouched}
++        save_atomic(plan_path, plan)  # Persist before any external mutation.
++
++    def matches(info):
++        names = set(inventory(info))
++        return all(name in names and hashlib.sha256(read(info.sha, name)).hexdigest() == sha
++                   for name, sha in expected.items())
++
++    if matches(before):
++        oid, action = before.sha, 'skip-exact-bytes'
++    else:
++        package.need(before.sha == plan['parent'], 'HF main changed to a conflicting payload; refusing overwrite')
++        ops = [CommitOperationAdd(path_in_repo=name, path_or_fileobj=data) for name, data in payload.items()]
++        oid = api.create_commit(repo_id=repo, repo_type='model', revision='main', parent_commit=before.sha,
++                                operations=ops, commit_message='JSpark3 ' + manifest['tag'] + ' recipe and results').oid
++        after = api.model_info(repo, revision=oid, files_metadata=True)
++        package.need(matches(after), 'HF committed payload differs')
++        package.need({name: row for name, row in inventory(after).items() if name not in expected} == untouched,
++                     'HF non-payload files changed')
++        action = 'committed'
++    package.need(api.model_info(repo).sha == oid, 'HF main changed during verification; rerun')
++    result = {'commit': oid, 'parent': plan['parent'], 'package_sha256': plan['package_sha256'], 'action': action}
++    save_atomic(out / 'hf-published.json', result)
++    return result
++
++
+ if __name__=='__main__':
+     ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('package',type=Path);ap.add_argument('--execute',action='store_true')
+@@ -21,16 +95,3 @@
+     print(json.dumps({'repo':'jakejharris/jspark3','operations':[{'add':op.path_in_repo,'sha256':m['hf_files'][op.path_in_repo]} for op in ops], 'deletes':[], 'weights_uploaded':False},indent=2))
+     if a.execute:
+-        api=HfApi(); before=api.model_info('jakejharris/jspark3',files_metadata=True)
+-        package.need(before.card_data.get('license')=='apache-2.0' or (before.card_data.get('license')=='other' and before.card_data.get('license_name')=='shapleymcg-license-1.0'),'remote HF card license differs; stop for reconciliation')
+-        # Preserve every path outside the exact documentation allowlist. The
+-        # parent CAS prevents racing another change between this read and commit.
+-        unchanged={s.rfilename:(s.size,s.blob_id,s.lfs) for s in before.siblings if s.rfilename not in m['hf_files']}
+-        commit=api.create_commit(repo_id='jakejharris/jspark3',repo_type='model',revision='main',parent_commit=before.sha,
+-                                 operations=ops,commit_message='JSpark3 '+m['tag']+' recipe and results')
+-        after=api.model_info('jakejharris/jspark3',revision=commit.oid,files_metadata=True)
+-        for s in after.siblings:
+-            if s.rfilename in unchanged:
+-                package.need((s.size,s.blob_id,s.lfs)==unchanged.pop(s.rfilename),'HF non-payload file changed')
+-        package.need(not unchanged,'HF non-payload file disappeared')
+-        package.save(out/'hf-published.json',{'commit':commit.oid,'parent':before.sha,'package_sha256':package.sha(out/'package.json')})
+-        print(commit.oid)
++        print(json.dumps(reconcile(out), sort_keys=True))
+--- a/tools/publish_checks.py
++++ b/tools/publish_checks.py
+@@ -4,4 +4,6 @@
+ from datetime import datetime, timezone
+ import json
++import os
++os.environ.setdefault('HF_HUB_DISABLE_XET', '1')
+ from pathlib import Path
+ import subprocess
+@@ -21,4 +23,19 @@
+     package.need(redesign['state']=='OPEN' and redesign['mergedAt'] is None,
+                  'site redesign PR #98 must be OPEN and unmerged; the site flip follows the GitHub release')
++
++
++def verify_refs(text, plan, complete=False):
++    rows = [line.split() for line in text.splitlines() if line.strip()]
++    package.need(all(len(row) == 2 for row in rows), 'malformed release refs')
++    refs = {ref: oid for oid, ref in rows}
++    expected = {'refs/heads/' + plan['branch']: plan['commit'],
++                'refs/tags/' + plan['tag']: plan['tag_object'],
++                'refs/tags/' + plan['tag'] + '^{}': plan['commit']}
++    package.need(len(rows) == len(refs) and all(expected.get(ref) == oid for ref, oid in refs.items()),
++                 'existing release ref differs from approved object')
++    tag = 'refs/tags/' + plan['tag']
++    package.need((tag in refs) == (tag + '^{}' in refs), 'release tag must be annotated with its approved target')
++    package.need(not complete or refs == expected, 'approved release refs are incomplete')
++    return refs
 
- The historical measured stock cohort used a validation profile for testing. It does not qualify production admission. This sanitized source distribution retains `hardware_qualified=false`; fresh qualification of the exact shipped configuration is required before production mode-0 admission. Measurements describe the separately identified serving configuration, not a hardware test of this source export.
-@@ -153,7 +164,5 @@
-     notes += f'\nRead [installation]({url}/blob/{ref}/docs/INSTALL.md), [operations]({url}/blob/{ref}/docs/OPERATIONS.md), [limitations]({url}/blob/{ref}/docs/LIMITATIONS.md), and [licensing]({url}/blob/{ref}/docs/LICENSING.md). Source archive, SBOM and checksums accompany this release.\n'
-     readme = f'# JSpark3 {tag}\n\n{headline}{headline_label}\n\n{comparison}{headline_ranges}\nA serving recipe for GLM-5.3 Flash on three DGX Sparks.\n\n'+posture+f'\nRead [installation](docs/INSTALL.md), [operations](docs/OPERATIONS.md), [benchmarks](docs/BENCHMARKS.md), [release notes](release/RELEASE-NOTES.md) and [licensing](docs/LICENSING.md). Verify the source with `python3 -B tools/validate_release.py .`.\n'
--    card = f'''---
--license: apache-2.0
--base_model: zai-org/GLM-5.3-Flash
-+    card = f'''{HF_LICENSE_HEADER}base_model: zai-org/GLM-5.3-Flash
- base_model_relation: quantized
- library_name: transformers
-@@ -177,5 +186,5 @@
- {posture}
 
--The card's Apache-2.0 metadata follows the publication policy. It is not a relicensing of the model files or the assembled service. Existing model license and attribution documents continue to apply.
-+The card's license metadata names the ShapleyMcg License v1.0 in LICENSE, which covers the model files. The component licenses above describe the recipe and service code. Existing model license and attribution documents continue to apply.
-
- See {links}, [the recipe]({url}/tree/{ref}/recipe), and [installation]({url}/blob/{ref}/docs/INSTALL.md).
+@@ -53,9 +70,15 @@
+     a=ap.parse_args(); m,plan=verify_local(a.package.resolve(),a.checkout.resolve(),a.go,a.variants.resolve() if a.variants else None)
+     def gh(*args): return package.run(['gh',*args]).stdout.strip()
+-    main=verify_public_main(m,json.loads(gh('api','repos/jakejharris/jspark3/git/ref/heads/main')))
+-    redesign=json.loads(gh('pr','view','98','--repo','jakejharris/jakeportfolio','--json','state,mergedAt'))
+-    verify_redesign(redesign)
+-    refs=package.run(['git','-C',a.checkout,'ls-remote','origin','refs/tags/'+m['tag'],m['github_ref']]).stdout
+-    package.need(not refs.strip(),'release tag or branch already exists; inspect before resuming')
++    from publish_release import context, GitHub, check_release
++    ctx=context(a.package.resolve(),a.checkout.resolve(),m,plan); github=GitHub(ctx)
++    github.refs(complete=False)
++    release=github.release()
++    main=redesign=None
++    if release is None:
++        main=verify_public_main(m,json.loads(gh('api','repos/jakejharris/jspark3/git/ref/heads/main')))
++        redesign=json.loads(gh('pr','view','98','--repo','jakejharris/jakeportfolio','--json','state,mergedAt'))
++        verify_redesign(redesign)
++    else:
++        check_release(release,ctx,github,partial=True)
+     from huggingface_hub import HfApi
+     info=HfApi().model_info('jakejharris/jspark3')
+--- /dev/null
++++ b/tools/publish_release.py
+@@ -0,0 +1,165 @@
++#!/usr/bin/env python3
++"""Resume the approved GitHub release without replacing conflicting public state."""
++import argparse
++import hashlib
++import json
++from pathlib import Path
++import subprocess
++import package as p
++from publish_checks import verify_local, verify_public_main, verify_redesign, verify_refs
++
++REPO = 'jakejharris/jspark3'
++
++
++def digest(data):
++    return hashlib.sha256(data).hexdigest()
++
++
++def context(out, checkout, manifest, plan):
++    return {'out': out, 'checkout': checkout, 'manifest': manifest, 'plan': plan,
++            'body': (out / 'release-body.md').read_text(),
++            'assets': {name: (out / 'assets' / name).read_bytes() for name in p.files(out / 'assets')}}
++
++
++class GitHub:
++    def __init__(self, ctx):
++        self.ctx = ctx
++
++    def api(self, path, missing=False):
++        try:
++            return json.loads(p.run(['gh', 'api', 'repos/' + REPO + '/' + path]).stdout)
++        except subprocess.CalledProcessError as exc:
++            if missing and '(HTTP 404)' in (exc.stderr or ''):
++                return None
++            raise
++
++    def refs(self, complete=True):
++        plan = self.ctx['plan']
++        text = p.run(['git', '-C', self.ctx['checkout'], 'ls-remote', 'origin',
++                      'refs/heads/' + plan['branch'], 'refs/tags/' + plan['tag'],
++                      'refs/tags/' + plan['tag'] + '^{}']).stdout
++        return verify_refs(text, plan, complete)
++
++    def release(self):
++        # The tag lookup is for published releases. Authenticated release listing
++        # also exposes drafts, including a draft whose create acknowledgement was lost.
++        pages = json.loads(p.run(['gh', 'api', 'repos/' + REPO + '/releases', '--paginate', '--slurp']).stdout)
++        matches = [row for page in pages for row in page if row['tag_name'] == self.ctx['plan']['tag']]
++        p.need(len(matches) <= 1, 'multiple releases share the approved tag')
++        return matches[0] if matches else None
++
++    def before_create(self):
++        verify_public_main(self.ctx['manifest'], self.api('git/ref/heads/main'))
++        redesign = json.loads(p.run(['gh', 'pr', 'view', '98', '--repo', 'jakejharris/jakeportfolio',
++                                     '--json', 'state,mergedAt']).stdout)
++        verify_redesign(redesign)
++
++    def create(self):
++        ctx = self.ctx
++        p.need((ctx['out'] / 'release-body.md').read_text() == ctx['body'], 'local release notes changed')
++        p.run(['gh', 'release', 'create', ctx['plan']['tag'], '--draft', '--repo', REPO,
++               '--verify-tag', '--target', ctx['plan']['commit'], '--title', 'JSpark3 ' + ctx['plan']['tag'],
++               '--notes-file', ctx['out'] / 'release-body.md'])
++
++    def asset_bytes(self, asset):
++        return subprocess.run(['gh', 'api', 'repos/' + REPO + '/releases/assets/' + str(asset['id']),
++                               '-H', 'Accept: application/octet-stream'], check=True, capture_output=True).stdout
++
++    def remove_placeholder(self, asset):
++        p.run(['gh', 'api', '--method', 'DELETE', 'repos/' + REPO + '/releases/assets/' + str(asset['id'])])
++
++    def upload(self, name):
++        path = self.ctx['out'] / 'assets' / name
++        p.need(path.read_bytes() == self.ctx['assets'][name], 'local asset changed before upload')
++        p.run(['gh', 'release', 'upload', self.ctx['plan']['tag'], path, '--repo', REPO])
++
++    def publish(self):
++        p.run(['gh', 'release', 'edit', self.ctx['plan']['tag'], '--repo', REPO, '--draft=false', '--latest'])
++
++    def pr_state(self):
++        return json.loads(p.run(['gh', 'pr', 'view', '9', '--repo', REPO, '--json', 'state']).stdout)['state']
++
++    def close_pr(self):
++        p.run(['gh', 'pr', 'close', '9', '--repo', REPO])
++
++
++def check_release(release, ctx, github, partial=False):
++    p.need(release['tag_name'] == ctx['plan']['tag'] and release['name'] == 'JSpark3 ' + ctx['plan']['tag']
++           and release['target_commitish'] == ctx['plan']['commit'] and release['prerelease'] is False,
++           'existing release identity differs')
++    normalize = lambda text: text.replace('\r\n', '\n').rstrip('\n')
++    p.need(normalize(release['body'] or '') == normalize(ctx['body']), 'existing release notes differ')
++    rows = release['assets']
++    p.need(len(rows) == len({row['name'] for row in rows}), 'duplicate release asset names')
++    missing = set(ctx['assets'])
++    placeholders = []
++    for row in rows:
++        name = row['name']
++        p.need(name in missing, 'unexpected release asset')
++        # A failed draft upload may leave an empty GitHub starter placeholder.
++        if partial and release['draft'] and row['state'] == 'starter' and row['size'] == 0 and not row.get('digest'):
++            placeholders.append(row)
++            continue
++        data = ctx['assets'][name]
++        p.need(row['state'] == 'uploaded' and row['size'] == len(data), 'existing asset is incomplete or differs')
++        if row.get('digest'):
++            p.need(row['digest'] == 'sha256:' + digest(data), 'existing asset hash differs')
++        else:
++            p.need(github.asset_bytes(row) == data, 'existing asset bytes differ')
++        missing.remove(name)
++    p.need(partial or not missing, 'release assets are incomplete')
++    return sorted(missing), placeholders
++
++
++def reconcile(ctx, github):
++    github.refs()
++    existing = github.release()
++    if existing is not None:
++        check_release(existing, ctx, github, partial=True)
++    p.need(github.pr_state() in ('OPEN', 'CLOSED'), 'unexpected contributor PR state')
++    if existing is None:
++        github.before_create()
++        github.create()
++        existing = github.release()
++        p.need(existing is not None, 'release not visible after draft creation; rerun')
++    missing, placeholders = check_release(existing, ctx, github, partial=True)
++    for row in placeholders:
++        github.remove_placeholder(row)
++    for name in missing:
++        github.upload(name)
++    # Re-read every asset before publishing; no clobber, deletion of uploaded
++    # assets, or replacement of mismatched notes/ref objects is permitted.
++    github.refs()
++    complete = github.release()
++    check_release(complete, ctx, github)
++    if complete['draft']:
++        github.publish()
++    published = github.release()
++    check_release(published, ctx, github)
++    p.need(published['draft'] is False, 'release remains draft; rerun')
++    state = github.pr_state()
++    p.need(state in ('OPEN', 'CLOSED'), 'contributor PR state changed')
++    if state == 'OPEN':
++        github.close_pr()
++    p.need(github.pr_state() == 'CLOSED', 'PR close incomplete; rerun')
++    return {'release_id': published['id'], 'tag': ctx['plan']['tag'], 'status': 'PUBLISHED',
++            'package_sha256': p.sha(ctx['out'] / 'package.json')}
++
++
++def main():
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument('package', type=Path)
++    parser.add_argument('--checkout', type=Path, required=True)
++    parser.add_argument('--go', type=Path, required=True)
++    parser.add_argument('--variants', type=Path)
++    args = parser.parse_args()
++    manifest, plan = verify_local(args.package, args.checkout, args.go, args.variants)
++    ctx = context(args.package, args.checkout, manifest, plan)
++    result = reconcile(ctx, GitHub(ctx))
++    p.save(args.package / 'publish-complete.json', result)
++    print(json.dumps(result, sort_keys=True))
++    print(p.run(['gh', 'release', 'view', plan['tag'], '--repo', REPO, '--json', 'tagName,name,url,assets']).stdout)
++
++
++if __name__ == '__main__':
++    main()
+--- a/tools/test_headline.py
++++ b/tools/test_headline.py
+@@ -32,7 +32,7 @@
+             text=content[name]
+             test(rule+' '+name+' labelled c4 maxima and full ranges',lambda text=text:check_headline_copy(text,raw))
+-            test(rule+' '+name+' unlabelled up to refuses',lambda text=text:check_headline_copy(text.replace(BEST_OF_TWO,''),raw),True,'unlabelled up to')
+-            test(rule+' '+name+' missing in-document range refuses',lambda text=text:check_headline_copy(text.replace('| prose | 4 | 83.3 to 90.7 |',''),raw),True,'full ranges required')
+-            test(rule+' '+name+' changed maximum refuses',lambda text=text:check_headline_copy(text.replace('Up to 141.7','Up to 141.8'),raw),True,'differs from frozen c4 maxima')
++            test(rule+' '+name+' unlabelled up to refuses',lambda text=text:check_headline_copy(text.replace(BEST_OF_TWO,''),raw),True,'two-sweep measurement scope')
++            test(rule+' '+name+' missing in-document range refuses',lambda text=text:check_headline_copy(text.replace('83.3 to 90.7 tok/s at 4 streams',''),raw),True,'full ranges required')
++            test(rule+' '+name+' changed maximum refuses',lambda text=text:check_headline_copy(text.replace('136.9 to 141.7','136.9 to 141.8'),raw),True,'differs from frozen ranges')
+     for name,change in [
+         ('wrong run count',lambda d:d['sets']['release_m0']['cells']['decode_c4'].update(n=1)),
+@@ -43,5 +43,5 @@
+         test(name+' refuses',lambda changed=changed:render(json.dumps(changed),'b',True),True)
+     text=render(raw,'b',True)['README.md']+'\nUp to 999 tok/s at 4 streams.\n'
+-    test('additional unlabelled up to refuses',lambda:check_headline_copy(text,raw),True,'differs from frozen c4 maxima')
++    test('additional unlabelled up to refuses',lambda:check_headline_copy(text,raw),True,'differs from frozen ranges')
+     result={'checks':checks,'passed':sum(c['pass'] for c in checks),'total':len(checks),'results_sha256':p.sha(config['results']),'maxima_binding':proof,'offline_controls':True}
+     p.save(p.HERE/'evidence/pass-1240-20260927/headline-controls.json',result)
+--- a/tools/test_package.py
++++ b/tools/test_package.py
+@@ -74,5 +74,5 @@
+     raw=numbers.read_bytes()
+     content=render(raw,'b',True)
+-    check('headline copies literal c4 maxima with labelled ranges',lambda:p.need('Up to 141.5 tok/s code and 92.6 tok/s prose' in content['headline'] and BEST_OF_TWO in content['README.md'] and '| code | 4 | 137.8 to 141.5 |' in content['README.md'],'unbound headline'))
++    check('headline copies literal c4 maxima with labelled ranges',lambda:p.need('Measured: 137.8 to 141.5 tok/s code decode at 4 streams and 180.1 to 181.0' in content['headline'] and BEST_OF_TWO in content['README.md'] and 'Prose decode: 85.9 to 92.6 tok/s at 4 streams' in content['README.md'],'unbound headline'))
+     check('matched median reference clause',lambda:p.need('Our median' in content['release/RELEASE-NOTES.md'] and '45.48' in content['release/RELEASE-NOTES.md'],'comparison absent'))
+     changed=deepcopy(n)
+@@ -99,5 +99,5 @@
+                 try:p.validate(frozen)
+                 except ValueError as exc:
+-                    p.need('unlabelled up to' in str(exc),'wrong refusal: '+str(exc));return
++                    p.need('two-sweep measurement scope' in str(exc),'wrong refusal: '+str(exc));return
+                 raise ValueError('unlabelled up to was accepted')
+             check('rehashed unlabelled up to refused by semantic policy',refuse_unlabelled)

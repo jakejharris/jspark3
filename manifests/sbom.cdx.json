@@ -5,7 +5,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "f4b50ecc71f2e2450e8e0a7d428d62cf5248277eb2fb61e8042c05f61e79eb11"
+          "content": "3d31cdcbb9bd43a0f92f8a73918d26ab5741ac65430a6892b75a83f217df9461"
         }
       ],
       "licenses": [
@@ -2130,7 +2130,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "e106d5fad61cacc89f3923bccad23228a0760bd75c4179618ab3dfe438151b0a"
+          "content": "b480384a3a4e157468f3f6b92f91da781c2967ea82575abf01ff1a913d528673"
         }
       ],
       "licenses": [
@@ -2181,7 +2181,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "2e823762ea37c0fbb7c3b94c1771820feb56847026741828f767b43b5114e4d7"
+          "content": "0cce0028122462be0356ab075f3ee77a7277ac8660e9c34f6027fdf53427869f"
         }
       ],
       "licenses": [
@@ -2521,7 +2521,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "74d8b223252971c5f384191ab591e1d3495151c27b18f67b49240a3831fa9363"
+          "content": "40e65885472398346e7a7c0baf79d520ba384cd4e5e813ce27d6c1ddd7196e8d"
         }
       ],
       "licenses": [
@@ -2589,7 +2589,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "8ab89831897e2c07b8e7f9fb8472c707d6dc096f715a8f9ffdd8e9108293c2bd"
+          "content": "8b7816713b267a86db6c4cad081f08155b642d97a8c66996224b0086377857b6"
         }
       ],
       "licenses": [
@@ -2617,6 +2617,23 @@
         }
       ],
       "name": "recipe/scripts/make_image_receipt.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "22d61e7e36cb7c363ef6048b9847cd54b4b72ee27f26779d608853a9987e98fd"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/scripts/page_cache_hygiene.py",
       "type": "file"
     },
     {
@@ -2821,6 +2838,23 @@
         }
       ],
       "name": "recipe/scripts/triar_entry.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "7bc10db054b01f3f0815f70ed57b41b389b451b965304a98b9d6fb0026d1896b"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/scripts/triar_inactive.py",
       "type": "file"
     },
     {

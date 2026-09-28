@@ -1,0 +1,54 @@
+{
+  "definition": "(usage.completion_tokens - 1) / seconds from first to last content chunk",
+  "hardware_qualified": false,
+  "max_tokens": 512,
+  "median_decode_tok_s": 49.05,
+  "model": "glm-5.3-flash",
+  "profile": {
+    "ABLIT": "0",
+    "GLM53_ADAPTIVE_K": "ema",
+    "JSPARK3_TRIAR": "1",
+    "JSPARK3_V14_PROFILE": "full",
+    "JSPARK3_V16_APC_LRU": "1",
+    "JSPARK3_V16_COOP": "0",
+    "JSPARK3_V16_DENSE_FP8": "trunk",
+    "JSPARK3_V16_PROFILE": "production-stock"
+  },
+  "prompt": "Write a Python module implementing a thread-safe LRU cache class with get, put and delete methods, type hints, docstrings and a short unittest suite.",
+  "reps": [
+    {
+      "chunks": 144,
+      "completion_tokens": 512,
+      "decode_s": 10.419,
+      "decode_tok_s": 49.05,
+      "prompt_tokens": 37,
+      "rep": 0,
+      "ttft_s": 0.185
+    },
+    {
+      "chunks": 156,
+      "completion_tokens": 512,
+      "decode_s": 11.181,
+      "decode_tok_s": 45.7,
+      "prompt_tokens": 37,
+      "rep": 1,
+      "ttft_s": 0.242
+    },
+    {
+      "chunks": 139,
+      "completion_tokens": 512,
+      "decode_s": 10.172,
+      "decode_tok_s": 50.23,
+      "prompt_tokens": 37,
+      "rep": 2,
+      "ttft_s": 0.184
+    }
+  ],
+  "sanitization": "Original base URL omitted; measurement rows copied without alteration",
+  "schema": "jspark3-operator-cleanroom-observation/1",
+  "scope": "One v1.8.2 operator-built three-Spark boot; full admission not run",
+  "source_commit": "7977795",
+  "source_receipt_sha256": "5e33cd02f3d31fa79301ee76110401ad8782c55c887469499949fe176f777b4b",
+  "temperature": 0,
+  "tok_source": "server usage.completion_tokens"
+}
