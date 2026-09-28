@@ -402,6 +402,9 @@ The legacy `build_coop_moe.sh ... seal` now refuses profile-only sealing.
 
 ## 4. Pass 2 after independent evidence review
 
+Use the [release integration checklist](COOP_RELEASE_CHECKLIST.md) for the exact
+pin, default, admission, measurement, documentation and inventory updates.
+
 1. Integrate only publishable source metadata/evidence. Never distribute `.so`,
    raw compiler intermediates, model shards, NVIDIA package contents or private logs.
    Copy the measured policy into both source and bundle; refresh the source

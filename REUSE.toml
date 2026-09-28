@@ -300,3 +300,8 @@ SPDX-License-Identifier = "Apache-2.0"
 path = ["tools/v16/test_coop_sanitizer.py"]
 precedence = "aggregate"
 SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ["docs/COOP_RELEASE_CHECKLIST.md"]
+precedence = "aggregate"
+SPDX-License-Identifier = "Apache-2.0"

@@ -22,6 +22,7 @@
     "docker/stock-v13/instanttensor-files.json": "Apache-2.0",
     "docs/BENCHMARKS.md": "Apache-2.0",
     "docs/COOP_QUALIFICATION_HANDOFF.md": "Apache-2.0",
+    "docs/COOP_RELEASE_CHECKLIST.md": "Apache-2.0",
     "docs/COOP_REPRODUCIBILITY.md": "Apache-2.0",
     "docs/INSTALL.md": "Apache-2.0",
     "docs/LICENSING.md": "Apache-2.0",

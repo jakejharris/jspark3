@@ -51,8 +51,8 @@
       "changed": true,
       "input_sha256": "17ad9fc5f274886f3a6243287a3431d3dbc1d77b29f20fbb26270e203d61dd08",
       "origin": "release-package-render",
-      "public_sha256": "ca7af20e8029347eddc833a46943f152336ce972cf9002ee29e27bc5252f2c09",
-      "revision": "sanitizer-launch-record-fix"
+      "public_sha256": "e2eb156237586e7a8300f1474790275622140fa9e0c8d3bf3a11d5ecacdc0009",
+      "revision": "v184-publish-preparation"
     },
     "THIRD_PARTY_NOTICES.md": {
       "changed": true,
@@ -83,8 +83,15 @@
       "changed": true,
       "input_sha256": "b99e219ae2c3ec2e09349149ae1a6b43fd8335cbd730f9a279a1064b34741fd9",
       "origin": "v1.8.4-offline-implementation",
-      "public_sha256": "54eedbc59c6f111f08e102e5fdcbc26cc0f389b129328673382bc98336418ec4",
-      "revision": "sanitizer-launch-record-fix"
+      "public_sha256": "e0cc7de816a0e9c34ca8e201a1933add2c93d19fc9e490c36493226ec6f67c37",
+      "revision": "v184-publish-preparation"
+    },
+    "docs/COOP_RELEASE_CHECKLIST.md": {
+      "changed": false,
+      "input_sha256": "f52c33c63ac2b075e46640e687ada0a062cb1f8458a04726870a4dfec983977d",
+      "origin": "v184-publish-preparation",
+      "public_sha256": "f52c33c63ac2b075e46640e687ada0a062cb1f8458a04726870a4dfec983977d",
+      "revision": "v184-publish-preparation"
     },
     "docs/COOP_REPRODUCIBILITY.md": {
       "changed": true,
@@ -170,8 +177,8 @@
       "changed": true,
       "input_sha256": "9830d95de98135c7d36d7ecc66e0f2fbd493a717227059317df57c1f654cbab6",
       "origin": "release-package-render",
-      "public_sha256": "f6086405eb48bb083259db8aaf527c255dd024175bdaebbddf62bf86716da3c6",
-      "revision": "sanitizer-launch-record-fix"
+      "public_sha256": "4978d2bba63a78a63154de07e10359f51d236ee80339f33c58121c913a4dfd5a",
+      "revision": "v184-publish-preparation"
     },
     "manifests/figure-bindings.json": {
       "changed": false,
@@ -204,8 +211,8 @@
       "changed": true,
       "input_sha256": "f968bb8ad61c217d1c955e5a6209b35cebfae065e3f1ef6d3077ed6a07f25739",
       "origin": "release-package-render",
-      "public_sha256": "479cd7fa1f543cc8befb8fb8985223bc892f2b7ccb073f962900cfb739dbbeec",
-      "revision": "sanitizer-launch-record-fix"
+      "public_sha256": "8a341f8788f4aee427d0fec38bb1b341cde526f39cc561327ec9d96e9f556679",
+      "revision": "v184-publish-preparation"
     },
     "manifests/qualification.json": {
       "changed": false,
@@ -250,8 +257,8 @@
       "changed": true,
       "input_sha256": "4385da5b65ce5e0fe108c5ea2a02b0bde63c22911593cdb4df42ec4fe169a6f8",
       "origin": "generated",
-      "public_sha256": "26733272a04a3fee34f79f9bbd8afdc4720f911e569485ae99b6be6b86533815",
-      "revision": "v1.8.4-pass1"
+      "public_sha256": "cc97c7c43e519eb255b2486cfef2c50388418aec5142a342f54b4cd79fe37151",
+      "revision": "v184-publish-preparation"
     },
     "recipe/.env.example": {
       "changed": true,

@@ -46,7 +46,7 @@
       "0",
       "1"
     ],
-    "qualification": "Historical source example and sealed measurements use 1; operator-native prepare_runtime.py explicitly writes 0. Operator coop-on is unsupported.",
+    "qualification": "Default operator preparation requires the release-pinned qualified component seal and writes 1. It refuses while the seal is pending. Explicit --coop-off writes 0 for diagnostics; every serving boot still requires its own admission.",
     "release_ship_value": null,
     "sealed_base_value": "1"
   },
