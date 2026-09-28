@@ -192,23 +192,6 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "61675e24eea8020ac34fbf33ffa4d382e8c92b77596822d92b366f56813efc71"
-        }
-      ],
-      "licenses": [
-        {
-          "license": {
-            "id": "Apache-2.0"
-          }
-        }
-      ],
-      "name": "recipe/config/native-build-policy.json",
-      "type": "file"
-    },
-    {
-      "hashes": [
-        {
-          "alg": "SHA-256",
           "content": "2117846b297757a88242e2e20993da19f0a83cd698cb5e08de75fb369f7aded1"
         }
       ],
@@ -2198,23 +2181,6 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "d8ff5419173f6fda891390af38b12e0732efb9f1625c63527d640ceb599cbaa0"
-        }
-      ],
-      "licenses": [
-        {
-          "license": {
-            "id": "Apache-2.0"
-          }
-        }
-      ],
-      "name": "recipe/scripts/_native_identity.py",
-      "type": "file"
-    },
-    {
-      "hashes": [
-        {
-          "alg": "SHA-256",
           "content": "2e823762ea37c0fbb7c3b94c1771820feb56847026741828f767b43b5114e4d7"
         }
       ],
@@ -2266,7 +2232,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "aede51e55499610aaa2edc38254c333b09eb6953c64a69157b61c4401bdefcc4"
+          "content": "7d1403192e734afbb294fbfe8d059f1348542d7fa4cd3bbbaaea05717c22420a"
         }
       ],
       "licenses": [
@@ -2725,7 +2691,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "f6b2451774bb22992ad96ed008e4866e8ea30ca68630c5aafd969f505784b74f"
+          "content": "6995c8f07f2e957b1a0169d720139e3727f05b198341f673f5a0a042ff8c2c86"
         }
       ],
       "licenses": [

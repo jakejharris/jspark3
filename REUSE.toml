@@ -40,8 +40,3 @@ SPDX-License-Identifier = "Apache-2.0"
 path = ["recipe/config/image-build-policy.json"]
 precedence = "aggregate"
 SPDX-License-Identifier = "Apache-2.0"
-
-[[annotations]]
-path = ["recipe/config/native-build-policy.json"]
-precedence = "aggregate"
-SPDX-License-Identifier = "Apache-2.0"

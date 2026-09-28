@@ -9,11 +9,10 @@ weights. Hardware admission remains unqualified; see the local image procedure b
    and source dependencies identified in `recipe/config/`. Image/module
    redistribution is outside this source package's license posture.
 3. On **one of your own DGX Sparks**, build the native artifacts using your
-   verified image (Python and Docker run on the Spark host; GCC/CUDA run inside
-   the ARM64 image):
+   verified image (Python/Docker on the host; GCC/CUDA inside the ARM64 image):
    `python3 -B tools/build_native.py --image-receipt ../operator-image.json --output ../native-build`.
-   No host CUDA compiler or GPU access is needed for compilation. An ARM64 Docker
-   host or Docker ARM64 emulation can also build them. It builds the display
+   No host CUDA compiler or GPU access is needed for compilation. Another ARM64
+   Docker host or Docker ARM64 emulation can also build them. It builds the display
    library, display probe and coop-MoE binary twice in fresh network-disabled
    containers at `/w`, checks byte identity, and writes a local receipt binding
    the exact source files, build recipe, image receipt and output hashes.
@@ -26,7 +25,12 @@ weights. Hardware admission remains unqualified; see the local image procedure b
    The source export stays unchanged. Run the controller from this prepared
    runtime's `recipe/scripts/`, and copy this same recipe to all three hosts.
    Without `--native-receipt`, the original historical output pins remain mandatory.
-5. Copy the runtime recipe's `.env.example` to a private environment file.
+   With a native receipt, preparation explicitly sets `JSPARK3_V16_COOP=0` in
+   the prepared `recipe/.env.example`. Keep that setting; operator coop-on
+   support requires a future implementation change.
+5. Copy the **prepared runtime recipe's** `.env.example` to a private environment
+   file, preserving `JSPARK3_V16_COOP=0` for operator native builds. Do not copy
+   the source export's example, which describes the historical coop-on setup.
    Replace documentation hosts, addresses, roots, interfaces and device paths.
    Point `JSPARK_RECIPE_ROOT` at the prepared runtime recipe on each host.
    Inspect `preflight`, `start`, `verify`, `status` and `stop` through
@@ -106,21 +110,23 @@ build record, with the same trust boundary as the image receipt, not a signature
 Receipt edits, source/build changes, a different image receipt and binary hash
 mismatches are refused. Keep both receipts and the source export together.
 
-The default is `production-stock`, `coop=1`, display profile `full`, adaptive-K
-`ema`, and dense FP8 `trunk`. Preparation seals an operator-built coop bundle to
-its native and image receipts, rewrites its runtime manifest, and binds the
-reference row choices to the operator binary. The source export's historical
-records stay unchanged. The runtime seal identifies the reused reference policy
-and records `hardware_qualified=false`; it does not claim new profile measurements.
-Preflight, the patch installer and the runtime loader accept this verified native
-identity, so the default profile does not require the historical binaries.
+Operator-native preparation selects `production-stock` with coop **off** and
+display profile `full`; adaptive-K `ema` and dense FP8 `trunk` remain unchanged.
+The source export's historical example has coop on, so use the prepared example.
+Its environment and native outputs are all bound by the runtime checksum inventory.
 
-Build and prepare once, then copy that exact image and prepared recipe to all
-three of your Sparks. Full preflight still checks their GPU, fabric, checkpoints,
-memory, headless display/DRM configuration and all normal admission conditions.
-Keep traffic blocked until fresh correctness/performance and production-stock
-qualification passes. Build/preparation success does not qualify the GPU kernels
-or display-memory behavior. No full DGX fleet run is claimed by the local tests.
+The historical BUILD.json, bundle manifest and measured row policy remain intact.
+`coop=1` still requires the historical sealed artifact and is refused for a changed
+operator binary. Enabling coop for operator builds requires a **future implementation
+change**. The current `tools/v16/build_coop_moe.sh` seal procedure is not an
+operator-image enablement route: runtime rejects a BUILD.json carrying the operator
+image with `cooperative-MoE build image drift`, even after fresh profiling. Do not
+rebind old profile hashes, edit the image identity, or enable coop to bypass that gate.
+
+Build/prepare once and copy the exact image and prepared recipe to all three
+Sparks. Full hardware, display/DRM, checkpoint, fabric, memory/no-swap and fresh
+production qualification requirements still apply. Coop-off performance is not
+established by the historical coop-on measurements.
 
 The prepared runtime selects `config/operator-image.json` everywhere: controller,
 remote preflight, per-container receipts and patch installers. Without that

@@ -48,30 +48,43 @@ def main():
     for name in binaries:
         shutil.copyfile(args.binary_root / name, output / name)
         (output / name).chmod(0o755)
-    recipe = output / 'recipe'
-    if image_record:
-        (recipe / 'config/operator-image.json').write_text(json.dumps(image_record, sort_keys=True) + '\n')
-    if native_record:
-        (recipe / 'config/operator-native.json').write_text(json.dumps(native_record, sort_keys=True) + '\n')
     sys.path.insert(0, str(output / 'recipe/scripts'))
     import apply_display_kv as display
     import apply_coop_moe as coop
     display.verify_sources()
     coop_native = 'recipe/overlays/v16/coop/bundle/cooperative_moe.so'
-    operator_coop = sha(output / coop_native) != binaries[coop_native]['expected_sha256']
-    if operator_coop:
-        from _native_identity import seal_operator_bundle
-        seal_operator_bundle(recipe, native_record)
-    coop.verify_bundle(coop.DEFAULT_BUNDLE, coop.DEFAULT_BUILD_RECORD)
+    needs_coop_seal = sha(output / coop_native) != binaries[coop_native]['expected_sha256']
+    if needs_coop_seal:
+        # The receipt proves a source build, not the historical 3x3 GPU profiles.
+        # Keep BUILD.json, manifest and row policy unchanged: verify_bundle must
+        # continue to refuse coop=1. Operator sealing needs future runtime support.
+        coop.verify_sources()
+    else:
+        coop.verify_bundle(coop.DEFAULT_BUNDLE, coop.DEFAULT_BUILD_RECORD)
+    recipe = output / 'recipe'
+    if image_record:
+        (recipe / 'config/operator-image.json').write_text(json.dumps(image_record, sort_keys=True) + '\n')
+    if native_record:
+        (recipe / 'config/operator-native.json').write_text(json.dumps(native_record, sort_keys=True) + '\n')
+        # A source-build receipt is not a hardware seal. The prepared example
+        # must explicitly select the supported off path; omission would allow
+        # callers to inherit a different default.
+        env = recipe / '.env.example'
+        env.write_text('\n'.join('JSPARK3_V16_COOP=0' if line.startswith('JSPARK3_V16_COOP=') else line
+                                 for line in env.read_text().splitlines()) + '\n')
     (recipe / 'SHA256SUMS').write_text(''.join(f'{sha(p)}  {p.relative_to(recipe).as_posix()}\n'
         for p in sorted(recipe.rglob('*')) if p.is_file() and p.name != 'SHA256SUMS'))
     (output / 'runtime-build-receipt.json').write_text(json.dumps({
         'source_tree_sha256': sha(root / 'SHA256SUMS'), 'recipe_manifest_sha256': sha(recipe / 'SHA256SUMS'),
         'operator_image_receipt_sha256': sha(recipe / 'config/operator-image.json') if image_record else None,
         'operator_native_receipt_sha256': sha(recipe / 'config/operator-native.json') if native_record else None,
-        'coop_artifact_seal': 'operator-native-receipt-v1' if operator_coop else 'historical',
+        'coop_hardware_seal_required': needs_coop_seal,
         'binary_sha256': {n: sha(output / n) for n in binaries}, 'hardware_qualified': False}, indent=2) + '\n')
     print('PASS local runtime recipe prepared; hardware admission remains closed')
+    if native_record:
+        print('Operator native build: prepared .env.example selects JSPARK3_V16_COOP=0; keep coop disabled')
+    if needs_coop_seal:
+        print('Coop-MoE candidate differs from the historical seal; operator coop=1 support requires a future implementation change')
 
 
 if __name__ == '__main__': main()

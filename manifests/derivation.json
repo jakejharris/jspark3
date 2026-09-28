@@ -13,7 +13,7 @@
       "changed": true,
       "input_sha256": "9e1306317b68af4677c2b6d2cd8a40cb3a27d9b13cde6a05264c59d007954814",
       "origin": "release-package-render",
-      "public_sha256": "7eac313d5d43dd882b54fda69968e5f7331fbf1fcab142fe8edea31018e82273",
+      "public_sha256": "58a2dd89c35524bb5c7f833f0f4236260dcdb793f8efac7e9e31fe3f9b267afc",
       "revision": "v1.8.1-operator-native"
     },
     "LICENSE": {
@@ -32,7 +32,7 @@
       "changed": true,
       "input_sha256": "7ce72ca2930b758a0b6ebb5d85ee0487483d23112f70a379ff1da43613f6c30e",
       "origin": "release-package-render",
-      "public_sha256": "41dd8d85cccf07605b15787f890fecf84864364e63c3ed15d2b9036669c1133b",
+      "public_sha256": "b8bd0ed264f251a2c63eaf98a46a3a5b9431a169bd68725321a45bd9f93b7344",
       "revision": "v1.8.1-operator-native"
     },
     "REQUIRED_ATTRIBUTION.md": {
@@ -45,8 +45,8 @@
       "changed": true,
       "input_sha256": "17ad9fc5f274886f3a6243287a3431d3dbc1d77b29f20fbb26270e203d61dd08",
       "origin": "release-package-render",
-      "public_sha256": "b14f96c00ff8f97b00ecdbe60f61b0167ba64520ec073eb53509a8c902a3ea05",
-      "revision": "v1.8.1-operator-native"
+      "public_sha256": "bbfae7f71068a8e5eb6ce0334dfc645fa31db09fcca8ae4f1c975466ba24cc93",
+      "revision": "v1.8.1-operator-image"
     },
     "THIRD_PARTY_NOTICES.md": {
       "changed": true,
@@ -76,7 +76,7 @@
       "changed": true,
       "input_sha256": "0a0d871fca9b3369747f1c0117074f4b5b164eca467c727efd88f4f53038bb63",
       "origin": "release-package-render",
-      "public_sha256": "2e7323bf2e8cc624f1c8de7c458ae3a4afcddefbf4b9db8c34ac900f3f7a2b90",
+      "public_sha256": "2e24f0e404588d6dc11c904cf049554ffafddc93da1cdfdcbe770d1db207719f",
       "revision": "v1.8.1-operator-native"
     },
     "docs/LICENSING.md": {
@@ -150,7 +150,7 @@
       "changed": true,
       "input_sha256": "f968bb8ad61c217d1c955e5a6209b35cebfae065e3f1ef6d3077ed6a07f25739",
       "origin": "release-package-render",
-      "public_sha256": "f848390c21ac92964d9325d3d34963b4c96cca0196ade0ff68504887f3cc30cb",
+      "public_sha256": "74d228ca6c4d8beaf48b239dfcfbebad5bc851d33a8c42d7a51d64a001a715e9",
       "revision": "v1.8.1-operator-native"
     },
     "manifests/qualification.json": {
@@ -170,8 +170,8 @@
       "changed": true,
       "input_sha256": "3df598b5f7e73d1a4961e895e33bb9cfcc2bd0cc4a0cf736f7806c0a01de3cea",
       "origin": "release-package-render",
-      "public_sha256": "8d16a1e4e2bfaf19b45a2b6fab4c2d2066c2d3519abaca0fb1dd68664fc89270",
-      "revision": "v1.8.1-operator-native"
+      "public_sha256": "b636b76695067a5116e0baf88a3399f8f93e7a33da079da8b0716157f5855669",
+      "revision": "v1.8.1-operator-image"
     },
     "manifests/serving-binding.json": {
       "changed": false,
@@ -186,11 +186,10 @@
       "public_sha256": "7ed001a4cdbd5a152abb307cb1659c96f4c76c39967a65df8eabcf227e135a26"
     },
     "manifests/toggles.json": {
-      "changed": true,
+      "changed": false,
       "input_sha256": "4385da5b65ce5e0fe108c5ea2a02b0bde63c22911593cdb4df42ec4fe169a6f8",
       "origin": "generated",
-      "public_sha256": "336be87aac636f0f38ed48a5b68455c65dedf59c55e26fe650b4f63e0b31ae7d",
-      "revision": "v1.8.1-operator-native"
+      "public_sha256": "4385da5b65ce5e0fe108c5ea2a02b0bde63c22911593cdb4df42ec4fe169a6f8"
     },
     "recipe/.env.example": {
       "changed": true,
@@ -258,13 +257,6 @@
       "input_sha256": "d5758b15b73dcd56487e9e3c57f57bea08dfb49412b889a24fda7a73b0840f70",
       "origin": "sealed-source",
       "public_sha256": "d5758b15b73dcd56487e9e3c57f57bea08dfb49412b889a24fda7a73b0840f70"
-    },
-    "recipe/config/native-build-policy.json": {
-      "changed": false,
-      "input_sha256": "61675e24eea8020ac34fbf33ffa4d382e8c92b77596822d92b366f56813efc71",
-      "origin": "v1.8.1-operator-native",
-      "public_sha256": "61675e24eea8020ac34fbf33ffa4d382e8c92b77596822d92b366f56813efc71",
-      "revision": "v1.8.1-operator-native"
     },
     "recipe/config/patch-contract.json": {
       "changed": true,
@@ -979,13 +971,6 @@
       "origin": "sealed-source",
       "public_sha256": "671324ca675ff5c74430932353e8ede3b9f02c82f84c69f9cd75b00c8150dbd2"
     },
-    "recipe/scripts/_native_identity.py": {
-      "changed": false,
-      "input_sha256": "d8ff5419173f6fda891390af38b12e0732efb9f1625c63527d640ceb599cbaa0",
-      "origin": "v1.8.1-operator-native",
-      "public_sha256": "d8ff5419173f6fda891390af38b12e0732efb9f1625c63527d640ceb599cbaa0",
-      "revision": "v1.8.1-operator-native"
-    },
     "recipe/scripts/api_smoke.py": {
       "changed": false,
       "input_sha256": "2e823762ea37c0fbb7c3b94c1771820feb56847026741828f767b43b5114e4d7",
@@ -1008,8 +993,8 @@
       "changed": true,
       "input_sha256": "39d1917cf59f113e3b9af31e9b1037d59c81da2c466d8b84d71360a9c7365b5b",
       "origin": "sealed-source",
-      "public_sha256": "aede51e55499610aaa2edc38254c333b09eb6953c64a69157b61c4401bdefcc4",
-      "revision": "v1.8.1-operator-native"
+      "public_sha256": "7d1403192e734afbb294fbfe8d059f1348542d7fa4cd3bbbaaea05717c22420a",
+      "revision": "v1.8.1-operator-image"
     },
     "recipe/scripts/apply_dense_fp8.py": {
       "changed": false,
@@ -1173,8 +1158,8 @@
       "changed": true,
       "input_sha256": "589e5868d3c49c3c672be746cac841d1d038027d191d3ac8bdea1dbec80de449",
       "origin": "sealed-source",
-      "public_sha256": "f6b2451774bb22992ad96ed008e4866e8ea30ca68630c5aafd969f505784b74f",
-      "revision": "v1.8.1-operator-native"
+      "public_sha256": "6995c8f07f2e957b1a0169d720139e3727f05b198341f673f5a0a042ff8c2c86",
+      "revision": "v1.8.1-operator-image"
     },
     "recipe/scripts/resource_scope.py": {
       "changed": true,
@@ -1339,14 +1324,14 @@
       "changed": true,
       "input_sha256": "a92c91c046638271b1988f4e11e7e9e808d8eec29dc815e24192ffa1c205d5fb",
       "origin": "export-template",
-      "public_sha256": "84c4e6eb4e86d9c1dd8bc60f8ead068e54eff19cf13d791a4c1f6468b98cb2f3",
+      "public_sha256": "94e68098b4f408937507aaa0cbfbb711b62d280b737dc2de2dbcf414c1500a51",
       "revision": "v1.8.1-operator-native"
     },
     "tools/test_native_build.py": {
       "changed": true,
       "input_sha256": "3c2a88afa4a706483170c9b2e2aa67537b135c167ef2742a58a9b71bef8d7b3b",
       "origin": "v1.8.1-operator-native",
-      "public_sha256": "761994538d081a32d818fa9defbcfbdec09619099bd49d7a57c563fd1cbd5f79",
+      "public_sha256": "ffeb020e4cebbbf3e7d00eef5cacdd1b03690dfd22f50c4c764948fb858b08d2",
       "revision": "v1.8.1-operator-native"
     },
     "tools/test_operator_image.py": {

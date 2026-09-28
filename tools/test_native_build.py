@@ -3,7 +3,6 @@
 """Offline native receipt policy tests. Real builds require an ARM64 Docker runtime."""
 import copy
 import hashlib
-import json
 from pathlib import Path
 import shutil
 import subprocess
@@ -16,16 +15,6 @@ import build_native as native
 
 
 class NativeReceiptTests(unittest.TestCase):
-    def test_runtime_policy_matches_build_inputs_and_reference(self):
-        policy = json.loads((native.ROOT / 'recipe/config/native-build-policy.json').read_text())
-        self.assertEqual(policy['build_inputs'], native.build_inputs())
-        reference = policy['coop_reference']
-        coop = native.ROOT / native.COOP
-        self.assertEqual(reference['manifest'], json.loads((coop / 'bundle/manifest.json').read_text()))
-        self.assertEqual(reference['policy_sha256'], native.sha(coop / 'bundle/dispatch_policy.json'))
-        self.assertEqual(reference['build_record_sha256'], native.sha(coop / 'BUILD.json'))
-        self.assertEqual(reference['rows'], json.loads((coop / 'bundle/dispatch_policy.json').read_text())['rows'])
-
     def setUp(self):
         self.directory = tempfile.TemporaryDirectory()
         self.addCleanup(self.directory.cleanup)
@@ -122,48 +111,50 @@ class DefaultProfileTests(unittest.TestCase):
                                       '--native-receipt', str(receipt), '--output', str(runtime)],
                                      capture_output=True, text=True)
             self.assertEqual(process.returncode, 0, process.stdout + process.stderr)
+            for name in ('BUILD.json', 'bundle/manifest.json', 'bundle/dispatch_policy.json'):
+                self.assertEqual((runtime / 'recipe/overlays/v16/coop' / name).read_bytes(),
+                                 (source / 'recipe/overlays/v16/coop' / name).read_bytes())
+            self.assertIn('JSPARK3_V16_COOP=1\n', (source / 'recipe/.env.example').read_text())
             code = '''
-import json, sys
+import os, sys
 from pathlib import Path
 sys.path.insert(0, sys.argv[1])
-import _fleetctl as fleet, remote_preflight as preflight, apply_coop_moe as coop
+import _fleetctl as fleet, remote_preflight as preflight
 r = Path(sys.argv[1]).parent
+os.environ['JSPARK3_V16_COOP'] = '1'
 values = fleet.load_env(r / '.env.example')
 assert values['JSPARK3_V16_PROFILE'] == 'production-stock'
-assert values['JSPARK3_V16_COOP'] == '1' and values['JSPARK3_V14_PROFILE'] == 'full'
+assert values['JSPARK3_V16_COOP'] == '0' and values['JSPARK3_V14_PROFILE'] == 'full'
 row = fleet.expected_v16_row(values)
-assert row['coop'] == 'on' and row['profile'] == 'production-stock'
-assert coop.verify_bundle(coop.DEFAULT_BUNDLE, coop.DEFAULT_BUILD_RECORD) == row['coop_bundle']
-policy = json.loads((coop.DEFAULT_BUNDLE / 'dispatch_policy.json').read_text())
-assert 'profile_log_sha256' not in policy and 'reference_policy_sha256' in policy
-record = json.loads(coop.DEFAULT_BUILD_RECORD.read_text())
-assert record['hardware_qualified'] is False
-import os, runpy, types
-os.environ.pop('GLM53_COOP_QUALIFICATION', None)
-os.environ.pop('GLM53_COOP_MAINTENANCE_TEST', None)
-# Exercise the actual adapter's file/policy verifier without importing a GPU
-# framework or executing kernels. These functions do not access torch.
-sys.modules['torch'] = types.ModuleType('torch')
-adapter = runpy.run_path(str(coop.DEFAULT_BUNDLE / 'runtime.py'))
-assert adapter['verify_bundle'](coop.DEFAULT_BUNDLE) == coop.DEFAULT_BUNDLE / 'cooperative_moe.so'
-assert adapter['load_row_policy'](coop.DEFAULT_BUNDLE) == {int(k): v for k, v in policy['rows'].items()}
-# Both normal host preflight and the patch installer use this verifier.
-for path in (coop.DEFAULT_BUNDLE / 'cooperative_moe.so', coop.DEFAULT_BUNDLE / 'dispatch_policy.json',
-             coop.DEFAULT_BUNDLE / 'manifest.json', coop.DEFAULT_BUILD_RECORD,
-             r / 'config/operator-native.json', r / 'config/operator-image.json',
-             coop.SOURCE_ROOT / 'native/cooperative_moe.cu'):
+assert row == preflight.v16_artifacts(r, values['JSPARK3_V16_PROFILE'], values['JSPARK3_V16_COOP'],
+                                    values['GLM53_ADAPTIVE_K'], values['JSPARK3_V16_DENSE_FP8'])
+assert row['coop'] == 'off' and row['coop_bundle'] == 'UNSEALED_ALLOWED_ONLY_WHEN_OFF'
+argv = fleet.preflight_argv(values, 0)
+assert argv[argv.index('--v16-coop') + 1] == '0'
+assert preflight.verify_manifest(r)
+values['JSPARK3_V16_COOP'] = '1'
+for check in (lambda: fleet.expected_v16_row(values),
+              lambda: preflight.v16_artifacts(r, 'production-stock', '1', 'ema', 'trunk')):
+    try:
+        check()
+    except preflight.Refusal as exc:
+        assert 'hardware-sealed' in str(exc) and 'bundle digest drift' in str(exc), str(exc)
+    else:
+        raise AssertionError('coop=1 accepted an unsealed operator binary')
+for name in ('overlays/v14/display_kv/display_kv_probe', 'overlays/v14/display_kv/libglm53_display_kv.so',
+             'overlays/v16/coop/bundle/cooperative_moe.so'):
+    path = r / name
     original = path.read_bytes()
     path.write_bytes(original + b'tamper')
     try:
-        fleet.expected_v16_row(values)
-    except (ValueError, preflight.Refusal, coop.Refusal):
-        pass
+        preflight.verify_manifest(r)
+    except preflight.Refusal as exc:
+        assert 'recipe manifest mismatch' in str(exc), str(exc)
     else:
-        raise AssertionError('accepted tamper: ' + str(path))
+        raise AssertionError('accepted runtime tamper: ' + name)
     finally:
         path.write_bytes(original)
-assert preflight.verify_manifest(r)
-print('PASS default production-stock coop=1 full: host/controller/installer/adapter artifact checks; seven tamper refusals')
+print('PASS prepared production-stock coop=0 full: controller/preflight; coop=1 and three binary tampers refused')
 '''
             process = subprocess.run([sys.executable, '-B', '-c', code, str(runtime / 'recipe/scripts')],
                                      capture_output=True, text=True)
