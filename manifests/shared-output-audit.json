@@ -7594,7 +7594,7 @@
     },
     "tools/test_component_serving.py": {
       "disposition": "Synthetic local test output only. Exercises real publication/refusal and comparison paths, retained private artifacts and opaque diagnostic controls; never hardware evidence.",
-      "sha256": "b904c04397e7d69a10eb24839f10e13c6fe09a7eec26ee6e3a69c273f05c7dd1",
+      "sha256": "30ff0668b11c9f4f08e4a7538169fc8a53944f8069735347ff68bde782cccd81",
       "sites": [
         {
           "function": "refresh_fixture",
@@ -7663,87 +7663,87 @@
         },
         {
           "function": "test_integrate_validate_and_prepare_with_real_gates.full_contract_gate",
-          "line": 197,
+          "line": 244,
           "operation": "run"
         },
         {
           "function": "test_integrate_validate_and_prepare_with_real_gates",
-          "line": 247,
+          "line": 294,
           "operation": "embedded output (private worker/test or fixed template)"
         },
         {
           "function": "test_integrate_validate_and_prepare_with_real_gates.production_entry",
-          "line": 251,
+          "line": 298,
           "operation": "run"
         },
         {
           "function": "test_integrate_validate_and_prepare_with_real_gates",
-          "line": 260,
+          "line": 307,
           "operation": "write_bytes"
         },
         {
           "function": "test_integrate_validate_and_prepare_with_real_gates",
-          "line": 266,
+          "line": 313,
           "operation": "write_bytes"
         },
         {
           "function": "test_integrate_validate_and_prepare_with_real_gates",
-          "line": 281,
+          "line": 328,
           "operation": "write"
         },
         {
           "function": "test_integrate_validate_and_prepare_with_real_gates",
-          "line": 286,
+          "line": 333,
           "operation": "write_bytes"
         },
         {
           "function": "test_entry_drift_refuses_source_validation_after_rehash",
-          "line": 291,
+          "line": 338,
           "operation": "write_bytes"
         },
         {
           "function": "test_install_contract_drift_refuses_source_validation",
-          "line": 304,
+          "line": 351,
           "operation": "write"
         },
         {
           "function": "test_missing_mismatched_foreign_seals_leave_no_output",
-          "line": 322,
+          "line": 369,
           "operation": "write"
         },
         {
           "function": "test_missing_mismatched_foreign_seals_leave_no_output",
-          "line": 327,
+          "line": 374,
           "operation": "write_bytes"
         },
         {
           "function": "test_policy_mismatch_refuses_after_checksums_refreshed",
-          "line": 332,
+          "line": 379,
           "operation": "write_bytes"
         },
         {
           "function": "test_policy_mismatch_refuses_after_checksums_refreshed",
-          "line": 339,
+          "line": 386,
           "operation": "write"
         },
         {
           "function": "test_final_refuses_every_stage_and_bound_without_measurements",
-          "line": 350,
+          "line": 397,
           "operation": "write"
         },
         {
           "function": "test_final_refuses_every_stage_and_bound_without_measurements",
-          "line": 356,
+          "line": 403,
           "operation": "write"
         },
         {
           "function": "test_private_state_refuses_inherited_admission",
-          "line": 365,
+          "line": 412,
           "operation": "write"
         },
         {
           "function": "test_original_qualification_manifest_remains_hash_bound",
-          "line": 372,
+          "line": 419,
           "operation": "write_bytes"
         }
       ]

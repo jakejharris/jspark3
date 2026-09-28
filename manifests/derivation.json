@@ -258,7 +258,7 @@
       "changed": true,
       "input_sha256": "fad5c997be3187d1ce467088572677544c60652fda500ea822e89392d7f8bca2",
       "origin": "v1.8.3-shared-output-r5",
-      "public_sha256": "c0e14a66c72dc9f1a41b01df7d987c0816649d8e5c82eb7f391273fd249f2816",
+      "public_sha256": "0556abfabff6feeb87c812c4954a76f5f67b20db7aaa45e34dd45029fe63fb03",
       "revision": "v184-entry-seam"
     },
     "manifests/stock-profile.json": {
@@ -1582,7 +1582,7 @@
       "changed": true,
       "input_sha256": "392cdc93c6d90a4f7c1fa03387d76c30b1271502564e328f73f996df4f32f0da",
       "origin": "v184-private-serving-source",
-      "public_sha256": "b904c04397e7d69a10eb24839f10e13c6fe09a7eec26ee6e3a69c273f05c7dd1",
+      "public_sha256": "30ff0668b11c9f4f08e4a7538169fc8a53944f8069735347ff68bde782cccd81",
       "revision": "v184-entry-seam"
     },
     "tools/test_fleetctl_errors.py": {

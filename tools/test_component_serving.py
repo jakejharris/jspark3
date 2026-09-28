@@ -192,9 +192,56 @@ row = preflight.v16_artifacts(recipe, 'production-stock', '1', 'ema', 'trunk')
 assert row['coop'] == 'on'
 assert row == fleet.expected_v16_row(fleet.load_env(recipe / '.env.example'))
 assert preflight.verify_manifest(recipe)
+# Exercise the installed-source consumers' selected pins without importing
+# torch/vLLM. Unknown entry bytes and contracts still refuse in their own gates.
+import os, runpy, json, copy, hashlib
+import _contracts as contracts
+import apply_base_pipeline as pipeline
+import apply_coop_moe as coop
+import apply_triar as triar
+base = json.loads((recipe / 'config/patch-contract.json').read_text())
+state = pipeline.snapshots(base)[0][-1].copy()
+for record in base['transforms']['apply_image_glm_dflash.py']['verify_only']:
+    if 'path' in record:
+        state.setdefault(record['path'], record['sha256'])
+for section in (contracts.V16_GRAMMAR_FSM, contracts.V16_WARMJIT,
+                coop.EXPECTED_SECTION, contracts.V16_ADAPTIVE_K, triar.section()):
+    for target in section['targets']:
+        if target['path'] in state:
+            assert state[target['path']] == target['before_sha256'], target['path']
+        state[target['path']] = target['after_sha256']
+os.environ.update(JSPARK3_V16_COOP='1', GLM53_ADAPTIVE_K='ema', B5_PREFIX_VERIFY='0')
+b5 = runpy.run_path(str(recipe / 'modules/b5_prefix_verify.py'))
+consumed = set(state) & set(b5['EXPECTED_SHA256'])
+assert {coop.EXL3, 'vllm/v1/core/sched/scheduler.py', 'vllm/v1/worker/gpu/cudagraph_utils.py'} <= consumed
+assert all(state[name] == b5['EXPECTED_SHA256'][name] for name in consumed)
+# Actual component/admission predicates on the integrated and prepared tree.
+# Synthetic boot receipts are test data, never hardware admission evidence.
+sys.path.insert(0, str(Path(sys.argv[2]) / 'tools/v16'))
+import qualify_runtime as qualify
+import admission_gate as admission
+component = qualify.component_identity(recipe, fleet.load_env(recipe / '.env.example'))
+first = dict(schema=admission.FIRST_SCHEMA, verdict='PASS', producer='qualify_runtime.py',
+             identity_config={'coop':'on', 'adaptive-k':'ema', 'dense-fp8':'trunk'},
+             component_qualification=component,
+             stock_profile={'ABLIT':'0', 'profile':'production-stock', 'APC':'1'},
+             manifest_sha256=fleet.recipe_manifest_sha256(),
+             boot=[{'rank': r, 'container_id': str(r + 1) * 64} for r in range(3)])
+final = {**first, 'schema': admission.FINAL_SCHEMA,
+         'input_hashes': {'client_evidence': [{'schema': admission.FIRST_SCHEMA,
+                          'sha256': admission.sha256_json(first)}]}}
+final['payload_sha256'] = admission.sha256_json(final)
+assert admission.evaluate(first, final, first_sha256=admission.sha256_json(first))['verdict'] == 'PASS'
+for key in ('native_sha256', 'policy_sha256', 'component_seal_sha256', 'gate_index_sha256'):
+    badfirst, badfinal = copy.deepcopy(first), copy.deepcopy(final)
+    for doc in (badfirst, badfinal):
+        doc['component_qualification'][key] = hashlib.sha256(key.encode()).hexdigest()
+    badfinal['input_hashes']['client_evidence'][0]['sha256'] = admission.sha256_json(badfirst)
+    badfinal['payload_sha256'] = admission.sha256_json({k:v for k,v in badfinal.items() if k != 'payload_sha256'})
+    assert admission.evaluate(badfirst, badfinal, first_sha256=admission.sha256_json(badfirst))['verdict'] == 'FAIL'
 '''
         def full_contract_gate():
-            return subprocess.run([sys.executable, '-B', '-c', program, str(runtime / 'recipe')],
+            return subprocess.run([sys.executable, '-B', '-c', program, str(runtime / 'recipe'), str(self.output)],
                                   capture_output=True, text=True, timeout=30)
         preflight = full_contract_gate()
         self.assertEqual(preflight.returncode, 0, preflight.stdout + preflight.stderr)
