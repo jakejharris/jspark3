@@ -90,8 +90,8 @@
       "changed": true,
       "input_sha256": "f52c33c63ac2b075e46640e687ada0a062cb1f8458a04726870a4dfec983977d",
       "origin": "v184-publish-preparation",
-      "public_sha256": "3b4f708811d234a0f9c9f1128171aaa8694792730865011536f61ba5c1fdf9de",
-      "revision": "v184-optional-hf-tags-fix"
+      "public_sha256": "03d55ca6294ef925c997e35131852c8f182bad61a4f670f9555ad79253fc304f",
+      "revision": "v184-grouped-credits"
     },
     "docs/COOP_REPRODUCIBILITY.md": {
       "changed": true,
@@ -184,8 +184,8 @@
       "changed": true,
       "input_sha256": "9830d95de98135c7d36d7ecc66e0f2fbd493a717227059317df57c1f654cbab6",
       "origin": "release-package-render",
-      "public_sha256": "a99f7e8f60763e7c17cc968e8c64c49ae4341136ef10d5ea3d2f3ab683274d24",
-      "revision": "v184-optional-hf-tags-fix"
+      "public_sha256": "5550ec853de71ea219887d89bc9b2ee41c705d1621dc88f7079c371968fbb887",
+      "revision": "v184-grouped-credits"
     },
     "manifests/figure-bindings.json": {
       "changed": false,
@@ -1441,8 +1441,8 @@
       "changed": true,
       "input_sha256": "227750b07407b5f6b70f1d3c43b5ae74a3ca94f671297e1e977296041c06d405",
       "origin": "release-package-render",
-      "public_sha256": "c89250c0d82a2f3ffe7845b0d7c63ed20535a696e3cb8c6ceede32a099bc6526",
-      "revision": "v184-shapleymcg-attribution"
+      "public_sha256": "2862fe8f8814fb2da76ed681a99cc33216fdc31a906905b8d17afc2103a29320",
+      "revision": "v184-grouped-credits"
     },
     "release/RELEASE-NUMBERS.md": {
       "changed": true,

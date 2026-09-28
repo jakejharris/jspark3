@@ -1,9 +1,5 @@
 # v1.8.4 candidate: pending component qualification
 
-The target model uses [ShapleyMcg](https://github.com/brandonmmusic-max/shapleymcg), created by Brandon M. Music.
-
-This work includes or was produced using ShapleyMcg, created by Brandon M. Music (https://github.com/brandonmmusic-max/shapleymcg). ShapleyMcg is licensed under the ShapleyMcg License v1.0, an attribution-required license that grants no rights to the person known as "0xSero." Use of ShapleyMcg without this attribution is unlicensed.
-
 This offline candidate adds the owner qualification/sealing workflow, a separate
 qualification-image/operator-image schema, default display+coop builds and
 qualified coop-on preparation/admission. It does not contain a measured policy
@@ -29,7 +25,19 @@ See [the owner workflow](../docs/COOP_REPRODUCIBILITY.md),
 [installation](../docs/INSTALL.md) and [measurement scope](MEASUREMENTS-v1.8.4.md).
 Historical results and notices remain preserved; compiled binaries are excluded.
 
-## ShapleyMcg citation
+## Credits
+
+JSpark3 builds on work by Z.AI, Inco AI, z-lab, Mia's AI Lab,
+FlyCockpit, vcruz305, sfxnz, Tony, turboderp, coolbho3k, gabewillen,
+plotarmordev, outstandly, the vLLM project and the InstantTensor contributors.
+See [THIRD_PARTY_NOTICES.md](../THIRD_PARTY_NOTICES.md) for component contributions,
+source revisions and license notices.
+
+The [ShapleyMcg](https://github.com/brandonmmusic-max/shapleymcg) attribution is reproduced below.
+
+This work includes or was produced using ShapleyMcg, created by Brandon M. Music (https://github.com/brandonmmusic-max/shapleymcg). ShapleyMcg is licensed under the ShapleyMcg License v1.0, an attribution-required license that grants no rights to the person known as "0xSero." Use of ShapleyMcg without this attribution is unlicensed.
+
+Schedule B citation:
 
 ```bibtex
 @misc{music2026shapleymcg,

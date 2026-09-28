@@ -76,10 +76,12 @@ memcheck/racecheck campaign and matched comparison. Credit Mia's AI Lab
 component boundaries and model restrictions; do not imply that linkage changes
 the licenses or that the complete service is Apache-2.0.
 
-Credit ShapleyMcg near the top of the HF card, link its canonical repository,
-include the Schedule B BibTeX citation and add the `shapleymcg` metadata tag.
-Include the credit, link, notice and citation in the release notes, and retain
-the citation in [`TECHNICAL-REPORT.md`](TECHNICAL-REPORT.md). Jake treats these
+Group upstream authors in one `Credits` section near the end of the release
+notes, README and HF card, naming each once in the credit prose and linking
+`THIRD_PARTY_NOTICES.md`. Keep the exact ShapleyMcg notice there, its canonical
+link, the HF `shapleymcg` metadata tag and Schedule B BibTeX citation. Preserve
+the citation in [`TECHNICAL-REPORT.md`](TECHNICAL-REPORT.md) and every source
+license notice, including notices in AGPL components. Jake treats these
 additions as goodwill: the publication kit warns during preparation and dry-run
 planning but does not block staging, approval or publication over attribution.
 The optional HF tag edit parses and serializes YAML, including flow lists with
