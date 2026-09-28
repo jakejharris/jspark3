@@ -16,7 +16,7 @@ import tempfile
 sys.dont_write_bytecode = True
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "recipe/scripts"))
-from _coop_qualification import TARGET_NATIVE
+from _coop_qualification import TARGET_NATIVE, verify_builder_host
 from _image_identity import ImageRefusal, canonical, read_operator_record, sha, verify_local_image
 
 # Same commands and /w paths as tools/v14/build_display_kv.sh. Do not run the
@@ -37,11 +37,36 @@ def builder_host():
     machine = Path('/etc/machine-id')
     if not machine.is_file() or not machine.read_text().strip():
         raise ImageRefusal('builder machine identity is unavailable')
-    return {'architecture': platform.machine(), 'machine_id_sha256': sha(machine)}
+    architecture = platform.machine()
+    physical = None
+    if architecture == 'aarch64':
+        # Read-only NVML inventory, without creating a CUDA context or exposing
+        # any GPU to the compiler containers. One integrated GB10 per board.
+        query = subprocess.run(['nvidia-smi', '--query-gpu=name,uuid', '--format=csv,noheader'],
+                               check=True, capture_output=True, text=True, timeout=10)
+        rows = [line.strip().split(',') for line in query.stdout.splitlines() if line.strip()]
+        if (len(rows) != 1 or len(rows[0]) != 2 or rows[0][0].strip() != 'NVIDIA GB10'
+                or not re.fullmatch(r'GPU-[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}', rows[0][1].strip())):
+            raise ImageRefusal('native ARM64 builder requires exactly one physical GB10 UUID')
+        physical = {'kind': 'gb10-gpu-uuid',
+                    'uuid_sha256': hashlib.sha256(rows[0][1].strip().lower().encode()).hexdigest()}
+    return {'architecture': architecture, 'machine_id_sha256': sha(machine), 'physical_identity': physical}
+
+
+def local_docker():
+    # The receipt must describe the host executing the build, not an SSH/TCP
+    # client's hardware. Rootless local Unix sockets are also supported.
+    endpoint = os.environ.get('DOCKER_HOST') if not os.environ.get('DOCKER_CONTEXT') else None
+    if not endpoint:
+        endpoint = subprocess.run(['docker', 'context', 'inspect', '--format', '{{.Endpoints.docker.Host}}'],
+                                  check=True, capture_output=True, text=True, timeout=10).stdout.strip()
+    if not endpoint.startswith('unix:///'):
+        raise ImageRefusal('native receipts require a local Docker Unix socket')
+    return endpoint
 
 
 def build_inputs():
-    paths = [ROOT / "tools/build_native.py", ROOT / DISPLAY / "display_kv.c",
+    paths = [ROOT / "tools/build_native.py", ROOT / "recipe/scripts/_coop_qualification.py", ROOT / DISPLAY / "display_kv.c",
              ROOT / DISPLAY / "probe_main.cu", ROOT / COOP / "build_repro.sh",
              ROOT / COOP / "SOURCE_MANIFEST.json", *(ROOT / COOP / "source").rglob("*")]
     return {p.relative_to(ROOT).as_posix(): sha(p) for p in sorted(paths) if p.is_file()}
@@ -60,7 +85,7 @@ def read_native_record(path, image):
     payload = {k: v for k, v in record.items() if k != "payload_sha256"}
     if record["payload_sha256"] != hashlib.sha256(canonical(payload)).hexdigest():
         raise ImageRefusal("operator native receipt payload hash mismatch")
-    if (record["schema_version"] != 1 or record["verification"] != "fixed-native-build-v1"
+    if (record["schema_version"] != 2 or record["verification"] != "fixed-native-build-v2"
             or record["hardware_qualified"] is not False
             or record["reproducibility"] != {"runs": 2, "comparison": "bit-identical"}
             or record["build_inputs"] != build_inputs()):
@@ -69,11 +94,7 @@ def read_native_record(path, image):
             or record["source_recipe_sha256"] != image["source_recipe_sha256"]
             or record["image_receipt_sha256"] != image["payload_sha256"]):
         raise ImageRefusal("operator native source/image binding drift")
-    host = record['builder_host']
-    if (not isinstance(host, dict) or set(host) != {'architecture', 'machine_id_sha256'}
-            or host['architecture'] not in ('aarch64', 'x86_64')
-            or not re.fullmatch('[0-9a-f]{64}', str(host['machine_id_sha256']))):
-        raise ImageRefusal('builder host identity malformed')
+    verify_builder_host(record['builder_host'])
     outputs = record["binary_sha256"]
     display = set(OUTPUTS["display"].values())
     with_coop = display | set(OUTPUTS["coop"].values())
@@ -124,6 +145,9 @@ def main():
         if image["source_recipe_sha256"] != sha(ROOT / "recipe/SHA256SUMS"):
             raise ImageRefusal("image receipt belongs to a different source recipe")
         verify_local_image(image)
+        endpoint = local_docker()
+        host = builder_host()
+        verify_builder_host(host)
         inputs = build_inputs()
         output.parent.mkdir(parents=True, exist_ok=True)
         with tempfile.TemporaryDirectory(prefix="jspark3-native-", dir=output.parent) as directory:
@@ -147,10 +171,12 @@ def main():
                 observed.update(first)
             if build_inputs() != inputs:
                 raise ImageRefusal("native build inputs changed during build")
-            record = {"schema_version": 1, "verification": "fixed-native-build-v1",
+            if local_docker() != endpoint or builder_host() != host:
+                raise ImageRefusal('builder identity changed during build')
+            record = {"schema_version": 2, "verification": "fixed-native-build-v2",
                       "source_recipe_sha256": image["source_recipe_sha256"],
                       "image_receipt_sha256": image["payload_sha256"], "build_inputs": inputs,
-                      "builder_host": builder_host(),
+                      "builder_host": host,
                       "reproducibility": {"runs": 2, "comparison": "bit-identical"},
                       "binary_sha256": observed, "hardware_qualified": False}
             record["payload_sha256"] = hashlib.sha256(canonical(record)).hexdigest()
@@ -163,7 +189,7 @@ def main():
             built.rename(output)
         print(f"PASS verified native builds; BINARY_ROOT={output}; hardware qualification remains required")
         return 0
-    except (OSError, ValueError, KeyError, subprocess.CalledProcessError) as exc:
+    except (OSError, ValueError, KeyError, subprocess.SubprocessError) as exc:
         print(f"REFUSE: {exc}", file=sys.stderr)
         return 9
 

@@ -30,6 +30,26 @@ def hash_ok(value):
     return isinstance(value, str) and re.fullmatch('[0-9a-f]{64}', value) and len(set(value)) > 1
 
 
+def verify_builder_host(host):
+    need(isinstance(host, dict) and set(host) == {'architecture', 'machine_id_sha256', 'physical_identity'}
+         and host['architecture'] in ('aarch64', 'x86_64')
+         and hash_ok(host['machine_id_sha256']), 'builder host identity malformed; rebuild old receipts')
+    physical = host['physical_identity']
+    need(physical is None or (isinstance(physical, dict)
+         and set(physical) == {'kind', 'uuid_sha256'} and physical['kind'] == 'gb10-gpu-uuid'
+         and hash_ok(physical['uuid_sha256'])), 'physical builder identity malformed')
+
+
+def independent_builders(first, second):
+    for host in (first, second):
+        verify_builder_host(host)
+        need(host['architecture'] == 'aarch64' and host['physical_identity'] is not None,
+             'independent builds require native ARM64 GB10 physical identities')
+    # machine-id is diagnostic only: cloned operating systems share it. GB10's
+    # integrated GPU identifies the physical board, independent of OS/hostname.
+    need(first['physical_identity'] != second['physical_identity'], 'second physical machine required')
+
+
 def regular(root, relative):
     rel = Path(relative)
     need(not rel.is_absolute() and '..' not in rel.parts and rel.parts, 'unsafe evidence path')
@@ -134,17 +154,16 @@ def verify_record(record, bundle, coop, *, release=True, operator=None):
              and build.get('image_receipt_sha256') == build_image['payload_sha256']
              and build.get('source_recipe_sha256') == build_image['source_recipe_sha256']
              and build.get('reproducibility') == {'runs': 2, 'comparison': 'bit-identical'}
+             and build.get('schema_version') == 2 and build.get('verification') == 'fixed-native-build-v2'
              and build.get('hardware_qualified') is False
              and build.get('binary_sha256', {}).get('recipe/overlays/v16/coop/bundle/cooperative_moe.so') == TARGET_NATIVE
-             and build.get('builder_host', {}).get('architecture') == 'aarch64'
-             and hash_ok(build['builder_host'].get('machine_id_sha256')), 'invalid native build evidence')
+             and build.get('builder_host', {}).get('architecture') == 'aarch64', 'invalid native build evidence')
         need(all(inputs.get(prefix + name) == expected for name, expected in record['compiled_inputs'].items())
              and inputs.get(prefix + 'SOURCE_MANIFEST.json') == record['qualification_source_manifest_sha256']
              and inputs.get(prefix + 'source/runtime.py') == raw['runtime_sha256']
              and inputs.get(prefix + 'source/dispatch_policy.json') == raw['dispatch_policy_sha256'],
              'native receipt differs from qualified source/builder inputs')
-    need(first['builder_host']['machine_id_sha256'] != second['builder_host']['machine_id_sha256'],
-         'second physical machine required')
+    independent_builders(first['builder_host'], second['builder_host'])
     need(record['reproducibility']['evidence_sha256'] == digest_value(first), 'qualification build receipt drift')
     gates = index.get('gates', {})
     need(set(gates) == set(gate_names()), 'missing/extra component gates')

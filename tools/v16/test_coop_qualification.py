@@ -30,6 +30,11 @@ def hashed(text):
     return hashlib.sha256(text.encode()).hexdigest()
 
 
+def host_identity(board):
+    return {'architecture': 'aarch64', 'machine_id_sha256': hashed('cloned OS'),
+            'physical_identity': {'kind': 'gb10-gpu-uuid', 'uuid_sha256': hashed(board)}}
+
+
 def profile_rows(rank, geometry, native_hash):
     rows = [{'stage':'profile_identity','native_sha256':native_hash}]
     for n in evidence.select_policy.ROWS:
@@ -87,7 +92,7 @@ class RecordTests(unittest.TestCase):
             'profile_log_sha256': self.profiles,
             'gates': {name: {'kind': kind, 'status': 'PASS', 'bundle':bundles.identity(self.bundle), **{key: hashed(name + key) for key in
                 ('receipt_sha256', 'log_sha256', 'environment_sha256', 'execution_sha256')}} for name, kind in q.gate_names().items()}}
-        second = {'image_receipt_sha256': image['payload_sha256'],
+        second = {'schema_version': 2, 'verification': 'fixed-native-build-v2', 'image_receipt_sha256': image['payload_sha256'],
                   'build_inputs':{**{runner.native.COOP + '/' + name:value for name,value in q.compiled_inputs(self.coop).items()},
                                   runner.native.COOP + '/SOURCE_MANIFEST.json':q.sha(self.coop / 'SOURCE_MANIFEST.json'),
                                   runner.native.COOP + '/source/runtime.py':q.sha(self.coop / 'source/runtime.py'),
@@ -95,11 +100,11 @@ class RecordTests(unittest.TestCase):
                   'source_recipe_sha256': image['source_recipe_sha256'],
                   'reproducibility': {'runs': 2, 'comparison': 'bit-identical'}, 'hardware_qualified': False,
                   'binary_sha256': {'recipe/overlays/v16/coop/bundle/cooperative_moe.so': q.TARGET_NATIVE},
-                  'builder_host': {'architecture': 'aarch64', 'machine_id_sha256': hashed('second host')}}
+                  'builder_host': host_identity('second')}
         second['payload_sha256'] = q.digest_value(second)
         self.index['independent_build'] = {'native_receipt': second, 'image_receipt': image}
         first = copy.deepcopy(second)
-        first['builder_host']['machine_id_sha256'] = hashed('first host')
+        first['builder_host'] = host_identity('first')
         first['payload_sha256'] = q.digest_value({k:v for k,v in first.items() if k != 'payload_sha256'})
         self.index['qualification_build'] = first
         runner.write(self.coop / 'QUALIFICATION.json', self.index)
@@ -130,6 +135,18 @@ class RecordTests(unittest.TestCase):
             self.verify()
         self.pin_fixture()
         self.assertEqual(self.verify()['native_sha256'], q.TARGET_NATIVE)
+
+    def test_seal_refuses_same_board_even_with_different_os_identity(self):
+        first = self.index['qualification_build']['builder_host']
+        second = self.index['independent_build']['native_receipt']
+        second['builder_host']['physical_identity'] = copy.deepcopy(first['physical_identity'])
+        second['builder_host']['machine_id_sha256'] = hashed('new OS identity')
+        second['payload_sha256'] = q.digest_value({k:v for k,v in second.items() if k != 'payload_sha256'})
+        runner.write(self.coop / 'QUALIFICATION.json', self.index)
+        self.record['gate_index_sha256'] = q.sha(self.coop / 'QUALIFICATION.json')
+        self.pin_fixture()
+        with self.assertRaisesRegex(ValueError, 'second physical machine'):
+            self.verify()
 
     def test_independent_eligible_operator_config_is_accepted(self):
         self.pin_fixture()
@@ -303,15 +320,16 @@ class RecordTests(unittest.TestCase):
         binary.parent.mkdir(parents=True)
         binary.write_bytes(self.native_bytes)
         for receipt, host in ((raw / 'native-build.json','first'),(second / 'native-build-receipt.json','second')):
-            build = {**self.index['qualification_build'], 'schema_version':1,'verification':'fixed-native-build-v1',
+            build = {**self.index['qualification_build'], 'schema_version':2,'verification':'fixed-native-build-v2',
                      'build_inputs':runner.native.build_inputs(),
-                     'builder_host':{'architecture':'aarch64','machine_id_sha256':hashed(host)}}
+                     'builder_host':host_identity(host)}
             build['binary_sha256'] = {**{name:hashed(name) for name in runner.native.OUTPUTS['display'].values()},
                                       runner.native.COOP + '/bundle/cooperative_moe.so':q.TARGET_NATIVE}
             build.pop('payload_sha256')
             write_record(receipt, build)
         args = argparse.Namespace(seal=raw,output=self.root / 'sealed',independent_build_root=second,
                                   independent_image_receipt=self.root / 'image.json')
+        runner.write(raw / 'independent-build.json', {'native_receipt': q.read(second / 'native-build-receipt.json'), 'image_receipt': image})
         before = {p.relative_to(raw):q.sha(p) for p in raw.rglob('*') if p.is_file()}
         with patch.object(runner,'TARGET_NATIVE',q.TARGET_NATIVE), patch.object(evidence,'TARGET_NATIVE',q.TARGET_NATIVE), \
                 patch.object(runner.native,'TARGET_NATIVE',q.TARGET_NATIVE), contextlib.redirect_stdout(io.StringIO()):
@@ -397,9 +415,9 @@ class RecordTests(unittest.TestCase):
                     (coop, 'SOURCE_MANIFEST_SHA256', self.record['source_manifest_sha256']),
                     (coop, 'DEFAULT_BUNDLE', self.bundle), (coop, 'DEFAULT_BUILD_RECORD', self.coop / 'BUILD.json')):
                 stack.enter_context(patch.object(module, name, value))
-            build = {'schema_version': 1, 'verification': 'fixed-native-build-v1',
+            build = {'schema_version': 2, 'verification': 'fixed-native-build-v2',
                      'source_recipe_sha256': image['source_recipe_sha256'], 'image_receipt_sha256': image['payload_sha256'],
-                     'build_inputs': native.build_inputs(), 'builder_host': native.builder_host(),
+                     'build_inputs': native.build_inputs(), 'builder_host': host_identity('local fixture'),
                      'reproducibility': {'runs': 2, 'comparison': 'bit-identical'}, 'binary_sha256': outputs,
                      'hardware_qualified': False}
             write_record(self.root / 'native.json', build)
@@ -423,6 +441,31 @@ class RecordTests(unittest.TestCase):
 
 
 class RunnerTests(unittest.TestCase):
+    def test_duplicate_or_missing_builder_refuses_before_any_container(self):
+        import argparse
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            image_path = root / 'image.json'
+            write_record(image_path, fixture())
+            image = images.read_operator_record(image_path)
+            build = {'builder_host': host_identity('same board')}
+            args = argparse.Namespace(output=root / 'campaign', check_only=True,
+                independent_build_root=root, independent_image_receipt=image_path)
+            (root / 'native-build-receipt.json').write_text('{}')
+            with patch.object(runner, 'inputs', return_value=(image, build, {}, {})), \
+                    patch.object(runner.native, 'read_native_record', return_value=build), \
+                    patch.object(runner, 'run_container') as execute:
+                for check_only in (True, False):
+                    args.check_only = check_only
+                    with self.assertRaisesRegex(ValueError, 'second physical machine'):
+                        runner.campaign(args)
+                args.independent_build_root = None
+                with self.assertRaisesRegex(ValueError, 'second-machine build'):
+                    runner.campaign(args)
+                execute.assert_not_called()
+                self.assertFalse(args.output.exists())
+                self.assertFalse(Path(str(args.output) + '.check').exists())
+
     def test_legacy_seal_cannot_be_reminted_with_placeholder_profiles(self):
         record = q.read(ROOT / 'recipe/overlays/v16/coop/BUILD.json')
         q.verify_legacy_record(record)
@@ -487,17 +530,25 @@ class RunnerTests(unittest.TestCase):
                     'nvcc': 'fixture', 'gcc': 'fixture', 'sanitizer': 'fixture'})
                 return types.SimpleNamespace(returncode=0)
             with patch.object(runner, 'inputs', return_value=(image, {}, {}, {})), \
-                    patch.object(runner.native, 'verify_local_image'), patch.object(runner, 'run_container', side_effect=execute), \
+                    patch.object(runner.native, 'verify_local_image'), patch.object(runner, 'independent_build', return_value={}), \
+                    patch.object(runner, 'run_container', side_effect=execute), \
                     contextlib.redirect_stdout(io.StringIO()):
                 runner.campaign(args)
             self.assertEqual(len(calls), 1)
             self.assertNotIn('--gpus', calls[0])
+            self.assertEqual(calls[0][calls[0].index('--memory') + 1], '4g')
+            self.assertEqual(calls[0][calls[0].index('--memory-swap') + 1], '4g')
             self.assertIn('NVIDIA_VISIBLE_DEVICES=void', calls[0])
             self.assertIn('CUDA_VISIBLE_DEVICES=', calls[0])
             check = Path(str(args.output) + '.check')
             plan = q.read(check / 'plan.json')
             self.assertEqual(set(plan), set(q.gate_names()) | {'environment', 'select-policy'})
             self.assertTrue(all('--gpus' in command for name, command in plan.items() if name != 'environment'))
+            estimates = q.read(check / 'plan-estimates.json')
+            self.assertEqual(set(estimates['steps']), set(plan))
+            self.assertEqual(estimates['confidence'], 'low')
+            self.assertEqual(estimates['gpu_window_seconds'], [5417, 14430])
+            self.assertTrue(all(command[command.index('--memory') + 1] == '16g' for name, command in plan.items() if name != 'environment'))
             self.assertFalse(args.output.exists())
             self.assertFalse((check / 'QUALIFICATION.json').exists())
             self.assertEqual(q.read(check / 'campaign.json')['status'], 'INCOMPLETE')

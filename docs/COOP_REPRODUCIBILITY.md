@@ -15,6 +15,15 @@ silently yield a display-only result; `--display-only` is diagnostic.
 
 ## Owner component workflow
 
+Follow the tracked [operator handoff](COOP_QUALIFICATION_HANDOFF.md) for exact
+source archives, writable paths, second-builder transfer, numeric memory guards
+and timing allowances. `TARGET_SNAPSHOT` can be the existing serving model
+directory; only read access is required. Native builders identify their integrated
+GB10 by a read-only GPU UUID query. Cloned machine-ids are accepted; duplicate
+physical boards are refused before check-only/campaign execution and at sealing.
+Old native receipts must be rebuilt, not edited. Remote Docker builders and
+emulated x86 builders cannot satisfy independent native qualification.
+
 Use a clean candidate source export or ordinary clone with no private working
 files. Run `python3 -B tools/validate_release.py .` for this pending candidate;
 `--require-final` must refuse until all component, admission and measurement pins
@@ -52,13 +61,16 @@ source checkout. Run check-only while the existing fleet remains serving:
 python3 -B tools/v16/qualify_coop.py \
   --image-receipt "$BUILD/operator-image.json" --build-root "$BUILD/native" \
   --model-root "$QUAL_MODEL" --fly-root "$QUAL_FLY" --helpers-root "$QUAL_HELPERS" \
-  --sanitizer-root "$QUAL_SANITIZER" --output "$QUAL" --check-only
+  --sanitizer-root "$QUAL_SANITIZER" --output "$QUAL" --check-only \
+  --independent-build-root "$SECOND_BUILD/native" \
+  --independent-image-receipt "$SECOND_BUILD/operator-image.json"
 ```
 
 Check-only writes `QUAL.check`, retains the complete container command plan,
 and runs CPU-only stage-8 transforms, dependency imports, host load/linkage,
 fixture-shape and sanitizer-option checks in a disposable container. It exposes
-no GPU and starts no service. Use a fresh output name for another check.
+no GPU and starts no service. Its memory and total memory+swap limits are 4 GiB;
+native compilation retains 8 GiB and exclusive GPU gates retain 16 GiB. Use a fresh output name for another check.
 
 Only after the owner drains and stops the bound fleet and reserves one GB10,
 repeat the same command without `--check-only`. The runner serially performs:

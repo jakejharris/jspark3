@@ -5,6 +5,7 @@ import copy
 from contextlib import redirect_stderr, redirect_stdout
 import hashlib
 import io
+import os
 from pathlib import Path
 import shutil
 import subprocess
@@ -15,6 +16,57 @@ from unittest.mock import patch
 
 sys.dont_write_bytecode = True
 import build_native as native
+from _coop_qualification import independent_builders
+
+
+def diagnostic_host():
+    return {'architecture': 'x86_64', 'machine_id_sha256': hashlib.sha256(b'diagnostic host').hexdigest(),
+            'physical_identity': None}
+
+
+class PhysicalBuilderTests(unittest.TestCase):
+    def host(self, uuid, architecture='aarch64'):
+        with patch.object(native.platform, 'machine', return_value=architecture), \
+                patch.object(native.subprocess, 'run', return_value=subprocess.CompletedProcess([], 0, f'NVIDIA GB10, {uuid}\n')) as query:
+            result = native.builder_host()
+        if architecture == 'aarch64':
+            self.assertEqual(query.call_args.args[0], ['nvidia-smi', '--query-gpu=name,uuid', '--format=csv,noheader'])
+        else:
+            query.assert_not_called()
+        return result
+
+    def test_cloned_os_distinct_boards_pass_same_board_refuses(self):
+        first = self.host('GPU-12345678-1234-1234-1234-123456789abc')
+        second = self.host('GPU-abcdefab-1234-1234-1234-123456789abc')
+        self.assertEqual(first['machine_id_sha256'], second['machine_id_sha256'])
+        independent_builders(first, second)
+        duplicate = self.host('GPU-12345678-1234-1234-1234-123456789ABC')
+        duplicate['machine_id_sha256'] = hashlib.sha256(b'reinstalled OS').hexdigest()
+        with self.assertRaisesRegex(ValueError, 'second physical machine'):
+            independent_builders(first, duplicate)
+        with self.assertRaisesRegex(ValueError, 'native ARM64 GB10'):
+            independent_builders(first, self.host('', 'x86_64'))
+
+    def test_missing_malformed_and_multiple_boards_refuse(self):
+        for output in ('', 'NVIDIA GB10, N/A', 'NVIDIA GB10, MIG-1234',
+                       'NVIDIA other, GPU-12345678-1234-1234-1234-123456789abc',
+                       'NVIDIA GB10, GPU-12345678-1234-1234-1234-123456789abc\n' * 2):
+            with self.subTest(output=output), patch.object(native.platform, 'machine', return_value='aarch64'), \
+                    patch.object(native.subprocess, 'run', return_value=subprocess.CompletedProcess([], 0, output)):
+                with self.assertRaisesRegex(ValueError, 'exactly one physical GB10'):
+                    native.builder_host()
+
+    def test_remote_docker_refused_including_context_override(self):
+        for endpoint in ('ssh://remote', 'tcp://remote:2376', ''):
+            with patch.dict(os.environ, {'DOCKER_HOST': '', 'DOCKER_CONTEXT': 'selected'}), \
+                    patch.object(native.subprocess, 'run', return_value=subprocess.CompletedProcess([], 0, endpoint)):
+                with self.assertRaisesRegex(ValueError, 'local Docker Unix socket'):
+                    native.local_docker()
+        with patch.dict(os.environ, {'DOCKER_HOST': 'tcp://remote:2376', 'DOCKER_CONTEXT': ''}):
+            with self.assertRaisesRegex(ValueError, 'local Docker Unix socket'):
+                native.local_docker()
+        with patch.dict(os.environ, {'DOCKER_HOST': 'unix:///run/user/1000/docker.sock', 'DOCKER_CONTEXT': ''}):
+            self.assertEqual(native.local_docker(), 'unix:///run/user/1000/docker.sock')
 
 
 class NativeReceiptTests(unittest.TestCase):
@@ -24,11 +76,11 @@ class NativeReceiptTests(unittest.TestCase):
         self.path = Path(self.directory.name) / 'receipt.json'
         self.image = {'payload_sha256': '2' * 64,
                       'source_recipe_sha256': native.sha(native.ROOT / 'recipe/SHA256SUMS')}
-        self.record = {'schema_version': 1, 'verification': 'fixed-native-build-v1',
+        self.record = {'schema_version': 2, 'verification': 'fixed-native-build-v2',
                        'source_recipe_sha256': self.image['source_recipe_sha256'],
                        'image_receipt_sha256': self.image['payload_sha256'],
                        'build_inputs': native.build_inputs(),
-                       'builder_host': native.builder_host(),
+                       'builder_host': diagnostic_host(),
                        'reproducibility': {'runs': 2, 'comparison': 'bit-identical'},
                        'binary_sha256': {name: (native.TARGET_NATIVE if group == native.OUTPUTS['coop'] else '3' * 64) for group in native.OUTPUTS.values() for name in group.values()},
                        'hardware_qualified': False}
@@ -63,6 +115,17 @@ class NativeReceiptTests(unittest.TestCase):
                 with self.assertRaises(native.ImageRefusal):
                     native.read_native_record(self.path, self.image)
 
+    def test_old_receipt_cannot_gain_physical_identity_by_reselfhashing(self):
+        old = {**self.record, 'schema_version': 1, 'verification': 'fixed-native-build-v1'}
+        self.write(old)
+        with self.assertRaisesRegex(ValueError, 'inputs/recipe drift'):
+            native.read_native_record(self.path, self.image)
+        old = copy.deepcopy(self.record)
+        del old['builder_host']['physical_identity']
+        self.write(old)
+        with self.assertRaisesRegex(ValueError, 'rebuild old receipts'):
+            native.read_native_record(self.path, self.image)
+
     def test_output_inventory_is_exact(self):
         for outputs in ({}, {name: '3' * 64 for name in native.OUTPUTS['coop'].values()},
                         {next(iter(native.OUTPUTS['display'].values())): '3' * 64},
@@ -92,7 +155,8 @@ class BuildSelectionTests(unittest.TestCase):
                  ('--display-only', None, ['display', 'display']),
                  (None, 'display', ['display', 'display']),
                  (None, 'coop', ['display', 'display', 'coop', 'coop']),
-                 (None, 'wrong-pin', ['display', 'display', 'coop', 'coop']))
+                 (None, 'wrong-pin', ['display', 'display', 'coop', 'coop']),
+                 (None, 'identity', ['display', 'display', 'coop', 'coop']))
         for option, drift, expected_calls in cases:
             with self.subTest(option=option, drift=drift), tempfile.TemporaryDirectory() as directory:
                 work = Path(directory)
@@ -116,17 +180,22 @@ class BuildSelectionTests(unittest.TestCase):
                 if option:
                     argv.append(option)
                 log = io.StringIO()
-                with patch.object(native, 'TARGET_NATIVE', hashlib.sha256(b'synthetic compiler output').hexdigest()), \
+                host = diagnostic_host()
+                after = {**host, 'machine_id_sha256': hashlib.sha256(b'changed host').hexdigest()} if drift == 'identity' else host
+                with patch.object(native, 'builder_host', side_effect=[host, after]), \
+                        patch.object(native, 'TARGET_NATIVE', hashlib.sha256(b'synthetic compiler output').hexdigest()), \
                         patch.object(sys, 'argv', argv), patch.object(native, 'verify_local_image'), \
                         patch('validate_release.verify', return_value={'failed': 0}), \
                         patch.object(native, 'build', side_effect=fake_build), \
+                        patch.object(native, 'local_docker', return_value='unix:///var/run/docker.sock'), \
                         redirect_stdout(log), redirect_stderr(log):
                     status = native.main()
                 self.assertEqual(calls, expected_calls)
                 self.assertEqual(status, 9 if drift else 0, log.getvalue())
                 self.assertEqual(output.exists(), drift is None)
                 if drift:
-                    self.assertIn('candidate pin' if drift == 'wrong-pin' else drift + ': two native builds differ', log.getvalue())
+                    self.assertIn('builder identity changed' if drift == 'identity' else
+                                  'candidate pin' if drift == 'wrong-pin' else drift + ': two native builds differ', log.getvalue())
                 else:
                     with patch.object(native, 'TARGET_NATIVE', hashlib.sha256(b'synthetic compiler output').hexdigest()):
                         record = native.read_native_record(output / 'native-build-receipt.json',
@@ -167,10 +236,10 @@ class DefaultProfileTests(unittest.TestCase):
                     path.parent.mkdir(parents=True, exist_ok=True)
                     path.write_bytes(b'\x7fELF synthetic ARM64 build fixture ' + name.encode())
                     outputs[name] = native.sha(path)
-            record = {'schema_version': 1, 'verification': 'fixed-native-build-v1',
+            record = {'schema_version': 2, 'verification': 'fixed-native-build-v2',
                       'source_recipe_sha256': image['source_recipe_sha256'],
                       'image_receipt_sha256': image['payload_sha256'], 'build_inputs': native.build_inputs(),
-                      'builder_host': native.builder_host(),
+                      'builder_host': diagnostic_host(),
                        'reproducibility': {'runs': 2, 'comparison': 'bit-identical'},
                       'binary_sha256': outputs, 'hardware_qualified': False}
             receipt = work / 'native.json'

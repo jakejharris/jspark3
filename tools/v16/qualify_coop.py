@@ -15,7 +15,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path[:0] = [str(ROOT / 'tools'), str(ROOT / 'recipe/scripts')]
 import build_native as native
 from _coop_qualification import (TARGET_NATIVE, canonical, compiled_inputs, digest_value,
-                                gate_names, need, read, regular, sha, verify_record)
+                                gate_names, independent_builders, need, read, regular, sha, verify_record)
 from _image_identity import build_policy
 from _coop_checkpoint import authenticate as fixture
 from _coop_bundle import identity as bundle_identity, verify_bundle
@@ -101,9 +101,34 @@ def inputs(args):
     return image, build, helper, fixture(args.model_root)
 
 
+def independent_build(args, first):
+    need(args.independent_build_root and args.independent_image_receipt,
+         'check/campaign/seal require second-machine build and image receipts')
+    image = native.read_operator_record(args.independent_image_receipt)
+    second = native.read_native_record(regular(args.independent_build_root, 'native-build-receipt.json'), image)
+    independent_builders(first['builder_host'], second['builder_host'])
+    need(sha(regular(args.independent_build_root, native.COOP + '/bundle/cooperative_moe.so')) == TARGET_NATIVE,
+         'second-machine native pin')
+    return {'native_receipt': second, 'image_receipt': image}
+
+
+def plan_estimates(plan):
+    # Planning allocations from the owner's 1.5–4 h estimate, not measured GPU
+    # runtimes or timeouts. The only measured step is the CPU environment (~17 s).
+    ranges = {'environment': [17, 60], 'h1': [80, 180], 'profile': [120, 300],
+              'smoke': [90, 240], 'geometry2': [180, 600], 'select': [17, 30], 'policy': [60, 180]}
+    steps = {name: {'seconds': ranges[name.split('-')[0]],
+                   'basis': 'one CPU rehearsal; upper allowance' if name == 'environment' else 'unmeasured planning allowance'}
+             for name in plan}
+    return {'schema_version': 1, 'confidence': 'low', 'steps': steps,
+            'gpu_window_seconds': [sum(row['seconds'][i] for name, row in steps.items() if name != 'environment') for i in (0, 1)],
+            'excludes': ['staging', 'drain', 'seal/review', 'fleet restore', 'serving qualification']}
+
+
 def container(args, campaign, stage, image, command, gpu):
+    memory = '16g' if gpu else '4g'
     options = ['docker', 'create', '--platform', 'linux/arm64', '--network', 'none',
-               '--cpus', '4', '--memory', '16g', '--memory-swap', '16g', '--pids-limit', '1024']
+               '--cpus', '4', '--memory', memory, '--memory-swap', memory, '--pids-limit', '1024']
     if gpu:
         options += ['--gpus', 'device=0']
     else:
@@ -133,6 +158,7 @@ def campaign(args):
     output = Path(str(args.output) + '.check') if args.check_only else args.output
     need(not output.exists() and not output.is_symlink() and not output.resolve().is_relative_to(ROOT), 'output must be new outside source')
     image, build, helper, checkpoint = inputs(args)
+    second = independent_build(args, build)
     native.verify_local_image(image)
     output.mkdir(parents=True)
     shutil.copytree(ROOT / 'recipe', output / 'recipe')
@@ -154,10 +180,12 @@ def campaign(args):
     plan = {name: container(args, output, output / ('container-' + name), image, command, name != 'environment')
             for name, command in commands}
     write(output / 'plan.json', plan)
+    write(output / 'plan-estimates.json', plan_estimates(plan))
     for name, command in plan.items():
         print(name + ': ' + shlex.join(command), flush=True)
     write(output / 'image.json', image)
     write(output / 'native-build.json', build)
+    write(output / 'independent-build.json', second)
     write(output / 'campaign.json', {'schema_version': 1, 'status': 'INCOMPLETE', 'identity': identity})
     for name, _ in commands:
         if args.check_only and name != 'environment':
@@ -190,6 +218,7 @@ def campaign(args):
                 shutil.copyfile(full, output / f'profiles/rank{r}-geo{g}.jsonl')
             validate_gate(name, output, identity, output / 'raw-bundle')
     need(inputs(args) == (image, build, helper, checkpoint), 'qualification inputs changed during run')
+    need(independent_build(args, build) == second, 'independent build changed during run')
     if args.check_only:
         write(output / 'check.json', {'status': 'PASS', 'scope': 'GPU-free environment and complete command plan', 'identity': identity})
     else:
@@ -204,15 +233,10 @@ def seal(args):
     build = native.read_native_record(regular(args.seal, 'native-build.json'), image)
     need(index['source_manifest_sha256'] == sha(COOP / 'SOURCE_MANIFEST.json'), 'campaign source changed; review before rebinding')
     need(index['runner_sha256'] == runner_inputs(), 'runner changed')
-    need(args.independent_build_root and args.independent_image_receipt, 'seal requires second-machine build and image receipts')
-    second_image = native.read_operator_record(args.independent_image_receipt)
-    second = native.read_native_record(regular(args.independent_build_root, 'native-build-receipt.json'), second_image)
-    for record in (build, second):
-        need(record['builder_host']['architecture'] == 'aarch64', 'seal requires native ARM64 builds')
-    need(build['builder_host']['machine_id_sha256'] != second['builder_host']['machine_id_sha256'], 'independent physical builder required')
-    need(sha(regular(args.independent_build_root, native.COOP + '/bundle/cooperative_moe.so')) == TARGET_NATIVE, 'second-machine native pin')
+    second = independent_build(args, build)
+    need(read(args.seal / 'independent-build.json') == second, 'independent build differs from campaign preflight')
     index['qualification_build'] = build
-    index['independent_build'] = {'native_receipt': second, 'image_receipt': second_image}
+    index['independent_build'] = second
     output = args.output
     need(not output.exists() and not output.is_symlink() and not output.resolve().is_relative_to(ROOT), 'seal output must be new outside source')
     output.mkdir(parents=True)
@@ -267,8 +291,10 @@ def main():
             need(not args.check_only, '--check-only applies to the environment phase')
             seal(args)
         else:
-            need(all(getattr(args, n) is not None for n in ('image_receipt','build_root','model_root','fly_root','helpers_root','sanitizer_root')), 'all fixture paths required')
-            for name in ('output', 'image_receipt','build_root','model_root','fly_root','helpers_root','sanitizer_root'):
+            need(all(getattr(args, n) is not None for n in ('image_receipt','build_root','model_root','fly_root','helpers_root','sanitizer_root',
+                 'independent_build_root', 'independent_image_receipt')), 'all fixture and independent-builder paths required')
+            for name in ('output', 'image_receipt','build_root','model_root','fly_root','helpers_root','sanitizer_root',
+                         'independent_build_root', 'independent_image_receipt'):
                 path = getattr(args, name)
                 need(path.is_absolute() and not path.is_symlink(), 'absolute non-symlink path required: ' + name)
             campaign(args)
