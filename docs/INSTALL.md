@@ -102,6 +102,14 @@ Their receipt records the output hashes. Coop is neither built nor required;
 the prepared example explicitly sets `JSPARK3_V16_COOP=0`. Keep it off.
 Copy the **prepared** example above, not the source's historical coop-on example.
 
+The display compiler uses stable intermediate filenames and distinct translation
+unit seeds. It does not strip or normalize completed binaries. If a comparison
+fails, the refusal names the artifact and both SHA-256 hashes. Both builds remain
+in the printed private directory (mode 0700), including compiler intermediates;
+no successful native receipt is published. Keep that directory and the private
+diagnostic files for investigation. Historical binary pins remain historical;
+the operator path above verifies the new outputs through their native receipt.
+
 ## 4. Stage the recipe, weights and runtime views on every Spark
 
 Edit `operator.env` with your real hosts, addresses, paths, interfaces, GID and

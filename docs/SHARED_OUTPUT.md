@@ -46,3 +46,8 @@ Discovery includes executable permission bits and shebangs as well as known
 source suffixes, including extensionless and hidden shipped files. Git
 administration and private task evidence are excluded from this executable
 inventory; release validation separately refuses private evidence in exports.
+
+Native reproducibility refusals publish fixed artifact labels and validated
+SHA-256 pairs. Failed native workspaces remain private (mode 0700) with both
+builds and compiler intermediates intact; they are never successful build
+receipts or shared evidence dependencies. Completed ELF bytes are not rewritten.

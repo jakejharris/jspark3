@@ -5,6 +5,7 @@ import copy
 from contextlib import redirect_stderr, redirect_stdout
 import hashlib
 import io
+import json
 from pathlib import Path
 import shutil
 import subprocess
@@ -46,6 +47,7 @@ class NativeReceiptTests(unittest.TestCase):
 
     def test_source_and_recipe_drift_refused_even_when_reselfhashed(self):
         for name in ('tools/build_native.py', f'{native.DISPLAY}/display_kv.c',
+                     f'{native.DISPLAY}/build_repro.sh',
                      f'{native.COOP}/build_repro.sh', f'{native.COOP}/source/native/cooperative_moe.cu'):
             with self.subTest(name=name):
                 record = copy.deepcopy(self.record)
@@ -126,12 +128,54 @@ class BuildSelectionTests(unittest.TestCase):
                     self.assertNotIn(drift + ': two native builds differ', log.getvalue())
                     private = log.getvalue().split('Private diagnostics (do not share): ', 1)[1].splitlines()[0]
                     self.assertIn(drift + ': two native builds differ', Path(private).read_text())
+                    retained = Path(log.getvalue().split('Private native artifacts (do not share): ', 1)[1].splitlines()[0])
+                    self.assertEqual(retained.stat().st_mode & 0o777, 0o700)
+                    rows = [json.loads(line) for line in log.getvalue().splitlines() if line.startswith('{')]
+                    self.assertEqual({row['artifact'] for row in rows}, set(native.OUTPUTS[drift].values()))
+                    for row in rows:
+                        self.assertEqual(row['reason'], 'reproducibility mismatch')
+                        name = next(name for name, relative in native.OUTPUTS[drift].items() if relative == row['artifact'])
+                        for run, key in (('a', 'first_sha256'), ('b', 'second_sha256')):
+                            self.assertEqual(native.sha(retained / (drift + '-' + run) / name), row[key])
+                    self.assertFalse(list(retained.rglob('native-build-receipt.json')))
                 else:
                     record = native.read_native_record(output / 'native-build-receipt.json',
                                                        native.read_operator_record(image_path))
                     expected = {name for kind in set(expected_calls) for name in native.OUTPUTS[kind].values()}
                     self.assertEqual(set(record['binary_sha256']), expected)
                     self.assertEqual((output / native.COOP / 'bundle/cooperative_moe.so').exists(), with_coop)
+
+    def test_untrusted_comparison_fields_never_reach_console(self):
+        expected = {name: hashlib.sha256(name.encode()).hexdigest() for name in native.OUTPUTS['display'].values()}
+        for bad in ({'opaqueNativeDiagnosticValue': 'a' * 64},
+                    {name: 'opaqueNativeDiagnosticValue' for name in expected}):
+            log = io.StringIO()
+            with redirect_stderr(log), self.assertRaises(native.ImageRefusal):
+                native.compare_builds('display', expected, bad)
+            self.assertNotIn('opaqueNativeDiagnosticValue', log.getvalue())
+
+    def test_compiler_failure_retains_partial_stage_privately(self):
+        from test_operator_image import fixture, write_record
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            image, output = root / 'image.json', root / 'binaries'
+            write_record(image, fixture())
+            def fail(kind, stage, image):
+                stage.mkdir()
+                (stage / 'partial.o').write_bytes(b'opaqueNativeDiagnosticValue')
+                raise subprocess.CalledProcessError(17, ['compiler'], stderr='opaqueNativeDiagnosticValue')
+            log = io.StringIO()
+            with patch.object(sys, 'argv', ['build_native', '--image-receipt', str(image), '--output', str(output)]), \
+                    patch.object(native, 'verify_local_image'), patch('validate_release.verify', return_value={'failed': 0}), \
+                    patch.object(native, 'build', side_effect=fail), redirect_stdout(log), redirect_stderr(log):
+                self.assertEqual(native.main(), 9)
+            self.assertFalse(output.exists())
+            self.assertNotIn('opaqueNativeDiagnosticValue', log.getvalue())
+            retained = Path(log.getvalue().split('Private native artifacts (do not share): ', 1)[1].splitlines()[0])
+            self.assertEqual(retained.stat().st_mode & 0o777, 0o700)
+            self.assertEqual((retained / 'display-a/partial.o').read_bytes(), b'opaqueNativeDiagnosticValue')
+            private = Path(log.getvalue().split('Private diagnostics (do not share): ', 1)[1].splitlines()[0])
+            self.assertIn('opaqueNativeDiagnosticValue', private.read_text())
 
 
 class DefaultProfileTests(unittest.TestCase):

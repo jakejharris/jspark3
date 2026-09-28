@@ -67,6 +67,7 @@
     "recipe/overlays/trunk_w8a16.py": "Apache-2.0",
     "recipe/overlays/v14/display_kv/BUILD.json": "AGPL-3.0-only",
     "recipe/overlays/v14/display_kv/build.sh": "AGPL-3.0-only",
+    "recipe/overlays/v14/display_kv/build_repro.sh": "Apache-2.0",
     "recipe/overlays/v14/display_kv/bw_pinned.cu": "AGPL-3.0-only",
     "recipe/overlays/v14/display_kv/display_kv.c": "AGPL-3.0-only",
     "recipe/overlays/v14/display_kv/glm53_display_kv.py": "AGPL-3.0-only",

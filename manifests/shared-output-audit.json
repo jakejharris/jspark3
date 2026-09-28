@@ -413,6 +413,42 @@
         }
       ]
     },
+    "recipe/overlays/v14/display_kv/build_repro.sh": {
+      "disposition": "Private compiler stage at fixed /w: stable kept host-stub basename, separate translation-unit seeds, fixed tool environment and named object files. Never runs GPU code or rewrites completed ELFs. Raw compiler output/intermediates are private through parent controller.",
+      "sha256": "836a422e8f3d20d85e42f7d354e0ffe33de2f6d6b013f8524440dcb28ed9c2ec",
+      "sites": [
+        {
+          "function": "<shell>",
+          "line": 8,
+          "operation": "private output/child channel"
+        },
+        {
+          "function": "<shell>",
+          "line": 12,
+          "operation": "private output/child channel"
+        },
+        {
+          "function": "<shell>",
+          "line": 13,
+          "operation": "private output/child channel"
+        },
+        {
+          "function": "<shell>",
+          "line": 15,
+          "operation": "private output/child channel"
+        },
+        {
+          "function": "<shell>",
+          "line": 17,
+          "operation": "private output/child channel"
+        },
+        {
+          "function": "<shell>",
+          "line": 18,
+          "operation": "private output/child channel"
+        }
+      ]
+    },
     "recipe/overlays/v14/display_kv/bw_pinned.cu": {
       "disposition": "Private runtime/build channel: pinned module logs, tensor/native diagnostics and generated build files stay in containers or private build stages. Controllers capture this channel privately and publish only checked facts/hashes. Not a shared evidence bundle.",
       "sha256": "5801acf0b091dda46d7f0db906a6d85b26f1c62f86e33052869e645922d217fe",
@@ -7135,27 +7171,32 @@
       "sites": []
     },
     "tools/build_native.py": {
-      "disposition": "Shared native receipt contains source/build/image/output hashes and fixed policy. Compiler stdout/stderr captured privately; native build products remain private. Two-build display identity unchanged.",
-      "sha256": "968bd6861988a096eef7a95229d5495d90b232614ea2d4d076c7bdae21dfc424",
+      "disposition": "Native compiler children privately captured. Fixed compared-artifact inventory and validated SHA-256 pairs are the only mismatch facts published. Any failing build workspace is retained in its generated 0700 directory; no success receipt published. Canonical display script is hashed as build input. Original source/image and optional component/host policies preserved.",
+      "sha256": "dddcf20c9ebc5d5f0df0ee3e533a862107a87e9c739c87d861cb2a1567a9f5b1",
       "sites": [
         {
-          "function": "build",
-          "line": 83,
-          "operation": "run_private"
+          "function": "workspace",
+          "line": 37,
+          "operation": "print"
         },
         {
-          "function": "main",
-          "line": 134,
-          "operation": "write_bytes"
-        },
-        {
-          "function": "main",
-          "line": 137,
+          "function": "compare_builds",
+          "line": 53,
           "operation": "print"
         },
         {
           "function": "main",
-          "line": 140,
+          "line": 156,
+          "operation": "write_bytes"
+        },
+        {
+          "function": "main",
+          "line": 159,
+          "operation": "print"
+        },
+        {
+          "function": "main",
+          "line": 162,
           "operation": "report_failure"
         }
       ]
@@ -7395,82 +7436,87 @@
       ]
     },
     "tools/test_native_build.py": {
-      "disposition": "Synthetic local test output only; never release/qualification evidence. Covers real producers with private sentinels and negative controls.",
-      "sha256": "da56ca065eba29d6ad6ccc73a4762b335157b0d033379ec7c3f776b27def7617",
+      "disposition": "Synthetic local test output only. Exercises real publication/refusal and comparison paths, retained private artifacts and opaque diagnostic controls; never hardware evidence.",
+      "sha256": "1ce04e229334f24dd2a2c2fba1808fe3dbdc715b5027c5e8c351d262b2a1b3a0",
       "sites": [
         {
           "function": "write",
-          "line": 38,
+          "line": 39,
           "operation": "write_bytes"
         },
         {
           "function": "test_operator_outputs_accepted_without_historical_pin",
-          "line": 43,
+          "line": 44,
           "operation": "write"
         },
         {
           "function": "test_source_and_recipe_drift_refused_even_when_reselfhashed",
-          "line": 53,
+          "line": 55,
           "operation": "write"
         },
         {
           "function": "test_source_image_and_qualification_drift_refused",
-          "line": 61,
+          "line": 63,
           "operation": "write"
         },
         {
           "function": "test_output_inventory_is_exact",
-          "line": 70,
+          "line": 72,
           "operation": "write"
         },
         {
           "function": "test_receipt_tamper_and_symlink_refused",
-          "line": 75,
+          "line": 77,
           "operation": "write"
         },
         {
           "function": "test_receipt_tamper_and_symlink_refused",
-          "line": 76,
+          "line": 78,
           "operation": "write_bytes"
         },
         {
           "function": "test_default_opt_in_and_two_build_refusals.fake_build",
-          "line": 109,
+          "line": 111,
+          "operation": "write_bytes"
+        },
+        {
+          "function": "test_compiler_failure_retains_partial_stage_privately.fail",
+          "line": 165,
           "operation": "write_bytes"
         },
         {
           "function": "prepare_and_check",
-          "line": 166,
+          "line": 210,
           "operation": "write_bytes"
         },
         {
           "function": "prepare_and_check",
-          "line": 175,
+          "line": 219,
           "operation": "run"
         },
         {
           "function": "prepare_and_check",
-          "line": 181,
+          "line": 225,
           "operation": "run"
         },
         {
           "function": "prepare_and_check",
-          "line": 222,
+          "line": 266,
           "operation": "embedded output (private worker/test or fixed template)"
         },
         {
           "function": "prepare_and_check",
-          "line": 230,
+          "line": 274,
           "operation": "embedded output (private worker/test or fixed template)"
         },
         {
           "function": "prepare_and_check",
-          "line": 231,
+          "line": 275,
           "operation": "embedded output (private worker/test or fixed template)"
         },
         {
           "function": "prepare_and_check",
-          "line": 233,
+          "line": 277,
           "operation": "run"
         }
       ]
@@ -7959,68 +8005,68 @@
       ]
     },
     "tools/v14/build_display_kv.sh": {
-      "disposition": "Outer legacy builder routes inherited output to private diagnostic capture; inner remote compiler/toolchain/native artifacts remain private. Only fixed exit summary reaches outer console.",
-      "sha256": "f89fc64541d397905e5187f7b636c61d40cc4ad16e37f03ca0fae101e0842d1d",
+      "disposition": "Legacy remote builder uses the same stable display compiler script; raw compiler/toolchain output remains in private diagnostic capture. Historical output checks remain explicit; no automatic repinning.",
+      "sha256": "6a40c74b3551a7a1489fc56bec9eb39e1cb3756ddf4ec2d15f70eb98cba6c125",
       "sites": [
         {
-          "function": "<native/shell/patch>",
+          "function": "<shell>",
           "line": 5,
-          "operation": "output/child channel or source template"
+          "operation": "private output/child channel"
         },
         {
-          "function": "<native/shell/patch>",
+          "function": "<shell>",
+          "line": 8,
+          "operation": "private output/child channel"
+        },
+        {
+          "function": "<shell>",
           "line": 15,
-          "operation": "output/child channel or source template"
+          "operation": "private output/child channel"
         },
         {
-          "function": "<native/shell/patch>",
+          "function": "<shell>",
           "line": 27,
-          "operation": "output/child channel or source template"
+          "operation": "private output/child channel"
         },
         {
-          "function": "<native/shell/patch>",
+          "function": "<shell>",
           "line": 29,
-          "operation": "output/child channel or source template"
+          "operation": "private output/child channel"
         },
         {
-          "function": "<native/shell/patch>",
+          "function": "<shell>",
           "line": 31,
-          "operation": "output/child channel or source template"
+          "operation": "private output/child channel"
         },
         {
-          "function": "<native/shell/patch>",
+          "function": "<shell>",
           "line": 35,
-          "operation": "output/child channel or source template"
+          "operation": "private output/child channel"
         },
         {
-          "function": "<native/shell/patch>",
-          "line": 41,
-          "operation": "output/child channel or source template"
+          "function": "<shell>",
+          "line": 39,
+          "operation": "private output/child channel"
         },
         {
-          "function": "<native/shell/patch>",
-          "line": 44,
-          "operation": "output/child channel or source template"
+          "function": "<shell>",
+          "line": 45,
+          "operation": "private output/child channel"
         },
         {
-          "function": "<native/shell/patch>",
-          "line": 50,
-          "operation": "output/child channel or source template"
+          "function": "<shell>",
+          "line": 60,
+          "operation": "private output/child channel"
         },
         {
-          "function": "<native/shell/patch>",
-          "line": 66,
-          "operation": "output/child channel or source template"
+          "function": "<shell>",
+          "line": 71,
+          "operation": "private output/child channel"
         },
         {
-          "function": "<native/shell/patch>",
-          "line": 76,
-          "operation": "output/child channel or source template"
-        },
-        {
-          "function": "<native/shell/patch>",
-          "line": 78,
-          "operation": "output/child channel or source template"
+          "function": "<shell>",
+          "line": 73,
+          "operation": "private output/child channel"
         }
       ]
     },
