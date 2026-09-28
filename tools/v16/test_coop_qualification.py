@@ -250,7 +250,8 @@ class RecordTests(unittest.TestCase):
         for r in range(3):
             for g in range(3):
                 path = raw / f'profiles/rank{r}-geo{g}.jsonl'
-                path.write_text(''.join(json.dumps(row) + '\n' for row in profile_rows(r, g, q.TARGET_NATIVE)))
+                path.write_text(runner.projection.gate_log(f'profile-r{r}-g{g}',
+                    ''.join(json.dumps(row) + '\n' for row in profile_rows(r, g, q.TARGET_NATIVE))))
                 logs.append(path)
         policy = evidence.select_policy.select(logs, q.TARGET_NATIVE)
         runner.write(raw / 'selected-bundle/dispatch_policy.json', policy)
@@ -274,6 +275,7 @@ class RecordTests(unittest.TestCase):
                'fatpath_sha256':'69309df5f236502ec8cf55648f72369c20052c646ebd8850cd88272be881b48e',
                'ldd':'libcudart.so.13 => synthetic','nvcc':'fixture','gcc':'fixture','sanitizer':'fixture',
                'torch':'fixture','cuda':'fixture','gpu':{'name':'NVIDIA GB10','capability':[12,1],'driver':'fixture'}}
+        env = runner.projection.environment({**env, 'bundle': {}})
         for name, kind in q.gate_names().items():
             stage = raw / ('container-' + name)
             stage.mkdir()
@@ -311,6 +313,7 @@ class RecordTests(unittest.TestCase):
             else:
                 text = json.dumps({'stage':'production_policy_complete','pass':True,'choices':
                     {str(n):policy['rows'].get(str(n),'stock') for n in (*evidence.select_policy.ROWS,33,65)}}) + '\n'
+            text = runner.projection.gate_log(name, text)
             (raw / (name + '.log')).write_text(text)
             runner.write(raw / (name + '.json'), {'schema_version':1,'name':name,'kind':kind,'status':'PASS',
                          'exit_code':0,'identity':identity,'bundle':binding,'log_sha256':q.sha(raw / (name + '.log'))})
@@ -522,12 +525,13 @@ class RunnerTests(unittest.TestCase):
             calls = []
             def execute(command, stage, log):
                 calls.append(command)
-                runner.write(stage / 'environment.json', {'status': 'PASS',
+                log.write('opaqueCampaignDiagnosticValue\n')
+                runner.write(stage / 'environment.json', runner.projection.environment({'status': 'PASS', 'bundle': {},
                     'checkpoint':checkpoint.authority(),
                     'exl3_sha256': '71e7118bd5af385821d7cb23e96fb154a3f31e1e835599a1082c72abb3aeb174',
                     'fatpath_sha256': '69309df5f236502ec8cf55648f72369c20052c646ebd8850cd88272be881b48e',
                     'ldd': 'libcudart.so.13 => synthetic', 'torch': 'fixture', 'cuda': 'fixture',
-                    'nvcc': 'fixture', 'gcc': 'fixture', 'sanitizer': 'fixture'})
+                    'nvcc': 'fixture', 'gcc': 'fixture', 'sanitizer': 'fixture'}))
                 return types.SimpleNamespace(returncode=0)
             with patch.object(runner, 'inputs', return_value=(image, {}, {}, {})), \
                     patch.object(runner.native, 'verify_local_image'), patch.object(runner, 'independent_build', return_value={}), \
@@ -552,6 +556,14 @@ class RunnerTests(unittest.TestCase):
             self.assertFalse(args.output.exists())
             self.assertFalse((check / 'QUALIFICATION.json').exists())
             self.assertEqual(q.read(check / 'campaign.json')['status'], 'INCOMPLETE')
+            self.assertNotIn('opaqueCampaignDiagnosticValue', (check / 'environment.log').read_text())
+            private = list(check.glob('*' + runner.diagnostics.PRIVATE_SUFFIX))
+            self.assertTrue(any('opaqueCampaignDiagnosticValue' in p.read_text() for p in private))
+            self.assertTrue(all(p.stat().st_mode & 0o777 == 0o600 for p in private))
+            self.assertFalse((check / 'raw-bundle/build32.log').exists())
+            for path in private:
+                path.unlink()
+            runner.validate_environment(check / 'container-environment/environment.json', gpu=False)
 
     def test_instrumentation_and_error_controls(self):
         launch = '========= Launch #1\n=========   Kernel: exl3_moe_coop_a_kernel()\n'

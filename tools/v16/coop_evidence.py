@@ -8,7 +8,8 @@ sys.dont_write_bytecode = True
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / 'recipe/scripts'))
 sys.path.insert(0, str(ROOT / 'recipe/overlays/v16/coop/source'))
-from _coop_qualification import TARGET_NATIVE, need, read, regular, sha, gate_names
+from _coop_qualification import TARGET_NATIVE, need, read, regular, sha, gate_names, hash_ok
+import coop_projection as projection
 from _coop_bundle import identity as bundle_identity, verify_bundle, verify_selection
 import coop_h1_control as h1
 import select_policy
@@ -17,7 +18,9 @@ KERNEL_FILTER = 'kns=exl3_moe_coop_'
 
 
 def events(path):
-    return [json.loads(line) for line in path.read_text().splitlines() if line.startswith('{')]
+    rows = [json.loads(line) for line in path.read_text().splitlines() if line.startswith('{')]
+    need(all(projection.event(row) == row for row in rows), 'unprojected gate fields')
+    return rows
 
 
 def sanitizer(text, tool):
@@ -44,12 +47,15 @@ def validate_environment(path, *, gpu):
     need(environment.get('status') == 'PASS'
          and environment.get('exl3_sha256') == '71e7118bd5af385821d7cb23e96fb154a3f31e1e835599a1082c72abb3aeb174'
          and environment.get('fatpath_sha256') == '69309df5f236502ec8cf55648f72369c20052c646ebd8850cd88272be881b48e'
-         and 'libcudart.so.13 =>' in environment.get('ldd', '') and 'not found' not in environment['ldd']
-         and all(environment.get(k) for k in ('nvcc', 'gcc', 'sanitizer', 'torch', 'cuda')), 'stage-8 environment evidence')
+         and environment.get('ldd') == projection.LINKAGE
+         and all(hash_ok(environment.get(k)) for k in projection.VERSIONS), 'stage-8 environment evidence')
+    need(set(environment) == {'status', 'checkpoint', 'bundle', 'exl3_sha256', 'fatpath_sha256', 'ldd', *projection.VERSIONS}
+         | ({'gpu'} if gpu else set()), 'environment field inventory')
     need(('gpu' in environment) == gpu, 'environment GPU scope differs')
     if gpu:
         need(environment['gpu'].get('name') == 'NVIDIA GB10'
-             and environment['gpu'].get('capability') == [12, 1] and environment['gpu'].get('driver'), 'GB10 identity')
+             and environment['gpu'].get('capability') == [12, 1] and hash_ok(environment['gpu'].get('driver'))
+             and set(environment['gpu']) == {'name', 'capability', 'driver'}, 'GB10 identity')
     return environment
 
 
@@ -127,6 +133,13 @@ def validate_campaign(root):
     campaign = read(root / 'campaign.json')
     need(campaign.get('schema_version') == 1 and campaign.get('status') == 'COMPLETE', 'campaign incomplete')
     identity = campaign['identity']
+    need(set(identity) - {'build_artifacts_sha256'} == {'native_sha256', 'source_manifest_sha256',
+         'image_receipt_sha256', 'helper', 'checkpoint', 'sanitizer', 'raw_bundle', 'raw_bundle_manifest', 'runner_sha256'},
+         'campaign identity field inventory')
+    artifacts = identity.get('build_artifacts_sha256', {})
+    need(all(k in {f'coop-{run}/out/{name}' for run in ('a', 'b') for name in
+         ('cooperative_moe.so', 'manifest.json', 'toolchain.txt', 'build32.log', 'build64.log', 'link.log')}
+         and hash_ok(v) for k, v in artifacts.items()), 'campaign build evidence inventory')
     need(identity['native_sha256'] == TARGET_NATIVE, 'candidate native drift')
     from _coop_checkpoint import authority
     need(identity.get('checkpoint') == authority(), 'campaign checkpoint authority differs')

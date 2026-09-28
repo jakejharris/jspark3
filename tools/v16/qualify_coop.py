@@ -6,7 +6,6 @@ from datetime import datetime, timezone
 import json
 import os
 from pathlib import Path
-import shlex
 import shutil
 import subprocess
 import sys
@@ -21,6 +20,8 @@ from _coop_checkpoint import authenticate as fixture
 from _coop_bundle import identity as bundle_identity, verify_bundle
 from experiment_coop_build import run_container, Cancelled
 from coop_evidence import KERNEL_FILTER, validate_campaign, validate_gate, validate_environment
+import coop_projection as projection
+import _diagnostics as diagnostics
 import coop_h1_control as h1
 
 COOP = ROOT / native.COOP
@@ -33,9 +34,9 @@ def write(path, value):
 
 
 def runner_inputs():
-    paths = ['tools/v16/' + name for name in ('qualify_coop.py', 'coop_environment.py', 'coop_evidence.py')]
+    paths = ['tools/v16/' + name for name in ('qualify_coop.py', 'coop_environment.py', 'coop_evidence.py', 'coop_projection.py')]
     paths += ['recipe/scripts/' + name for name in ('_coop_checkpoint.py', '_coop_bundle.py',
-                                                   '_coop_qualification.py', 'validate_checkpoint.py')]
+                                                   '_coop_qualification.py', 'validate_checkpoint.py', '_diagnostics.py')]
     return {name: sha(regular(ROOT, name)) for name in paths}
 
 
@@ -165,8 +166,8 @@ def campaign(args):
     write(output / 'recipe/config/operator-image.json', image)
     for name in native.OUTPUTS['display'].values():
         shutil.copyfile(args.build_root / name, output / name)
-    shutil.copytree(args.build_root / 'coop-a/out', output / 'raw-bundle')
-    shutil.copytree(output / 'raw-bundle', output / 'selected-bundle')
+    projection.copy_bundle(args.build_root / 'coop-a/out', output / 'raw-bundle')
+    projection.copy_bundle(output / 'raw-bundle', output / 'selected-bundle')
     (output / 'profiles').mkdir()
     identity = {'native_sha256': TARGET_NATIVE, 'source_manifest_sha256': sha(COOP / 'SOURCE_MANIFEST.json'),
                 'raw_bundle': bundle_identity(output / 'raw-bundle'),
@@ -179,10 +180,10 @@ def campaign(args):
     commands = [('environment', []), *matrix()]
     plan = {name: container(args, output, output / ('container-' + name), image, command, name != 'environment')
             for name, command in commands}
-    write(output / 'plan.json', plan)
+    write(output / 'plan.json', {name: projection.command(command) for name, command in plan.items()})
     write(output / 'plan-estimates.json', plan_estimates(plan))
-    for name, command in plan.items():
-        print(name + ': ' + shlex.join(command), flush=True)
+    for name in plan:
+        print('Planned ' + name, flush=True)
     write(output / 'image.json', image)
     write(output / 'native-build.json', build)
     write(output / 'independent-build.json', second)
@@ -193,28 +194,24 @@ def campaign(args):
         stage = output / ('container-' + name)
         stage.mkdir()
         started = datetime.now(timezone.utc).isoformat()
-        with (output / (name + '.log')).open('w') as log:
+        with diagnostics.capture_log(output / (name + '.log')) as log:
             result = run_container(plan[name], stage, log)
         write(stage / 'execution.json', {'started_at': started, 'completed_at': datetime.now(timezone.utc).isoformat(),
-                                       'exit_code': result.returncode, 'command': plan[name]})
+                                       'exit_code': result.returncode, 'command': projection.command(plan[name])})
         need(result.returncode == 0, name + ' failed; evidence retained')
         validate_environment(regular(stage, 'environment.json'), gpu=name != 'environment')
         if name in gate_names():
+            # Full output remains in its exclusive 0600 file. Only closed facts
+            # enter the log bound by gate receipts; private files are optional.
+            raw_text = Path(log.private_diagnostic_path).read_text()
+            (output / (name + '.log')).write_text(projection.gate_log(name, raw_text))
             active_bundle = output / ('selected-bundle' if name.startswith('policy-') else 'raw-bundle')
             write(output / (name + '.json'), {'schema_version': 1, 'name': name, 'kind': gate_names()[name],
                     'status': 'PASS', 'exit_code': 0, 'identity': identity, 'bundle': bundle_identity(active_bundle),
                     'log_sha256': sha(output / (name + '.log'))})
             if name.startswith('profile-'):
                 r, g = name[-4], name[-1]
-                # Isolate profile JSONL from stage-8/import diagnostics, retaining
-                # the full container log separately.
                 full = output / (name + '.log')
-                shutil.copyfile(full, stage / 'full.log')
-                rows = [line for line in full.read_text().splitlines() if line.startswith('{')
-                        and json.loads(line).get('stage') in ('profile_identity', 'compare', 'profile', 'profile_complete')]
-                full.write_text('\n'.join(rows) + '\n')
-                write(output / (name + '.json'), {'schema_version': 1, 'name': name, 'kind': 'profile', 'status': 'PASS',
-                      'exit_code': 0, 'identity': identity, 'bundle': bundle_identity(active_bundle), 'log_sha256': sha(full)})
                 shutil.copyfile(full, output / f'profiles/rank{r}-geo{g}.jsonl')
             validate_gate(name, output, identity, output / 'raw-bundle')
     need(inputs(args) == (image, build, helper, checkpoint), 'qualification inputs changed during run')
@@ -224,7 +221,7 @@ def campaign(args):
     else:
         write(output / 'campaign.json', {'schema_version': 1, 'status': 'COMPLETE', 'identity': identity})
         write(output / 'QUALIFICATION.json', validate_campaign(output))
-    print('PASS ' + str(output))
+    print('PASS component campaign')
 
 
 def seal(args):
@@ -244,7 +241,7 @@ def seal(args):
     shutil.copytree(COOP / 'source', output / 'source')
     shutil.copyfile(COOP / 'SOURCE_MANIFEST.json', output / 'SOURCE_MANIFEST.json')
     shutil.copyfile(COOP / 'build_repro.sh', output / 'build_repro.sh')
-    shutil.copytree(args.seal / 'selected-bundle', output / 'bundle')
+    projection.copy_bundle(args.seal / 'selected-bundle', output / 'bundle')
     write(output / 'QUALIFICATION.json', index)
     manifest = read(output / 'bundle/manifest.json')
     record = {'schema_version': 2, 'source_manifest_sha256': sha(COOP / 'SOURCE_MANIFEST.json'),
@@ -259,7 +256,7 @@ def seal(args):
               'gate_index_sha256': sha(output / 'QUALIFICATION.json')}
     verify_record(record, output / 'bundle', output, release=False)
     write(output / 'BUILD.json', record)
-    print('PASS component seal; release integration and final-source rebuilds remain required: ' + str(output))
+    print('PASS component seal; release integration and final-source rebuilds remain required')
 
 
 def main():
@@ -299,10 +296,11 @@ def main():
                 need(path.is_absolute() and not path.is_symlink(), 'absolute non-symlink path required: ' + name)
             campaign(args)
     except (OSError, ValueError, KeyError, subprocess.CalledProcessError, Cancelled) as exc:
-        print('REFUSE: ' + str(exc), file=sys.stderr)
+        diagnostics.report_failure(exc)
         return 9
     return 0
 
 
 if __name__ == '__main__':
+    diagnostics.install_exception_hook()
     raise SystemExit(main())

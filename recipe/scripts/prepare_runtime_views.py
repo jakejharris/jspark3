@@ -2,6 +2,9 @@
 """Create hash-bound sibling runtime views without changing downloaded trees."""
 
 from __future__ import annotations
+import sys
+sys.dont_write_bytecode = True
+import _diagnostics as diagnostics
 
 import argparse
 import hashlib
@@ -123,11 +126,12 @@ def main() -> int:
             "draft_runtime_config_sha256": DRAFT_RUNTIME,
         }
     except (OSError, ValueError, json.JSONDecodeError, Refusal) as exc:
-        print(f"REFUSE: {exc}")
+        diagnostics.report_failure(exc)
         return 9
     print(json.dumps(result, sort_keys=True))
     return 0
 
 
 if __name__ == "__main__":
+    diagnostics.install_exception_hook()
     raise SystemExit(main())

@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 """Create a runtime candidate from validated source and pinned or receipted local builds."""
+import sys
+sys.dont_write_bytecode = True
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "recipe/scripts"))
+import _diagnostics as diagnostics
 import argparse
 import hashlib
 import json
-from pathlib import Path
 import shutil
-import sys
-sys.dont_write_bytecode = True
 
 
 def main():
@@ -24,7 +26,7 @@ def main():
     output = args.output.resolve()
     if output.exists() or output.is_relative_to(root): parser.error('output must be new and outside the source export')
     from validate_release import verify
-    if verify(root)['failed']: raise SystemExit('REFUSE: source export failed validation')
+    if verify(root)['failed']: raise ValueError('source export failed validation')
     sha = lambda p: hashlib.sha256(p.read_bytes()).hexdigest()
     sys.path.insert(0, str(root / 'recipe/scripts'))
     from _image_identity import read_operator_record
@@ -32,11 +34,11 @@ def main():
     if args.image_receipt:
         image_record = read_operator_record(args.image_receipt)
         if image_record['source_recipe_sha256'] != sha(root / 'recipe/SHA256SUMS'):
-            raise SystemExit('REFUSE: image receipt belongs to a different source recipe')
+            raise ValueError('image receipt belongs to a different source recipe')
     native_record = None
     if args.native_receipt:
         if not image_record:
-            raise SystemExit('REFUSE: native receipt requires its operator image receipt')
+            raise ValueError('native receipt requires its operator image receipt')
         from build_native import read_native_record
         native_record = read_native_record(args.native_receipt, image_record)
     binaries = json.loads((root / 'manifests/binaries.json').read_text())
@@ -46,7 +48,7 @@ def main():
         path = args.binary_root / name
         expected = native_record['binary_sha256'][name] if native_record else row['expected_sha256']
         if path.is_symlink() or not path.is_file() or sha(path) != expected:
-            raise SystemExit('REFUSE: missing or mismatched local build: ' + name)
+            raise ValueError('missing or mismatched local build: ' + name)
     from _image_identity import verify_local_image
     import apply_coop_moe as coop
     coop_native = 'recipe/overlays/v16/coop/bundle/cooperative_moe.so'
@@ -54,7 +56,7 @@ def main():
     if not args.coop_off:
         from _coop_qualification import TARGET_NATIVE, verify_record, read
         if coop_native not in binaries or sha(args.binary_root / coop_native) != TARGET_NATIVE:
-            raise SystemExit('REFUSE: default preparation requires the pinned coop native')
+            raise ValueError('default preparation requires the pinned coop native')
         # Source-only validation checks all metadata. Verify against a temporary
         # complete bundle before publishing any prepared directory.
         import tempfile
@@ -92,4 +94,6 @@ def main():
     print('Prepared coop=' + ('0 (diagnostic)' if args.coop_off else '1 (component sealed)'))
 
 
-if __name__ == '__main__': main()
+if __name__ == '__main__':
+    diagnostics.install_exception_hook()
+    main()

@@ -24,7 +24,7 @@ import urllib.request
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from v16_common import QAError, fetch_remote_logs, metric_delta, metrics_snapshot, sha256_json, write_json  # noqa: E402
+from v16_common import QAError, fetch_remote_logs, metric_delta, metrics_snapshot, sha256_json, write_json, diagnostics  # noqa: E402
 
 COMPILE_RE = re.compile(r"TileLang begins to compile|JIT compilation during inference")
 # One size per mhc compute_num_split class on a 48-SM GB10 (grid = ceil(tokens/64); split = 48 // grid).
@@ -44,7 +44,7 @@ def count_tokens(base: str, model: str, text: str) -> int:
     req = urllib.request.Request(base.rstrip("/") + "/tokenize",
                                  data=json.dumps({"model": model, "prompt": text}).encode(),
                                  headers={"Content-Type": "application/json"})
-    return int(json.loads(urllib.request.urlopen(req, timeout=30).read())["count"])
+    return int(json.loads(diagnostics.private_read(urllib.request.urlopen(req, timeout=30)))["count"])
 
 
 def sized_text(base: str, model: str, rng: random.Random, target: int) -> str:
@@ -60,25 +60,32 @@ def stream_chat(base: str, body: dict) -> dict:
     request_started_at = datetime.now(timezone.utc).isoformat()
     request_ids, finish_reasons, usage = set(), set(), None
     first = None
-    with urllib.request.urlopen(req, timeout=600) as resp:
-        for raw in resp:
-            line = raw.decode().strip()
-            if not line.startswith("data:") or line == "data: [DONE]":
-                continue
-            data = json.loads(line[5:])
-            if data.get("id"):
-                request_ids.add(data["id"])
-            if data.get("usage"):
-                usage = data["usage"]
-            for choice in data.get("choices", []):
-                if choice.get("finish_reason"):
-                    finish_reasons.add(choice["finish_reason"])
-                delta = choice.get("delta", {})
-                if first is None and any(delta.get(k) for k in ("content", "reasoning_content", "reasoning", "tool_calls")):
-                    first = time.monotonic() - t0
-    return {"client_ttft_s": first, "client_e2e_s": time.monotonic() - t0,
-            "request_started_at": request_started_at, "response_ended_at": datetime.now(timezone.utc).isoformat(),
-            "request_ids": sorted(request_ids), "finish_reasons": sorted(finish_reasons), "usage": usage}
+    raw_events = []
+    try:
+        with urllib.request.urlopen(req, timeout=600) as resp:
+            for raw in resp:
+                raw_events.append(raw.decode("utf-8", "replace"))
+                line = raw.decode().strip()
+                if not line.startswith("data:") or line == "data: [DONE]":
+                    continue
+                data = json.loads(line[5:])
+                if data.get("id"):
+                    request_ids.add(diagnostics.fingerprint(data["id"]))
+                if data.get("usage"):
+                    usage = diagnostics.numeric_usage(data["usage"])
+                for choice in data.get("choices", []):
+                    if choice.get("finish_reason"):
+                        if choice["finish_reason"] not in ("stop", "length", "tool_calls", "content_filter", "function_call"):
+                            raise QAError("invalid finish reason: " + repr(choice))
+                        finish_reasons.add(choice["finish_reason"])
+                    delta = choice.get("delta", {})
+                    if first is None and any(delta.get(k) for k in ("content", "reasoning_content", "reasoning", "tool_calls")):
+                        first = time.monotonic() - t0
+        return {"client_ttft_s": first, "client_e2e_s": time.monotonic() - t0,
+                "request_started_at": request_started_at, "response_ended_at": datetime.now(timezone.utc).isoformat(),
+                "request_ids": sorted(request_ids), "finish_reasons": sorted(finish_reasons), "usage": usage}
+    finally:
+        diagnostics.retain("".join(raw_events))
 
 
 def measured(base: str, body: dict, tag: str) -> dict:
@@ -129,7 +136,7 @@ def class_body(base: str, model: str, rng: random.Random, salt: str, size: int) 
 
 
 def compile_lines(log_text: str) -> list[str]:
-    return [line[:240] for line in log_text.splitlines() if COMPILE_RE.search(line)]
+    return [match.group(0) for line in log_text.splitlines() if (match := COMPILE_RE.search(line))]
 
 
 def evaluate(gate_rows: list[dict], compiles: list[str], floor: float) -> list[str]:
@@ -183,9 +190,10 @@ def main(argv: list[str] | None = None) -> int:
             size = rng.randint(low + 10, high - 20) if high - low > 40 else low + 10
             gate.append(measured(args.base_url, class_body(args.base_url, args.model, rng, salt + "-g", size), f"class-{size}"))
         logs, sources = fetch_remote_logs(args.env_file, args.container_prefix, since=gate_start)
+        diagnostics.private_text(args.out, logs)
         compiles = compile_lines(logs)
     except (QAError, OSError, ValueError, KeyError) as exc:
-        print(f"REFUSED: {exc}", file=sys.stderr)
+        diagnostics.report_failure(exc, args.out, command='prefill gate')
         return 2
     findings = evaluate(gate, compiles, args.floor_tok_s)
     pi = [row["prefill_tok_s"] for row in gate if row["tag"].startswith("pi-turn")]
@@ -201,4 +209,5 @@ def main(argv: list[str] | None = None) -> int:
 
 
 if __name__ == "__main__":
+    diagnostics.install_exception_hook()
     raise SystemExit(main())

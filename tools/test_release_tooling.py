@@ -6,6 +6,10 @@ Usage: python3 -B tools/test_release_tooling.py --packaging-root PACKAGING_DIR
 All publication commands are replaced with local recording executables.
 """
 import argparse
+import ast
+from contextlib import redirect_stderr
+import io
+import traceback
 import hashlib
 import importlib.util
 import json
@@ -33,6 +37,23 @@ class ReleaseToolingTests(unittest.TestCase):
         spec.loader.exec_module(cls.render)
         cls.raw = (Path(__file__).resolve().parents[1] / 'release/results-v1.8.0.json').read_bytes()
 
+    def test_packager_captured_child_failure_stays_private(self):
+        # Load the exact formatter without importing the private assembler inputs.
+        tree = ast.parse((PACKAGING / 'tools/package.py').read_text())
+        tree.body = [n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name == 'report_failure']
+        namespace = dict(traceback=traceback, subprocess=subprocess, tempfile=tempfile, os=os, sys=sys)
+        exec(compile(tree, str(PACKAGING / 'tools/package.py'), 'exec'), namespace)
+        secret = 'opaquePublicationFailureCredentialValue'
+        error = subprocess.CalledProcessError(17, ['publisher', secret], output=secret, stderr=secret)
+        console = io.StringIO()
+        with redirect_stderr(console):
+            namespace['report_failure'](error)
+        self.assertNotIn(secret, console.getvalue())
+        path = Path(console.getvalue().split('private diagnostic (do not share): ', 1)[1].strip())
+        self.addCleanup(path.unlink)
+        self.assertIn(secret, path.read_text())
+        self.assertEqual(path.stat().st_mode & 0o777, 0o600)
+
     def test_card_license_matches_model_and_rejects_old_metadata(self):
         for variant in ('b', 'c'):
             for comparison in ('strict', 'median'):
@@ -59,6 +80,8 @@ class ReleaseToolingTests(unittest.TestCase):
             self.assertIn('`ABLIT=1`', text)
             self.assertIn('`JSPARK3_V16_COOP=1`', text)
             self.assertIn('`JSPARK3_V16_COOP=0`', text)
+            self.assertIn('Decode ranges span both sweeps.', text)
+            self.assertIn('from one post-hygiene gate pass', text)
 
     def test_variant_copy_gate_accepts_corrected_wording_and_refuses_missing_mode(self):
         # Keep the real comparison gate; supply only its filesystem helpers.

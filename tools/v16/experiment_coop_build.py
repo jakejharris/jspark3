@@ -1,25 +1,27 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: Apache-2.0
 """Local-only, GPU-free coop reproducibility experiment; preserves every build."""
+import sys
+sys.dont_write_bytecode = True
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "recipe/scripts"))
+import _diagnostics as diagnostics
 import argparse
 import difflib
 import json
 import os
-from pathlib import Path
 import platform
 import re
 import shutil
 import signal
 import struct
 import subprocess
-import sys
 import uuid
 
-sys.dont_write_bytecode = True
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / 'tools'))
 import build_native as native
-from diff_native_elf import Elf, compare
+from diff_native_elf import Elf, compare, public_comparison
 
 # The deliberately different process counts test independence from PID allocation.
 # No GPU is exposed and no kernel is launched; CDLL tests host dependency loading.
@@ -80,7 +82,8 @@ def run_container(command, stage, log):
                 # Stop first, even if writing the retained cleanup log fails.
                 cleanup = subprocess.run(['docker', 'rm', '--force', cid], stdout=subprocess.PIPE,
                                          stderr=subprocess.STDOUT, text=True, start_new_session=True)
-                (stage / 'cleanup.log').write_text(cleanup.stdout)
+                with diagnostics.capture_log(stage / 'cleanup.log') as log:
+                    log.write(cleanup.stdout)
                 cleanup.check_returncode()
         finally:
             for sig, handler in previous.items():
@@ -97,13 +100,14 @@ def compare_runs(stages, output, label):
         other = stage / 'out/cooperative_moe.so'
         result = compare(first, other)
         name = f'{label}-1-vs-{index}'
-        (output / (name + '.json')).write_text(json.dumps(result, indent=2, sort_keys=True) + '\n')
+        (output / (name + '.json')).write_text(json.dumps(public_comparison(result, output / (name + '.json')), indent=2, sort_keys=True) + '\n')
         # Decode CUDA line tables as well as reporting raw .nv_fatbin offsets.
         a, b = (s / 'out/cuda-elf.txt' for s in (stages[0], stage))
         if a.exists() and b.exists():
             diff = difflib.unified_diff(a.read_text().splitlines(True), b.read_text().splitlines(True),
                                        fromfile=str(a), tofile=str(b))
-            (output / (name + '.cuda-elf.diff')).write_text(''.join(diff))
+            with diagnostics.capture_log(output / (name + '.cuda-elf.diff')) as log:
+                log.write(''.join(diff))
         reports.append({'report': name + '.json', 'identical': result['identical']})
     return reports
 
@@ -137,8 +141,8 @@ def main():
         inputs = native.build_inputs()
         report = {'schema_version': 1, 'scope': 'compilation and host load only; no GPU qualification',
                   'hardware_qualified': False, 'host_machine': platform.machine(),
-                  'docker_machine': subprocess.check_output(
-                      ['docker', 'info', '--format', '{{.Architecture}}'], text=True).strip(),
+                  'docker_machine_sha256': diagnostics.fingerprint(subprocess.check_output(
+                      ['docker', 'info', '--format', '{{.Architecture}}'], text=True, stderr=subprocess.STDOUT).strip()),
                   'image_receipt_sha256': native.sha(args.image_receipt),
                   'image_config': image['config_digest'], 'build_inputs': inputs, 'builders': {}}
         output.mkdir(parents=True)
@@ -159,7 +163,7 @@ def main():
                            '--user', f'{os.getuid()}:{os.getgid()}', '-v', f'{stage}:/w', '-w', '/w',
                            '--entrypoint', 'bash', image['config_digest'], '-c', COMMAND, 'bash', str(burns)]
                 print(f'BUILD {label} {run + 1}/{args.runs}; retained at {stage}', flush=True)
-                with (stage / 'console.log').open('w') as log:
+                with diagnostics.capture_log(stage / 'console.log') as log:
                     process = run_container(command, stage, log)
                 row = {'directory': stage.name, 'exit_code': process.returncode, 'pid_burns': burns}
                 group['runs'].append(row)
@@ -169,12 +173,12 @@ def main():
                     try:
                         symbols = Elf(binary).symbols()
                         row['elf_valid'] = True
-                        row['tmpxft_symbols'] = [s[1] for s in symbols if 'tmpxft_' in s[1]]
-                        row['defined_cudart_symbols'] = [s[1] for s in symbols
+                        row['tmpxft_symbols'] = [diagnostics.fingerprint(s[1]) for s in symbols if 'tmpxft_' in s[1]]
+                        row['defined_cudart_symbols'] = [s[1].split('@')[0] for s in symbols
                             if s[4] != 0 and s[1].split('@')[0] in {'cudaLaunchKernel', 'cudaRuntimeGetVersion',
                                                                   '__cudaRegisterFatBinary', '__cudaRegisterFunction'}]
                     except (ValueError, IndexError, struct.error) as exc:
-                        row['elf_error'] = str(exc)
+                        row['elf_error'] = diagnostics.record_failure(exc, output / 'experiment.json', command='ELF analysis')
                 if process.returncode == 0:
                     row['shared_cudart'] = 'Shared library: [libcudart.so.13]' in (stage / 'out/elf.txt').read_text()
                     row['dependencies_found'] = 'not found' not in (stage / 'out/ldd.txt').read_text()
@@ -196,12 +200,13 @@ def main():
         print(f'{report["status"]} candidate compilation experiment; evidence={output}; GPU qualification still required')
         return 0 if passed else 9
     except Cancelled as exc:
-        print(f'CANCELLED: {exc}; experiment container removed; evidence retained', file=sys.stderr)
+        diagnostics.report_failure(exc, args.output / 'experiment.json', command='cancelled build')
         return 128 + exc.signum
     except (OSError, ValueError, subprocess.CalledProcessError) as exc:
-        print(f'REFUSE: {exc}', file=sys.stderr)
+        diagnostics.report_failure(exc)
         return 9
 
 
 if __name__ == '__main__':
+    diagnostics.install_exception_hook()
     raise SystemExit(main())

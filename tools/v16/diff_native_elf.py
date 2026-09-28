@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: Apache-2.0
 """Locate byte, section and symbol differences without executing either ELF."""
+import sys
+sys.dont_write_bytecode = True
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "recipe/scripts"))
+import _diagnostics as diagnostics
 import argparse
 from collections import Counter
 import hashlib
 import json
-from pathlib import Path
 import struct
 
 
@@ -104,6 +108,25 @@ def compare(left, right):
             'identical_sections': identical, 'symbols': symbol_changes}
 
 
+def public_comparison(result, output=None):
+    diagnostics.retain(json.dumps(result), output)
+    result = json.loads(json.dumps(result))
+    for side in ('left', 'right'):
+        result[side]['path'] = '<private input>'
+    for row in result['changed_sections']:
+        row['name'] = diagnostics.fingerprint(row['name'])
+        for change in row.get('first_differences', []):
+            change.pop('left', None); change.pop('right', None)
+    result['identical_sections'] = [diagnostics.fingerprint(name) for name in result['identical_sections']]
+    for change in result['file_bytes']['first_differences']:
+        change.pop('left', None); change.pop('right', None)
+    for side in ('left_only', 'right_only'):
+        for row in result['symbols'][side]:
+            row['name'] = diagnostics.fingerprint(row['name'])
+            row['table'] = diagnostics.fingerprint(row['table'])
+    return result
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('left', type=Path)
@@ -113,8 +136,9 @@ def main():
     try:
         result = compare(args.left, args.right)
     except (OSError, ValueError, IndexError, struct.error) as exc:
-        parser.error(str(exc))
-    report = json.dumps(result, indent=2, sort_keys=True) + '\n'
+        diagnostics.report_failure(exc)
+        return 2
+    report = json.dumps(public_comparison(result, args.output), indent=2, sort_keys=True) + '\n'
     if args.output:
         args.output.write_text(report)
     else:
@@ -123,4 +147,5 @@ def main():
 
 
 if __name__ == '__main__':
+    diagnostics.install_exception_hook()
     raise SystemExit(main())

@@ -1,21 +1,23 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: Apache-2.0
 """Build ARM64 display and pinned coop artifacts by default and receipt verified inputs/outputs."""
+import sys
+sys.dont_write_bytecode = True
 import argparse
 import hashlib
 import json
 import os
 import platform
 from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "recipe/scripts"))
+import _diagnostics as diagnostics
 import shutil
 import re
 import socket
 import stat
 import subprocess
-import sys
 import tempfile
 
-sys.dont_write_bytecode = True
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "recipe/scripts"))
 from _coop_qualification import TARGET_NATIVE, verify_builder_host
@@ -92,6 +94,7 @@ def builder_host():
         query = subprocess.run([trusted_nvidia_smi(), '--query-gpu=name,uuid', '--format=csv,noheader'],
                                check=True, capture_output=True, text=True, timeout=10,
                                env=IDENTITY_ENV, cwd='/', stdin=subprocess.DEVNULL)
+        diagnostics.retain(query.stdout + (query.stderr or ''))
         rows = [line.strip().split(',') for line in query.stdout.splitlines() if line.strip()]
         if (len(rows) != 1 or len(rows[0]) != 2 or rows[0][0].strip() != 'NVIDIA GB10'
                 or not re.fullmatch(r'GPU-[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}', rows[0][1].strip())):
@@ -166,7 +169,7 @@ def build(kind, stage, image):
             shutil.copyfile(ROOT / COOP / name, stage / name)
         shutil.copytree(ROOT / COOP / "source", stage / "source")
         command = ["/w/build_repro.sh", "/w/out"]
-    subprocess.run(["docker", "run", "--rm", "--platform", "linux/arm64",
+    diagnostics.run_private(["docker", "run", "--rm", "--platform", "linux/arm64",
                     "--network", "none", "--cpus", "4", "--memory", "8g", "--memory-swap", "8g",
                     "-e", "NVIDIA_VISIBLE_DEVICES=void", "-e", "CUDA_VISIBLE_DEVICES=", "--user", f"{os.getuid()}:{os.getgid()}",
                     "-v", f"{stage}:/w", "-w", "/w", "--entrypoint", "bash",
@@ -235,12 +238,13 @@ def main():
                 if stage.is_dir():
                     shutil.move(str(stage), str(built / stage.name))
             built.rename(output)
-        print(f"PASS verified native builds; BINARY_ROOT={output}; hardware qualification remains required")
+        print("PASS verified native builds; hardware qualification remains required")
         return 0
     except (OSError, ValueError, KeyError, subprocess.SubprocessError) as exc:
-        print(f"REFUSE: {exc}", file=sys.stderr)
+        diagnostics.report_failure(exc)
         return 9
 
 
 if __name__ == "__main__":
+    diagnostics.install_exception_hook()
     raise SystemExit(main())

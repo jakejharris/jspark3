@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 """Optional boot stage after v1.6. Gate 0 leaves every served byte untouched."""
 from __future__ import annotations
+import sys
+sys.dont_write_bytecode = True
+import _diagnostics as diagnostics
 
 import argparse
 import hashlib
 import json
 import os
 from pathlib import Path
-import sys
 
 from _atomic import Refusal, execute, print_receipt, read_image_receipt, safe_target
 
@@ -90,9 +92,10 @@ def main():
         print_receipt(receipt)
         return 0
     except (OSError, ValueError, KeyError, Refusal) as exc:
-        print(f"REFUSE: {exc}", file=sys.stderr)
+        diagnostics.report_failure(exc)
         return 9
 
 
 if __name__ == "__main__":
+    diagnostics.install_exception_hook()
     raise SystemExit(main())

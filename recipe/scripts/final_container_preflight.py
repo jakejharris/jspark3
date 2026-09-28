@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """Real transformed-image imports after installation, before model allocation."""
-import hashlib,json,os,subprocess,sys
+import sys
+sys.dont_write_bytecode = True
+import _diagnostics as diagnostics
+import hashlib,json,os,subprocess
 from pathlib import Path
 
 PROBE=r'''
@@ -24,14 +27,17 @@ def main():
  receipt=dict(status='FAULT',rank=rank,phase='after-source-install-before-model-load')
  try:
   p=subprocess.run(['python3','-B','-c',PROBE],env=dict(os.environ,B5_OUT=str(out)),stdin=subprocess.DEVNULL,text=True,capture_output=True,timeout=180)
-  (out/'stdout.log').write_text(p.stdout);(out/'stderr.log').write_text(p.stderr)
+  diagnostics.retain(p.stdout + p.stderr, out/'result.json')
   rows=[json.loads(x[16:]) for x in p.stdout.splitlines() if x.startswith('FINAL_INSTALLED ')]
   assert p.returncode==0 and len(rows)==1 and rows[0]['status']=='PASS','transformed-image import/graph-source smoke failed'
-  receipt.update(status='PASS',installed=rows[0],graph_capture_executed=False)
+  receipt.update(status='PASS',installed_sha256=diagnostics.fingerprint(rows[0]),graph_capture_executed=False)
  finally:
-  receipt['inputs']={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in out.rglob('*') if p.is_file()}
+  # Runtime module evidence stays local; shared receipt binds its bytes only.
+  receipt['runtime_evidence_sha256']=diagnostics.fingerprint({p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in out.rglob('*') if p.is_file() and not p.name.endswith(diagnostics.PRIVATE_SUFFIX)})
   (out/'result.json').write_text(json.dumps(receipt,sort_keys=True)+'\n')
  print('FINAL-INSTALLED-IMPORTS-PASS '+json.dumps(dict(rank=rank,receipt_sha256=hashlib.sha256((out/'result.json').read_bytes()).hexdigest()),sort_keys=True),flush=True)
  return 0
 
-if __name__=='__main__':raise SystemExit(main())
+if __name__=='__main__':
+ diagnostics.install_exception_hook()
+ raise SystemExit(main())

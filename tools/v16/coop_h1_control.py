@@ -8,15 +8,19 @@ the clone is perturbed immediately before the frozen tolerance comparison.
 """
 
 from __future__ import annotations
+import sys
+sys.dont_write_bytecode = True
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "recipe/scripts"))
+import _diagnostics as diagnostics
 
 import argparse
+from contextlib import redirect_stdout, redirect_stderr
 import hashlib
 import importlib.util
 import json
 import math
 import os
-from pathlib import Path
-import sys
 import tempfile
 
 
@@ -356,13 +360,15 @@ def parser() -> argparse.ArgumentParser:
 def main() -> int:
     args = parser().parse_args()
     try:
-        record = run(args)
+        with diagnostics.capture_log(args.receipt.with_suffix(".log")) as raw, redirect_stdout(raw), redirect_stderr(raw):
+            record = run(args)
     except (ControlRefusal, OSError, ValueError, json.JSONDecodeError) as exc:
-        print(f"REFUSE: {exc}", file=sys.stderr)
+        diagnostics.report_failure(exc)
         return 9
     print(json.dumps(record, sort_keys=True), flush=True)
     return 0
 
 
 if __name__ == "__main__":
+    diagnostics.install_exception_hook()
     raise SystemExit(main())

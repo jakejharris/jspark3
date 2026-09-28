@@ -4,12 +4,12 @@ GLM-5.3 Flash on three NVIDIA DGX Sparks, with tensor parallelism across all thr
 
 **Historical v1.8.0 measurement: 136.9 to 141.7 tok/s code decode at 4 streams and 174.0 to 179.7 tok/s at 8, on unedited EXL3-quantized GLM-5.3 Flash weights.**
 
-Measured on one serving start across two sweeps. Ranges span both sweeps.
+Decode was measured on one serving start across two sweeps. Decode ranges span both sweeps.
 
 - Prose decode: 83.3 to 90.7 tok/s at 4 streams, 110.1 to 110.8 tok/s at 8
-- Prefill: 1195.0 to 1262.6 tok/s across eight Pi coding-agent turns extending a cached prefix, after page-cache hygiene
+- Prefill: 1195.0 to 1262.6 tok/s across eight Pi coding-agent turns extending a cached prefix, from one post-hygiene gate pass
 
-These come from the v1.8.0 release build (cooperative-MoE kernel on, one serving start, two sweeps); each range spans both sweeps. Decode is the combined rate of all streams, each forced to 512 output tokens at temperature 0 with thinking off. Every figure and its evidence hash is in [release/results.json](release/results.json), with definitions in [benchmarks](docs/BENCHMARKS.md).
+These come from the v1.8.0 release build with the cooperative-MoE kernel on. Decode ranges span two sweeps on one serving start; the prefill range spans eight turns from one recorded post-hygiene gate pass. Decode is the combined rate of all streams, each forced to 512 output tokens at temperature 0 with thinking off. Every figure and its evidence hash is in [release/results.json](release/results.json), with definitions in [benchmarks](docs/BENCHMARKS.md).
 
 The historical v1.8.0 build was faster than the published three-Spark reference build on its own benchmark at one and two streams, in every run.
 

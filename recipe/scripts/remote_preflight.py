@@ -2,6 +2,9 @@
 """Per-rank admission checks; temporary image checks never start a container."""
 
 from __future__ import annotations
+import sys
+sys.dont_write_bytecode = True
+import _diagnostics as diagnostics
 
 import argparse
 import csv
@@ -13,10 +16,8 @@ from pathlib import Path
 import platform
 import shutil
 import subprocess
-import sys
 import re
 
-sys.dont_write_bytecode = True
 from _image_identity import selected_identity, verify_local_image
 
 IMAGE_IDENTITY = selected_identity()
@@ -37,6 +38,7 @@ class Refusal(RuntimeError):
 def run(argv: list[str]) -> str:
     process = subprocess.run(argv, text=True, stdout=subprocess.PIPE,
                              stderr=subprocess.PIPE, check=False)
+    diagnostics.retain((process.stdout or "") + (process.stderr or ""))
     if process.returncode:
         detail = process.stderr.strip().splitlines()[-1:] or ["no detail"]
         raise Refusal(f"command failed: {argv[0]}: {detail[0]}")
@@ -299,6 +301,7 @@ def display_server_running(name: str) -> bool:
     """pgrep: 0 = present, 1 = proven absent; any other status proves nothing."""
     argv = ["pgrep", "-x", name]
     process = subprocess.run(argv, text=True, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, check=False)
+    diagnostics.retain((process.stdout or "") + (process.stderr or ""))
     if process.returncode not in (0, 1):
         raise query_failed(argv, process)
     return process.returncode == 0
@@ -308,6 +311,7 @@ def display_unit_running(unit: str) -> bool:
     """Absent only on an explicit ActiveState=inactive (loaded or not-found)."""
     argv = ["systemctl", "show", "--property=LoadState,ActiveState", unit]
     process = subprocess.run(argv, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False)
+    diagnostics.retain((process.stdout or "") + (process.stderr or ""))
     if process.returncode:
         raise query_failed(argv, process)
     state = dict(line.split("=", 1) for line in process.stdout.splitlines() if "=" in line)
@@ -468,6 +472,7 @@ def main() -> int:
             "--draft-root", str(models / DRAFT_NATIVE),
             "--draft-runtime", str(models / DRAFT_RUNTIME),
         ], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        diagnostics.retain(validation.stdout + validation.stderr)
         if validation.returncode:
             raise Refusal("checkpoint serving-byte gate failed")
         if available_memory() < MIN_AVAILABLE_MEMORY:
@@ -500,9 +505,10 @@ def main() -> int:
         }, sort_keys=True))
         return 0
     except (OSError, ValueError, KeyError, TypeError, json.JSONDecodeError, Refusal) as exc:
-        print(f"REFUSE: {exc}", file=sys.stderr)
+        diagnostics.report_failure(exc)
         return 9
 
 
 if __name__ == "__main__":
+    diagnostics.install_exception_hook()
     raise SystemExit(main())

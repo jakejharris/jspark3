@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 """Validate a recipe-only source export. No deployment or publication is performed."""
 from __future__ import annotations
+import sys
+sys.dont_write_bytecode = True
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "recipe/scripts"))
+import _diagnostics as diagnostics
 
 import argparse
 import ast
@@ -8,13 +13,10 @@ import hashlib
 import ipaddress
 import json
 import os
-from pathlib import Path
 import re
 import stat
 import subprocess
-import sys
 
-sys.dont_write_bytecode = True
 from _release_checks import Report, sha256, pth_payload_allowed, check_syntax, check_links, check_dry_runs
 
 # Split policy literals so the scanner also checks its own source.
@@ -130,7 +132,7 @@ def verify(root, require_final=False):
             else: report.ok(name)
         except Exception as exc:
             # Do not echo external data or secret-bearing matches.
-            report.fail(name, type(exc).__name__)
+            report.fail(name, exc)
     check('inventory', lambda: errors)
     check('required-files', lambda: [n for n in REQUIRED if not (root / n).is_file()])
     # Validate every working-tree name and byte, including untracked files.
@@ -142,6 +144,8 @@ def verify(root, require_final=False):
           and not any(re.search(rb'(?:github.com/|ghcr.io/|pkg:github/)jakejh(?:/|$)', p.read_bytes()) for p in files) else ['repository identity mismatch'])
     check_syntax(root, files, report)
     check_links(root, files, report)
+    from _shared_output_audit import verify as output_audit
+    check('shared-output-audit', lambda: output_audit(root))
 
     def derivation():
         d = load(root, 'manifests/derivation.json')
@@ -191,6 +195,7 @@ for n,h in json.loads((r/'config/swa-contract.json').read_text())['patches'].ite
  assert hashlib.sha256((r/'overlays'/n).read_bytes()).hexdigest()==h
 '''
         p = subprocess.run([sys.executable, '-B', '-S', '-c', code, str(recipe / 'scripts')], capture_output=True, timeout=30)
+        diagnostics.retain((p.stdout + p.stderr).decode('utf-8', 'replace'))
         return [] if p.returncode == 0 else ['source pins or transform contracts disagree']
     check('identity-contracts', contracts)
     check('license-copies', lambda: [n for n in ('LICENSE', 'REQUIRED_ATTRIBUTION.md', 'THIRD_PARTY_NOTICES.md') if (root / n).read_bytes() != (root / 'recipe' / n).read_bytes()])
@@ -281,4 +286,5 @@ def main():
 
 
 if __name__ == '__main__':
+    diagnostics.install_exception_hook()
     raise SystemExit(main())

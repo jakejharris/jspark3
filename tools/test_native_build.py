@@ -291,8 +291,11 @@ class BuildSelectionTests(unittest.TestCase):
                 self.assertEqual(status, 9 if drift else 0, log.getvalue())
                 self.assertEqual(output.exists(), drift is None)
                 if drift:
-                    self.assertIn('builder identity changed' if drift == 'identity' else
-                                  'candidate pin' if drift == 'wrong-pin' else drift + ': two native builds differ', log.getvalue())
+                    expected = ('builder identity changed' if drift == 'identity' else
+                                'candidate pin' if drift == 'wrong-pin' else drift + ': two native builds differ')
+                    self.assertNotIn(expected, log.getvalue())
+                    private = log.getvalue().split('Private diagnostics (do not share): ', 1)[1].splitlines()[0]
+                    self.assertIn(expected, Path(private).read_text())
                 else:
                     with patch.object(native, 'TARGET_NATIVE', hashlib.sha256(b'synthetic compiler output').hexdigest()):
                         record = native.read_native_record(output / 'native-build-receipt.json',
@@ -348,7 +351,9 @@ class DefaultProfileTests(unittest.TestCase):
                                      capture_output=True, text=True)
             if default_refusal:
                 self.assertNotEqual(process.returncode, 0)
-                self.assertIn('default preparation requires the pinned coop native', process.stderr)
+                self.assertNotIn('default preparation requires the pinned coop native', process.stderr)
+                private = process.stderr.split('Private diagnostics (do not share): ', 1)[1].splitlines()[0]
+                self.assertIn('default preparation requires the pinned coop native', Path(private).read_text())
                 self.assertFalse(runtime.exists())
                 return
             self.assertEqual(process.returncode, 0, process.stdout + process.stderr)

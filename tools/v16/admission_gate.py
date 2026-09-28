@@ -10,7 +10,7 @@ from pathlib import Path
 import sys
 sys.dont_write_bytecode = True
 
-from v16_common import QAError, json_safe, load_json, sha256_json, write_json
+from v16_common import QAError, json_safe, load_json, sha256_json, write_json, diagnostics
 
 SCHEMA = "jspark3-v16-admission-gate/1"
 FIRST_SCHEMA = "jspark3-v16-first-prompt/1"
@@ -80,7 +80,8 @@ def evaluate(first: dict, final: dict, *, first_path: str = "first", final_path:
                     if {k: component[k] for k in expected} != expected:
                         findings.append('operator component differs from the release qualification')
                 except (OSError, ValueError, KeyError) as exc:
-                    findings.append('release component qualification refused: ' + str(exc))
+                    detail = diagnostics.record_failure(exc)
+                    findings.append('release component qualification refused: ' + detail['reason'])
     if first_identity and first_identity.get("dense-fp8") == "negative-coarse":
         findings.append("test-only negative-coarse cannot open admission")
     return {"schema": SCHEMA, "verdict": "PASS" if not findings else "FAIL",
@@ -131,16 +132,19 @@ def main(argv: list[str] | None = None) -> int:
                     raise QAError('operator evidence inventory is missing')
                 for name, expected in evidence.items():
                     path = args.finalize.parent / name
-                    if Path(name).name != name or path.is_symlink() or _sha(path) != expected:
+                    if (Path(name).name != name or name.endswith(diagnostics.PRIVATE_SUFFIX)
+                            or path.is_symlink() or _sha(path) != expected):
                         raise QAError('operator evidence changed: ' + name)
             report["input_sha256"] = {"first_prompt": _sha(args.first_prompt),
                                       "finalize": _sha(args.finalize)}
         except (OSError, ValueError, QAError) as exc:
-            report = {"schema": SCHEMA, "verdict": "FAIL", "findings": [str(exc)]}
+            report = {"schema": SCHEMA, "verdict": "FAIL", "findings": ["admission evidence refused"],
+                      **diagnostics.record_failure(exc, args.out, command="admission recheck")}
     write_json(args.out, report)
     print(json.dumps(json_safe(report), indent=2, sort_keys=True, allow_nan=False))
     return 0 if report.get("verdict") == "PASS" else 1
 
 
 if __name__ == "__main__":
+    diagnostics.install_exception_hook()
     sys.exit(main())

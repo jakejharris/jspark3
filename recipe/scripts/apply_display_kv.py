@@ -10,13 +10,15 @@ workers load the sealed build from the read-only recipe mount
 """
 
 from __future__ import annotations
+import sys
+sys.dont_write_bytecode = True
+import _diagnostics as diagnostics
 
 import argparse
 import hashlib
 import os
 from pathlib import Path
 import subprocess
-import sys
 import tempfile
 
 from _atomic import Refusal, execute, print_receipt, safe_target
@@ -70,10 +72,11 @@ def compose(files: dict[str, bytes]) -> dict[str, bytes]:
         try:
             require_overrides(OVERLAY / PATCHER, env)
         except ValueError as exc:
-            raise Refusal(str(exc)) from None
+            raise Refusal(str(exc)) from exc
         process = subprocess.run(
             [sys.executable, "-S", str(OVERLAY / PATCHER)], env=env, cwd=stage_root, text=True,
             stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False)
+        diagnostics.retain(process.stdout + process.stderr)
         if process.returncode:
             tail = (process.stderr or process.stdout).strip().splitlines()[-3:]
             raise Refusal(f"{PATCHER}: installer refused: {' | '.join(tail)}")
@@ -114,9 +117,10 @@ def main() -> int:
         print_receipt(receipt)
         return 0
     except (OSError, ValueError, UnicodeError, Refusal) as exc:
-        print(f"REFUSE: {exc}", file=sys.stderr)
+        diagnostics.report_failure(exc)
         return 9
 
 
 if __name__ == "__main__":
+    diagnostics.install_exception_hook()
     raise SystemExit(main())

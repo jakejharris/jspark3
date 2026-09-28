@@ -21,12 +21,14 @@ here makes no claim about the configured 1,000,000-token limit.
 """
 
 from __future__ import annotations
+import sys
+sys.dont_write_bytecode = True
+import _diagnostics as diagnostics
 
 import argparse
 import hashlib
 import json
 import os
-import sys
 import time
 import urllib.error
 import urllib.request
@@ -97,9 +99,9 @@ def run_request(url: str, body: bytes, api_key: str, timeout: int) -> tuple[int,
     request = urllib.request.Request(url, data=body, headers=headers)
     try:
         with urllib.request.urlopen(request, timeout=timeout) as response:
-            return response.status, json.loads(response.read())
+            return response.status, json.loads(diagnostics.private_read(response))
     except urllib.error.HTTPError as exc:
-        detail = exc.read(400).decode("utf-8", "replace")
+        detail = diagnostics.private_read(exc).decode("utf-8", "replace")
         raise Refusal(f"HTTP {exc.code} from endpoint: {detail}") from exc
 
 
@@ -145,7 +147,7 @@ def main() -> int:
             "request_payload_sha256": hashlib.sha256(body).hexdigest(),
             "payload_pinned": pinned, "min_prompt_tokens": args.min_prompt_tokens,
             "min_completion_tokens": MIN_COMPLETION_TOKENS,
-            "served_model": result.get("model"), "elapsed_seconds": round(time.monotonic() - started, 3),
+            "served_model_sha256": diagnostics.fingerprint(result.get("model")), "elapsed_seconds": round(time.monotonic() - started, 3),
             **verdict,
         }
         if not verdict["pass"]:
@@ -154,9 +156,10 @@ def main() -> int:
         return 0
     except (OSError, ValueError, KeyError, TypeError, UnicodeError, json.JSONDecodeError,
             urllib.error.URLError, Refusal) as exc:
-        print(f"REFUSE: {exc}", file=sys.stderr)
+        diagnostics.report_failure(exc)
         return 9
 
 
 if __name__ == "__main__":
+    diagnostics.install_exception_hook()
     raise SystemExit(main())

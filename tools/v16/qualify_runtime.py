@@ -18,7 +18,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import admission_gate
 import apc_gate
 import prefill_gate
-from v16_common import ERROR_RE, QAError, load_json, sha256_json, write_json
+from v16_common import ERROR_RE, QAError, load_json, sha256_json, write_json, diagnostics
 
 HYGIENE_ROOTS = ['/models', '/recipe', '/sources/fly', '/evidence',
                  '/root/.cache/vllm', '/root/.triton/cache', '/root/.tilelang/cache']
@@ -118,8 +118,14 @@ def run(args, fleet):
     def command(name, script, arguments, allowed=(0,)):
         proc = subprocess.run([sys.executable, '-B', str(script), *map(str, arguments)],
                               text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        fleet.atomic_text(out / (name + '.log'), fleet.redact_diagnostics(proc.stdout + proc.stderr, values))
-        need(proc.returncode in allowed, name + ' refused; see its log')
+        diagnostics.retain(proc.stdout + proc.stderr)
+        fleet.save_diagnostics(out / (name + '.log'), proc.stdout + proc.stderr)
+        if proc.returncode not in allowed:
+            error = QAError('qualification command refused')
+            error.raw_output = proc.stdout + proc.stderr
+            error.safe_diagnostics = diagnostics.structure(error.raw_output)
+            error.safe_diagnostics.update(command=name, rank=None, exit_code=proc.returncode)
+            raise error
         return proc.returncode
 
     def verify(name):
@@ -128,7 +134,19 @@ def run(args, fleet):
         return verified(out / (name + '.json'), manifest_sha, fleet)
 
     def inputs():
-        return {p.name: fleet.sha_file(p) for p in sorted(out.iterdir()) if p.is_file()}
+        # Only named products of this producer are shared evidence. Diagnostics
+        # and unrelated files must never become admission dependencies.
+        names = ['verify-first.json', 'verify-first.log', 'verify-final.json', 'verify-final.log',
+                 'first-prompt.json', 'prefill-first.json', 'prefill-first.log',
+                 'prefill-post.json', 'prefill-post.log', 'apc.json', 'apc.log', 'apc-fixtures.json']
+        names += [f'{kind}-rank{rank}.{suffix}' for rank in range(3)
+                  for kind, suffix in (('hygiene', 'json'), ('triar-inactive', 'json'), ('post-warmup', 'log'))]
+        return {name: fleet.sha_file(out / name) for name in sorted(names) if (out / name).is_file()}
+
+    def public_boot():
+        return [{"rank": row['rank'], "container_id": row['container_id'],
+                 "started_at_sha256": diagnostics.fingerprint(row['started_at']), "epochs": row['epochs']}
+                for row in initial]
 
     def same_boot():
         need(fleet.sha_file(args.manifest) == manifest_sha and fleet.sha_file(args.env_file) == env_sha
@@ -140,7 +158,7 @@ def run(args, fleet):
     first = {'schema': admission_gate.FIRST_SCHEMA, 'verdict': 'PASS', 'identity_config': identity,
              'producer': 'qualify_runtime.py', 'component_qualification': component,
              'stock_profile': {'ABLIT': values['ABLIT'], 'profile': values['JSPARK3_V16_PROFILE'], 'APC': values['JSPARK3_V16_APC_LRU']},
-             'manifest_sha256': manifest_sha, 'boot': initial,
+             'manifest_sha256': manifest_sha, 'boot': public_boot(),
              'correctness': 'fleetctl arithmetic, focused and long-context witnesses', 'evidence_sha256': inputs()}
     write_json(out / 'first-prompt.json', first)
     gate_args = ['--base-url', base, '--env-file', args.env_file]
@@ -155,7 +173,13 @@ def run(args, fleet):
         # Runs with read access to the exact bound container's mounted files, avoiding
         # the root-owned cache/evidence EACCES seen with host-user-only walks.
         doc = json.loads(proc.stdout)
-        write_json(out / f'hygiene-rank{rank}.json', {'rank': rank, 'container_id': row['container_id'], **doc})
+        private = diagnostics.retain(proc.stdout + proc.stderr, out / f'hygiene-rank{rank}.json')
+        valid = (doc.get('verdict') == 'PASS' and not doc.get('errors')
+                 and type(doc.get('files')) is int and doc['files'] > 0 and type(doc.get('bytes')) is int)
+        write_json(out / f'hygiene-rank{rank}.json', {'rank': rank, 'container_id': row['container_id'],
+            'verdict': 'PASS' if valid else 'FAIL', 'files': doc.get('files') if valid else 0,
+            'bytes': doc.get('bytes') if valid else 0, 'errors': [] if valid else ['hygiene refused'],
+            'response_sha256': diagnostics.fingerprint(doc), 'private_diagnostic': Path(private).name if private else None})
         need(proc.returncode == 0 and doc['verdict'] == 'PASS' and not doc['errors'] and doc['files'] > 0,
              f'rank{rank} hygiene incomplete')
     same_boot()
@@ -173,7 +197,7 @@ def run(args, fleet):
         all_logs += proc.stdout + proc.stderr
         proc = fleet.remote(values, row['rank'], ['docker', 'logs', '--since', prefill_first['gate_start'], row['container_id']])
         text = proc.stdout + proc.stderr
-        fleet.atomic_text(out / f"post-warmup-rank{row['rank']}.log", fleet.redact_diagnostics(text, values))
+        fleet.save_diagnostics(out / f"post-warmup-rank{row['rank']}.log", text)
         need(not prefill_gate.compile_lines(text) and not ERROR_RE.search(text),
              f"rank{row['rank']} compiled or reported an engine error after warmup")
     inactive = triar_off(all_logs, values.get('JSPARK3_TRIAR', '0') == '1')
@@ -182,7 +206,11 @@ def run(args, fleet):
             proc = fleet.remote(values, row['rank'], ['docker', 'exec', row['container_id'], 'python3', '-B', '-S',
                 '/recipe/scripts/triar_inactive.py', '--started-at', row['started_at']])
             proof = json.loads(proc.stdout)
-            write_json(out / f"triar-inactive-rank{row['rank']}.json", proof)
+            private = diagnostics.retain(proc.stdout + proc.stderr, out / 'triar-inactive.json')
+            write_json(out / f"triar-inactive-rank{row['rank']}.json", {
+                'verdict': 'PASS' if proof.get('verdict') == 'PASS' else 'FAIL',
+                'attestation': {'rank': row['rank']}, 'response_sha256': diagnostics.fingerprint(proof),
+                'private_diagnostic': Path(private).name if private else None})
             need(proof['verdict'] == 'PASS' and proof['attestation']['rank'] == row['rank'],
                  'TRIAR inactive attestation failed')
     same_boot()
@@ -192,7 +220,7 @@ def run(args, fleet):
              'manifest_sha256': manifest_sha, 'environment_sha256': env_sha,
              'qualification_tools_sha256': {name: fleet.sha_file(Path(__file__).with_name(name)) for name in
                  ('qualify_runtime.py', 'prefill_gate.py', 'apc_gate.py', 'admission_gate.py', 'v16_common.py')},
-             'boot': initial, 'triar': inactive, 'completed_at': datetime.now(timezone.utc).isoformat(),
+             'boot': public_boot(), 'triar': inactive, 'completed_at': datetime.now(timezone.utc).isoformat(),
              'prefill_floor_tok_s': 1100, 'evidence_sha256': inputs(),
              'input_hashes': {'client_evidence': [{'schema': admission_gate.FIRST_SCHEMA,
                                                  'sha256': fleet.sha_file(out / 'first-prompt.json')}]}}
@@ -218,11 +246,12 @@ def main():
     fleet = importlib.import_module('fleetctl')
     try:
         run(args, fleet)
-    except (OSError, ValueError, KeyError, QAError, fleet.Refusal) as exc:
-        print('REFUSE: ' + fleet.redact_diagnostics(str(exc)), file=sys.stderr)
+    except Exception as exc:
+        diagnostics.report_failure(exc, args.output / 'qualification-failure.json', command='qualify runtime')
         return 1
     return 0
 
 
 if __name__ == '__main__':
+    diagnostics.install_exception_hook()
     raise SystemExit(main())

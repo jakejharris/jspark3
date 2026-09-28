@@ -5,6 +5,9 @@ The optional operator record is part of the private runtime's SHA256SUMS.
 The original OCI document remains the historical reference, never a pull URL.
 """
 from __future__ import annotations
+import sys
+sys.dont_write_bytecode = True
+import _diagnostics as diagnostics
 
 import argparse
 import hashlib
@@ -79,6 +82,7 @@ def selected_identity():
 
 def docker(argv):
     process = subprocess.run(["docker", *argv], capture_output=True, text=True)
+    diagnostics.retain(process.stdout + process.stderr)
     if process.returncode:
         raise ImageRefusal(f"docker {argv[0]} failed: {process.stderr.strip()}")
     return process.stdout
@@ -115,6 +119,7 @@ def verify_local_image(identity):
 
 
 if __name__ == "__main__":
+    diagnostics.install_exception_hook()
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--receipt", type=Path)
     args = parser.parse_args()

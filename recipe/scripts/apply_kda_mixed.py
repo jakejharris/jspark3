@@ -2,12 +2,14 @@
 """Install exact original KDA modules and apply the mixed-output hook atomically."""
 
 from __future__ import annotations
+import sys
+sys.dont_write_bytecode = True
+import _diagnostics as diagnostics
 
 import argparse
 import base64
 import gzip
 from pathlib import Path
-import sys
 
 from _atomic import Refusal, execute, print_receipt, safe_target, sha_bytes
 from _contracts import KDA_MIXED
@@ -75,9 +77,10 @@ def main() -> int:
         print_receipt(receipt)
         return 0
     except (OSError, ValueError, UnicodeError, Refusal) as exc:
-        print(f"REFUSE: {exc}", file=sys.stderr)
+        diagnostics.report_failure(exc)
         return 9
 
 
 if __name__ == "__main__":
+    diagnostics.install_exception_hook()
     raise SystemExit(main())

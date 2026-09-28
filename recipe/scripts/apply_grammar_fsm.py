@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 """Apply the sealed XGrammar reasoning/termination backport after the base pipeline."""
 from __future__ import annotations
+import sys
+sys.dont_write_bytecode = True
+import _diagnostics as diagnostics
 
 import argparse
 import importlib.util
 from pathlib import Path
-import sys
 
 from _atomic import Refusal, execute, print_receipt, safe_target, sha_file
 from _contracts import V16_GRAMMAR_FSM
@@ -65,9 +67,10 @@ def main():
         ))
         return 0
     except (OSError, ValueError, SyntaxError, Refusal) as exc:
-        print(f"REFUSE: {exc}", file=sys.stderr)
+        diagnostics.report_failure(exc)
         return 9
 
 
 if __name__ == "__main__":
+    diagnostics.install_exception_hook()
     raise SystemExit(main())

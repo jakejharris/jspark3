@@ -16,6 +16,7 @@ import re
 import shlex
 import statistics
 import subprocess
+import sys
 import threading
 import time
 import urllib.error
@@ -23,9 +24,16 @@ import urllib.parse
 import urllib.request
 from typing import Any, Iterable
 
+sys.dont_write_bytecode = True
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "recipe/scripts"))
+import _diagnostics as diagnostics
+
 MODEL = "glm-5.3-flash"
 METRIC_KEYS = (
     "vllm:request_success_total",
+    "vllm:prefix_cache_queries_total",
+    "vllm:prefix_cache_hits_total",
+    "vllm:request_prefill_time_seconds_sum",
     "vllm:prompt_tokens_total",
     "vllm:generation_tokens_total",
     "vllm:num_requests_running",
@@ -235,6 +243,7 @@ def observe_epoch(document: dict, sources: list[dict], env_file: Path | None) ->
         path = f"{values['JSPARK_WORK_ROOT']}/rank{rank}/evidence/adaptive-k-epoch.json"
         proc = subprocess.run(ssh_argv(values, rank, ["cat", "--", path]),
                               capture_output=True, text=True, check=False)
+        diagnostics.retain(proc.stdout + proc.stderr)
         try:
             actual = validate_epoch_document(json.loads(proc.stdout))
         except (ValueError, QAError) as exc:
@@ -317,10 +326,13 @@ def fetch_remote_logs(
             )
         except OSError as exc:
             raise QAError(f"rank{rank} log collection failed: {exc}") from exc
+        private = diagnostics.retain(proc.stdout + proc.stderr)
         if proc.returncode:
-            raise QAError(
-                f"rank{rank} docker logs failed rc={proc.returncode}: {proc.stderr.strip()[-300:]}"
-            )
+            error = QAError('remote log collection failed')
+            error.raw_output = proc.stdout + proc.stderr
+            error.safe_diagnostics = diagnostics.structure(error.raw_output)
+            error.safe_diagnostics.update(rank=rank, command='docker logs', exit_code=proc.returncode)
+            raise error
         combined += f"\n===== remote rank{rank} {name} =====\n{proc.stdout}{proc.stderr}"
         sources.append(f"{values[f'JSPARK_RANK{rank}_HOST']}:{name}")
     return combined, sources
@@ -424,7 +436,7 @@ def http_get_text(base_url: str, path: str, timeout: float = 20.0) -> str:
     request = urllib.request.Request(_url(base_url, path), headers={"Accept": "text/plain"})
     try:
         with _opener().open(request, timeout=timeout) as response:
-            return response.read().decode("utf-8", "replace")
+            return diagnostics.private_read(response).decode("utf-8", "replace")
     except (OSError, urllib.error.URLError, urllib.error.HTTPError) as exc:
         raise QAError(f"GET {path} failed: {exc}") from exc
 
@@ -438,9 +450,9 @@ def http_post_json(base_url: str, path: str, body: dict, timeout: float = 360.0)
     )
     try:
         with _opener().open(request, timeout=timeout) as response:
-            raw = response.read().decode("utf-8", "replace")
+            raw = diagnostics.private_read(response).decode("utf-8", "replace")
     except urllib.error.HTTPError as exc:
-        detail = exc.read().decode("utf-8", "replace")[:1000]
+        detail = diagnostics.private_read(exc).decode("utf-8", "replace")
         raise QAError(f"POST {path} returned HTTP {exc.code}: {detail}") from exc
     except (OSError, urllib.error.URLError) as exc:
         raise QAError(f"POST {path} failed: {exc}") from exc
@@ -455,6 +467,7 @@ def http_post_json(base_url: str, path: str, body: dict, timeout: float = 360.0)
 
 def parse_prometheus(text: str) -> dict[str, float]:
     """Aggregate series by metric name (labels are intentionally collapsed)."""
+    diagnostics.retain(text)
     result: dict[str, float] = {}
     for raw in text.splitlines():
         line = raw.strip()
@@ -467,7 +480,8 @@ def parse_prometheus(text: str) -> dict[str, float]:
             value = float(match.group(2))
         except ValueError:
             continue
-        result[match.group(1)] = result.get(match.group(1), 0.0) + value
+        if match.group(1) in METRIC_KEYS:
+            result[match.group(1)] = result.get(match.group(1), 0.0) + value
     return result
 
 
@@ -667,7 +681,7 @@ def run_stream(base_url: str, body: dict, timeout: float = 360.0, barrier: threa
                     if isinstance(ids, list):
                         token_ids.extend(x for x in ids if isinstance(x, int))
     except urllib.error.HTTPError as exc:
-        detail = exc.read().decode("utf-8", "replace")[:1000]
+        detail = diagnostics.private_read(exc).decode("utf-8", "replace")
         error = f"HTTP {exc.code}: {detail}"
     except Exception as exc:  # network/protocol evidence belongs in the result
         error = f"{type(exc).__name__}: {exc}"

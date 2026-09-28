@@ -23,6 +23,7 @@ import urllib.request
 sys.dont_write_bytecode = True
 
 import production_stock
+import _diagnostics as diagnostics
 
 from _image_identity import selected_identity
 
@@ -339,36 +340,36 @@ def ssh_argv(values: dict[str, str], rank: int, remote_argv: list[str]) -> list[
 # -S preserves), so skipping site hooks provably changes nothing but the
 # noise; the strict parsers stay byte-exact with no banner stripping.
 JSON_PYTHON = ("python3", "-S")
-REMOTE_STDERR_LIMIT = 16 * 1024  # Characters retained in failure receipts.
+REMOTE_STDERR_LIMIT = diagnostics.TAIL_LIMIT
 
 
 def redact_diagnostics(text: str, values: dict[str, str] | None = None) -> str:
-    """Remove known secrets and credential-bearing diagnostic forms before storage."""
-    sensitive = r"token|secret|password|passwd|api[-_]?key|access[-_]?key|private[-_]?key|authorization|credential"
-    known = {str(value) for key, value in {**os.environ, **(values or {})}.items()
-             if value and re.search(sensitive, key, re.I)}
-    for value in sorted(known, key=len, reverse=True):
-        for form in (json.dumps(value), repr(value), value):
-            text = text.replace(form, '[REDACTED]')
-    text = re.sub(r'(?i)\b(Bearer|Basic)\s+[A-Za-z0-9._~+/=-]+', r'\1 [REDACTED]', text)
-    # Handles env assignments, shell flags, JSON and Python argv reprs. Quoted
-    # values may contain spaces; remove the whole value, not just its first word.
-    quoted_value = r'"(?:\\.|[^"\\\r\n])*"|\'(?:\\.|[^\'\\\r\n])*\''
-    pattern = (rf"(?i)(?<![\w-])((?:--)?[\w-]*(?:{sensitive})[\w-]*[\"']?"
-               r"(?:\s*[:=,]\s*|\s+))(?:" + quoted_value + r"|[^\s,;]+)")
-    text = re.sub(pattern, r'\1[REDACTED]', text)
-    text = re.sub(r'(?i)(https?://)[^\s/@:]+:[^\s/@]+@', r'\1[REDACTED]@', text)
-    return text
+    """Compatibility API: return only recognized structure, never free text."""
+    return diagnostics.render(diagnostics.structure(text))
+
+
+def save_diagnostics(output: Path, text: str) -> None:
+    private = diagnostics.private_tail(output, text)
+    atomic_text(output, redact_diagnostics(text) + "\nPrivate diagnostic tail (do not share): " + private + "\n")
+
+
+class RemoteFailure(Refusal):
+    def __init__(self, rank: int, argv: list[str], code: int, stderr: str):
+        command, files = diagnostics.command_context(argv)
+        self.raw_tail = stderr[-REMOTE_STDERR_LIMIT:]
+        self.raw_output = stderr
+        self.safe_diagnostics = diagnostics.structure(stderr, files)
+        self.safe_diagnostics.update(rank=rank, command=command, exit_code=code)
+        super().__init__(f"rank{rank} remote command failed (exit {code}): {command}\n" +
+                         diagnostics.render(self.safe_diagnostics))
 
 
 def remote(values: dict[str, str], rank: int, argv: list[str], *, check: bool = True) -> subprocess.CompletedProcess[str]:
     process = subprocess.run(ssh_argv(values, rank, argv), text=True,
                              stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False)
+    diagnostics.retain(process.stdout + process.stderr)
     if check and process.returncode:
-        detail = redact_diagnostics(process.stderr, values).strip() or "no detail"
-        if len(detail) > REMOTE_STDERR_LIMIT:
-            detail = "[stderr truncated; tail follows]\n" + detail[-REMOTE_STDERR_LIMIT:]
-        raise Refusal(f"rank{rank} remote command failed (exit {process.returncode}):\n{detail}")
+        raise RemoteFailure(rank, argv, process.returncode, process.stderr)
     return process
 
 
@@ -903,6 +904,7 @@ def mint_image_receipt(
             "--rank", str(rank), "--preflight-sha256", preflight_sha,
             "--recipe-manifest-sha256", recipe_sha,
         ], text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False)
+        diagnostics.retain(process.stdout + process.stderr)
         if process.returncode:
             raise Refusal(f"rank{rank} image-receipt mint failed: {process.stderr.strip()}")
         return output.read_bytes()
@@ -1091,7 +1093,8 @@ def stop_created(values: dict[str, str], created: list[dict]) -> bool:
             continue
         try:
             inspected = inspect_document(probe.stdout, f"rank{rank} cleanup")
-        except (TypeError, json.JSONDecodeError, Refusal):
+        except (TypeError, json.JSONDecodeError, Refusal) as exc:
+            diagnostics.record_failure(exc)
             confirmed = False
             continue
         if (inspected.get("State") or {}).get("Running"):
@@ -1100,7 +1103,8 @@ def stop_created(values: dict[str, str], created: list[dict]) -> bool:
         try:
             final_item = inspect_document(final.stdout, f"rank{rank} cleanup-final")
             stopped = final.returncode == 0 and not (final_item.get("State") or {}).get("Running")
-        except (TypeError, json.JSONDecodeError, Refusal):
+        except (TypeError, json.JSONDecodeError, Refusal) as exc:
+            diagnostics.record_failure(exc)
             stopped = False
         confirmed = confirmed and stopped
     return confirmed
@@ -1200,7 +1204,7 @@ def cmd_start(args: argparse.Namespace, values: dict[str, str]) -> None:
             try:
                 save(status)
             except BaseException as save_exc:
-                print(f"START REFUSED; local failure manifest write also failed: {save_exc}", file=sys.stderr)
+                diagnostics.report_failure(save_exc, args.manifest, command='start manifest preservation')
             if stopped:
                 print("START REFUSED; all manifest-bound created containers are inspect-confirmed stopped/preserved", file=sys.stderr)
             else:
@@ -1304,7 +1308,20 @@ def cgroup_state(values: dict[str, str], rank: int, pid: int) -> dict:
     value = strict_loads(output)
     if not isinstance(value, dict) or set(value) != {"memory_max", "swap_max", "swap_current", "events"}:
         raise Refusal(f"rank{rank} cgroup status schema drift")
-    return value
+    events = value['events']
+    if not isinstance(events, dict):
+        raise Refusal('cgroup events schema drift')
+    def number(item):
+        if type(item) is int:
+            return item
+        if isinstance(item, str) and item.isdecimal():
+            return int(item)
+        raise Refusal('cgroup numeric value invalid: ' + repr(item))
+    return {'memory_max': 'max' if value['memory_max'] == 'max' else str(number(value['memory_max'])),
+            'swap_max': 'max' if value['swap_max'] == 'max' else str(number(value['swap_max'])),
+            'swap_current': number(value['swap_current']),
+            'events': {name: number(events[name]) for name in
+                       ('low', 'high', 'max', 'oom', 'oom_kill', 'oom_group_kill') if name in events}}
 
 
 def collect_status(values: dict[str, str], manifest: dict) -> list[dict]:
@@ -1316,12 +1333,15 @@ def collect_status(values: dict[str, str], manifest: dict) -> list[dict]:
         hc = item.get("HostConfig") or {}
         row = {
             "rank": rank, "name": binding["name"], "running": state.get("Running") is True,
-            "oom_killed": state.get("OOMKilled") is True, "restart_count": item.get("RestartCount"),
-            "exit_code": state.get("ExitCode"), "actual_image_config": item.get("Image"),
+            "oom_killed": state.get("OOMKilled") is True, "restart_count": item.get("RestartCount") if type(item.get("RestartCount")) is int else None,
+            "exit_code": state.get("ExitCode") if type(state.get("ExitCode")) is int else None,
+            "actual_image_config_sha256": diagnostics.fingerprint(item.get("Image")),
             "image_config_match": item.get("Image") == IMAGE_CONFIG,
             "image_reference_match": (item.get("Config") or {}).get("Image") == IMAGE,
-            "memory_bytes": hc.get("Memory"), "memory_swap_bytes": hc.get("MemorySwap"),
-            "restart_policy": (hc.get("RestartPolicy") or {}).get("Name"),
+            "memory_bytes": hc.get("Memory") if type(hc.get("Memory")) is int else None,
+            "memory_swap_bytes": hc.get("MemorySwap") if type(hc.get("MemorySwap")) is int else None,
+            "restart_policy": ((hc.get("RestartPolicy") or {}).get("Name")
+                if (hc.get("RestartPolicy") or {}).get("Name") in ("no", "always", "unless-stopped", "on-failure") else "unknown"),
         }
         if row["running"]:
             pid = state.get("Pid")
@@ -1428,10 +1448,18 @@ def runtime_identity(values: dict[str, str], binding: dict, manifest: dict) -> d
             production_stock.stock_identity(stock, rank)
         except ValueError as exc:
             raise Refusal(str(exc)) from exc
+    diagnostics.retain(canonical(stock).decode())
+    if int(values["ABLIT"]) == 0:
+        production_stock.disabled_receipt(stock.get("ablation"), rank)
+        stock_summary = {key: stock[key] for key in ("status", "rank", "ablit", "ablation")}
+    else:
+        stock_summary = {"status": "PASS", "rank": rank, "ablit": 1}
+    stock_summary["evidence_sha256"] = sha_bytes(canonical(stock))
+    stock_summary["loaders"] = production_stock.loader_facts(stock.get("loaders"))
     cadence = b45_identity(values, binding)
     result = {**configs, "transform_pipeline_state": pipeline_value.get("state"),
               "transform_target_set_sha256": pipeline_value.get("target_set_sha256"),
-              "image_receipt_bound": True, "cadence_b45": cadence, "stock_v13": stock}
+              "image_receipt_bound": True, "cadence_b45": cadence, "stock_v13": stock_summary}
     expected = {
         "target_runtime_config": "55201c73ed092c5a77f9b87ce40298edb450790ad864c1256cb6ca3a182683bd",
         "draft_runtime_config": "c9f0c3a6c41f8a226fb31a1fb7817cea274d1f4b7b0d2e4d787d38c0f508283f",
@@ -1485,8 +1513,8 @@ def cmd_status(args: argparse.Namespace, values: dict[str, str]) -> None:
                 code == 200 and model_identities(models) == ["glm-5.3-flash"]
             )
         except (OSError, ValueError, KeyError, TypeError, json.JSONDecodeError,
-                urllib.error.URLError, Refusal):
-            pass
+                urllib.error.URLError, Refusal) as exc:
+            diagnostics.record_failure(exc)
     print(json.dumps({"grade": "ENGINEERING-EVIDENCE",
                       "ranks": rows, "endpoint": endpoint}, indent=2, sort_keys=True))
 
@@ -1522,7 +1550,7 @@ def http_json(url: str, payload: dict | None = None, timeout: int = 30) -> tuple
                                      headers={"Content-Type": "application/json"} if data else {})
     try:
         with urllib.request.urlopen(request, timeout=timeout) as response:
-            value = strict_object(response.read().decode("utf-8"), "HTTP response")
+            value = strict_object(diagnostics.private_read(response).decode("utf-8"), "HTTP response")
             return response.status, value
     except urllib.error.HTTPError as exc:
         raise Refusal(f"HTTP {exc.code} from API") from exc
@@ -1547,7 +1575,7 @@ def preserve_rank0_logs(
     logs = process.stdout + process.stderr
     if not logs:
         logs = f"docker logs returned exit {process.returncode} without output\n"
-    atomic_text(output, redact_diagnostics(logs, values))
+    save_diagnostics(output, logs)
 
 
 def focused_witness_argv(values: dict[str, str], base: str) -> list[str]:
@@ -1815,6 +1843,21 @@ def v16_apc_lru_ok(text: str, apc_lru: str) -> bool:
     return low_priority == exempt != ""
 
 
+def witness_summary(value):
+    diagnostics.retain(canonical(value).decode())
+    fields = ("pass", "warmups", "scored_requests", "automatic_retries", "decode_tok_s", "median_decode_tok_s",
+              "admission_floor", "prompt_tokens", "completion_tokens", "min_prompt_tokens",
+              "min_completion_tokens", "elapsed_seconds", "code_word_verbatim", "payload_pinned")
+    def number(item):
+        if type(item) in (bool, int, float) or item is None:
+            return item
+        if isinstance(item, list):
+            return [number(v) for v in item]
+        raise Refusal("witness numeric schema drift")
+    return {"evidence_sha256": sha_bytes(canonical(value)),
+            **{key: number(value[key]) for key in fields if key in value}}
+
+
 def _verify_bound(
     args: argparse.Namespace, values: dict[str, str], manifest: dict,
     candidate_recipe_sha256: str | None = None,
@@ -1849,7 +1892,7 @@ def _verify_bound(
     rank0 = manifest["containers"][0]
     log_process = remote(values, 0, ["docker", "logs", rank0["container_id"]])
     logs = log_process.stdout + log_process.stderr
-    atomic_text(args.log_output, redact_diagnostics(logs, values))
+    save_diagnostics(args.log_output, logs)
     load = load_gate(logs, runtime)
     if not all(load.values()):
         raise Refusal("load/graph/cadence receipt gate failed")
@@ -1879,11 +1922,13 @@ def _verify_bound(
         raise Refusal("arithmetic gate failed")
     witness = subprocess.run(focused_witness_argv(values, base), text=True,
                              stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False)
+    diagnostics.retain(witness.stdout + witness.stderr)
     if witness.returncode:
         raise Refusal(f"focused witness failed: {witness.stderr.strip()}")
     witness_value = strict_object(witness.stdout, "focused witness response")
     long_context = subprocess.run(long_context_witness_argv(values, base), text=True,
                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False)
+    diagnostics.retain(long_context.stdout + long_context.stderr)
     if long_context.returncode:
         raise Refusal(f"long-context witness failed: {long_context.stderr.strip()}")
     long_context_value = strict_object(long_context.stdout, "long-context witness response")
@@ -1892,8 +1937,8 @@ def _verify_bound(
         "manifest_sha256": sha_file(args.manifest), "runtime_identity": runtime, "image_and_safety": statuses,
         "load": load, "v14_identity": v14_identity, "v16_identity": v16_identity,
         "health_http": 200, "served_model": "glm-5.3-flash",
-        "arithmetic": 323, "focused_witness": witness_value,
-        "long_context_witness": long_context_value, "status": "VERIFY_PASS",
+        "arithmetic": 323, "focused_witness": witness_summary(witness_value),
+        "long_context_witness": witness_summary(long_context_value), "status": "VERIFY_PASS",
     }
     if stock_production is not None:
         receipt["production_stock"] = stock_production
@@ -1921,13 +1966,13 @@ def wait_ready(values: dict[str, str], manifest: dict, timeout: float) -> None:
                 healthy = response.status == 200
             if healthy:
                 with urllib.request.urlopen(base + '/v1/models', timeout=10) as response:
-                    code, models = response.status, strict_object(response.read().decode(), 'models response')
+                    code, models = response.status, strict_object(diagnostics.private_read(response).decode(), 'models response')
                 if code == 200:
                     if model_identities(models) != ['glm-5.3-flash']:
                         raise Refusal('served-model identity drift during readiness')
                     return
-        except (OSError, urllib.error.URLError):
-            pass
+        except (OSError, urllib.error.URLError) as exc:
+            diagnostics.record_failure(exc)
         if time.monotonic() >= deadline:
             raise Refusal(f'readiness timeout after {timeout:g}s; health/model not ready')
         time.sleep(min(5, max(0, deadline - time.monotonic())))
@@ -1948,7 +1993,7 @@ def cmd_verify(args: argparse.Namespace, values: dict[str, str]) -> None:
         try:
             preserve_rank0_logs(values, manifest, args.log_output)
         except Exception as log_exc:
-            print(f"VERIFY LOG PRESERVATION REFUSED: {redact_diagnostics(str(log_exc), values)}", file=sys.stderr)
+            diagnostics.report_failure(log_exc, args.output, command='verify log preservation')
         raise
 
 
@@ -1993,21 +2038,23 @@ def main() -> int:
         functions[args.command](args, values)
         return 0
     except Exception as exc:
-        reason = redact_diagnostics(str(exc), values)
-        if (getattr(args, "command", None) == "verify" and
-                not getattr(args, "dry_run", False) and values is not None):
+        output = args.output if hasattr(args, "output") else args.manifest
+        report = diagnostics.record_failure(exc, output, command=args.command, preserve=not args.dry_run)
+        reason = report["reason"]
+        if args.command == "verify" and not args.dry_run:
             failure = {
                 "schema_version": 1, "grade": "ENGINEERING-EVIDENCE",
-                "manifest_sha256": (sha_file(args.manifest) if args.manifest.is_file() else None),
-                "rank0_log_path": (str(args.log_output) if args.log_output.is_file() else None),
-                "reason": reason, "status": "VERIFY_REFUSED",
-                "operator_direction": "Inspect the bound IDs, then use stop.sh with the exact manifest if safety requires shutdown.",
+                **report, "status": "VERIFY_REFUSED",
+                "operator_direction": "Inspect the private diagnostics locally and the bound IDs; use stop.sh with the exact manifest if safety requires shutdown.",
             }
-            failure["payload_sha256"] = sha_bytes(canonical(failure))
             try:
+                failure["manifest_sha256"] = sha_file(args.manifest) if args.manifest.is_file() else None
+                failure["rank0_log_path"] = str(args.log_output) if args.log_output.is_file() else None
+                failure["payload_sha256"] = sha_bytes(canonical(failure))
                 atomic_json(args.output, failure)
-            except OSError as write_exc:
-                print(f"REFUSE: failure receipt write failed: {write_exc}", file=sys.stderr)
+            except Exception as write_exc:
+                print("REFUSE: failure receipt write failed", file=sys.stderr)
+                diagnostics.report_failure(write_exc, output, command="verify receipt preservation")
         print(f"REFUSE: {reason}", file=sys.stderr)
         return 9
 
@@ -2017,4 +2064,5 @@ import v18_triar
 v18_triar.install(globals())
 
 if __name__ == "__main__":
+    diagnostics.install_exception_hook()
     raise SystemExit(main())

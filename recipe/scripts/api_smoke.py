@@ -2,11 +2,13 @@
 """Small OpenAI-compatible API smoke test; no endpoint or credential is embedded."""
 
 from __future__ import annotations
+import sys
+sys.dont_write_bytecode = True
+import _diagnostics as diagnostics
 
 import argparse
 import json
 import os
-import sys
 import time
 import urllib.error
 import urllib.request
@@ -26,7 +28,7 @@ def request(url: str, body: bytes | None, api_key: str, timeout: int = 60):
 def json_call(url: str, payload: dict | None, api_key: str) -> tuple[int, dict]:
     body = None if payload is None else json.dumps(payload, sort_keys=True, separators=(",", ":")).encode()
     with request(url, body, api_key) as response:
-        return response.status, json.loads(response.read())
+        return response.status, json.loads(diagnostics.private_read(response))
 
 
 def stream_call(url: str, payload: dict, api_key: str) -> dict:
@@ -38,7 +40,7 @@ def stream_call(url: str, payload: dict, api_key: str) -> dict:
     visible = []
     with request(url, body, api_key, timeout=120) as response:
         status = response.status
-        for wire in response:
+        for wire in diagnostics.private_lines(response):
             line = wire.decode("utf-8").strip()
             if not line.startswith("data:"):
                 continue
@@ -98,9 +100,10 @@ def main() -> int:
         return 0
     except (OSError, ValueError, KeyError, TypeError, UnicodeError, json.JSONDecodeError,
             urllib.error.URLError, Refusal) as exc:
-        print(f"REFUSE: {exc}", file=sys.stderr)
+        diagnostics.report_failure(exc)
         return 9
 
 
 if __name__ == "__main__":
+    diagnostics.install_exception_hook()
     raise SystemExit(main())

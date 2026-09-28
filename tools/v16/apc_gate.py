@@ -50,20 +50,23 @@ control-divergent stays at 2560 because its producer tail (5120) lies past the d
 """
 
 from __future__ import annotations
+import sys
+sys.dont_write_bytecode = True
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "recipe/scripts"))
+import _diagnostics as diagnostics
 
 import argparse
 from datetime import datetime, timezone
 import copy
 import json
-from pathlib import Path
 import re
-import sys
 import time
 import urllib.request
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from v16_common import QAError, fetch_remote_logs, metric_delta, metrics_snapshot, sha256_json, write_json  # noqa: E402
+from v16_common import QAError, fetch_remote_logs, metric_delta, metrics_snapshot, sha256_json, write_json, diagnostics  # noqa: E402
 
 BLOCK = 2560
 FINE = 640
@@ -97,7 +100,7 @@ def render(base: str, model: str, messages: list[dict], tools: list | None = Non
         body["tools"] = tools
     req = urllib.request.Request(base.rstrip("/") + "/tokenize", data=json.dumps(body).encode(),
                                  headers={"Content-Type": "application/json"})
-    tokens = json.loads(urllib.request.urlopen(req, timeout=60).read())["tokens"]
+    tokens = json.loads(diagnostics.private_read(urllib.request.urlopen(req, timeout=60)))["tokens"]
     if not tokens or not all(type(t) is int and t >= 0 for t in tokens):
         raise QAError("tokenize returned no token ids")
     return tokens
@@ -167,7 +170,9 @@ def allowed_hits(cell: dict, expect: str) -> set[int]:
 
 
 def validate_cells(cells: list[dict]) -> None:
-    if not cells or len({c["id"] for c in cells}) != len(cells):
+    allowed = {"pi-prose", "pi-tools", "large-jump", "same-prompt", "control-5079", "control-divergent",
+               *(f"suffix-{size}" for size in SUFFIXES)}
+    if not cells or {c["id"] for c in cells} != allowed or len(cells) != len(allowed):
         raise QAError("fixture cells missing or duplicated")
     for cell in cells:
         for key in ("producer", "probe"):
@@ -197,38 +202,46 @@ def consume(lines, started: float, now=time.monotonic) -> dict:
     ids, strs, lps, tops = [], [], [], []
     request_ids = set()
     usage, finish, first, done = None, None, None, False
-    for raw in lines:
-        line = raw.decode().strip() if isinstance(raw, bytes) else raw.strip()
-        if not line.startswith("data:"):
-            continue
-        data = line[5:].strip()
-        if data == "[DONE]":
-            done = True
-            break
-        event = json.loads(data)
-        if event.get("id"):
-            request_ids.add(event["id"])
-        if "error" in event:
-            raise QAError(f"server error: {event['error']}")
-        if event.get("usage"):
-            usage = event["usage"]
-        for choice in event.get("choices", []):
-            new = choice.get("token_ids") or []
-            if new and first is None:
-                first = now() - started
-            ids.extend(new)
-            lp = choice.get("logprobs") or {}
-            strs.extend(lp.get("tokens") or [])
-            lps.extend(lp.get("token_logprobs") or [])
-            tops.extend(lp.get("top_logprobs") or [])
-            finish = choice.get("finish_reason") or finish
-    if not done or first is None or usage is None or finish != "length":
-        raise QAError("incomplete stream (DONE/ids/usage/length)")
-    if len(ids) != usage.get("completion_tokens"):
-        raise QAError("token ids disagree with usage")
-    return {"token_ids": ids, "token_strs": strs, "logprobs": lps, "top_logprobs": tops,
-            "request_ids": sorted(request_ids),
-            "usage": usage, "ttft_s": round(first, 4), "e2e_s": round(now() - started, 4)}
+    raw_events = []
+    try:
+        for raw in lines:
+            raw_events.append(raw.decode("utf-8", "replace") if isinstance(raw, bytes) else raw)
+            line = raw.decode().strip() if isinstance(raw, bytes) else raw.strip()
+            if not line.startswith("data:"):
+                continue
+            data = line[5:].strip()
+            if data == "[DONE]":
+                done = True
+                break
+            event = json.loads(data)
+            if event.get("id"):
+                request_ids.add(diagnostics.fingerprint(event["id"]))
+            if "error" in event:
+                raise QAError(f"server error: {event['error']}")
+            if event.get("usage"):
+                usage = diagnostics.numeric_usage(event["usage"])
+            for choice in event.get("choices", []):
+                new = choice.get("token_ids") or []
+                if new and first is None:
+                    first = now() - started
+                if not all(type(token) is int and token >= 0 for token in new):
+                    raise QAError("invalid token IDs: " + repr(new))
+                ids.extend(new)
+                lp = choice.get("logprobs") or {}
+                strs.extend(diagnostics.fingerprint(token) for token in (lp.get("tokens") or []))
+                lps.extend(float(value) for value in (lp.get("token_logprobs") or []))
+                tops.extend({diagnostics.fingerprint(token): float(value) for token, value in row.items()}
+                            for row in (lp.get("top_logprobs") or []))
+                finish = choice.get("finish_reason") or finish
+        if not done or first is None or usage is None or finish != "length":
+            raise QAError("incomplete stream (DONE/ids/usage/length)")
+        if len(ids) != usage.get("completion_tokens"):
+            raise QAError("token ids disagree with usage")
+        return {"token_ids": ids, "token_strs": strs, "logprobs": lps, "top_logprobs": tops,
+                "request_ids": sorted(request_ids),
+                "usage": usage, "ttft_s": round(first, 4), "e2e_s": round(now() - started, 4)}
+    finally:
+        diagnostics.retain("\n".join(raw_events))
 
 
 def request(base: str, payload: dict) -> dict:
@@ -481,7 +494,7 @@ def main(argv: list[str] | None = None) -> int:
         time.sleep(0.5)
         total = metric_delta(before, metrics_snapshot(args.base_url))
     except (QAError, OSError, ValueError, KeyError, StopIteration) as exc:
-        print(f"REFUSED: {type(exc).__name__}: {exc}", file=sys.stderr)
+        diagnostics.report_failure(exc)
         return 2
     doc = {"schema": "jspark3-v16-apc-gate/1", "base_url": args.base_url, "expect": args.expect, "started": started,
            "fixtures": str(args.fixtures), "fixtures_sha256": fixtures["cells_sha256"], "log_sources": sources,
@@ -512,4 +525,5 @@ def main(argv: list[str] | None = None) -> int:
 
 
 if __name__ == "__main__":
+    diagnostics.install_exception_hook()
     raise SystemExit(main())

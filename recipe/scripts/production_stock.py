@@ -1,4 +1,5 @@
 """Fail-closed production policy for native ABLIT=0; no model execution code."""
+import re
 
 PROFILE = 'production-stock'
 DONOR_KEYS = frozenset(('ABLIT_METHOD', 'ABLIT_LAYERS', 'ABLIT_INCLUDE_MTP',
@@ -35,6 +36,25 @@ def stock_identity(stock, rank):
             type(stock.get('ablit')) is int and stock['ablit'] == 0,
             'native stock verifier identity mismatch')
     disabled_receipt(stock.get('ablation'), rank)
+
+
+def loader_facts(loaders):
+    """Checked facts needed by load_gate, shared by producer and controller.
+
+    Accept historical full loader receipts as well as projected receipts;
+    filenames, tensor descriptors and optional fields remain private.
+    """
+    require(isinstance(loaders, dict), 'missing loader evidence')
+    result = {}
+    for kind in ('target', 'draft'):
+        row = loaders.get(kind)
+        require(isinstance(row, dict) and row.get('state') == 'COMPLETE',
+                kind + ' loader incomplete')
+        digest = row.get('ordered_headers_sha256')
+        require(isinstance(digest, str) and re.fullmatch('[0-9a-f]{64}', digest) is not None,
+                kind + ' loader header census missing or malformed')
+        result[kind] = {'state': 'COMPLETE', 'ordered_headers_sha256': digest}
+    return result
 
 
 def all_ranks(values, runtime):

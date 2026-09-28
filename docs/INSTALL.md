@@ -207,6 +207,17 @@ model refuses immediately. `status --env-file ../operator.env --manifest
 ../service.json` reports progress. Verify includes native stock checks inside
 each container, correctness, long-context and effective memory/no-swap checks.
 
+On failure, `verify.json` and the console contain a structural summary: remote
+rank, command label, exit code, recognized exception types and file:line frames.
+Command arguments and free-form remote messages stay out of shared output.
+The receipt names a separate `*.may-contain-secrets-do-not-share.log` next to it:
+the mode-0600 tail holds the last 16 KiB of decoded stderr characters, and
+`private_diagnostic` retains the full failure separately when longer. Inspect
+private diagnostics locally; **do not upload it**. Unknown filenames
+and exception names remain private. `verify-rank0.log` is also a summary with a
+pointer to its private tail. See [operations](OPERATIONS.md) for retention and
+failure handling.
+
 Qualification records the first prefill pass, applies page-cache hygiene on
 all ranks, then requires post-hygiene prefill ≥1100 tok/s, the `finehit` cache
 gate, zero compilation after warmup, native TRIAR-inactive proof and final

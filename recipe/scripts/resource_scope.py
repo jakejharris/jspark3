@@ -68,7 +68,9 @@ def install(fleet):
             check_scope(doc, argv[2])
             # This host/controller observation is evidence, not a substitute for
             # any subsequent native verify or finalizer gate.
-            print('PERSISTENT-ZERO-SWAP ' + json.dumps(dict(rank=rank, **doc), sort_keys=True), flush=True)
+            fleet.diagnostics.retain(observed.stdout)
+            print('PERSISTENT-ZERO-SWAP ' + json.dumps(dict(rank=rank, container_id=argv[2],
+                  status='PASS', systemd_memory_swap_max=0, swap_max=0, swap_current=0), sort_keys=True), flush=True)
         return result
 
     fleet.container_argv = container_argv

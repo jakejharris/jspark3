@@ -50,7 +50,7 @@
 +        raise ValueError('HF license must match the model LICENSE: ShapleyMcg v1.0')
 +
 +
-+BEST_OF_TWO = 'Measured on one serving start across two sweeps. Ranges span both sweeps.'
++BEST_OF_TWO = 'Decode was measured on one serving start across two sweeps. Decode ranges span both sweeps.'
 
 
  def headline_parts(n, field):
@@ -89,7 +89,7 @@
 +    headline = ('**Measured: ' + bands['code', 4] + ' tok/s code decode at 4 streams and ' + bands['code', 8]
 +                + ' tok/s at 8, on unedited EXL3-quantized GLM-5.3 Flash weights.**')
 +    prose = ('\n- Prose decode: ' + bands['prose', 4] + ' tok/s at 4 streams, ' + bands['prose', 8] + ' tok/s at 8\n') if all(('prose', count) in bands for count in (4, 8)) else '\n'
-+    ranges = (prose + '- Prefill: ' + prefill + ' tok/s across eight Pi coding-agent turns extending a cached prefix, after page-cache hygiene\n')
++    ranges = (prose + '- Prefill: ' + prefill + ' tok/s across eight Pi coding-agent turns extending a cached prefix, from one post-hygiene gate pass\n')
 +    return headline, ranges
 
 
@@ -183,14 +183,46 @@
              'CHANGELOG.md': f'# JSpark3 {tag}\n\n'+changes+'\n'+posture,
 --- a/tools/package.py
 +++ b/tools/package.py
-@@ -22,5 +22,5 @@
+@@ -11,4 +11,6 @@
+ import sys
+ import tarfile
++import tempfile
++import traceback
+ from datetime import datetime, timezone
+
+@@ -22,5 +24,5 @@
  sys.path.insert(0, str(EXPORT/'templates/tools'))
  from validate_release import leaks
 -from render import render, public_prose, check_headline_copy
 +from render import render, public_prose, check_headline_copy, check_hf_license
  import serving
 
-@@ -343,5 +343,5 @@
+@@ -42,4 +44,24 @@
+ def files(root):
+     return {p.relative_to(root).as_posix(): sha(p) for p in sorted(root.rglob('*')) if p.is_file() and '.git' not in p.relative_to(root).parts}
++
++
++def report_failure(exc):
++    # Publication command diagnostics are private, including captured child output.
++    raw = ''.join(traceback.format_exception(type(exc), exc, exc.__traceback__))
++    if isinstance(exc, subprocess.CalledProcessError):
++        for value in (exc.stdout, exc.stderr):
++            if value:
++                raw += '\n' + (value.decode('utf-8', 'replace') if isinstance(value, bytes) else value)
++    try:
++        fd, name = tempfile.mkstemp(prefix='release-diagnostic-', suffix='.may-contain-secrets-do-not-share.log')
++        with os.fdopen(fd, 'w') as stream:
++            os.fchmod(stream.fileno(), 0o600)
++            stream.write(raw)
++        print('REFUSE: release operation failed; private diagnostic (do not share): ' + name, file=sys.stderr)
++    except Exception:
++        print('REFUSE: release operation failed; private diagnostic write failed', file=sys.stderr)
++
++
++sys.excepthook = lambda kind, value, tb: report_failure(value.with_traceback(tb))
+
+
+@@ -343,5 +365,5 @@
              need(not re.search(rb'within\s+2\s*(?:%|percent)',p.read_bytes(),re.I), 'unsupported four-stream proximity claim')
              if p.suffix=='.md': need('{{' not in p.read_text() and 'CONFIRM' not in p.read_text(),'unfilled public draft')
 -    need((out/'hf/README.md').read_text().startswith('---\nlicense: apache-2.0\n'),'HF license')
@@ -212,15 +244,21 @@
 +        check(name+' protected stock/restart wording',all(phrase in text for phrase in ('EXL3 quantization, unedited (`ABLIT=0`), using `production-stock`', 'Edited weights (`ABLIT=1`) are an explicit opt-in', 'Changing modes requires a service restart and recomputes conversation prefixes.', '`JSPARK3_V16_COOP=1`', '`JSPARK3_V16_COOP=0`')))
      check('exact frozen results copies',all(p.sha(out/name)==p.FROZEN_RESULTS_SHA256 for name in (
          'github/release/results.json','github/release/results-v1.8.0.json',
+@@ -88,3 +88,3 @@
+         else:seal(args.root.resolve())
+     except (ValueError,KeyError) as exc:
+-        print('VARIANT-REFUSED:',str(exc),file=sys.stderr);raise SystemExit(1)
++        p.report_failure(exc);raise SystemExit(1)
 --- a/tools/hf_upload.py
 +++ b/tools/hf_upload.py
-@@ -2,7 +2,13 @@
+@@ -2,7 +2,14 @@
  """Plan an exact HF documentation upload offline; explicit execution at release."""
  import argparse
 +from dataclasses import asdict, is_dataclass
 +import hashlib
  import json
 +import os
++import re
 +
 +# Set before the SDK reads its environment at import time.
 +os.environ.setdefault("HF_HUB_DISABLE_XET", "1")
@@ -229,7 +267,7 @@
 +from huggingface_hub import HfApi, CommitOperationAdd, hf_hub_download
  import package
 
-@@ -14,4 +20,72 @@
+@@ -14,4 +21,76 @@
 
 
 +def inventory(info):
@@ -260,21 +298,23 @@
 +            return Path(hf_hub_download(repo, name, repo_type='model', revision=revision,
 +                                       token=api.token)).read_bytes()
 +    before = api.model_info(repo, files_metadata=True)
++    package.need(re.fullmatch('[0-9a-f]{40}', before.sha) is not None, 'invalid HF revision')
 +    card = before.card_data or {}
 +    package.need(card.get('license') == 'apache-2.0' or
 +                 (card.get('license') == 'other' and card.get('license_name') == 'shapleymcg-license-1.0'),
 +                 'remote HF card license differs; stop for reconciliation')
 +    current = inventory(before)
 +    untouched = {name: row for name, row in current.items() if name not in expected}
++    untouched_sha256 = hashlib.sha256(json.dumps(untouched, sort_keys=True).encode()).hexdigest()
 +    plan_path = out / 'hf-upload-plan.json'
 +    if plan_path.exists():
 +        plan = package.load(plan_path)
 +        package.need(plan['package_sha256'] == package.sha(out / 'package.json')
-+                     and plan['payload'] == expected and plan['untouched'] == untouched,
++                     and plan['payload'] == expected and plan.get('untouched_sha256') == untouched_sha256,
 +                     'HF retry plan or non-payload inventory differs')
 +    else:
 +        plan = {'package_sha256': package.sha(out / 'package.json'), 'parent': before.sha,
-+                'payload': expected, 'untouched': untouched}
++                'payload': expected, 'untouched_sha256': untouched_sha256}
 +        save_atomic(plan_path, plan)  # Persist before any external mutation.
 +
 +    def matches(info):
@@ -295,6 +335,8 @@
 +                     'HF non-payload files changed')
 +        action = 'committed'
 +    package.need(api.model_info(repo).sha == oid, 'HF main changed during verification; rerun')
++    package.need(re.fullmatch('[0-9a-f]{40}', oid) is not None
++                 and re.fullmatch('[0-9a-f]{40}', plan['parent']) is not None, 'invalid HF commit identity')
 +    result = {'commit': oid, 'parent': plan['parent'], 'package_sha256': plan['package_sha256'], 'action': action}
 +    save_atomic(out / 'hf-published.json', result)
 +    return result
@@ -302,7 +344,7 @@
 +
  if __name__=='__main__':
      ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('package',type=Path);ap.add_argument('--execute',action='store_true')
-@@ -21,16 +95,3 @@
+@@ -21,16 +100,3 @@
      print(json.dumps({'repo':'jakejharris/jspark3','operations':[{'add':op.path_in_repo,'sha256':m['hf_files'][op.path_in_repo]} for op in ops], 'deletes':[], 'weights_uploaded':False},indent=2))
      if a.execute:
 -        api=HfApi(); before=api.model_info('jakejharris/jspark3',files_metadata=True)
@@ -517,6 +559,7 @@
 +    if state == 'OPEN':
 +        github.close_pr()
 +    p.need(github.pr_state() == 'CLOSED', 'PR close incomplete; rerun')
++    p.need(type(published['id']) is int and published['id'] > 0, 'invalid release identifier')
 +    return {'release_id': published['id'], 'tag': ctx['plan']['tag'], 'status': 'PUBLISHED',
 +            'package_sha256': p.sha(ctx['out'] / 'package.json')}
 +
@@ -533,7 +576,6 @@
 +    result = reconcile(ctx, GitHub(ctx))
 +    p.save(args.package / 'publish-complete.json', result)
 +    print(json.dumps(result, sort_keys=True))
-+    print(p.run(['gh', 'release', 'view', plan['tag'], '--repo', REPO, '--json', 'tagName,name,url,assets']).stdout)
 +
 +
 +if __name__ == '__main__':
