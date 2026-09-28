@@ -1,29 +1,18 @@
-# JSpark3 v1.8.3
+# v1.8.4 candidate: pending component qualification
 
-Operators build their own image and display natives on a DGX Spark, prepare the
-receipt-bound recipe, and qualify their own three-rank boot. Coop stays off;
-no historical native binary or unpublished serving image is required.
+This offline candidate adds the owner qualification/sealing workflow, a separate
+qualification-image/operator-image schema, default display+coop builds and
+qualified coop-on preparation/admission. It does not contain a measured policy
+for the new binary and cannot pass final-release validation yet.
 
-This release adds readiness waiting, credential-redacted failure diagnostics,
-page-cache hygiene and a same-boot admission producer. Prefix-cache gates default
-to the runtime's fine-hit policy. Native TRIAR-inactive attestation checks the
-actual Cadence graph banks. Installation includes exact dependency downloads,
-runtime views, host requirements, first requests and stop/upgrade commands.
-Normal clones validate the checked-out files, including untracked files, without
-scanning unrelated Git history. Exported-file privacy checks remain enforced.
+Native candidate: `3212a3b0a308e2ec3673878212fcb0504a463c5f7df84eced5db7bb301cc3c07`.
+The builder, native sources and compiler flags remain unchanged.
 
-The experimental coop build runner now cleans up its exact build container on
-cancellation. Coop reproducibility/GPU qualification and operator coop-on support
-remain separate work; the historical coop-on gate is unchanged.
+The component campaign, final-source reproduction on two physical machines,
+ordinary-clone stock boot admission, archive/clone parity and new measurements
+must pass before release. An edited serving boot requires its separate owner
+admission. The public producer continues to reject ABLIT=1.
 
-One v1.8.2 clean-room fleet passed verify, post-hygiene prefill and fine-hit APC,
-with single-stream code decode at 49.05 tok/s median (three repetitions, 512
-tokens, temperature 0, coop off). It did not run full admission. This is a single
-observation, not a qualification of every installation or a controlled coop comparison.
-
-The [frozen v1.8.0 results](results-v1.8.0.json) and [numbers](RELEASE-NUMBERS.md)
-are unchanged. Their headline uses coop on. Historical notes remain
-[archived](RELEASE-NOTES-v1.8.0.md); follow the current [installation](../docs/INSTALL.md),
-[operations](../docs/OPERATIONS.md), [benchmarks](../docs/BENCHMARKS.md) and
-[licensing](../docs/LICENSING.md). EXL3/TR3 attribution remains in
-[REQUIRED_ATTRIBUTION](../REQUIRED_ATTRIBUTION.md).
+See [the owner workflow](../docs/COOP_REPRODUCIBILITY.md),
+[installation](../docs/INSTALL.md) and [measurement scope](MEASUREMENTS-v1.8.4.md).
+Historical results and notices remain preserved; compiled binaries are excluded.

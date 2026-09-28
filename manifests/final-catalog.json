@@ -1401,5 +1401,22 @@
       "JSPARK3_V18_THIRDS": "1"
     },
     "variant": "a"
+  },
+  "v1.8.4-coop": {
+    "component_seal_sha256": null,
+    "kind": "source-candidate",
+    "native_sha256": "3212a3b0a308e2ec3673878212fcb0504a463c5f7df84eced5db7bb301cc3c07",
+    "policy_sha256": null,
+    "startup_settings": {
+      "ABLIT": "0",
+      "GLM53_ADAPTIVE_K": "ema",
+      "JSPARK3_TRIAR": "1",
+      "JSPARK3_TRIAR_P2P": "auto",
+      "JSPARK3_V14_PROFILE": "full",
+      "JSPARK3_V16_APC_LRU": "1",
+      "JSPARK3_V16_COOP": "1",
+      "JSPARK3_V16_DENSE_FP8": "trunk",
+      "JSPARK3_V16_PROFILE": "production-stock"
+    }
   }
 }

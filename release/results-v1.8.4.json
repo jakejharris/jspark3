@@ -1,0 +1,36 @@
+{
+  "candidate_commit": null,
+  "component_seal_sha256": null,
+  "edited": null,
+  "native_sha256": "3212a3b0a308e2ec3673878212fcb0504a463c5f7df84eced5db7bb301cc3c07",
+  "policy_sha256": null,
+  "protocol": {
+    "comparison": "Historical only until separately rerun under its named protocol",
+    "prefill": {
+      "after_hygiene": true,
+      "turns": 8
+    },
+    "quality": "Full-model panels required for every quality claim",
+    "stock_decode": {
+      "concurrency": [
+        1,
+        2,
+        4,
+        8
+      ],
+      "output_tokens": 512,
+      "prefix_reuse": false,
+      "sweeps": 2,
+      "temperature": 0,
+      "thinking": false,
+      "types": [
+        "structured",
+        "prose"
+      ]
+    }
+  },
+  "release_version": "v1.8.4",
+  "schema_version": 1,
+  "status": "pending-measurement",
+  "stock": null
+}

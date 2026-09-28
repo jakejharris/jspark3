@@ -5,7 +5,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "3d31cdcbb9bd43a0f92f8a73918d26ab5741ac65430a6892b75a83f217df9461"
+          "content": "7eb94841ded50183d538c1ff8d933814ec425928a49a40e91c7f8067da9c1f6a"
         }
       ],
       "licenses": [
@@ -135,6 +135,57 @@
         }
       ],
       "name": "recipe/config/checkpoint-contract.json",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "f129e7279742af3dfab8f6f2247764bac1d2dcab01537af08aa484a94c06c6f5"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/config/coop-helper.json",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "43519e602b41e1df748ac488a6af7191cba9a12c7b258dbc34c218faae384f59"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/config/coop-release.json",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "5ce936d58cf8e59dcb9ecaae7787a07c73566154ffe1a14a5d5eb36feec6aab6"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/config/coop-sanitizer.json",
       "type": "file"
     },
     {
@@ -2130,7 +2181,24 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "b480384a3a4e157468f3f6b92f91da781c2967ea82575abf01ff1a913d528673"
+          "content": "1c09dfdfd31e7d9b095e6589c3ee64e6cb3441a44aed766b9247761b420c3779"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/scripts/_coop_qualification.py",
+      "type": "file"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "42db97dd1a891cb0fd592483b3fc64cdb190086180e5b67eac0e297562f8dbdb"
         }
       ],
       "licenses": [
@@ -2147,7 +2215,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "8b5db2cb139d358736f0e7e418850b8ab5b84b678067e83004720e488d37956f"
+          "content": "066d6451ca03c916a401fdbd119a2689e2e15697e2c51108524699f293f9efd9"
         }
       ],
       "licenses": [
@@ -2215,7 +2283,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "095350e19c68da3693dbb1d84a5070b9e3b0f6cee3b17e11fa89c4b7ec22da49"
+          "content": "c672d5865ab88eb79d1164f5e0e9d3f4b82b7aadb50540247f7f68f1ae5ccb37"
         }
       ],
       "licenses": [
@@ -2232,7 +2300,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "7d1403192e734afbb294fbfe8d059f1348542d7fa4cd3bbbaaea05717c22420a"
+          "content": "822da7badc9d884a26bafd9a0db569c4e686b396b67cafd8f2c834bff4cd3825"
         }
       ],
       "licenses": [
@@ -2487,7 +2555,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "b830b123102777aea3080bfda50acd8b17417f8b8e370a77daf328c4a3b75aec"
+          "content": "35e2256f6be0032c5b4fdcdc1ec5cccb7b56251bdfd5fa59b3029fcbeff3a374"
         }
       ],
       "licenses": [

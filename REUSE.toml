@@ -55,3 +55,58 @@ SPDX-License-Identifier = "Apache-2.0"
 path = ["release/RELEASE-NOTES-v1.8.0.md", "release/operator-cleanroom-v1.8.2.json"]
 precedence = "aggregate"
 SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ["manifests/final-binding-v1.8.3.json"]
+precedence = "aggregate"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ["recipe/config/coop-helper.json"]
+precedence = "aggregate"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ["recipe/config/coop-release.json"]
+precedence = "aggregate"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ["recipe/config/coop-sanitizer.json"]
+precedence = "aggregate"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ["recipe/scripts/_coop_qualification.py"]
+precedence = "aggregate"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ["release/MEASUREMENTS-v1.8.4.md"]
+precedence = "aggregate"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ["release/results-v1.8.4.json"]
+precedence = "aggregate"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ["tools/v16/coop_environment.py"]
+precedence = "aggregate"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ["tools/v16/coop_evidence.py"]
+precedence = "aggregate"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ["tools/v16/qualify_coop.py"]
+precedence = "aggregate"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ["tools/v16/test_coop_qualification.py"]
+precedence = "aggregate"
+SPDX-License-Identifier = "Apache-2.0"

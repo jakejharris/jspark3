@@ -17,5 +17,20 @@
   "results_sha256": "056faf5047b836f43baad062583c07bdace2b25172cf1db15afdf0309e33b99c",
   "ruling_sha256": "43b57bad294bbba5b91735567344053fbdcd32216926eef26e764ad88262ef59",
   "schema_version": 1,
-  "status": "release-package-frozen"
+  "status": "release-package-frozen",
+  "v184_document_sha256": {
+    "CHANGELOG.md": "b92435bdf9cc33a6085297f69bc55d817b1ea7ef345f9e2b24c4d3f66d89677f",
+    "README.md": "722b746e0856505f73edebd00cb10804cd5654569aabd1236a4c5ce3f205e4fe",
+    "docs/BENCHMARKS.md": "70cc1b1072a0e2ece8df54466973eac6454153cfa956b1eab398781cb90a9d40",
+    "docs/COOP_REPRODUCIBILITY.md": "241f6156bffa9616321c6e6f6fabb2d5e11038a4ce9b1585173bd11ed2a82240",
+    "docs/INSTALL.md": "9c863c089e6acde222aa068709de62cbd5c31fbb91af2fb5cdc75dd20bb94c72",
+    "docs/LICENSING.md": "e0647170d6547feda8a9726eef7db7d0266be8ef1fdbb3a19b7a5bbfa4ee97ad",
+    "docs/LIMITATIONS.md": "2537ea5b56268c8a59af04da5d52ce82df76ce63699929aba47a8bbeca2defe4",
+    "docs/OPERATIONS.md": "907380c6760a6ad0a3b26b9157b544fc7dcd825994cfaae44fff09fe3bb048ab",
+    "docs/RELEASE_TOOLING.md": "8d7202b669c21e95019b68b1ed6e708a55772c19240ec222d7066706cc380371",
+    "docs/REPRODUCIBILITY.md": "e2f78386aa068723381ab99a23fa736cfa25bb45fc3a84997617906cfeadc8aa",
+    "release/MEASUREMENTS-v1.8.4.md": "e6d57e5e08d8b06e281089dcfca114befde7778673223d3f4ce993797b50ead7",
+    "release/RELEASE-NOTES.md": "288f4004b1c411ce460a0f38c95cc75c86e065e7ba8256ba98bd6ddd186ef7a2",
+    "release/results-v1.8.4.json": "8ab8c41bc5860106dd79bac071410293606a7919edcb0d113102e3aa5aba8f61"
+  }
 }

@@ -1,129 +1,122 @@
-# Cooperative MoE build experiment
+# Cooperative MoE: reproducible builds and component qualification
 
-This is a candidate build recipe for future coop-on qualification. The operator
-default remains coop off. A matching build hash does not confer GPU qualification
-or permit bypassing the existing historical seal.
+The unchanged deterministic builder targets
+`3212a3b0a308e2ec3673878212fcb0504a463c5f7df84eced5db7bb301cc3c07`.
+It uses fixed `/w` paths, source timestamps, per-unit seeds and retained compiler
+intermediates, with shared cudart. It never strips or normalizes completed ELFs.
+The earlier build experiment remains separate evidence; repeating its old-builder
+controls is not a release prerequisite. New GPU qualification remains pending.
 
-## Build change and evidence boundary
+`tools/build_native.py` builds display and coop twice in fresh, network-disabled
+containers. Both runs must agree and coop must hit the exact candidate hash.
+It retains raw build directories and a receipt bound to the current source and
+operator image. `--with-coop` is a compatibility alias. A failed coop build cannot
+silently yield a display-only result; `--display-only` is diagnostic.
 
-The old recipe embedded PID-derived `tmpxft` host-stub filenames in ELF FILE
-symbols. Serial compilation in a fresh container did not guarantee stable PIDs.
-The new recipe uses nvcc `--keep --keep-dir` with separate, stable directories and
-random seeds for rows32, rows64 and dispatch. Source mtimes and `/w` paths remain
-fixed. Intermediates and verbose compiler commands are retained for diagnosis;
-finished binaries are neither stripped nor normalized to force a match.
-These are supported [nvcc options](https://docs.nvidia.com/cuda/archive/13.0.1/cuda-compiler-driver-nvcc/index.html#keeping-intermediate-phase-files).
+## Owner component workflow
 
-Linking now explicitly uses `--cudart=shared`. The verified operator image has
-`libcudart.so.13`; the experiment checks the ELF dependency, resolution with
-`ldd`, and host library loading without exposing GPUs. GPU behavior still needs
-the qualification below. Two emulated ARM64 full builds matched with deliberately
-different preceding process counts; native ARM64 confirmation remains required.
+Use a clean candidate source export or ordinary clone with no private working
+files. Run `python3 -B tools/validate_release.py .` for this pending candidate;
+`--require-final` must refuse until all component, admission and measurement pins
+are integrated. Build the operator image and native outputs as documented in
+[installation](INSTALL.md), omitting only that premature final-release assertion.
 
-## One native Spark round
+Stage these immutable inputs before reserving a GPU:
 
-The hardware owner runs this on their own ARM64 Spark, from a clean source
-export, after choosing the build window. Python 3 and Docker are required on the
-host. Compilers, readelf and cuobjdump come from the verified image.
+- An eligible image receipt and the complete `build_native.py` output, including
+  both `coop-a` and `coop-b`. Independently repeat the build on a second physical
+  Spark and retain its image/build receipts and machine identity evidence.
+- The exact target checkpoint revision directory from
+  `recipe/config/checkpoint-contract.json`. It must contain the original pinned
+  index and the shards holding layer-3 weights for all 288 experts. The runner
+  mounts only this one snapshot read-only at the HF-cache path expected by the
+  helper, hashes the shards, and checks all three EP ranges and tensor shapes.
+- Fly sources at the commit in `recipe/config/patch-contract.json`.
+- `test_exl3_overlay.py` and `LICENSE` from the exact repository/revision/file
+  hashes in `recipe/config/coop-helper.json`. Dependencies come from the verified
+  image: torch, vLLM, exllamav3_ext and safetensors. The helper is AGPL-3.0-only,
+  downloaded directly by the operator; no private helper path is required.
+- NVIDIA's exact package in `recipe/config/coop-sanitizer.json`. Verify its
+  SHA-256, extract it with `dpkg-deb -x`, and point `--sanitizer-root` at the listed
+  directory. The runner verifies its executable/support-file hashes and mounts
+  them read-only. No sanitizer package or NVIDIA binary is distributed here.
 
-```sh
-python3 -B tools/build_operator_image.py --output ../coop-image.json
-python3 -B tools/v16/experiment_coop_build.py \
-  --image-receipt ../coop-image.json --output ../coop-experiment --runs 3
-```
-
-For a before/after control in the same round, add
-`--baseline-builder ../build_repro-7977795.sh`, a saved copy of that revision's
-build script. This runs three baseline containers as well as three candidate
-containers; it does not modify the baseline script or sources. The report records
-both builder hashes. A baseline failure does not suppress candidate diagnostics.
-
-Every container is fresh, network-disabled, runs as the invoking UID without GPU exposure,
-and capped at four CPUs and 8 GiB RAM with no extra swap allowance. All builds
-mount their separate host directories at `/w`. The runs deliberately start after
-0, 37 and 74 extra processes to challenge the previous PID assumption. No serving
-container is started, stopped or edited. The experiment retains failed builds.
-
-Ctrl-C (SIGINT), SIGTERM or a session hangup (SIGHUP) cancels the experiment and force-removes its current
-container by the exact ID retained in that run's `container.cid`. Creation
-finishes before cancellation cleanup, without starting the compile; repeated
-signals cannot interrupt cleanup. The runner exits 130, 143 or 129, respectively, after removal.
-The bind-mounted build directory, partial `console.log` and `cleanup.log` survive.
-Completed and failed runs also remove their containers before the next run starts.
-
-Keep the complete output directory. `experiment.json` records image/source/build
-identity, host and Docker architecture, return codes, output hashes, linkage and
-comparisons. A PASS requires three identical candidate ELFs, successful host
-loads, resolved shared cudart, and no PID-derived FILE symbols or the checked
-defined cudart runtime entry points. A compile, comparison or linkage failure
-returns exit 9. The optional baseline result is diagnostic only.
-
-`candidate-1-vs-2.json` and `candidate-1-vs-3.json` locate differing file offsets,
-ELF sections and symbols (including symbol-content hashes). CUDA ELF dumps decode
-fatbin line tables; corresponding `.cuda-elf.diff` files show their differences.
-Each run also retains `console.log`, `out/build32.log`, `out/build64.log`,
-`out/link.log`, `out/keep/`, `out/elf.txt`, `out/ldd.txt` and `out/load.txt`.
-For any two retained binaries, the standalone diagnostic needs only Python:
+All variables below are absolute paths, with `QUAL` a new directory outside the
+source checkout. Run check-only while the existing fleet remains serving:
 
 ```sh
-python3 -B tools/v16/diff_native_elf.py FIRST.so SECOND.so --output difference.json
+python3 -B tools/v16/qualify_coop.py \
+  --image-receipt "$BUILD/operator-image.json" --build-root "$BUILD/native" \
+  --model-root "$QUAL_MODEL" --fly-root "$QUAL_FLY" --helpers-root "$QUAL_HELPERS" \
+  --sanitizer-root "$QUAL_SANITIZER" --output "$QUAL" --check-only
 ```
 
-Its exit code is 0 for identical bytes, 1 for differences, and 2 for invalid input.
-It reads the ELFs without executing them. Report examples are bounded; total
-counts and full section hashes remain available.
+Check-only writes `QUAL.check`, retains the complete container command plan,
+and runs CPU-only stage-8 transforms, dependency imports, host load/linkage,
+fixture-shape and sanitizer-option checks in a disposable container. It exposes
+no GPU and starts no service. Use a fresh output name for another check.
 
-## After native reproducibility passes
+Only after the owner drains and stops the bound fleet and reserves one GB10,
+repeat the same command without `--check-only`. The runner serially performs:
 
-1. Record the common binary hash and complete experiment evidence. Independently
-   rebuild with the same public image recipe on another Spark and require the
-   same hash. Keep the raw build bundles unchanged; profile a separate copy.
-2. In an exclusively reserved GPU maintenance environment, use the exact new
-   binary and verified operator image with the pinned stage-8 EXL3/fatpath and
-   real checkpoint/helper fixtures required by `test_cuda_integration.py`.
-   The unpatched base image alone is insufficient. For every EP rank 0, 1, 2 and
-   geometry 0, 1, 2, set `GLM53_COOP_MAINTENANCE_TEST=1`,
-   `GLM53_COOP_QUALIFICATION=1`, `GLM53_COOP_EP_RANK`, `GLM53_COOP_GEOMETRY`,
-   `GLM53_COOP_BUNDLE` and `GLM53_COOP_TEST_HELPERS`. Run
-   `test_cuda_integration.py` and `profile_shapes.py` from the pinned coop source.
-   Save exactly nine `rankN-geoN.jsonl` profile logs. Require all 468 numerical
-   and timing cases, graph/eager parity and allocation checks. Run the candidate
-   memcheck/racecheck gates, including `test_geometry2_sanitizer.py`, plus the
-   existing `coop_h1_control.py` baseline/perturb sensitivity control. The
-   [source instructions](../recipe/overlays/v16/coop/source/README.md) describe
-   the maintenance fixtures and candidate-focused sanitizer scope.
-3. Run `source/select_policy.py --bundle QUALIFIED_COPY` with the nine logs;
-   then `source/manifest.py verify-artifacts QUALIFIED_COPY`. Run
-   `test_policy_gpu.py` for all EP ranks without the qualification override.
-   Slower or unmeasured rows remain stock. None of the historical profile logs
-   may be reused for the new binary.
-4. Seal the new binary, selected row policy, manifest, source identity, verified
-   build image and nine profile hashes into a reviewed new BUILD record. The
-   existing `tools/v16/build_coop_moe.sh` provides the record schema and checks,
-   but its build-image override is **not runtime enablement**: runtime currently
-   requires the historical image in `apply_coop_moe.verify_bundle`. A follow-up
-   release change must pin the newly qualified build-image identity and artifacts
-   explicitly, update binary/recipe/source inventories and test this runtime gate.
-   An operator receipt alone must never grant hardware qualification.
-5. Only after that seal and the normal full-model, fabric, memory, no-swap,
-   correctness and fresh stock-production admission gates pass, make coop the
-   prepared operator default again and require outsider builds to equal the new
-   qualified pin. Add a clean-install coop-on test and a changed-byte refusal.
-   Frozen v1.8.0 results remain unchanged; performance claims for this candidate
-   require new measurements.
+- Nine full integration/H1 baselines plus nine bound perturbation controls.
+- Nine complete profiles: 468 timed and numerically checked cases, preserving
+  median/min/max; the source fixes five warmups and 25 samples per implementation.
+- Eighteen smoke sanitizer runs and six geometry-2 runs, under memcheck and
+  racecheck. The candidate-only filter is `kns=exl3_moe_coop_`. Retain all output;
+  require clean summaries and nonzero unfiltered candidate launch evidence from
+  `--dump-kernel-launches`. Unknown formats or unexplained errors refuse sealing.
+  See [NVIDIA's option documentation](https://docs.nvidia.com/compute-sanitizer/ComputeSanitizer/index.html).
+- Policy selection on a separate bundle and three production-policy GPU checks
+  without qualification or geometry overrides. Every row 1–64 is explicit;
+  unmeasured/nonwinning rows stay stock and the worst-case ratio must be ≤0.97.
 
-## Licensing with shared cudart
+Each test starts from exact base transforms in a fresh maintenance container.
+No live serving container is copied. Container commands, timestamps, actual GPU/
+driver/toolchain, stage-8 identities, image/source/helper/checkpoint identities,
+proof receipts and logs are retained. Cancellation removes only the exact
+container created by that command, using the tested experiment cleanup routine.
+The runner has no fleet controller or endpoint mutation operation.
 
-The source export still carries AGPL-3.0-only coop derivatives and MIT headers,
-with their original notices and attribution. Shared cudart removes the static
-host CUDA runtime from the candidate ELF; it does not make the whole serving
-stack wholly AGPL or clear binary redistribution. The CUDA dependency retains
-its [NVIDIA terms](https://docs.nvidia.com/cuda/archive/13.0.1/eula/index.html).
-Dynamic linking alone does not resolve copyleft compatibility; the
-[GNU licensing FAQ](https://www.gnu.org/licenses/gpl-faq.en.html#GPLStaticVsDynamic)
-treats static and dynamic linking alike for that question. A compatible permission
-or applicable exception still needs to be established before distributing a
-combined binary. This change distributes source only, with operators compiling
-locally; no CUDA library, coop ELF or image is included. The existing AGPL network
-source-offer, InstantTensor, DFlash2 and attribution obligations in
-[licensing](LICENSING.md) remain in force.
+## Seal, review, then integrate
+
+```sh
+python3 -B tools/v16/qualify_coop.py --seal "$QUAL" --output "$SEALED_OUTPUT" \
+  --independent-build-root "$SECOND_BUILD/native" \
+  --independent-image-receipt "$SECOND_BUILD/operator-image.json"
+python3 -B tools/v16/qualify_coop.py --check-seal "$SEALED_OUTPUT"
+```
+
+The seal operation revalidates every gate and profile and regenerates the policy
+from the raw logs before writing new BUILD/bundle/index files. Raw builds and
+campaign outputs are preserved. The legacy shell helper's profile-only seal
+operation is retired. A check-seal PASS is component evidence, not release
+approval or fleet admission.
+
+Pass 2 independently reviews the evidence, integrates the measured source and
+bundle policies together, refreshes source/install pins and records both the
+pre-policy qualification source identity and final source identity. Verify the
+compiled-input map is unchanged, then rebuild twice from the final source and
+repeat on the second physical machine. Only reviewed actual hashes enter
+`coop-release.json`, the binary inventory and the distinct v1.8.4 delivery.
+Until then default preparation and final-release validation refuse.
+
+The schema records the actual qualification image separately from operator image
+eligibility. Every operator still passes the fixed Dockerfile/InstantTensor policy
+and local image inspection. Independent eligible config digests may differ;
+self-hashed image/native receipts never grant GPU qualification. Historical
+schema-1 records retain their strict historical image check.
+
+Run the public clone-based coop-on stock installation/admission and compare the
+prepared archive path. Keep `hardware_qualified=false` on local build receipts.
+The stock-only producer binds the seal/native/policy and actual operator image
+through first and final evidence; ABLIT=1 needs a separate owner admission.
+Record new measurements in [the v1.8.4 record](../release/results-v1.8.4.json).
+Historical throughput and quality do not transfer to the new native bytes.
+
+## Source-only distribution
+
+The original AGPL/MIT notices and source-offer obligations remain in place.
+Shared cudart is not new authorization to distribute CUDA, native libraries or
+combined images. Operators compile locally and obtain NVIDIA tools directly.
+See [licensing](LICENSING.md) for retained obligations.

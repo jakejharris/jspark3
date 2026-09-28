@@ -1,0 +1,29 @@
+{
+  "candidate_manifest_sha256": "dd8ef472ded8195420d8015a260e6d4fe08ff02f14bbd6d76b849645e6301877",
+  "delivery_seal_sha256": "80a21a7f89526691470293cd508ba0c9673bb767f4dbb9843e29b3b7e5403d3f",
+  "hardware_qualified": false,
+  "release_version": "v1.8.3",
+  "runtime_settings": {
+    "adaptive": "ema",
+    "b5": "default",
+    "triar": "off"
+  },
+  "sealed_profile_sha256": "92b5eeebfedf56560479017b6407e2bd1797ea73e848f9f5d51f0bcd621e4c1e",
+  "selection_sha256": "7c0e74bd5baafd94d913bc413035558e616162e3c91de425dc5f7dfd25247080",
+  "settings_record_sha256": "0b1fdf02b617e9c934af810257329dcb5f8768bcfd22b12ce0e65850889d4fee",
+  "source_inventory_sha256": "75ca61fdc96511f1e820a6844f2eed88a68629ea223ad00932fd530b42bd0825",
+  "source_recipe_sha256": "f7addedea803daba236db2f61686edcc4f8a328520ec73309750df7dc8dcd6b0",
+  "startup_settings": {
+    "ABLIT": "0",
+    "GLM53_ADAPTIVE_K": "ema",
+    "JSPARK3_TRIAR": "1",
+    "JSPARK3_TRIAR_P2P": "auto",
+    "JSPARK3_V14_PROFILE": "full",
+    "JSPARK3_V16_APC_LRU": "1",
+    "JSPARK3_V16_COOP": "1",
+    "JSPARK3_V16_DENSE_FP8": "trunk",
+    "JSPARK3_V16_PROFILE": "production-stock"
+  },
+  "state": "bound",
+  "variant": "b"
+}

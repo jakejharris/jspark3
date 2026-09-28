@@ -1,5 +1,14 @@
 # JSpark3 v1.8.3
 
+## v1.8.4 candidate — pending hardware evidence
+
+Default builds include display and deterministic coop, each compiled twice.
+Preparation and stock admission support the release-pinned schema-2 component
+seal. The owner runner checks fixtures before an exclusive GPU campaign and
+seals complete integration/H1/sanitizer/profile/policy evidence into a new output.
+Measured policy, final source rebuilds, clean-room stock admission and v1.8.4
+numbers remain pending. Frozen v1.8.0 results are unchanged.
+
 Runnable operator admission with all-rank hygiene, fine-hit prefix-cache gates,
 readiness waiting and native TRIAR-inactive proof. Complete install/upgrade
 instructions and explicit coop-on/coop-off measurement scope. Credentials are

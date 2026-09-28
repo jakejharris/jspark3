@@ -20,7 +20,9 @@ Use a new output directory for every attempt. The command performs these steps:
 
 1. Bind exact container IDs, start times, environment, recipe, image and runtime
    epoch files. This default-profile path requires no runtime epoch overrides.
-   Require the unedited `production-stock`, coop-off, APC-on profile.
+   Require unedited `production-stock`, ABLIT=0, APC-on and qualified coop-on
+   (or an explicit coop-off diagnostic boot). Bind the component seal, native
+   binary, measured policy and actual operator image into both receipts.
 2. Run `fleetctl verify`, including native `verify_stock.py` **inside every
    container**, loader/capture checks, arithmetic, focused and long-context
    witnesses, and effective no-swap resource checks. The receipt must contain
@@ -129,7 +131,7 @@ hold automatic refreshes during the serving window with `sudo snap refresh
 | `scripts/__pycache__` in recipe | Use a fresh prepared recipe; wrappers now disable bytecode writes. Do not edit checksum inventories. |
 | Checkpoint serving-byte gate | Run the four-path `validate_checkpoint.py` command in INSTALL on the failing rank; its stderr identifies the missing view, ledger or shard. |
 | Display host state | Make `full` hosts headless as INSTALL specifies, or choose `display0` and remove all DRM keys before a fresh start. |
-| Coop seal/build-image drift | Restore the prepared `JSPARK3_V16_COOP=0`; operator coop-on is not supported. |
+| Coop seal/build-image drift | Stop admission; verify the release-pinned component seal and rebuild matching bytes. Never switch coop under captured graphs. |
 | Readiness timeout | Inspect `status` and the retained rank log; raise `--ready-timeout` only for a still-loading healthy boot. |
 | First prefill dip | Retain it; hygiene and the repeat decide. A repeat below 1100 still blocks admission. |
 | Hygiene errors | Inspect per-rank paths/errors; fix missing mounts/read access and repeat the whole qualification into a new output directory. |

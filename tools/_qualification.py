@@ -37,6 +37,9 @@ def verify(root, require_final=False):
     assert 'QA' in cohort['label'] and numbers['mode_switch'] == 'B'
     binding = load(root, 'manifests/final-binding.json')
     release = load(root, 'manifests/release.json')
+    if release.get('release_version') == 'v1.8.4':
+        verify_v184(root, binding, release, require_final)
+        return
     derivation = load(root, 'manifests/derivation.json')
     final = require_final or release.get('stage') == 'final' or release.get('release_version') is not None
     assert binding['hardware_qualified'] is False
@@ -86,3 +89,60 @@ def verify(root, require_final=False):
         assert set(runtime) == {'triar','adaptive','b5'}
         assert runtime['triar'] in ('off','on') and runtime['adaptive'] in ('ema','off') and runtime['b5']=='default'
         assert binding['variant'] != 'c' or runtime == {'triar':'off','adaptive':'ema','b5':'default'}
+
+
+def verify_v184(root, binding, release, require_final):
+    """Pending fields are null, never invented hashes or inherited GPU evidence."""
+    import sys
+    sys.path.insert(0, str(root / 'recipe/scripts'))
+    from _coop_qualification import TARGET_NATIVE
+    assert binding['schema_version'] == 2 and binding['hardware_qualified'] is False
+    assert binding['release_version'] == 'v1.8.4' and binding['native_sha256'] == TARGET_NATIVE
+    historical = root / 'manifests/final-binding-v1.8.3.json'
+    assert hashlib.sha256(historical.read_bytes()).hexdigest() == binding['historical_binding_sha256']
+    catalog = load(root, 'manifests/final-catalog.json')[binding['delivery_id']]
+    assert catalog == {'kind': 'source-candidate', 'native_sha256': TARGET_NATIVE,
+                       'component_seal_sha256': binding['component_seal_sha256'],
+                       'policy_sha256': binding['policy_sha256'], 'startup_settings': binding['startup_settings']}
+    env = dict(line.split('=', 1) for line in (root / 'recipe/.env.example').read_text().splitlines()
+               if line and not line.startswith('#') and '=' in line)
+    assert all(env.get(k) == v for k, v in binding['startup_settings'].items())
+    assert env['JSPARK3_V16_COOP'] == '1' and env['ABLIT'] == '0' and env['JSPARK3_V16_PROFILE'] == 'production-stock'
+    pin = load(root, 'recipe/config/coop-release.json')
+    results = load(root, 'release/results-v1.8.4.json')
+    assert results['native_sha256'] == TARGET_NATIVE and results['release_version'] == 'v1.8.4'
+    if binding['state'] == 'prepared':
+        assert not require_final and release['stage'] == 'prepared', 'v1.8.4 component/boot/measurement gates are pending'
+        assert pin == {'schema_version': 1, 'status': 'pending-component-qualification', 'native_sha256': TARGET_NATIVE,
+                       'build_sha256': None, 'gate_index_sha256': None}
+        assert all(binding[key] is None for key in ('component_seal_sha256', 'policy_sha256', 'admission_receipt_sha256', 'results_sha256'))
+        assert results['status'] == 'pending-measurement' and all(results[key] is None for key in
+               ('candidate_commit', 'component_seal_sha256', 'policy_sha256', 'stock', 'edited'))
+        return
+    assert binding['state'] == 'bound' and release['stage'] == 'final'
+    from _coop_qualification import verify_record
+    coop = root / 'recipe/overlays/v16/coop'
+    record = load(root, 'recipe/overlays/v16/coop/BUILD.json')
+    component = verify_record(record, coop / 'bundle', coop)
+    assert binding['component_seal_sha256'] == component['component_seal_sha256']
+    assert binding['policy_sha256'] == component['policy_sha256']
+    assert load(root, 'manifests/binaries.json')['recipe/overlays/v16/coop/bundle/cooperative_moe.so']['expected_sha256'] == TARGET_NATIVE
+    assert results['status'] == 'measured' and re.fullmatch('[0-9a-f]{40}', results['candidate_commit'])
+    assert results['component_seal_sha256'] == binding['component_seal_sha256']
+    assert results['policy_sha256'] == binding['policy_sha256']
+    assert hashlib.sha256((root / 'release/results-v1.8.4.json').read_bytes()).hexdigest() == binding['results_sha256']
+    stock = results['stock']
+    assert stock['weight_mode'] == 'production-stock' and stock['ABLIT'] == 0
+    assert len(stock['decode_sweeps']) == 2 and len(stock['prefill_turns']) == 8 and stock['quality_evidence']
+    # The public admission producer revalidates boot/environment/component and
+    # all supplied evidence. A standalone PASS string never qualifies a release.
+    import subprocess, sys, tempfile
+    admission = root / 'release/v1.8.4-admission'
+    assert hashlib.sha256((admission / 'finalize.json').read_bytes()).hexdigest() == binding['admission_receipt_sha256']
+    final = load(root, 'release/v1.8.4-admission/finalize.json')
+    assert final['producer'] == 'qualify_runtime.py' and final['identity_config']['coop'] == 'on'
+    assert all(final['component_qualification'][key] == value for key, value in component.items())
+    with tempfile.TemporaryDirectory() as temp:
+        subprocess.run([sys.executable, '-B', str(root / 'tools/v16/admission_gate.py'),
+                        '--first-prompt', str(admission / 'first-prompt.json'), '--finalize', str(admission / 'finalize.json'),
+                        '--out', str(Path(temp) / 'admission.json')], check=True, capture_output=True)

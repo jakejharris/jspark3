@@ -6,7 +6,7 @@
       "1"
     ],
     "qualification": "Example selects stock; production-stock requires mode 0 and a fresh passing stock qualification before admission.",
-    "release_ship_value": "0",
+    "release_ship_value": null,
     "sealed_base_value": "0"
   },
   "GLM53_ADAPTIVE_K": {
@@ -17,7 +17,7 @@
       "ema"
     ],
     "qualification": "Epoch changes must be coordinated and recorded across ranks.",
-    "release_ship_value": "ema",
+    "release_ship_value": null,
     "sealed_base_value": "ema"
   },
   "JSPARK3_V14_PROFILE": {
@@ -27,7 +27,7 @@
       "display0"
     ],
     "qualification": "Memory-layout change requires restart.",
-    "release_ship_value": "full",
+    "release_ship_value": null,
     "sealed_base_value": "full"
   },
   "JSPARK3_V16_APC_LRU": {
@@ -37,7 +37,7 @@
       "1"
     ],
     "qualification": "Source and prepared examples enable prefix-cache LRU; the shipped runtime requires the finehit gate.",
-    "release_ship_value": "1",
+    "release_ship_value": null,
     "sealed_base_value": "1"
   },
   "JSPARK3_V16_COOP": {
@@ -47,7 +47,7 @@
       "1"
     ],
     "qualification": "Historical source example and sealed measurements use 1; operator-native prepare_runtime.py explicitly writes 0. Operator coop-on is unsupported.",
-    "release_ship_value": "1",
+    "release_ship_value": null,
     "sealed_base_value": "1"
   },
   "JSPARK3_V16_DENSE_FP8": {
@@ -58,7 +58,7 @@
       "negative-coarse"
     ],
     "qualification": "negative-coarse is QA-only with explicit test acknowledgement.",
-    "release_ship_value": "trunk",
+    "release_ship_value": null,
     "sealed_base_value": "trunk"
   },
   "JSPARK3_V16_PROFILE": {
@@ -69,7 +69,7 @@
       "qa"
     ],
     "qualification": "QA does not confer production admission.",
-    "release_ship_value": "production-stock",
+    "release_ship_value": null,
     "sealed_base_value": "production-stock"
   }
 }

@@ -50,7 +50,7 @@ class ReleasePrivacyTests(unittest.TestCase):
     def validate(self, root):
         report = self.work / 'validation.json'
         proc = subprocess.run([sys.executable, '-B', str(root / 'tools/validate_release.py'), str(root),
-                               '--require-final', '--report', str(report)], capture_output=True, text=True)
+                               '--report', str(report)], capture_output=True, text=True)
         return proc, json.loads(report.read_text())
 
     def test_full_clone_ignores_unrelated_history_and_unblocks_build_entrypoints(self):
@@ -83,6 +83,12 @@ class ReleasePrivacyTests(unittest.TestCase):
         self.assertIn('missing or mismatched local build', proc.stderr)
         self.assertNotIn('source export failed validation', proc.stderr)
         self.assertFalse((self.work / 'runtime').exists())
+
+    def test_pending_component_candidate_refuses_final_validation(self):
+        proc = subprocess.run([sys.executable, '-B', str(self.clone / 'tools/validate_release.py'),
+                               str(self.clone), '--require-final'], capture_output=True, text=True)
+        self.assertNotEqual(proc.returncode, 0)
+        self.assertIn('FAIL release-manifest', proc.stdout)
 
     def test_export_and_checkout_still_reject_private_file_bytes_and_names(self):
         export = self.work / 'export'

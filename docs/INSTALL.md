@@ -1,4 +1,4 @@
-# Install JSpark3 v1.8.3
+# Install JSpark3 v1.8.4
 
 JSpark3 serves GLM-5.3 Flash with EXL3/TR3 quantization across three DGX Sparks.
 The target's routed experts use 4 bits per weight; "stock" means unedited
@@ -37,26 +37,31 @@ host with SSH to all ranks and HTTP access to rank 0. The recipe, model, Fly
 source and work roots must each have the **same absolute path on every Spark**.
 Use new, dedicated recipe/work directories for each installation.
 
+This is the pending v1.8.4 installation path. `--require-final` deliberately
+refuses this first-pass candidate: no measured component seal or v1.8.4 results
+have been inserted. The owner uses the pre-seal workflow in
+[component qualification](COOP_REPRODUCIBILITY.md) before this public flow can pass.
+
 ## 1. Obtain and validate the source
 
 Download the recipe tarball and its distribution `SHA256SUMS` from the
 [release page](https://github.com/jakejharris/jspark3/releases). Choose the
-v1.8.3 assets when published; this document describes that source version.
+v1.8.4 assets when published; this document describes that source version.
 In the download directory, verify the tarball before extracting it:
 
 ```sh
 sha256sum --ignore-missing -c SHA256SUMS
-tar -xzf jspark3-recipe-v1.8.3.tar.gz
+tar -xzf jspark3-recipe-v1.8.4.tar.gz
 cd jspark3
 sha256sum -c SHA256SUMS
 python3 -B tools/validate_release.py . --require-final
 export JSPARK_SRC="$PWD"
-export JSPARK_RUNTIME="$(realpath -m ../jspark3-runtime-v1.8.3)"
+export JSPARK_RUNTIME="$(realpath -m ../jspark3-runtime-v1.8.4)"
 ```
 
 The exported tarball, `git archive`, and a normal clone checked out at the release
 tag all work. Once published, the Git alternative is
-`git clone --branch v1.8.3 https://github.com/jakejharris/jspark3.git`.
+`git clone --branch v1.8.4 https://github.com/jakejharris/jspark3.git`.
 Validation scans the current file names and contents, including untracked files;
 Git metadata and history are outside the source-export privacy guarantee.
 Keep builds and evidence outside the source directory. The following controller
@@ -97,10 +102,14 @@ python3 -B "$JSPARK_RUNTIME/recipe/scripts/remote_preflight.py" \
 cp "$JSPARK_RUNTIME/recipe/.env.example" "$JSPARK_RUNTIME/operator.env"
 ```
 
-The display library and probe must be byte-identical across two fresh builds.
-Their receipt records the output hashes. Coop is neither built nor required;
-the prepared example explicitly sets `JSPARK3_V16_COOP=0`. Keep it off.
-Copy the **prepared** example above, not the source's historical coop-on example.
+Display and coop must each match across two fresh builds. Coop must additionally
+match `3212a3b0a308e2ec3673878212fcb0504a463c5f7df84eced5db7bb301cc3c07`.
+The receipt remains `hardware_qualified=false`. Preparation validates the
+release-pinned component seal and measured policy, installs your matching binary,
+and selects `production-stock`, `ABLIT=0`, `JSPARK3_V16_COOP=1`.
+Missing, wrong or unsealed coop refuses preparation. `--with-coop` is a
+compatibility alias; `build_native.py --display-only` and
+`prepare_runtime.py --coop-off` are explicit diagnostic options.
 
 ## 4. Stage the recipe, weights and runtime views on every Spark
 
@@ -111,7 +120,7 @@ inactive, and admission checks that path. Do not create runtime epoch files
 or enable active TRIAR. See [operations](OPERATIONS.md#triar-and-runtime-settings).
 
 Copy `$JSPARK_RUNTIME/recipe/` to the declared `JSPARK_RECIPE_ROOT` on each host,
-for example `rsync -a "$JSPARK_RUNTIME/recipe/" HOST:/srv/jspark3-recipe-v1.8.3/`.
+for example `rsync -a "$JSPARK_RUNTIME/recipe/" HOST:/srv/jspark3-recipe-v1.8.4/`.
 Create the model, Fly parent and work directories as operator-writable paths
 before the next commands. Do not merge the recipe into an old installation.
 
@@ -122,7 +131,7 @@ in a virtual environment outside the source and recipe, if needed.
 ```sh
 export JSPARK_MODEL_ROOT=/srv/models
 export JSPARK_FLY_ROOT=/srv/sources/FlyCockpit-GLM-5.3-Flash-EXL3-3x-DGX-Sparks
-export JSPARK_RECIPE_ROOT=/srv/jspark3-recipe-v1.8.3
+export JSPARK_RECIPE_ROOT=/srv/jspark3-recipe-v1.8.4
 export HF_HUB_DISABLE_XET=1
 hf download Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw \
   --revision 25a44fdbf16862a46b7cc9921142c6c81350af2f \
@@ -231,12 +240,14 @@ builder, not signed third-party attestations. Keep the validated source,
 receipts, exact image and native files together. Without a native receipt,
 `prepare_runtime.py` still requires the historical output hashes.
 
-The earlier coop build differed across two native Spark builds. Stable build
-intermediates/shared cudart are under [experiment](COOP_REPRODUCIBILITY.md),
-not a promise of reproducibility. `build_native.py --with-coop` remains
-experimental and does not enable serving. Operator `coop=1` needs future
-runtime support: even a fresh BUILD.json seal for an operator image is refused
-by the historical build-image gate. Do not edit old seals or profile hashes.
+The deterministic builder preserves fixed `/w` paths, source timestamps,
+per-unit compiler seeds and shared cudart. Component qualification is a separate
+GPU campaign with all nine integration/H1/profile pairs, 24 sanitizer runs and
+three measured-policy checks. The release pins that complete seal; arbitrary
+operator receipts do not replace it. Eligible independent operator images may
+have different config digests under the same fixed image-build policy.
+The actual operator image remains bound on every rank. Keep old seals and raw
+builds intact; use the [new owner runner](COOP_REPRODUCIBILITY.md).
 
 Edited mode (`ABLIT=1`, profile `production`) replaces attention output
 projections in layers 15–45 using an operator-supplied donor checkpoint. This

@@ -2,6 +2,12 @@
   "builder_sha256": "608f4243b65889e1e31cc7503d55cdcbaef35e672d7920c97769e03e3aafe241",
   "candidate_manifest_sha256": "dd8ef472ded8195420d8015a260e6d4fe08ff02f14bbd6d76b849645e6301877",
   "composition_builder_sha256": "0050e13f12fe482a29e5cda0ee4b3ac53e9c4f95c823b3acc1063d2decf8ebcd",
+  "delivery_candidate": {
+    "binding_sha256": "3db940e70ff681014b3f4ae41b3e475910bf58171fbb18144f04d08492e59456",
+    "release_version": "v1.8.4",
+    "source_recipe_sha256": "83ff1281bfeadb595c113d096f61285348465c098a30116460dc17438dc1583e",
+    "state": "pending-component-and-boot-evidence"
+  },
   "files": {
     ".gitignore": {
       "changed": false,
@@ -13,8 +19,8 @@
       "changed": true,
       "input_sha256": "9e1306317b68af4677c2b6d2cd8a40cb3a27d9b13cde6a05264c59d007954814",
       "origin": "release-package-render",
-      "public_sha256": "6b2d1146a306acbbea8523425e59ea16baaa0097c972f6bbf13fc3307403a3d0",
-      "revision": "v1.8.3-docs-r2"
+      "public_sha256": "b92435bdf9cc33a6085297f69bc55d817b1ea7ef345f9e2b24c4d3f66d89677f",
+      "revision": "v1.8.4-pass1"
     },
     "LICENSE": {
       "changed": false,
@@ -32,8 +38,8 @@
       "changed": true,
       "input_sha256": "7ce72ca2930b758a0b6ebb5d85ee0487483d23112f70a379ff1da43613f6c30e",
       "origin": "release-package-render",
-      "public_sha256": "9bfb21e7131304d838af0742be46fe26d6b78f55620e1a1607f91896e2d95aed",
-      "revision": "v1.8.3-docs-r2"
+      "public_sha256": "722b746e0856505f73edebd00cb10804cd5654569aabd1236a4c5ce3f205e4fe",
+      "revision": "v1.8.4-pass1"
     },
     "REQUIRED_ATTRIBUTION.md": {
       "changed": false,
@@ -45,8 +51,8 @@
       "changed": true,
       "input_sha256": "17ad9fc5f274886f3a6243287a3431d3dbc1d77b29f20fbb26270e203d61dd08",
       "origin": "release-package-render",
-      "public_sha256": "394a658a7b03e704dbcbebd435075f84569a21d3fffa9295540e0e2d3c0acc8a",
-      "revision": "v1.8.3-docs-r2"
+      "public_sha256": "30987dad6261052fb8e020ec3636f6b463ac601048d7913b36914aca3b6c9c05",
+      "revision": "v1.8.4-pass1"
     },
     "THIRD_PARTY_NOTICES.md": {
       "changed": true,
@@ -70,22 +76,22 @@
       "changed": true,
       "input_sha256": "37368db2e341869babdf091708221fbb6693a97ccdd1239ccb6ac0ae3cbbe714",
       "origin": "release-package-render",
-      "public_sha256": "2344ee0b946cac8b8d093c3dec8ea90102ed6e2e564c108080d415d1da6f8f35",
-      "revision": "v1.8.3-docs-r2"
+      "public_sha256": "70cc1b1072a0e2ece8df54466973eac6454153cfa956b1eab398781cb90a9d40",
+      "revision": "v1.8.4-pass1"
     },
     "docs/COOP_REPRODUCIBILITY.md": {
       "changed": true,
       "input_sha256": "803c4a240052f86f21329234b924a53133ca81237e82b41bc45a64cdda807b8c",
       "origin": "v1.8.1-operator-native",
-      "public_sha256": "edecefd37a6b690b8e2faf528238b9daecf3fd9fe50186471de5e6e4d842a417",
-      "revision": "v1.8.3-coop-hangup"
+      "public_sha256": "241f6156bffa9616321c6e6f6fabb2d5e11038a4ce9b1585173bd11ed2a82240",
+      "revision": "v1.8.4-pass1"
     },
     "docs/INSTALL.md": {
       "changed": true,
       "input_sha256": "0a0d871fca9b3369747f1c0117074f4b5b164eca467c727efd88f4f53038bb63",
       "origin": "release-package-render",
-      "public_sha256": "9c6c614fd7578678cfbde27eed868bad5a2e58311168d00a67c6415da9393312",
-      "revision": "v1.8.3-clone-privacy"
+      "public_sha256": "9c863c089e6acde222aa068709de62cbd5c31fbb91af2fb5cdc75dd20bb94c72",
+      "revision": "v1.8.4-pass1"
     },
     "docs/LICENSING.md": {
       "changed": true,
@@ -105,8 +111,8 @@
       "changed": true,
       "input_sha256": "468123e9465240a884465ebaa14641cfedeac27d36f8b494ab6c5cb77523611c",
       "origin": "release-package-render",
-      "public_sha256": "367437fa1d578af105374918b5ee3c3d8f2c577fd5198f6b8d5cb1f58a12d4e8",
-      "revision": "v1.8.3-clone-privacy"
+      "public_sha256": "907380c6760a6ad0a3b26b9157b544fc7dcd825994cfaae44fff09fe3bb048ab",
+      "revision": "v1.8.4-pass1"
     },
     "docs/RELEASE_TOOLING.md": {
       "changed": true,
@@ -143,8 +149,8 @@
       "changed": true,
       "input_sha256": "9830d95de98135c7d36d7ecc66e0f2fbd493a717227059317df57c1f654cbab6",
       "origin": "release-package-render",
-      "public_sha256": "ce368522afe31215003a4cc73c8ff0ea236390e3e7f14026a05b2eb35c2c26a7",
-      "revision": "v1.8.3-docs-r2"
+      "public_sha256": "f4afcc593fb446e9cf618b2f3feea758aa9a4d4a66c951c07b126facbc5ce783",
+      "revision": "v1.8.4-pass1"
     },
     "manifests/figure-bindings.json": {
       "changed": false,
@@ -152,25 +158,33 @@
       "origin": "release-package-render",
       "public_sha256": "93cfc3b1f3cb1617993f20bfc371a54fc91a1b97e2821072ca538487b0b6f8d6"
     },
+    "manifests/final-binding-v1.8.3.json": {
+      "changed": false,
+      "input_sha256": "8dd4664cc11dc3c92ce8d2df42f0900b33d0069b24753dabba4af659d4378c9b",
+      "origin": "v1.8.4-offline-implementation",
+      "public_sha256": "8dd4664cc11dc3c92ce8d2df42f0900b33d0069b24753dabba4af659d4378c9b",
+      "revision": "v1.8.4-pass1"
+    },
     "manifests/final-binding.json": {
       "changed": true,
       "input_sha256": "bc72b806fb419ce47abc215e0fabee37695c194df843a37736b3060c984e3e53",
       "origin": "generated",
-      "public_sha256": "8dd4664cc11dc3c92ce8d2df42f0900b33d0069b24753dabba4af659d4378c9b",
-      "revision": "v1.8.3-docs-r2"
+      "public_sha256": "3db940e70ff681014b3f4ae41b3e475910bf58171fbb18144f04d08492e59456",
+      "revision": "v1.8.4-pass1"
     },
     "manifests/final-catalog.json": {
-      "changed": false,
+      "changed": true,
       "input_sha256": "1452e71188ca42470e4701e17e6c48739aad34ea9cabb11c2dd479a4de52f6c8",
       "origin": "generated",
-      "public_sha256": "1452e71188ca42470e4701e17e6c48739aad34ea9cabb11c2dd479a4de52f6c8"
+      "public_sha256": "7000a3dc4d188e00e4800bc4995022179fed0acadf3273e0e05a8b661ddd9321",
+      "revision": "v1.8.4-pass1"
     },
     "manifests/license-review.json": {
       "changed": true,
       "input_sha256": "f968bb8ad61c217d1c955e5a6209b35cebfae065e3f1ef6d3077ed6a07f25739",
       "origin": "release-package-render",
-      "public_sha256": "0863449f399e1a975295c3cfda0add7c54043dc7c0bdfcdedae40a6a18355153",
-      "revision": "v1.8.3-clone-privacy"
+      "public_sha256": "87e8c56be4ec28586cc0b6bba277db40c9028c6dbe9060dc1867ed07a4497a73",
+      "revision": "v1.8.4-pass1"
     },
     "manifests/qualification.json": {
       "changed": false,
@@ -182,15 +196,15 @@
       "changed": true,
       "input_sha256": "749e7c674aab4461e3e1d9ee1b6c730fb02f99de572b36ee8a25cd6658121907",
       "origin": "generated",
-      "public_sha256": "917ef5556ef71e468a42047640406d36b63dbe3a163636d5af67311ec522173c",
-      "revision": "v1.8.3-docs-r2"
+      "public_sha256": "d5f237ade61952873a77fc14b4158dcb8651c8b28eb8374a9353e63726c18c4c",
+      "revision": "v1.8.4-pass1"
     },
     "manifests/sbom.cdx.json": {
       "changed": true,
       "input_sha256": "3df598b5f7e73d1a4961e895e33bb9cfcc2bd0cc4a0cf736f7806c0a01de3cea",
       "origin": "release-package-render",
-      "public_sha256": "272b3c629ed682535588606700eab0fca56da7b77ef3f3cd193bb047dbd5a43a",
-      "revision": "v1.8.3-docs-r2"
+      "public_sha256": "2a4628c0a83c4ec0d9857d07e3e23c1114c0cd031647eb88ad723f39d5837bc4",
+      "revision": "v1.8.4-pass1"
     },
     "manifests/serving-binding.json": {
       "changed": false,
@@ -208,15 +222,15 @@
       "changed": true,
       "input_sha256": "4385da5b65ce5e0fe108c5ea2a02b0bde63c22911593cdb4df42ec4fe169a6f8",
       "origin": "generated",
-      "public_sha256": "26cf86cf9472b7d747a4c10028e401980b2cb50fef325a588063337db94e1926",
-      "revision": "v1.8.3-docs-r2"
+      "public_sha256": "26733272a04a3fee34f79f9bbd8afdc4720f911e569485ae99b6be6b86533815",
+      "revision": "v1.8.4-pass1"
     },
     "recipe/.env.example": {
       "changed": true,
       "input_sha256": "73101255d1a0ede32d88430fe0a0bb14484fef3d12d62db4b4ac4e574b9faea0",
       "origin": "sealed-source",
-      "public_sha256": "3d31cdcbb9bd43a0f92f8a73918d26ab5741ac65430a6892b75a83f217df9461",
-      "revision": "v1.8.3-docs-r2"
+      "public_sha256": "7eb94841ded50183d538c1ff8d933814ec425928a49a40e91c7f8067da9c1f6a",
+      "revision": "v1.8.4-pass1"
     },
     "recipe/.gitignore": {
       "changed": false,
@@ -259,6 +273,27 @@
       "input_sha256": "5f39ea600fa38f2baf8a67caaf4f1a71845637d79a8eeed4afaadc1857c55210",
       "origin": "sealed-source",
       "public_sha256": "5f39ea600fa38f2baf8a67caaf4f1a71845637d79a8eeed4afaadc1857c55210"
+    },
+    "recipe/config/coop-helper.json": {
+      "changed": false,
+      "input_sha256": "f129e7279742af3dfab8f6f2247764bac1d2dcab01537af08aa484a94c06c6f5",
+      "origin": "v1.8.4-offline-implementation",
+      "public_sha256": "f129e7279742af3dfab8f6f2247764bac1d2dcab01537af08aa484a94c06c6f5",
+      "revision": "v1.8.4-pass1"
+    },
+    "recipe/config/coop-release.json": {
+      "changed": false,
+      "input_sha256": "43519e602b41e1df748ac488a6af7191cba9a12c7b258dbc34c218faae384f59",
+      "origin": "v1.8.4-offline-implementation",
+      "public_sha256": "43519e602b41e1df748ac488a6af7191cba9a12c7b258dbc34c218faae384f59",
+      "revision": "v1.8.4-pass1"
+    },
+    "recipe/config/coop-sanitizer.json": {
+      "changed": false,
+      "input_sha256": "5ce936d58cf8e59dcb9ecaae7787a07c73566154ffe1a14a5d5eb36feec6aab6",
+      "origin": "v1.8.4-offline-implementation",
+      "public_sha256": "5ce936d58cf8e59dcb9ecaae7787a07c73566154ffe1a14a5d5eb36feec6aab6",
+      "revision": "v1.8.4-pass1"
     },
     "recipe/config/image-build-policy.json": {
       "changed": false,
@@ -973,19 +1008,26 @@
       "origin": "sealed-source",
       "public_sha256": "9739442b3b0b4f0ecca528e774b0ef7daf4f73c3944557ee3635c292df687bed"
     },
+    "recipe/scripts/_coop_qualification.py": {
+      "changed": true,
+      "input_sha256": "aa13d569b81ec06de96e887b1fea84c5aa3de7ab2b007f6474722b04b8319407",
+      "origin": "v1.8.4-offline-implementation",
+      "public_sha256": "1c09dfdfd31e7d9b095e6589c3ee64e6cb3441a44aed766b9247761b420c3779",
+      "revision": "v1.8.4-pass1"
+    },
     "recipe/scripts/_fleetctl.py": {
       "changed": true,
       "input_sha256": "4e3de11e9e50b091c274eae480c4080c0f3f452f618eae4d1e5e480826a309b8",
       "origin": "sealed-source",
-      "public_sha256": "b480384a3a4e157468f3f6b92f91da781c2967ea82575abf01ff1a913d528673",
-      "revision": "v1.8.3-docs-r2"
+      "public_sha256": "42db97dd1a891cb0fd592483b3fc64cdb190086180e5b67eac0e297562f8dbdb",
+      "revision": "v1.8.4-pass1"
     },
     "recipe/scripts/_image_identity.py": {
       "changed": true,
       "input_sha256": "848fcb7744801df7455386e86e9a3afe286e1611518042fca8d37bdf63a07a42",
       "origin": "v1.8.1-operator-image",
-      "public_sha256": "8b5db2cb139d358736f0e7e418850b8ab5b84b678067e83004720e488d37956f",
-      "revision": "v1.8.1-operator-image"
+      "public_sha256": "066d6451ca03c916a401fdbd119a2689e2e15697e2c51108524699f293f9efd9",
+      "revision": "v1.8.4-pass1"
     },
     "recipe/scripts/_installer_guard.py": {
       "changed": false,
@@ -1007,17 +1049,18 @@
       "public_sha256": "5ae84ea2e6ad8004745a2eda0d23bec9409bc3e55e9261ca72a06e7fdbdcab37"
     },
     "recipe/scripts/apply_base_pipeline.py": {
-      "changed": false,
+      "changed": true,
       "input_sha256": "095350e19c68da3693dbb1d84a5070b9e3b0f6cee3b17e11fa89c4b7ec22da49",
       "origin": "sealed-source",
-      "public_sha256": "095350e19c68da3693dbb1d84a5070b9e3b0f6cee3b17e11fa89c4b7ec22da49"
+      "public_sha256": "c672d5865ab88eb79d1164f5e0e9d3f4b82b7aadb50540247f7f68f1ae5ccb37",
+      "revision": "v1.8.4-pass1"
     },
     "recipe/scripts/apply_coop_moe.py": {
       "changed": true,
       "input_sha256": "39d1917cf59f113e3b9af31e9b1037d59c81da2c466d8b84d71360a9c7365b5b",
       "origin": "sealed-source",
-      "public_sha256": "7d1403192e734afbb294fbfe8d059f1348542d7fa4cd3bbbaaea05717c22420a",
-      "revision": "v1.8.1-operator-image"
+      "public_sha256": "822da7badc9d884a26bafd9a0db569c4e686b396b67cafd8f2c834bff4cd3825",
+      "revision": "v1.8.4-pass1"
     },
     "recipe/scripts/apply_dense_fp8.py": {
       "changed": false,
@@ -1105,10 +1148,11 @@
       "public_sha256": "7b49204aecd811125bbe50fdfd80ea28cbfd26da88c585588250607778f1b419"
     },
     "recipe/scripts/container_entry.sh": {
-      "changed": false,
+      "changed": true,
       "input_sha256": "b830b123102777aea3080bfda50acd8b17417f8b8e370a77daf328c4a3b75aec",
       "origin": "sealed-source",
-      "public_sha256": "b830b123102777aea3080bfda50acd8b17417f8b8e370a77daf328c4a3b75aec"
+      "public_sha256": "35e2256f6be0032c5b4fdcdc1ec5cccb7b56251bdfd5fa59b3029fcbeff3a374",
+      "revision": "v1.8.4-pass1"
     },
     "recipe/scripts/final_container_preflight.py": {
       "changed": false,
@@ -1278,6 +1322,13 @@
       "origin": "sealed-source",
       "public_sha256": "ca75b5b751517ef2361be1e27bf733b43142a9c2277e7fda4bed01d584f322da"
     },
+    "release/MEASUREMENTS-v1.8.4.md": {
+      "changed": false,
+      "input_sha256": "e6d57e5e08d8b06e281089dcfca114befde7778673223d3f4ce993797b50ead7",
+      "origin": "v1.8.4-offline-implementation",
+      "public_sha256": "e6d57e5e08d8b06e281089dcfca114befde7778673223d3f4ce993797b50ead7",
+      "revision": "v1.8.4-pass1"
+    },
     "release/RELEASE-NOTES-v1.8.0.md": {
       "changed": false,
       "input_sha256": "ba35e2475fedec355d52c1327bb09cd2da769eaff096285bb33d2efc08318dfa",
@@ -1289,8 +1340,8 @@
       "changed": true,
       "input_sha256": "227750b07407b5f6b70f1d3c43b5ae74a3ca94f671297e1e977296041c06d405",
       "origin": "release-package-render",
-      "public_sha256": "009b94a235f199a5b373b76ff9f107bdb6f0fd6a2852eb54d2a304a03956dc03",
-      "revision": "v1.8.3-clone-privacy"
+      "public_sha256": "288f4004b1c411ce460a0f38c95cc75c86e065e7ba8256ba98bd6ddd186ef7a2",
+      "revision": "v1.8.4-pass1"
     },
     "release/RELEASE-NUMBERS.md": {
       "changed": true,
@@ -1310,6 +1361,13 @@
       "input_sha256": "056faf5047b836f43baad062583c07bdace2b25172cf1db15afdf0309e33b99c",
       "origin": "release-package-render",
       "public_sha256": "056faf5047b836f43baad062583c07bdace2b25172cf1db15afdf0309e33b99c"
+    },
+    "release/results-v1.8.4.json": {
+      "changed": false,
+      "input_sha256": "8ab8c41bc5860106dd79bac071410293606a7919edcb0d113102e3aa5aba8f61",
+      "origin": "v1.8.4-offline-implementation",
+      "public_sha256": "8ab8c41bc5860106dd79bac071410293606a7919edcb0d113102e3aa5aba8f61",
+      "revision": "v1.8.4-pass1"
     },
     "release/results.json": {
       "changed": true,
@@ -1342,10 +1400,11 @@
       "public_sha256": "8d56b405468aad11f87ab5763f901e276e08d9646ff5c8481b1762b6b789e9ed"
     },
     "tools/_qualification.py": {
-      "changed": false,
+      "changed": true,
       "input_sha256": "1a55e0a43b073d6a2acb1e155afff4f663144290c7c9e9647a9ff9d851405bff",
       "origin": "export-template",
-      "public_sha256": "1a55e0a43b073d6a2acb1e155afff4f663144290c7c9e9647a9ff9d851405bff"
+      "public_sha256": "e685d44563c83fbc6a3075ec559c9540e9e3d1de83be6b326f4d5dc066a6d164",
+      "revision": "v1.8.4-pass1"
     },
     "tools/_release_checks.py": {
       "changed": false,
@@ -1357,15 +1416,15 @@
       "changed": true,
       "input_sha256": "86daee4cc54e4caaa310680884d4cdd3125a2805f4861d4d7e0aa72309405671",
       "origin": "export-template",
-      "public_sha256": "eaf5dfd5ef96c9308892bbb9a4efbcc95d1f479e998960fe6b6e11522da6b815",
-      "revision": "v1.8.1-operator-image"
+      "public_sha256": "40e4573b1532bfc76168330b1c53895c118d29bc6329b19dc80509cfe3b5c9e3",
+      "revision": "v1.8.4-pass1"
     },
     "tools/build_native.py": {
       "changed": true,
       "input_sha256": "f7a1042e9ea7c6d6034d46eed737dcabbb224a9b16c82a454640d8d08068a2cc",
       "origin": "v1.8.1-operator-native",
-      "public_sha256": "35afca458ad5cab48d2cf481e4a1f9aef5b7e97b74dca75a068ae276da2f5988",
-      "revision": "v1.8.1-operator-native"
+      "public_sha256": "722a149d8ad96bcf3ea1c5894b0389ee7b821697488e8e7fa0880dfb5898b0c1",
+      "revision": "v1.8.4-pass1"
     },
     "tools/build_operator_image.py": {
       "changed": false,
@@ -1378,8 +1437,8 @@
       "changed": true,
       "input_sha256": "a92c91c046638271b1988f4e11e7e9e808d8eec29dc815e24192ffa1c205d5fb",
       "origin": "export-template",
-      "public_sha256": "e6ff439df0e1aab1affc3c4d378b131d4a07b893f0b419df9b9027f222bd7e34",
-      "revision": "v1.8.1-operator-native"
+      "public_sha256": "d446faaae18ad7eee97cfe356a0ba9d1c563165f1e23d1ec28e96c27af2d6a06",
+      "revision": "v1.8.4-pass1"
     },
     "tools/release_packaging.patch": {
       "changed": true,
@@ -1399,15 +1458,15 @@
       "changed": true,
       "input_sha256": "3c2a88afa4a706483170c9b2e2aa67537b135c167ef2742a58a9b71bef8d7b3b",
       "origin": "v1.8.1-operator-native",
-      "public_sha256": "d2f4edcb042748566403b87532be62ee0cfd6f809ae7695fd65dcd1e50ba9f69",
-      "revision": "v1.8.1-operator-native"
+      "public_sha256": "d361cad13e095a0dbc08411c93331aa8bbeda5a4428fb487939495f27b16e663",
+      "revision": "v1.8.4-pass1"
     },
     "tools/test_operator_admission.py": {
       "changed": true,
       "input_sha256": "7af1ace2d2f4291698b0d3f035c542d2f41498ffe88c11b2db60e4967bdf7184",
       "origin": "v1.8.3-docs-r2",
-      "public_sha256": "96be6b245981e39bd660135125183a3ccba444272d08765cdc19abb3266438af",
-      "revision": "v1.8.3-docs-r2"
+      "public_sha256": "df7b632f05d6a831db62c90d5d21460045a6f2b27c4b6b768a84faf8b2770bbb",
+      "revision": "v1.8.4-pass1"
     },
     "tools/test_operator_image.py": {
       "changed": true,
@@ -1424,11 +1483,11 @@
       "revision": "v1.8.3-docs-r2"
     },
     "tools/test_release_privacy.py": {
-      "changed": false,
+      "changed": true,
       "input_sha256": "83ba59513e732814da59c1988bb5ce7409482819571c186041da9f7737181ea0",
       "origin": "v1.8.3-clone-privacy",
-      "public_sha256": "83ba59513e732814da59c1988bb5ce7409482819571c186041da9f7737181ea0",
-      "revision": "v1.8.3-clone-privacy"
+      "public_sha256": "c8c8e0f961d97de8884274843628565402f9dd85d0a009d8c418fd8fd07654fc",
+      "revision": "v1.8.4-pass1"
     },
     "tools/test_release_tooling.py": {
       "changed": true,
@@ -1448,8 +1507,8 @@
       "changed": true,
       "input_sha256": "46e56d229077ed89c4048f48e163e12212ec5496742eec14c5b4bd1422726e4c",
       "origin": "sealed-source",
-      "public_sha256": "a1947f6a1bd9f4267f6dba23ac9ddf58282aaf27ce2ae242f55d07ab31dc5769",
-      "revision": "v1.8.3-docs-r2"
+      "public_sha256": "1e2b7d18be040a42a96a6dff24a33fd045c18db259194fe794e7ce482a7ccc66",
+      "revision": "v1.8.4-pass1"
     },
     "tools/v16/apc_gate.py": {
       "changed": true,
@@ -1462,8 +1521,22 @@
       "changed": true,
       "input_sha256": "a866c74e396416048adb7bb0a90733c33a65171e93634f8ad0fea6ead4f44ece",
       "origin": "sealed-source",
-      "public_sha256": "ce9bd9a05bf93609591973818bc4738361256ffeb1d06c8900f9b0998067bab6",
-      "revision": "v1.8.1-operator-image"
+      "public_sha256": "3573f639b8f2aff8bc7fd57e41dbbd7271d9afb865f45f3bf5cbe05e838d9a3f",
+      "revision": "v1.8.4-pass1"
+    },
+    "tools/v16/coop_environment.py": {
+      "changed": true,
+      "input_sha256": "1787d0c2bf1eb26526191e67d7785f6bbcdcf74ec842e467f1356f47aea31475",
+      "origin": "v1.8.4-offline-implementation",
+      "public_sha256": "514891d052161fa064d5e404cf889df773b8d296030098ae48d492533dbdd3e5",
+      "revision": "v1.8.4-pass1"
+    },
+    "tools/v16/coop_evidence.py": {
+      "changed": true,
+      "input_sha256": "7d5ad597127038978af7a870f986c1973d794971709d31023f77622390871f66",
+      "origin": "v1.8.4-offline-implementation",
+      "public_sha256": "23b0d45d82d17ce3691b8fa32592fcf1799f7a187fca46dbd906a6ac777fb520",
+      "revision": "v1.8.4-pass1"
     },
     "tools/v16/coop_h1_control.py": {
       "changed": false,
@@ -1491,12 +1564,19 @@
       "origin": "sealed-source",
       "public_sha256": "1df9e20a8f1cf78cf7a02267cf78e1ab2f61ccca44834ba98ef7916defb09dde"
     },
+    "tools/v16/qualify_coop.py": {
+      "changed": true,
+      "input_sha256": "3d102d6a6d9fe04faf0c483d0e86f907c05236d93fb39ef79548a933127dde88",
+      "origin": "v1.8.4-offline-implementation",
+      "public_sha256": "b1ef4e1f145bf2b8a70f4859b26947bac3bb03032b8f8a229875049df78d65d3",
+      "revision": "v1.8.4-pass1"
+    },
     "tools/v16/qualify_runtime.py": {
       "changed": true,
       "input_sha256": "33f94c509691c6bcd87a91803df3b1d5b3c722e9369516ebf8a5885f9d44bcaa",
       "origin": "v1.8.3-docs-r2",
-      "public_sha256": "4f3958a4bf2c03f306c342b8ca68f4e7c54a5bf6f830c8466b70364d21378640",
-      "revision": "v1.8.3-docs-r2"
+      "public_sha256": "badaef30d57efc5a33932f4e19fe0f5cb0d6ad46021bd41d9b8ecd41dbc0fad2",
+      "revision": "v1.8.4-pass1"
     },
     "tools/v16/test_coop_cancellation.py": {
       "changed": true,
@@ -1511,6 +1591,13 @@
       "origin": "v1.8.1-operator-native",
       "public_sha256": "c543df17101e048b8c6c575b15cb0be7cf15d934588e290017ec9da798b96fc8",
       "revision": "v1.8.3-coop-cancellation"
+    },
+    "tools/v16/test_coop_qualification.py": {
+      "changed": true,
+      "input_sha256": "4b3b956349535cae552427aa559ec5552564120cf190866c687cabf10f3719c9",
+      "origin": "v1.8.4-offline-implementation",
+      "public_sha256": "d9fc5d8775ca60cc1280e32e918c007ece3a5f9f11f3e86bed7179611783f70e",
+      "revision": "v1.8.4-pass1"
     },
     "tools/v16/v16_common.py": {
       "changed": false,
