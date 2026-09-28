@@ -229,7 +229,8 @@ class AdmissionTests(unittest.TestCase):
                 inspect_identity=lambda *a: {'State': {'Running': True, 'OOMKilled': False,
                     'StartedAt': 'changed' if failure == 'restart' and events else 'start'}, 'RestartCount': 0},
                 remote=remote, sha_file=fleet.sha_file, sha_bytes=fleet.sha_bytes, canonical=fleet.canonical,
-                atomic_text=fleet.atomic_text, redact_diagnostics=fleet.redact_diagnostics)
+                atomic_text=fleet.atomic_text, save_diagnostics=fleet.save_diagnostics,
+                redact_diagnostics=fleet.redact_diagnostics)
             args = argparse.Namespace(recipe=ROOT / 'recipe', env_file=env, manifest=manifest_path, output=out)
             with patch.object(qualification.subprocess, 'run', side_effect=run), redirect_stdout(io.StringIO()):
                 if failure:

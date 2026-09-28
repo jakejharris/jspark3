@@ -1,192 +1,210 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: Apache-2.0
-"""Offline remote failure controls through the real verify receipt writer."""
+"""Real failing children -> verify -> shared receipt and private diagnostic tail."""
 from contextlib import redirect_stderr
 import io
 import json
 import os
 from pathlib import Path
+import stat
 import subprocess
 import sys
 import tempfile
+import time
 import unittest
 from unittest.mock import patch
 
 sys.dont_write_bytecode = True
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "recipe/scripts"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'recipe/scripts'))
 import _fleetctl as fleet
-
-TRACEBACK = ('Traceback (most recent call last):\n'
-             '  File "remote_check.py", line 23, in check\n'
-             '    assert actual == expected, "native identity drift"\n'
-             'AssertionError: native identity drift\n')
+from _diagnostic_cases import TRACE, cases
 
 
 class RemoteFailureTests(unittest.TestCase):
-    def verify_failure(self, stderr, *, local_child=False, write_error=None):
+    def verify_failure(self, stderr, *, write_error=None, private_error=None, local_error=None,
+                       preserve_error=None, argv=None, values=None):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            output = root / "verify.json"
-            manifest = root / "manifest.json"
+            output = root / 'verify.json'
+            manifest = root / 'manifest.json'
             manifest.write_text('{}\n')
-            process = subprocess.CompletedProcess(['ssh'], 1, '', stderr)
+            source = root / 'input.txt'
+            source.write_text(stderr)
             console = io.StringIO()
 
-            def failing_check(args, values, bound, candidate):
-                fleet.remote(values, 2, ['python3', 'remote_check.py'])
+            def failing_check(args, env, bound, candidate):
+                if local_error:
+                    raise local_error
+                fleet.remote(env, 2, argv or ['python3', 'remote_check.py'])
 
-            argv = ['fleetctl', 'verify', '--env-file', str(root / 'env'),
-                    '--manifest', str(manifest), '--output', str(output),
-                    '--log-output', str(root / 'rank0.log')]
-            with (patch.object(sys, 'argv', argv),
-                  patch.object(fleet, 'load_env', return_value={}),
+            cli = ['fleetctl', 'verify', '--env-file', str(root / 'env'),
+                   '--manifest', str(manifest), '--output', str(output),
+                   '--log-output', str(root / 'rank0.log')]
+            child = [sys.executable, '-B', '-c',
+                     'import sys;from pathlib import Path;sys.stderr.write(Path(sys.argv[1]).read_text());sys.exit(17)',
+                     str(source)]
+            with (patch.object(sys, 'argv', cli),
+                  patch.object(fleet, 'load_env', return_value=values or {}),
                   patch.object(fleet, 'validate_env'),
                   patch.object(fleet, 'bound_manifest', return_value={}),
                   patch.object(fleet, 'wait_ready'),
                   patch.object(fleet, '_verify_bound', side_effect=failing_check),
-                  patch.object(fleet, 'preserve_rank0_logs') as preserve,
+                  patch.object(fleet, 'preserve_rank0_logs', side_effect=preserve_error) as preserve,
                   patch.object(fleet, 'atomic_json', wraps=fleet.atomic_json, side_effect=write_error),
-                  patch.object(fleet, 'ssh_argv', return_value=[sys.executable, '-c',
-                               'import sys;sys.stderr.write(sys.argv[1]);sys.exit(1)', stderr]),
-                  patch.object(fleet.subprocess, 'run', wraps=subprocess.run if local_child else None,
-                               **({} if local_child else {'return_value': process})),
+                  patch.object(fleet.diagnostics, 'private_tail', wraps=fleet.diagnostics.private_tail,
+                               side_effect=private_error),
+                  patch.object(fleet, 'ssh_argv', return_value=child),
                   redirect_stderr(console)):
                 self.assertEqual(fleet.main(), 9)
                 preserve.assert_called_once()
             self.console = console.getvalue()
             if write_error:
                 self.assertFalse(output.exists())
-                return self.console
-            record = json.loads(output.read_text())
+                self.assertTrue(list(root.glob('*' + fleet.diagnostics.PRIVATE_SUFFIX)))
+                return None
+            self.record = json.loads(output.read_text())
+            record = dict(self.record)
             digest = record.pop('payload_sha256')
             self.assertEqual(digest, fleet.sha_bytes(fleet.canonical(record)))
             self.assertEqual(record['status'], 'VERIFY_REFUSED')
             self.assertEqual(record['manifest_sha256'], fleet.sha_file(manifest))
-            return record['reason']
+            if private_error:
+                self.assertIsNone(record['private_stderr_tail'])
+            else:
+                name = record['private_stderr_tail']
+                self.assertEqual(Path(name).name, name)
+                self.assertTrue(name.endswith(fleet.diagnostics.PRIVATE_SUFFIX))
+                self.assertIn(name, self.console)
+                private = root / name
+                self.assertEqual(stat.S_IMODE(private.stat().st_mode), 0o600)
+                self.raw_tail = private.read_text()
+            return record
 
-    def check_remote_redaction(self, diagnostics, secrets):
-        reason = self.verify_failure(diagnostics + '\n' + TRACEBACK, local_child=True)
-        for output in (reason, self.console):
-            for secret in secrets:
-                self.assertNotIn(secret, output)
-            self.assertIn(TRACEBACK.rstrip(), output)
-            self.assertIn('rank2 remote command failed (exit 1)', output)
+    def test_reviewer_76_case_matrix(self):
+        self.assertEqual(len(cases), 76)
+        for case in cases:
+            with self.subTest(case=case['name']), patch.dict(os.environ, case['known']):
+                text = case['diagnostic'] + ('\n' + TRACE if case['append_trace'] else '')
+                record = self.verify_failure(text)
+                public = json.dumps(record) + self.console
+                for secret in case['secrets']:
+                    self.assertNotIn(secret, public)
+                self.assertEqual(self.raw_tail, text.replace('\r\n', '\n')[-fleet.REMOTE_STDERR_LIMIT:])
+                # Free-form diagnostic markers are retained privately, not
+                # promoted to shared output just because they look innocuous.
+                for marker in case['markers']:
+                    self.assertIn(marker, self.raw_tail)
+                detail = record['diagnostics']
+                self.assertEqual((detail['rank'], detail['exit_code'], detail['command']),
+                                 (2, 17, 'python3 remote_check.py'))
+                self.assertIn('rank2 remote command failed (exit 17)', record['reason'])
+                if case['append_trace'] or 'File "remote_check.py"' in text:
+                    self.assertIn({'file': 'remote_check.py', 'line': 23}, detail['frames'])
+                    self.assertIn('AssertionError', detail['exception_types'])
+                    self.assertIn('remote_check.py:23', self.console)
+                self.assertNotIn('native identity drift', public)
 
-    def test_review_authorization_and_userinfo_reproduction(self):
-        # Same synthetic values/forms and real child -> refusal-writer path as
-        # the independent review; neither credential is in the local environment.
-        header = 'ghp_' + 'R2SyntheticHeaderValue123456789'
-        userinfo = 'ghp_' + 'R2SyntheticURLValue123456789'
-        diagnostic = ('HTTP request headers:\nAuthorization: token ' + header + '\n'
-                      "fatal: unable to access 'https://" + userinfo +
-                      "@github.com/example/repo.git': request failed")
-        self.check_remote_redaction(diagnostic, (header, userinfo))
+    def test_unknown_fields_paths_names_and_arguments_cannot_become_shared_text(self):
+        secret = 'opaque-field-credential'
+        text = (f'  File "/{secret}/verify_stock.py", line 42, in {secret}\n'
+                f'  File "{secret}.py", line 9, in check\n'
+                f'{secret}Error: {secret}\nValueError: {secret}\n' + TRACE)
+        record = self.verify_failure(text, argv=['python3', '-S', '/recipe/scripts/verify_stock.py',
+                                                '--argument', secret])
+        self.assertNotIn(secret, json.dumps(record) + self.console)
+        self.assertIn(secret, self.raw_tail)
+        self.assertIn({'file': 'verify_stock.py', 'line': 42}, record['diagnostics']['frames'])
+        self.assertIn({'file': '<unrecognized file>', 'line': 9}, record['diagnostics']['frames'])
+        self.assertEqual(record['diagnostics']['command'], 'python3 verify_stock.py')
 
-    def test_whole_authorization_and_cookie_values_are_redacted(self):
-        secret, continuation = 'opaque-remote-value', 'another-remote-value'
-        diagnostics = [
-            f'Authorization: {scheme} {secret}'
-            for scheme in ('token', 'Digest', 'Negotiate', 'AWS4-HMAC-SHA256', 'Custom')]
-        diagnostics += [f'Proxy-Authorization: Custom {secret}',
-                        f'X-Api-Key: Custom {secret}', f'X-Credential: Custom {secret}',
-                        f'HTTP_AUTHORIZATION=Custom {secret}',
-                        f'Authorization: Digest username="{secret}", nonce="{continuation}"',
-                        f'Authorization: Custom {secret}\r\n\t{continuation}',
-                        json.dumps({'Authorization': 'Custom ' + secret + ' "' + continuation}),
-                        repr(['--header', 'Authorization: Custom ' + secret]),
-                        repr(['--authorization', 'Custom ' + secret]),
-                        f'Cookie: session={secret}; identity={continuation}',
-                        f'Set-Cookie: session={secret}; Secure; HttpOnly']
-        for diagnostic in diagnostics:
-            with self.subTest(diagnostic=diagnostic.split(':', 1)[0]):
-                self.check_remote_redaction(diagnostic, (secret, continuation))
+    def test_docker_identity_and_inline_program_never_enter_command_summary(self):
+        secret = 'opaque-argument-credential'
+        for argv in (['docker', 'exec', secret, 'python3', '-c', secret], ['python3', '-c', secret]):
+            with self.subTest(argv=argv):
+                record = self.verify_failure(TRACE, argv=argv)
+                self.assertNotIn(secret, json.dumps(record) + self.console)
+                self.assertIn(record['diagnostics']['command'], ('docker exec', 'python3 -c'))
 
-    def test_userinfo_and_query_credentials_are_redacted(self):
-        secret = 'opaque-remote-value'
-        diagnostics = [f'{scheme}://{userinfo}@host.invalid/repo'
-                       for scheme in ('https', 'ssh', 'ftp')
-                       for userinfo in (secret, 'user:' + secret, ':' + secret)]
-        diagnostics += [f'//{secret}@host.invalid/repo',
-                        'https:\\/\\/' + secret + '@host.invalid/repo']
-        diagnostics += [f'https://host.invalid/repo?{key}={secret}&page=2'
-                        for key in ('key', 'auth', 'sig', 'signature', 'session_id', 'access_token', 'client_secret')]
-        diagnostics += [f'https://host.invalid/repo#key={secret}',
-                        f'https://host.invalid/repo?access_token=prefix,{secret};suffix&page=2']
-        for diagnostic in diagnostics:
-            with self.subTest(form=diagnostic.split('=', 1)[0]):
-                self.check_remote_redaction(diagnostic, (secret,))
+    def test_receipt_log_and_private_write_errors_cannot_echo_secrets(self):
+        secret = 'opaque-write-error-credential'
+        for field in ('write_error', 'private_error', 'preserve_error'):
+            with self.subTest(field=field):
+                self.verify_failure(TRACE, **{field: OSError(secret)})
+                self.assertNotIn(secret, self.console)
+                self.assertIn('remote_check.py:23', self.console)
+                self.assertIn('AssertionError', self.console)
 
-    def test_remote_token_shapes_in_other_headers_queries_and_key_blocks(self):
-        tokens = [prefix + 'X' * 32 for prefix in ('ghp_', 'gho_', 'github_pat_', 'hf_', 'sk-', 'xoxb-', 'AIza')]
-        tokens += [prefix + 'A' * 16 for prefix in ('AKIA', 'ASIA')]
-        tokens += ['eyJ' + 'a' * 16 + '.' + 'b' * 20 + '.' + 'c' * 20]
-        for token in tokens:
-            for diagnostic in (f'X-Diagnostic: {token}', f'https://host.invalid/repo?value={token}',
-                               json.dumps({'detail': token})):
-                with self.subTest(prefix=token[:4]):
-                    self.check_remote_redaction(diagnostic, (token,))
-        key = '-----BEGIN ' + 'PRIVATE KEY-----\nopaque-key-bytes\n-----END ' + 'PRIVATE KEY-----'
-        self.check_remote_redaction(key, ('opaque-key-bytes',))
-        self.assertNotIn('opaque-key-bytes', fleet.redact_diagnostics(key.split('-----END')[0]))
+    def test_nonremote_failures_also_exclude_freeform_messages(self):
+        secret = 'opaque-local-credential'
+        record = self.verify_failure('', local_error=fleet.Refusal('gate failed: ' + secret))
+        self.assertNotIn(secret, json.dumps(record) + self.console)
+        self.assertIn(secret, self.raw_tail)
+        self.assertIn('Refusal', record['diagnostics']['exception_types'])
+        self.assertTrue(record['diagnostics']['controller_frames'])
 
-    def test_receipt_write_failure_is_redacted(self):
-        secret = 'ghp_' + 'SyntheticWriteErrorValue123456789'
-        reason = self.verify_failure(TRACEBACK, local_child=True, write_error=OSError('writer failed: ' + secret))
-        self.assertNotIn(secret, reason)
-        self.assertIn('failure receipt write failed', reason)
-        self.assertIn(TRACEBACK.rstrip(), reason)
+    def test_large_adversarial_input_finishes_and_writes_receipt(self):
+        # Bound the whole real writer externally, not merely its string helper.
+        source = Path(__file__).resolve()
+        for count in (32000, 200000):
+            with self.subTest(chars=count * 6):
+                code = ("import sys;sys.path.insert(0,sys.argv[1]);"
+                        "from test_fleetctl_errors import RemoteFailureTests, TRACE;"
+                        "t=RemoteFailureTests();"
+                        "t.verify_failure('https://host.invalid/?'+'token.'*int(sys.argv[2])+'\\n'+TRACE);"
+                        "assert t.record['diagnostics']['stderr_truncated'];"
+                        "assert len(t.raw_tail)==16384")
+                start = time.monotonic()
+                proc = subprocess.run([sys.executable, '-B', '-c', code, str(source.parent), str(count)],
+                                      capture_output=True, text=True, timeout=5)
+                self.assertEqual(proc.returncode, 0, proc.stderr)
+                self.assertLess(time.monotonic() - start, 5)
 
-    def test_secret_bearing_traceback_is_redacted_in_receipt_and_console(self):
-        secret = 'synthetic-' + 'environment-credential'
-        flag = 'synthetic-' + 'argv-credential'
-        header = 'synthetic-' + 'header-credential'
-        diagnostics = (secret + '\n' + f"--api-key '{flag}'\nAuthorization: Bearer {header}\n" + TRACEBACK)
-        with patch.dict(os.environ, {'TEST_ACCESS_TOKEN': secret}):
-            reason = self.verify_failure(diagnostics, local_child=True)
-            self.assertNotIn(secret, fleet.redact_diagnostics(secret, {'TEST_ACCESS_TOKEN': flag}))
-        for output in (reason, self.console):
-            for value in (secret, flag, header):
-                self.assertNotIn(value, output)
-            self.assertIn('remote_check.py', output)
-            self.assertIn('AssertionError: native identity drift', output)
-            self.assertIn('[REDACTED]', output)
+    def test_empty_stderr_still_has_context_and_private_file(self):
+        record = self.verify_failure('')
+        self.assertEqual(self.raw_tail, '')
+        self.assertEqual(record['diagnostics']['frames'], [])
+        self.assertIn('rank2 remote command failed (exit 17)', self.console)
 
-    def test_redaction_happens_before_tail_truncation(self):
-        secret = 'sensitive-' + 'x' * 20000
-        reason = self.verify_failure('TOKEN=' + secret + '\n' + TRACEBACK)
-        self.assertNotIn('x' * 100, reason)
-        self.assertIn(TRACEBACK.rstrip(), reason)
+    def test_rank0_log_is_a_safe_summary_with_private_mode_tail(self):
+        secret = 'opaque-rank0-credential'
+        process = subprocess.CompletedProcess(['ssh'], 0, secret + '\n', TRACE)
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / 'rank0.log'
+            with patch.object(fleet, 'remote', return_value=process):
+                fleet.preserve_rank0_logs({}, {'containers': [{'rank': 0, 'container_id': 'local-fixture'}]}, output)
+            self.assertNotIn(secret, output.read_text())
+            private, = output.parent.glob('*' + fleet.diagnostics.PRIVATE_SUFFIX)
+            self.assertEqual(private.read_text(), secret + '\n' + TRACE)
+            self.assertEqual(stat.S_IMODE(private.stat().st_mode), 0o600)
+            self.assertIn(private.name, output.read_text())
 
-    def test_quoted_assignments_argv_and_credential_urls(self):
-        for diagnostic in ('PASSWORD="private value"', "['--api-key', 'private value']",
-                           '{"access_token": "private value"}', 'https://' + 'user:' + 'private@host.invalid/'):
-            self.assertNotIn('private', fleet.redact_diagnostics(diagnostic))
+    def test_private_files_are_unique_and_do_not_follow_prior_links(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            first = root / fleet.diagnostics.private_tail(root / 'verify.json', 'first')
+            target = root / 'keep'
+            target.write_text('untouched')
+            first.unlink()
+            first.symlink_to(target)
+            second = root / fleet.diagnostics.private_tail(root / 'verify.json', 'second')
+            self.assertNotEqual(first, second)
+            self.assertEqual(target.read_text(), 'untouched')
+            self.assertEqual(second.read_text(), 'second')
 
-    def test_escaped_quoted_secret_is_redacted_whole(self):
-        secret = 'private' + chr(34) + 'suffix'
-        for diagnostic in (json.dumps({'password': secret}), repr(['--api-key', secret])):
-            self.assertNotIn('suffix', fleet.redact_diagnostics(diagnostic))
-        with patch.dict(os.environ, {'TEST_SECRET': secret}):
-            self.assertNotIn('suffix', fleet.redact_diagnostics(json.dumps(secret)))
-
-    def test_verify_record_keeps_multiline_traceback(self):
-        reason = self.verify_failure(TRACEBACK)
-        self.assertIn('rank2 remote command failed (exit 1)', reason)
-        self.assertIn(TRACEBACK.rstrip(), reason)
-
-    def test_large_stderr_keeps_bounded_tail_and_marks_truncation(self):
-        reason = self.verify_failure('OLD-OUTPUT\n' + 'x' * 32000 + '\n' + TRACEBACK)
-        self.assertNotIn('OLD-OUTPUT', reason)
-        self.assertIn('[stderr truncated; tail follows]', reason)
-        self.assertIn(TRACEBACK.rstrip(), reason)
-        self.assertLess(len(reason), 16 * 1024 + 128)
-
-    def test_empty_stderr_has_rank_exit_and_fallback(self):
-        self.assertIn('rank2 remote command failed (exit 1):\nno detail',
-                      self.verify_failure(' \n'))
+    def test_shared_compatibility_helper_is_bounded_and_discards_free_text(self):
+        secret = 'opaque-any-encoding'
+        text = 'token.' * 32000 + secret + '\n' + TRACE
+        shared = fleet.redact_diagnostics(text)
+        self.assertNotIn(secret, shared)
+        self.assertIn('AssertionError', shared)
+        self.assertEqual(fleet.redact_diagnostics(secret), fleet.redact_diagnostics('arbitrary text'))
+        known = TRACE.replace('remote_check.py', 'verify_stock.py')
+        summary = fleet.redact_diagnostics(known)
+        self.assertIn('verify_stock.py:23', summary)
+        self.assertEqual(fleet.redact_diagnostics(summary), summary)
 
     def test_unchecked_remote_returns_original_process(self):
-        process = subprocess.CompletedProcess(['ssh'], 4, 'partial', TRACEBACK)
+        process = subprocess.CompletedProcess(['ssh'], 4, 'partial', TRACE)
         with (patch.object(fleet, 'ssh_argv', return_value=['ssh']),
               patch.object(fleet.subprocess, 'run', return_value=process)):
             self.assertIs(fleet.remote({}, 0, ['check'], check=False), process)

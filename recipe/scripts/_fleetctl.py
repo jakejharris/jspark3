@@ -23,6 +23,7 @@ import urllib.request
 sys.dont_write_bytecode = True
 
 import production_stock
+import _diagnostics as diagnostics
 
 from _image_identity import selected_identity
 
@@ -338,57 +339,34 @@ def ssh_argv(values: dict[str, str], rank: int, remote_argv: list[str]) -> list[
 # -S preserves), so skipping site hooks provably changes nothing but the
 # noise; the strict parsers stay byte-exact with no banner stripping.
 JSON_PYTHON = ("python3", "-S")
-REMOTE_STDERR_LIMIT = 16 * 1024  # Characters retained in failure receipts.
+REMOTE_STDERR_LIMIT = diagnostics.TAIL_LIMIT
 
 
 def redact_diagnostics(text: str, values: dict[str, str] | None = None) -> str:
-    """Remove known secrets and credential-bearing diagnostic forms before storage."""
-    sensitive = r"token|secret|password|passwd|api[-_]?key|access[-_]?key|private[-_]?key|authorization|credential|cookie"
-    known = {str(value) for source in (os.environ, values or {}) for key, value in source.items()
-             if value and re.search(sensitive, key, re.I)}
-    for value in sorted(known, key=len, reverse=True):
-        for form in (json.dumps(value), repr(value), value):
-            text = text.replace(form, '[REDACTED]')
-    # Handles env assignments, shell flags, JSON and Python argv reprs. Quoted
-    # values may contain spaces; remove the whole value, not just its first word.
-    quoted_value = r'"(?:\\.|[^"\\\r\n])*"|\'(?:\\.|[^\'\\\r\n])*\''
-    query = (rf'(?i)([?&#](?:[\w.-]*(?:{sensitive})[\w.-]*|key|auth|sig|signature|session(?:[-_]id)?)=)'
-             r'[^&#\s\"\']+')
-    text = re.sub(query, r'\1[REDACTED]', text)
-    # Authorization schemes are extensible; redact the entire header value,
-    # including folded lines and Digest parameters. Cookies are equally opaque.
-    for names, separator in ((r'authorization|cookie', r'(?:[ \t]*[:=,][ \t]*|[ \t]+)'),
-                             (sensitive, r'[ \t]*:[ \t]*')):
-        header = rf"(?i)(?<![\w-])((?:--)?[\w-]*(?:{names})[\w-]*[\"']?{separator})"
-        text = re.sub(header + r'(?:' + quoted_value + r'|[^\r\n]*(?:\r?\n[ \t]+[^\r\n]*)*)',
-                      r'\1[REDACTED]', text)
-    text = re.sub(r'(?i)\b(Bearer|Basic)\s+[A-Za-z0-9._~+/=-]+', r'\1 [REDACTED]', text)
-    pattern = (rf"(?i)(?<![\w-])((?:--)?[\w-]*(?:{sensitive})[\w-]*[\"']?"
-               r"(?:[ \t]*[:=,][ \t]*|[ \t]+))(?:" + quoted_value + r"|[^\s,;&]+)")
-    text = re.sub(pattern, r'\1[REDACTED]', text)
-    # Userinfo need not have a password separator. Include other URI schemes,
-    # scheme-relative URLs and JSON-escaped slashes; leave the host/path useful.
-    text = re.sub(r'(?i)(?<![\w+.-])((?:[a-z][a-z0-9+.-]*:)?(?:\\?/){2})[^/\s?#@\\]+@', r'\1[REDACTED]@', text)
-    # Remote secrets may be absent from the controller environment and appear
-    # under innocuous header/query names. Recognizable tokens are never useful
-    # traceback content, regardless of which field carried them.
-    tokens = (r'(?i)(?<![a-z0-9])(?:(?:sk[-_]|hf_|gh[pousr]_|github_pat_)[a-z0-9_-]{20,}'
-              r'|(?:AKIA|ASIA)[0-9A-Z]{16}|AIza[a-z0-9_-]{30,}|xox[baprs]-[a-z0-9-]{20,}'
-              r'|eyJ[a-z0-9_-]{12,}\.[a-z0-9_-]{12,}\.[a-z0-9_-]{12,})')
-    text = re.sub(tokens, '[REDACTED]', text)
-    text = re.sub(r'-----BEGIN [A-Z ]*PRIVATE KEY-----.*?(?:-----END [A-Z ]*PRIVATE KEY-----|\Z)',
-                  '[REDACTED]', text, flags=re.DOTALL)
-    return text
+    """Compatibility API: return only recognized structure, never free text."""
+    return diagnostics.render(diagnostics.structure(text))
+
+
+def save_diagnostics(output: Path, text: str) -> None:
+    private = diagnostics.private_tail(output, text)
+    atomic_text(output, redact_diagnostics(text) + "\nPrivate diagnostic tail (do not share): " + private + "\n")
+
+
+class RemoteFailure(Refusal):
+    def __init__(self, rank: int, argv: list[str], code: int, stderr: str):
+        command, files = diagnostics.command_context(argv)
+        self.raw_tail = stderr[-REMOTE_STDERR_LIMIT:]
+        self.safe_diagnostics = diagnostics.structure(stderr, files)
+        self.safe_diagnostics.update(rank=rank, command=command, exit_code=code)
+        super().__init__(f"rank{rank} remote command failed (exit {code}): {command}\n" +
+                         diagnostics.render(self.safe_diagnostics))
 
 
 def remote(values: dict[str, str], rank: int, argv: list[str], *, check: bool = True) -> subprocess.CompletedProcess[str]:
     process = subprocess.run(ssh_argv(values, rank, argv), text=True,
                              stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False)
     if check and process.returncode:
-        detail = redact_diagnostics(process.stderr, values).strip() or "no detail"
-        if len(detail) > REMOTE_STDERR_LIMIT:
-            detail = "[stderr truncated; tail follows]\n" + detail[-REMOTE_STDERR_LIMIT:]
-        raise Refusal(f"rank{rank} remote command failed (exit {process.returncode}):\n{detail}")
+        raise RemoteFailure(rank, argv, process.returncode, process.stderr)
     return process
 
 
@@ -1567,7 +1545,7 @@ def preserve_rank0_logs(
     logs = process.stdout + process.stderr
     if not logs:
         logs = f"docker logs returned exit {process.returncode} without output\n"
-    atomic_text(output, redact_diagnostics(logs, values))
+    save_diagnostics(output, logs)
 
 
 def focused_witness_argv(values: dict[str, str], base: str) -> list[str]:
@@ -1858,7 +1836,7 @@ def _verify_bound(
     rank0 = manifest["containers"][0]
     log_process = remote(values, 0, ["docker", "logs", rank0["container_id"]])
     logs = log_process.stdout + log_process.stderr
-    atomic_text(args.log_output, redact_diagnostics(logs, values))
+    save_diagnostics(args.log_output, logs)
     load = load_gate(logs, runtime)
     if not all(load.values()):
         raise Refusal("load/graph/cadence receipt gate failed")
@@ -1956,8 +1934,8 @@ def cmd_verify(args: argparse.Namespace, values: dict[str, str]) -> None:
     except Exception:
         try:
             preserve_rank0_logs(values, manifest, args.log_output)
-        except Exception as log_exc:
-            print(f"VERIFY LOG PRESERVATION REFUSED: {redact_diagnostics(str(log_exc), values)}", file=sys.stderr)
+        except Exception:
+            print("VERIFY LOG PRESERVATION REFUSED: inspect the controller output directory locally.", file=sys.stderr)
         raise
 
 
@@ -2002,21 +1980,36 @@ def main() -> int:
         functions[args.command](args, values)
         return 0
     except Exception as exc:
-        reason = redact_diagnostics(str(exc), values)
-        if (getattr(args, "command", None) == "verify" and
-                not getattr(args, "dry_run", False) and values is not None):
+        detail = diagnostics.failure(exc)
+        detail.setdefault("command", args.command)
+        detail.setdefault("rank", None)
+        detail.setdefault("exit_code", None)
+        reason = str(exc) if isinstance(exc, RemoteFailure) else diagnostics.render(detail)
+        reason += "\nController frames:\n" + diagnostics.render({
+            "frames": detail["controller_frames"], "exception_types": []})
+        private = None
+        if not args.dry_run:
+            output = args.output if hasattr(args, "output") else args.manifest
+            try:
+                private = diagnostics.private_tail(output, getattr(exc, "raw_tail", str(exc)))
+            except Exception:
+                print("REFUSE: private diagnostic tail write failed; check output directory permissions.", file=sys.stderr)
+            if private:
+                reason += "\nPrivate diagnostic tail next to receipt/manifest (do not share): " + private
+        if args.command == "verify" and not args.dry_run:
             failure = {
                 "schema_version": 1, "grade": "ENGINEERING-EVIDENCE",
-                "manifest_sha256": (sha_file(args.manifest) if args.manifest.is_file() else None),
-                "rank0_log_path": (str(args.log_output) if args.log_output.is_file() else None),
-                "reason": reason, "status": "VERIFY_REFUSED",
-                "operator_direction": "Inspect the bound IDs, then use stop.sh with the exact manifest if safety requires shutdown.",
+                "reason": reason, "diagnostics": detail, "status": "VERIFY_REFUSED",
+                "private_stderr_tail": private,
+                "operator_direction": "Inspect the private diagnostics locally and the bound IDs; use stop.sh with the exact manifest if safety requires shutdown.",
             }
-            failure["payload_sha256"] = sha_bytes(canonical(failure))
             try:
+                failure["manifest_sha256"] = sha_file(args.manifest) if args.manifest.is_file() else None
+                failure["rank0_log_path"] = str(args.log_output) if args.log_output.is_file() else None
+                failure["payload_sha256"] = sha_bytes(canonical(failure))
                 atomic_json(args.output, failure)
-            except OSError as write_exc:
-                print(f"REFUSE: failure receipt write failed: {redact_diagnostics(str(write_exc), values)}", file=sys.stderr)
+            except Exception:
+                print("REFUSE: failure receipt write failed; check output directory permissions.", file=sys.stderr)
         print(f"REFUSE: {reason}", file=sys.stderr)
         return 9
 

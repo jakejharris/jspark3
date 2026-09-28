@@ -106,7 +106,7 @@ def run(args, fleet):
     def command(name, script, arguments, allowed=(0,)):
         proc = subprocess.run([sys.executable, '-B', str(script), *map(str, arguments)],
                               text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        fleet.atomic_text(out / (name + '.log'), fleet.redact_diagnostics(proc.stdout + proc.stderr, values))
+        fleet.save_diagnostics(out / (name + '.log'), proc.stdout + proc.stderr)
         need(proc.returncode in allowed, name + ' refused; see its log')
         return proc.returncode
 
@@ -158,7 +158,7 @@ def run(args, fleet):
         all_logs += proc.stdout + proc.stderr
         proc = fleet.remote(values, row['rank'], ['docker', 'logs', '--since', prefill_first['gate_start'], row['container_id']])
         text = proc.stdout + proc.stderr
-        fleet.atomic_text(out / f"post-warmup-rank{row['rank']}.log", fleet.redact_diagnostics(text, values))
+        fleet.save_diagnostics(out / f"post-warmup-rank{row['rank']}.log", text)
         need(not prefill_gate.compile_lines(text) and not ERROR_RE.search(text),
              f"rank{row['rank']} compiled or reported an engine error after warmup")
     inactive = triar_off(all_logs, values.get('JSPARK3_TRIAR', '0') == '1')

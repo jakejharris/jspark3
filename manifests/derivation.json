@@ -84,8 +84,8 @@
       "changed": true,
       "input_sha256": "0a0d871fca9b3369747f1c0117074f4b5b164eca467c727efd88f4f53038bb63",
       "origin": "release-package-render",
-      "public_sha256": "9c6c614fd7578678cfbde27eed868bad5a2e58311168d00a67c6415da9393312",
-      "revision": "v1.8.3-clone-privacy"
+      "public_sha256": "1913388461efb4a84c1fad86a4a8d6438d7d2028cbd1fcfca6b10c254cdb1dcc",
+      "revision": "v1.8.3-structured-diagnostics"
     },
     "docs/LICENSING.md": {
       "changed": true,
@@ -105,8 +105,8 @@
       "changed": true,
       "input_sha256": "468123e9465240a884465ebaa14641cfedeac27d36f8b494ab6c5cb77523611c",
       "origin": "release-package-render",
-      "public_sha256": "367437fa1d578af105374918b5ee3c3d8f2c577fd5198f6b8d5cb1f58a12d4e8",
-      "revision": "v1.8.3-clone-privacy"
+      "public_sha256": "2b4043ae7c9f4b65b95c07cf7963958c45add75032f7071e0f622013a9013e23",
+      "revision": "v1.8.3-structured-diagnostics"
     },
     "docs/RELEASE_TOOLING.md": {
       "changed": true,
@@ -189,8 +189,8 @@
       "changed": true,
       "input_sha256": "3df598b5f7e73d1a4961e895e33bb9cfcc2bd0cc4a0cf736f7806c0a01de3cea",
       "origin": "release-package-render",
-      "public_sha256": "a9e3fc1d9d934920a6514761f529409b1baa2d1ccb5b9b3f2fca9777c443ed5b",
-      "revision": "v1.8.3-diagnostics-r3"
+      "public_sha256": "baa65ab2937502709a43af5ea283ae8709a3a8d66df98385763c5f4bfe6dc416",
+      "revision": "v1.8.3-structured-diagnostics"
     },
     "manifests/serving-binding.json": {
       "changed": false,
@@ -973,12 +973,19 @@
       "origin": "sealed-source",
       "public_sha256": "9739442b3b0b4f0ecca528e774b0ef7daf4f73c3944557ee3635c292df687bed"
     },
+    "recipe/scripts/_diagnostics.py": {
+      "changed": true,
+      "input_sha256": "c5eaebd639f3ce8e97e20da332327e36f48590c7d92246f2fedf74d0c1ac15eb",
+      "origin": "v1.8.3-structured-diagnostics",
+      "public_sha256": "a0a71ee7a11cb5656acdc9e7601ad483eaa7fe32c2421a340984342c227981d4",
+      "revision": "v1.8.3-structured-diagnostics"
+    },
     "recipe/scripts/_fleetctl.py": {
       "changed": true,
       "input_sha256": "4e3de11e9e50b091c274eae480c4080c0f3f452f618eae4d1e5e480826a309b8",
       "origin": "sealed-source",
-      "public_sha256": "8a046ce79b1c7e423ca1e4ca62a3c250d130dc5a3a54b5ce14b20061e3f20063",
-      "revision": "v1.8.3-diagnostics-r3"
+      "public_sha256": "18763aa5e8da49abe070c35a8967007edc85c06e91ae98c785bcfdc0d29e3ee9",
+      "revision": "v1.8.3-structured-diagnostics"
     },
     "recipe/scripts/_image_identity.py": {
       "changed": true,
@@ -1341,6 +1348,13 @@
       "origin": "approved-license-audit",
       "public_sha256": "8d56b405468aad11f87ab5763f901e276e08d9646ff5c8481b1762b6b789e9ed"
     },
+    "tools/_diagnostic_cases.py": {
+      "changed": true,
+      "input_sha256": "e09dc9add0976cfaebe62a6596de0e691ba1419ba7e0c440389604fc1b8e689f",
+      "origin": "v1.8.3-structured-diagnostics",
+      "public_sha256": "71d85d6cad7b978541a41e8c2e5ed4787328ba03179f90db0e6b186ba4bcbf43",
+      "revision": "v1.8.3-structured-diagnostics"
+    },
     "tools/_qualification.py": {
       "changed": false,
       "input_sha256": "1a55e0a43b073d6a2acb1e155afff4f663144290c7c9e9647a9ff9d851405bff",
@@ -1392,8 +1406,8 @@
       "changed": true,
       "input_sha256": "e3da651d6e69910ba7cad68e30d6a54fe376052b17dbe13796a18e2e47f299f2",
       "origin": "v1.8.3-docs-tooling",
-      "public_sha256": "ffddad7e744ba573308bc4b1e21e0ed41a58f980c1c79c731845805ce6ee63ef",
-      "revision": "v1.8.3-diagnostics-r3"
+      "public_sha256": "5f79da0803868c61b2371f895d3d63d377c3a7c8b3ddc3d32655755a1923e92f",
+      "revision": "v1.8.3-structured-diagnostics"
     },
     "tools/test_native_build.py": {
       "changed": true,
@@ -1406,8 +1420,8 @@
       "changed": true,
       "input_sha256": "7af1ace2d2f4291698b0d3f035c542d2f41498ffe88c11b2db60e4967bdf7184",
       "origin": "v1.8.3-docs-r2",
-      "public_sha256": "96be6b245981e39bd660135125183a3ccba444272d08765cdc19abb3266438af",
-      "revision": "v1.8.3-docs-r2"
+      "public_sha256": "5daa31adfd6f50755f7c2cda804cf8008a12164854ef7f2f034c22eadc5f6032",
+      "revision": "v1.8.3-structured-diagnostics"
     },
     "tools/test_operator_image.py": {
       "changed": true,
@@ -1495,8 +1509,8 @@
       "changed": true,
       "input_sha256": "33f94c509691c6bcd87a91803df3b1d5b3c722e9369516ebf8a5885f9d44bcaa",
       "origin": "v1.8.3-docs-r2",
-      "public_sha256": "4f3958a4bf2c03f306c342b8ca68f4e7c54a5bf6f830c8466b70364d21378640",
-      "revision": "v1.8.3-docs-r2"
+      "public_sha256": "5497df382c3925f22606eb7a259abece94c9f5a6ab4d910217e0d0dafc9d9cfe",
+      "revision": "v1.8.3-structured-diagnostics"
     },
     "tools/v16/test_coop_cancellation.py": {
       "changed": true,

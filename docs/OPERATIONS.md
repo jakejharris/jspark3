@@ -117,6 +117,28 @@ use a new release's controller to reinterpret an old manifest.
 
 ## Host changes and troubleshooting
 
+Verify refusal receipts and console output share recognized diagnostic
+structure, not raw stderr or regex-redacted messages. They identify the remote
+rank, exit code, command label (without arguments), recognized exception types
+and up to 32 file:line frames from a bounded tail. Controller file:line frames
+locate the calling operation, including inline Python commands. Only filenames
+known to the controller source or its selected Python script are shared;
+unknown names are replaced. Arbitrary exception messages, JSON fields and
+unknown exception names are available only in the private tail.
+
+The receipt's `private_stderr_tail` is a filename relative to its directory.
+These unique `*.may-contain-secrets-do-not-share.log` files are created with
+mode 0600 and retain at most 16 KiB of decoded characters, without masking or
+rewriting diagnostics. They can contain credentials. Inspect them locally,
+exclude them from shared bundles, and delete them when no longer needed.
+The ordinary rank-log and qualification `.log` files contain structural
+summaries with pointers to the same kind of private tail. Full logs remain on
+the serving hosts; gates still evaluate complete captured logs in memory.
+If private-file creation fails, the console reports it and the refusal receipt
+has a null pointer. Receipt-write errors also refuse without echoing error text.
+Other lifecycle failures keep their private tail next to the selected output
+receipt or service manifest. Dry runs do not write diagnostic files.
+
 Effective `memory.swap.max` must stay zero. Reverify after service-manager
 changes; daemon reloads can reset limits. On hosts using snapd and runc 1.2.5,
 hold automatic refreshes during the serving window with `sudo snap refresh

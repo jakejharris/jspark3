@@ -2130,7 +2130,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "8a046ce79b1c7e423ca1e4ca62a3c250d130dc5a3a54b5ce14b20061e3f20063"
+          "content": "18763aa5e8da49abe070c35a8967007edc85c06e91ae98c785bcfdc0d29e3ee9"
         }
       ],
       "licenses": [
@@ -3114,6 +3114,23 @@
       "name": "InstantTensor",
       "type": "library",
       "version": "0.2.0"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "a0a71ee7a11cb5656acdc9e7601ad483eaa7fe32c2421a340984342c227981d4"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "recipe/scripts/_diagnostics.py",
+      "type": "file"
     }
   ],
   "specVersion": "1.5",
