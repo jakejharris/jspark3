@@ -16,6 +16,7 @@ import subprocess
 import sys
 import re
 
+sys.dont_write_bytecode = True
 from _image_identity import selected_identity, verify_local_image
 
 IMAGE_IDENTITY = selected_identity()
@@ -27,7 +28,6 @@ DRAFT_NATIVE = "incoai--GLM-5.3-Flash-DFlash2-dc77ff1c-native"
 DRAFT_RUNTIME = DRAFT_NATIVE + "-tp3-runtime"
 MIN_AVAILABLE_MEMORY = 72 * 1024**3
 ALLOWED_LOCAL_STATE = {".env", "preflight.json", "jspark3-release-manifest.json", "verify.json", "verify-rank0.log"}
-sys.dont_write_bytecode = True
 
 
 class Refusal(RuntimeError):

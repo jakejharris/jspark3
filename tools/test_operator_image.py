@@ -3,6 +3,7 @@
 """Offline image-policy regression tests; no fleet or GPU contact."""
 import hashlib
 import json
+import os
 from pathlib import Path
 import shutil
 import subprocess
@@ -34,6 +35,37 @@ def write_record(path, record):
 
 
 class OperatorImageTests(unittest.TestCase):
+    def test_real_preflight_launch_preserves_recipe(self):
+        import _fleetctl
+        with tempfile.TemporaryDirectory() as directory:
+            recipe = Path(directory) / "recipe"
+            shutil.copytree(ROOT / "recipe", recipe)
+            values = _fleetctl.load_env(ROOT / "recipe/.env.example")
+            values["JSPARK_RECIPE_ROOT"] = str(recipe)
+            command = _fleetctl.preflight_argv(values, 0) + ["--recipe-only"]
+            self.assertNotIn("-B", command)
+            env = {k: v for k, v in os.environ.items() if k != "PYTHONDONTWRITEBYTECODE"}
+            process = subprocess.run(command, env=env, capture_output=True, text=True)
+            self.assertEqual(process.returncode, 0, process.stderr)
+            self.assertFalse(list(recipe.rglob("__pycache__")))
+
+    def test_real_receipt_mint_preserves_recipe(self):
+        import _fleetctl
+        with tempfile.TemporaryDirectory() as directory:
+            recipe = Path(directory) / "recipe"
+            shutil.copytree(ROOT / "recipe", recipe)
+            env = {k: v for k, v in os.environ.items() if k != "PYTHONDONTWRITEBYTECODE"}
+            with patch.object(_fleetctl, "RECIPE_ROOT", recipe), patch.dict(os.environ, env, clear=True):
+                receipt = json.loads(_fleetctl.mint_image_receipt(
+                    container_id="4" * 64, rank=0, preflight_sha="5" * 64,
+                    recipe_sha=image.sha(recipe / "SHA256SUMS")))
+            self.assertEqual(receipt["container_id"], "4" * 64)
+            self.assertFalse(list(recipe.rglob("__pycache__")))
+            process = subprocess.run([sys.executable, "-S", str(recipe / "scripts/remote_preflight.py"),
+                                      "--recipe-only", "--recipe-root", str(recipe)],
+                                     env=env, capture_output=True, text=True)
+            self.assertEqual(process.returncode, 0, process.stderr)
+
     def test_policy_matches_fixed_build_inputs(self):
         policy = image.build_policy()
         context = ROOT / "docker/stock-v13"

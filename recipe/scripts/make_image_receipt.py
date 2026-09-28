@@ -12,6 +12,7 @@ import re
 import sys
 import tempfile
 
+sys.dont_write_bytecode = True
 from _image_identity import selected_identity
 
 IDENTITY = selected_identity()

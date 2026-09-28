@@ -170,7 +170,7 @@
       "changed": true,
       "input_sha256": "3df598b5f7e73d1a4961e895e33bb9cfcc2bd0cc4a0cf736f7806c0a01de3cea",
       "origin": "release-package-render",
-      "public_sha256": "abc9d39c6ed0834fa3e267aeec274365d8e5656de0080afa221ff727d42c56a4",
+      "public_sha256": "b636b76695067a5116e0baf88a3399f8f93e7a33da079da8b0716157f5855669",
       "revision": "v1.8.1-operator-image"
     },
     "manifests/serving-binding.json": {
@@ -1127,7 +1127,7 @@
       "changed": true,
       "input_sha256": "1772c493a986c4afadd40f7e7586c5b72313e6d4a01b0964ebc4a0a66321f015",
       "origin": "sealed-source",
-      "public_sha256": "c6ad800a4f955e9bb3a27108e8c207c4b39388f06c3f597ef02dd05a5a1e0097",
+      "public_sha256": "429de5b91017d0f8a45a2a038ec219f5fec15c38ca00d1865bf937aec890e7e9",
       "revision": "v1.8.1-operator-image"
     },
     "recipe/scripts/patch_loader_audit.py": {
@@ -1158,7 +1158,7 @@
       "changed": true,
       "input_sha256": "589e5868d3c49c3c672be746cac841d1d038027d191d3ac8bdea1dbec80de449",
       "origin": "sealed-source",
-      "public_sha256": "2c6a1467ba392f5e736baee4a47af5aee2e25c49c302062e102fe6c16c1a3921",
+      "public_sha256": "6995c8f07f2e957b1a0169d720139e3727f05b198341f673f5a0a042ff8c2c86",
       "revision": "v1.8.1-operator-image"
     },
     "recipe/scripts/resource_scope.py": {
@@ -1324,7 +1324,7 @@
       "changed": true,
       "input_sha256": "f6fa67578bb552eb5daa028e0c44eb967dd0fe0292001c3b82957b34cc0a3352",
       "origin": "v1.8.1-operator-image",
-      "public_sha256": "16e1008ea92dbd335bc7247d7cdc55cdda5d85a1446bf414b1eb4029f980e182",
+      "public_sha256": "93b9e59cb887654e9b19e02442b8d6f8cc5f075a3ce8e7bd0d1914d57b265f3e",
       "revision": "v1.8.1-operator-image"
     },
     "tools/v14/build_display_kv.sh": {
