@@ -23,7 +23,7 @@ TRACEBACK = ('Traceback (most recent call last):\n'
 
 
 class RemoteFailureTests(unittest.TestCase):
-    def verify_failure(self, stderr, *, local_child=False):
+    def verify_failure(self, stderr, *, local_child=False, write_error=None):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             output = root / "verify.json"
@@ -45,6 +45,7 @@ class RemoteFailureTests(unittest.TestCase):
                   patch.object(fleet, 'wait_ready'),
                   patch.object(fleet, '_verify_bound', side_effect=failing_check),
                   patch.object(fleet, 'preserve_rank0_logs') as preserve,
+                  patch.object(fleet, 'atomic_json', wraps=fleet.atomic_json, side_effect=write_error),
                   patch.object(fleet, 'ssh_argv', return_value=[sys.executable, '-c',
                                'import sys;sys.stderr.write(sys.argv[1]);sys.exit(1)', stderr]),
                   patch.object(fleet.subprocess, 'run', wraps=subprocess.run if local_child else None,
@@ -52,13 +53,88 @@ class RemoteFailureTests(unittest.TestCase):
                   redirect_stderr(console)):
                 self.assertEqual(fleet.main(), 9)
                 preserve.assert_called_once()
+            self.console = console.getvalue()
+            if write_error:
+                self.assertFalse(output.exists())
+                return self.console
             record = json.loads(output.read_text())
             digest = record.pop('payload_sha256')
             self.assertEqual(digest, fleet.sha_bytes(fleet.canonical(record)))
             self.assertEqual(record['status'], 'VERIFY_REFUSED')
             self.assertEqual(record['manifest_sha256'], fleet.sha_file(manifest))
-            self.console = console.getvalue()
             return record['reason']
+
+    def check_remote_redaction(self, diagnostics, secrets):
+        reason = self.verify_failure(diagnostics + '\n' + TRACEBACK, local_child=True)
+        for output in (reason, self.console):
+            for secret in secrets:
+                self.assertNotIn(secret, output)
+            self.assertIn(TRACEBACK.rstrip(), output)
+            self.assertIn('rank2 remote command failed (exit 1)', output)
+
+    def test_review_authorization_and_userinfo_reproduction(self):
+        # Same synthetic values/forms and real child -> refusal-writer path as
+        # the independent review; neither credential is in the local environment.
+        header = 'ghp_' + 'R2SyntheticHeaderValue123456789'
+        userinfo = 'ghp_' + 'R2SyntheticURLValue123456789'
+        diagnostic = ('HTTP request headers:\nAuthorization: token ' + header + '\n'
+                      "fatal: unable to access 'https://" + userinfo +
+                      "@github.com/example/repo.git': request failed")
+        self.check_remote_redaction(diagnostic, (header, userinfo))
+
+    def test_whole_authorization_and_cookie_values_are_redacted(self):
+        secret, continuation = 'opaque-remote-value', 'another-remote-value'
+        diagnostics = [
+            f'Authorization: {scheme} {secret}'
+            for scheme in ('token', 'Digest', 'Negotiate', 'AWS4-HMAC-SHA256', 'Custom')]
+        diagnostics += [f'Proxy-Authorization: Custom {secret}',
+                        f'X-Api-Key: Custom {secret}', f'X-Credential: Custom {secret}',
+                        f'HTTP_AUTHORIZATION=Custom {secret}',
+                        f'Authorization: Digest username="{secret}", nonce="{continuation}"',
+                        f'Authorization: Custom {secret}\r\n\t{continuation}',
+                        json.dumps({'Authorization': 'Custom ' + secret + ' "' + continuation}),
+                        repr(['--header', 'Authorization: Custom ' + secret]),
+                        repr(['--authorization', 'Custom ' + secret]),
+                        f'Cookie: session={secret}; identity={continuation}',
+                        f'Set-Cookie: session={secret}; Secure; HttpOnly']
+        for diagnostic in diagnostics:
+            with self.subTest(diagnostic=diagnostic.split(':', 1)[0]):
+                self.check_remote_redaction(diagnostic, (secret, continuation))
+
+    def test_userinfo_and_query_credentials_are_redacted(self):
+        secret = 'opaque-remote-value'
+        diagnostics = [f'{scheme}://{userinfo}@host.invalid/repo'
+                       for scheme in ('https', 'ssh', 'ftp')
+                       for userinfo in (secret, 'user:' + secret, ':' + secret)]
+        diagnostics += [f'//{secret}@host.invalid/repo',
+                        'https:\\/\\/' + secret + '@host.invalid/repo']
+        diagnostics += [f'https://host.invalid/repo?{key}={secret}&page=2'
+                        for key in ('key', 'auth', 'sig', 'signature', 'session_id', 'access_token', 'client_secret')]
+        diagnostics += [f'https://host.invalid/repo#key={secret}',
+                        f'https://host.invalid/repo?access_token=prefix,{secret};suffix&page=2']
+        for diagnostic in diagnostics:
+            with self.subTest(form=diagnostic.split('=', 1)[0]):
+                self.check_remote_redaction(diagnostic, (secret,))
+
+    def test_remote_token_shapes_in_other_headers_queries_and_key_blocks(self):
+        tokens = [prefix + 'X' * 32 for prefix in ('ghp_', 'gho_', 'github_pat_', 'hf_', 'sk-', 'xoxb-', 'AIza')]
+        tokens += [prefix + 'A' * 16 for prefix in ('AKIA', 'ASIA')]
+        tokens += ['eyJ' + 'a' * 16 + '.' + 'b' * 20 + '.' + 'c' * 20]
+        for token in tokens:
+            for diagnostic in (f'X-Diagnostic: {token}', f'https://host.invalid/repo?value={token}',
+                               json.dumps({'detail': token})):
+                with self.subTest(prefix=token[:4]):
+                    self.check_remote_redaction(diagnostic, (token,))
+        key = '-----BEGIN ' + 'PRIVATE KEY-----\nopaque-key-bytes\n-----END ' + 'PRIVATE KEY-----'
+        self.check_remote_redaction(key, ('opaque-key-bytes',))
+        self.assertNotIn('opaque-key-bytes', fleet.redact_diagnostics(key.split('-----END')[0]))
+
+    def test_receipt_write_failure_is_redacted(self):
+        secret = 'ghp_' + 'SyntheticWriteErrorValue123456789'
+        reason = self.verify_failure(TRACEBACK, local_child=True, write_error=OSError('writer failed: ' + secret))
+        self.assertNotIn(secret, reason)
+        self.assertIn('failure receipt write failed', reason)
+        self.assertIn(TRACEBACK.rstrip(), reason)
 
     def test_secret_bearing_traceback_is_redacted_in_receipt_and_console(self):
         secret = 'synthetic-' + 'environment-credential'
@@ -67,6 +143,7 @@ class RemoteFailureTests(unittest.TestCase):
         diagnostics = (secret + '\n' + f"--api-key '{flag}'\nAuthorization: Bearer {header}\n" + TRACEBACK)
         with patch.dict(os.environ, {'TEST_ACCESS_TOKEN': secret}):
             reason = self.verify_failure(diagnostics, local_child=True)
+            self.assertNotIn(secret, fleet.redact_diagnostics(secret, {'TEST_ACCESS_TOKEN': flag}))
         for output in (reason, self.console):
             for value in (secret, flag, header):
                 self.assertNotIn(value, output)

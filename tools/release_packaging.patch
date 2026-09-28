@@ -50,7 +50,7 @@
 +        raise ValueError('HF license must match the model LICENSE: ShapleyMcg v1.0')
 +
 +
-+BEST_OF_TWO = 'Measured on one serving start across two sweeps. Ranges span both sweeps.'
++BEST_OF_TWO = 'Decode was measured on one serving start across two sweeps. Decode ranges span both sweeps.'
 
 
  def headline_parts(n, field):
@@ -89,7 +89,7 @@
 +    headline = ('**Measured: ' + bands['code', 4] + ' tok/s code decode at 4 streams and ' + bands['code', 8]
 +                + ' tok/s at 8, on unedited EXL3-quantized GLM-5.3 Flash weights.**')
 +    prose = ('\n- Prose decode: ' + bands['prose', 4] + ' tok/s at 4 streams, ' + bands['prose', 8] + ' tok/s at 8\n') if all(('prose', count) in bands for count in (4, 8)) else '\n'
-+    ranges = (prose + '- Prefill: ' + prefill + ' tok/s across eight Pi coding-agent turns extending a cached prefix, after page-cache hygiene\n')
++    ranges = (prose + '- Prefill: ' + prefill + ' tok/s across eight Pi coding-agent turns extending a cached prefix, from one post-hygiene gate pass\n')
 +    return headline, ranges
 
 

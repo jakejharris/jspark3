@@ -343,20 +343,41 @@ REMOTE_STDERR_LIMIT = 16 * 1024  # Characters retained in failure receipts.
 
 def redact_diagnostics(text: str, values: dict[str, str] | None = None) -> str:
     """Remove known secrets and credential-bearing diagnostic forms before storage."""
-    sensitive = r"token|secret|password|passwd|api[-_]?key|access[-_]?key|private[-_]?key|authorization|credential"
-    known = {str(value) for key, value in {**os.environ, **(values or {})}.items()
+    sensitive = r"token|secret|password|passwd|api[-_]?key|access[-_]?key|private[-_]?key|authorization|credential|cookie"
+    known = {str(value) for source in (os.environ, values or {}) for key, value in source.items()
              if value and re.search(sensitive, key, re.I)}
     for value in sorted(known, key=len, reverse=True):
         for form in (json.dumps(value), repr(value), value):
             text = text.replace(form, '[REDACTED]')
-    text = re.sub(r'(?i)\b(Bearer|Basic)\s+[A-Za-z0-9._~+/=-]+', r'\1 [REDACTED]', text)
     # Handles env assignments, shell flags, JSON and Python argv reprs. Quoted
     # values may contain spaces; remove the whole value, not just its first word.
     quoted_value = r'"(?:\\.|[^"\\\r\n])*"|\'(?:\\.|[^\'\\\r\n])*\''
+    query = (rf'(?i)([?&#](?:[\w.-]*(?:{sensitive})[\w.-]*|key|auth|sig|signature|session(?:[-_]id)?)=)'
+             r'[^&#\s\"\']+')
+    text = re.sub(query, r'\1[REDACTED]', text)
+    # Authorization schemes are extensible; redact the entire header value,
+    # including folded lines and Digest parameters. Cookies are equally opaque.
+    for names, separator in ((r'authorization|cookie', r'(?:[ \t]*[:=,][ \t]*|[ \t]+)'),
+                             (sensitive, r'[ \t]*:[ \t]*')):
+        header = rf"(?i)(?<![\w-])((?:--)?[\w-]*(?:{names})[\w-]*[\"']?{separator})"
+        text = re.sub(header + r'(?:' + quoted_value + r'|[^\r\n]*(?:\r?\n[ \t]+[^\r\n]*)*)',
+                      r'\1[REDACTED]', text)
+    text = re.sub(r'(?i)\b(Bearer|Basic)\s+[A-Za-z0-9._~+/=-]+', r'\1 [REDACTED]', text)
     pattern = (rf"(?i)(?<![\w-])((?:--)?[\w-]*(?:{sensitive})[\w-]*[\"']?"
-               r"(?:\s*[:=,]\s*|\s+))(?:" + quoted_value + r"|[^\s,;]+)")
+               r"(?:[ \t]*[:=,][ \t]*|[ \t]+))(?:" + quoted_value + r"|[^\s,;&]+)")
     text = re.sub(pattern, r'\1[REDACTED]', text)
-    text = re.sub(r'(?i)(https?://)[^\s/@:]+:[^\s/@]+@', r'\1[REDACTED]@', text)
+    # Userinfo need not have a password separator. Include other URI schemes,
+    # scheme-relative URLs and JSON-escaped slashes; leave the host/path useful.
+    text = re.sub(r'(?i)(?<![\w+.-])((?:[a-z][a-z0-9+.-]*:)?(?:\\?/){2})[^/\s?#@\\]+@', r'\1[REDACTED]@', text)
+    # Remote secrets may be absent from the controller environment and appear
+    # under innocuous header/query names. Recognizable tokens are never useful
+    # traceback content, regardless of which field carried them.
+    tokens = (r'(?i)(?<![a-z0-9])(?:(?:sk[-_]|hf_|gh[pousr]_|github_pat_)[a-z0-9_-]{20,}'
+              r'|(?:AKIA|ASIA)[0-9A-Z]{16}|AIza[a-z0-9_-]{30,}|xox[baprs]-[a-z0-9-]{20,}'
+              r'|eyJ[a-z0-9_-]{12,}\.[a-z0-9_-]{12,}\.[a-z0-9_-]{12,})')
+    text = re.sub(tokens, '[REDACTED]', text)
+    text = re.sub(r'-----BEGIN [A-Z ]*PRIVATE KEY-----.*?(?:-----END [A-Z ]*PRIVATE KEY-----|\Z)',
+                  '[REDACTED]', text, flags=re.DOTALL)
     return text
 
 
@@ -1995,7 +2016,7 @@ def main() -> int:
             try:
                 atomic_json(args.output, failure)
             except OSError as write_exc:
-                print(f"REFUSE: failure receipt write failed: {write_exc}", file=sys.stderr)
+                print(f"REFUSE: failure receipt write failed: {redact_diagnostics(str(write_exc), values)}", file=sys.stderr)
         print(f"REFUSE: {reason}", file=sys.stderr)
         return 9
 

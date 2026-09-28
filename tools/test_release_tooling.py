@@ -59,6 +59,8 @@ class ReleaseToolingTests(unittest.TestCase):
             self.assertIn('`ABLIT=1`', text)
             self.assertIn('`JSPARK3_V16_COOP=1`', text)
             self.assertIn('`JSPARK3_V16_COOP=0`', text)
+            self.assertIn('Decode ranges span both sweeps.', text)
+            self.assertIn('from one post-hygiene gate pass', text)
 
     def test_variant_copy_gate_accepts_corrected_wording_and_refuses_missing_mode(self):
         # Keep the real comparison gate; supply only its filesystem helpers.

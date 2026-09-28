@@ -32,8 +32,8 @@
       "changed": true,
       "input_sha256": "7ce72ca2930b758a0b6ebb5d85ee0487483d23112f70a379ff1da43613f6c30e",
       "origin": "release-package-render",
-      "public_sha256": "9bfb21e7131304d838af0742be46fe26d6b78f55620e1a1607f91896e2d95aed",
-      "revision": "v1.8.3-docs-r2"
+      "public_sha256": "1896224ba671301784a9446dc3264fbf4fddcb4176aac42b8e6545268e7046dd",
+      "revision": "v1.8.3-diagnostics-r3"
     },
     "REQUIRED_ATTRIBUTION.md": {
       "changed": false,
@@ -189,8 +189,8 @@
       "changed": true,
       "input_sha256": "3df598b5f7e73d1a4961e895e33bb9cfcc2bd0cc4a0cf736f7806c0a01de3cea",
       "origin": "release-package-render",
-      "public_sha256": "272b3c629ed682535588606700eab0fca56da7b77ef3f3cd193bb047dbd5a43a",
-      "revision": "v1.8.3-docs-r2"
+      "public_sha256": "a9e3fc1d9d934920a6514761f529409b1baa2d1ccb5b9b3f2fca9777c443ed5b",
+      "revision": "v1.8.3-diagnostics-r3"
     },
     "manifests/serving-binding.json": {
       "changed": false,
@@ -977,8 +977,8 @@
       "changed": true,
       "input_sha256": "4e3de11e9e50b091c274eae480c4080c0f3f452f618eae4d1e5e480826a309b8",
       "origin": "sealed-source",
-      "public_sha256": "b480384a3a4e157468f3f6b92f91da781c2967ea82575abf01ff1a913d528673",
-      "revision": "v1.8.3-docs-r2"
+      "public_sha256": "8a046ce79b1c7e423ca1e4ca62a3c250d130dc5a3a54b5ce14b20061e3f20063",
+      "revision": "v1.8.3-diagnostics-r3"
     },
     "recipe/scripts/_image_identity.py": {
       "changed": true,
@@ -1385,15 +1385,15 @@
       "changed": true,
       "input_sha256": "9195587f5e5760fefd45781b2472f6dff44d0d0dfdf5d55f6643444120bec234",
       "origin": "v1.8.3-docs-tooling",
-      "public_sha256": "c93175f2094e3cf9d7d30b7a639d28820131397cff3156d0600d0634f8f1b8e9",
-      "revision": "v1.8.3-docs-r2"
+      "public_sha256": "4ffba4461f2e98d3d56b9c3a7b5010b065184022abc245c58ca4b4cb1f5953e8",
+      "revision": "v1.8.3-diagnostics-r3"
     },
     "tools/test_fleetctl_errors.py": {
       "changed": true,
       "input_sha256": "e3da651d6e69910ba7cad68e30d6a54fe376052b17dbe13796a18e2e47f299f2",
       "origin": "v1.8.3-docs-tooling",
-      "public_sha256": "24f058948ee68d2eae44fca953895bf83945d6f31136d48c2706115693daf53e",
-      "revision": "v1.8.3-docs-r2"
+      "public_sha256": "ffddad7e744ba573308bc4b1e21e0ed41a58f980c1c79c731845805ce6ee63ef",
+      "revision": "v1.8.3-diagnostics-r3"
     },
     "tools/test_native_build.py": {
       "changed": true,
@@ -1434,8 +1434,8 @@
       "changed": true,
       "input_sha256": "d6aeb9dcbbfd6ec8d2894fb8c174942f80448d885aec2c672c026ca9b520b503",
       "origin": "v1.8.3-docs-tooling",
-      "public_sha256": "2f2a97a1b539696093b2e3d470d064c8a339e3e3f9c1c6d2ef99a10c760fbb2a",
-      "revision": "v1.8.3-docs-r2"
+      "public_sha256": "754240805146f26d3eb8456a6b526fc6afc60dfbe8889807e7de0a456bc22b77",
+      "revision": "v1.8.3-diagnostics-r3"
     },
     "tools/v14/build_display_kv.sh": {
       "changed": true,
