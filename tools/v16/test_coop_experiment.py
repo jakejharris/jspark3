@@ -57,7 +57,7 @@ class RunnerTests(unittest.TestCase):
                 output = work / 'experiment'
                 calls = []
 
-                def fake_docker(command, stdout, stderr):
+                def fake_docker(command, stage, log):
                     calls.append(command)
                     stage = Path(command[command.index('-v') + 1].removesuffix(':/w'))
                     (stage / 'out').mkdir()
@@ -71,7 +71,7 @@ class RunnerTests(unittest.TestCase):
                     (stage / 'out/elf.txt').write_text('Shared library: [libcudart.so.13]\n')
                     (stage / 'out/ldd.txt').write_text('libcudart.so.13 => /cuda/libcudart.so.13\n')
                     (stage / 'out/cuda-elf.txt').write_text('CUDA diagnostic fixture\n')
-                    stdout.write('synthetic compiler output; no GPU\n')
+                    log.write('synthetic compiler output; no GPU\n')
                     return subprocess.CompletedProcess(command, 1 if failed else 0)
 
                 image = {'config_digest': 'sha256:' + '1' * 64,
@@ -83,7 +83,7 @@ class RunnerTests(unittest.TestCase):
                         patch.object(experiment.native, 'read_operator_record', return_value=image), \
                         patch('validate_release.verify', return_value={'failed': 0}), \
                         patch.object(experiment.subprocess, 'check_output', return_value='aarch64\n'), \
-                        patch.object(experiment.subprocess, 'run', side_effect=fake_docker), redirect_stdout(io.StringIO()):
+                        patch.object(experiment, 'run_container', side_effect=fake_docker), redirect_stdout(io.StringIO()):
                     status = experiment.main()
                 self.assertEqual(status, 9 if mode == 'drift' else 0)
                 groups = 2 if mode == 'baseline-failure' else 1

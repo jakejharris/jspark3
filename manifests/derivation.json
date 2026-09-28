@@ -73,11 +73,11 @@
       "public_sha256": "37368db2e341869babdf091708221fbb6693a97ccdd1239ccb6ac0ae3cbbe714"
     },
     "docs/COOP_REPRODUCIBILITY.md": {
-      "changed": false,
+      "changed": true,
       "input_sha256": "803c4a240052f86f21329234b924a53133ca81237e82b41bc45a64cdda807b8c",
       "origin": "v1.8.1-operator-native",
-      "public_sha256": "803c4a240052f86f21329234b924a53133ca81237e82b41bc45a64cdda807b8c",
-      "revision": "v1.8.1-operator-native"
+      "public_sha256": "53761f257c3cf516eb85e1c9eeebd0ad728689d5a283f1e978bb55f86b3ae79d",
+      "revision": "v1.8.3-coop-cancellation"
     },
     "docs/INSTALL.md": {
       "changed": true,
@@ -164,8 +164,8 @@
       "changed": true,
       "input_sha256": "f968bb8ad61c217d1c955e5a6209b35cebfae065e3f1ef6d3077ed6a07f25739",
       "origin": "release-package-render",
-      "public_sha256": "cafd8f4bec4ba1a78fefa2a8fea2e3ef648f332a6dbd2fee8e4f6a20a206b4fd",
-      "revision": "v1.8.3-docs-tooling"
+      "public_sha256": "c922e4b9cef263bca9acec984a0664e1c56e90c912a8146297e39f02e5ed2624",
+      "revision": "v1.8.3-coop-cancellation"
     },
     "manifests/qualification.json": {
       "changed": false,
@@ -1417,11 +1417,11 @@
       "revision": "v1.8.1-operator-native"
     },
     "tools/v16/experiment_coop_build.py": {
-      "changed": false,
+      "changed": true,
       "input_sha256": "b959f8aa890047fdd90f6e5b75c30c3285716f2c705525e08b6122ef93f4901f",
       "origin": "v1.8.1-operator-native",
-      "public_sha256": "b959f8aa890047fdd90f6e5b75c30c3285716f2c705525e08b6122ef93f4901f",
-      "revision": "v1.8.1-operator-native"
+      "public_sha256": "f1fe447854b3c86dc2c8568cafe809b178faa0ee4a91d0f1dcb33f581d6faf43",
+      "revision": "v1.8.3-coop-cancellation"
     },
     "tools/v16/prefill_gate.py": {
       "changed": true,
@@ -1429,12 +1429,19 @@
       "origin": "sealed-source",
       "public_sha256": "1df9e20a8f1cf78cf7a02267cf78e1ab2f61ccca44834ba98ef7916defb09dde"
     },
+    "tools/v16/test_coop_cancellation.py": {
+      "changed": true,
+      "input_sha256": "8489b0e6d792a0e29a92a5769549a99c2842a3d604270a2a9bd6ceadaacc09d9",
+      "origin": "v1.8.3-coop-cancellation",
+      "public_sha256": "be6c84bddccba5b936c299dd83669b3b225d5f088237d3f96396adf695adae11",
+      "revision": "v1.8.3-coop-cancellation"
+    },
     "tools/v16/test_coop_experiment.py": {
       "changed": true,
       "input_sha256": "5e7aa161fd402b5f30d92fd8aef31be0dde4f3d31d383b8ce0f7404bfcfb3b75",
       "origin": "v1.8.1-operator-native",
-      "public_sha256": "4935799609c6b1124af8145193027c84b480d90385f10526eef72e24cda475cf",
-      "revision": "v1.8.1-operator-native"
+      "public_sha256": "c543df17101e048b8c6c575b15cb0be7cf15d934588e290017ec9da798b96fc8",
+      "revision": "v1.8.3-coop-cancellation"
     },
     "tools/v16/v16_common.py": {
       "changed": false,

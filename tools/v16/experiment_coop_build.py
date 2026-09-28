@@ -7,10 +7,13 @@ import json
 import os
 from pathlib import Path
 import platform
+import re
 import shutil
+import signal
 import struct
 import subprocess
 import sys
+import uuid
 
 sys.dont_write_bytecode = True
 ROOT = Path(__file__).resolve().parents[2]
@@ -28,6 +31,63 @@ readelf -W -S -s -n -d /w/out/cooperative_moe.so > /w/out/elf.txt
 ldd /w/out/cooperative_moe.so > /w/out/ldd.txt
 python3 -c 'import ctypes; ctypes.CDLL("/w/out/cooperative_moe.so"); print("PASS host library load; no kernel execution")' > /w/out/load.txt
 '''
+
+
+class Cancelled(Exception):
+    def __init__(self, signum):
+        self.signum = signum
+        super().__init__(signal.Signals(signum).name)
+
+
+def run_container(command, stage, log):
+    """Create before starting, so cancellation always has an exact cleanup ID."""
+    cidfile = stage / 'container.cid'
+    cid = None
+    pending = 0
+    interruptible = False
+
+    def cancel(signum, frame):
+        nonlocal pending, interruptible
+        pending = pending or signum
+        if interruptible:
+            interruptible = False  # Further signals must not interrupt cleanup.
+            raise Cancelled(pending)
+
+    previous = {sig: signal.signal(sig, cancel) for sig in (signal.SIGINT, signal.SIGTERM)}
+    try:
+        # Defer cancellation until create finishes; it cannot launch a compile.
+        # A separate session keeps terminal Ctrl-C from killing the Docker client
+        # before it writes the ID. No pending create can race the final removal.
+        name = 'jspark3-coop-' + uuid.uuid4().hex
+        create = command[:2] + ['--name', name, '--cidfile', str(cidfile)] + command[2:]
+        subprocess.run(create, stdout=log, stderr=subprocess.STDOUT,
+                       check=True, start_new_session=True)
+        cid = cidfile.read_text().strip()
+        if not re.fullmatch('[0-9a-f]{64}', cid):
+            raise ValueError('invalid experiment container ID')
+        interruptible = True
+        if pending:
+            raise Cancelled(pending)
+        process = subprocess.run(['docker', 'start', '--attach', cid],
+                                 stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
+    finally:
+        interruptible = False
+        try:
+            if cid is None and cidfile.exists():
+                cid = cidfile.read_text().strip()
+            if cid and re.fullmatch('[0-9a-f]{64}', cid):
+                # No name/prefix scan: remove only this create's exact ID.
+                # Stop first, even if writing the retained cleanup log fails.
+                cleanup = subprocess.run(['docker', 'rm', '--force', cid], stdout=subprocess.PIPE,
+                                         stderr=subprocess.STDOUT, text=True, start_new_session=True)
+                (stage / 'cleanup.log').write_text(cleanup.stdout)
+                cleanup.check_returncode()
+        finally:
+            for sig, handler in previous.items():
+                signal.signal(sig, handler)
+    if pending:
+        raise Cancelled(pending)
+    return process
 
 
 def compare_runs(stages, output, label):
@@ -94,13 +154,13 @@ def main():
                 shutil.copy2(ROOT / native.COOP / 'SOURCE_MANIFEST.json', stage / 'SOURCE_MANIFEST.json')
                 shutil.copytree(ROOT / native.COOP / 'source', stage / 'source')
                 burns = run * 37
-                command = ['docker', 'run', '--rm', '--platform', 'linux/arm64', '--network', 'none',
+                command = ['docker', 'create', '--platform', 'linux/arm64', '--network', 'none',
                            '--cpus', '4', '--memory', '8g', '--memory-swap', '8g', '--pids-limit', '512',
                            '--user', f'{os.getuid()}:{os.getgid()}', '-v', f'{stage}:/w', '-w', '/w',
                            '--entrypoint', 'bash', image['config_digest'], '-c', COMMAND, 'bash', str(burns)]
                 print(f'BUILD {label} {run + 1}/{args.runs}; retained at {stage}', flush=True)
                 with (stage / 'console.log').open('w') as log:
-                    process = subprocess.run(command, stdout=log, stderr=subprocess.STDOUT)
+                    process = run_container(command, stage, log)
                 row = {'directory': stage.name, 'exit_code': process.returncode, 'pid_burns': burns}
                 group['runs'].append(row)
                 binary = stage / 'out/cooperative_moe.so'
@@ -135,6 +195,9 @@ def main():
         (output / 'experiment.json').write_text(json.dumps(report, indent=2, sort_keys=True) + '\n')
         print(f'{report["status"]} candidate compilation experiment; evidence={output}; GPU qualification still required')
         return 0 if passed else 9
+    except Cancelled as exc:
+        print(f'CANCELLED: {exc}; experiment container removed; evidence retained', file=sys.stderr)
+        return 128 + exc.signum
     except (OSError, ValueError, subprocess.CalledProcessError) as exc:
         print(f'REFUSE: {exc}', file=sys.stderr)
         return 9
