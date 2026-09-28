@@ -67,6 +67,10 @@ def validate_gate(name, root, identity, raw_bundle):
          'gate command does not match reviewed matrix: ' + name)
     need(command.count('--gpus') == 1 and command[command.index('--gpus') + 1] == 'device=0'
          and command[command.index('--network') + 1] == 'none', 'gate container scope')
+    image = read(regular(root, 'image.json'))
+    need(image['payload_sha256'] == identity['image_receipt_sha256']
+         and command[command.index('--entrypoint') + 1:command.index('--entrypoint') + 3]
+         == ['/usr/bin/env', image['config_digest']], 'gate qualification image differs')
     validate_environment(regular(stage_dir, 'environment.json'), gpu=True)
     rows = events(log)
     if kind == 'h1':

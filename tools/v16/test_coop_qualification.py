@@ -269,6 +269,19 @@ class RecordTests(unittest.TestCase):
             runner.seal(args)
             record = q.read(args.output / 'BUILD.json')
             q.verify_record(record,args.output / 'bundle',args.output,release=False)
+            name = 'policy-r0'
+            saved = copy.deepcopy(plan[name])
+            plan[name][plan[name].index(image['config_digest'])] = 'sha256:' + hashed('wrong image')
+            runner.write(raw / 'plan.json', plan)
+            stage = raw / ('container-' + name)
+            execution = q.read(stage / 'execution.json')
+            execution['command'] = plan[name]
+            runner.write(stage / 'execution.json', execution)
+            with self.assertRaisesRegex(ValueError, 'qualification image differs'): evidence.validate_campaign(raw)
+            plan[name] = saved
+            execution['command'] = saved
+            runner.write(raw / 'plan.json', plan)
+            runner.write(stage / 'execution.json', execution)
             (raw / 'smoke-r0-g0-memcheck.json').unlink()
             with self.assertRaises(ValueError): evidence.validate_campaign(raw)
         self.assertEqual({p.relative_to(raw):q.sha(p) for p in raw.rglob('*') if p.is_file()},
