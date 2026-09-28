@@ -9,6 +9,8 @@ page-cache hygiene and a same-boot admission producer. Prefix-cache gates defaul
 to the runtime's fine-hit policy. Native TRIAR-inactive attestation checks the
 actual Cadence graph banks. Installation includes exact dependency downloads,
 runtime views, host requirements, first requests and stop/upgrade commands.
+Normal clones validate the checked-out files, including untracked files, without
+scanning unrelated Git history. Exported-file privacy checks remain enforced.
 
 The experimental coop build runner now cleans up its exact build container on
 cancellation. Coop reproducibility/GPU qualification and operator coop-on support

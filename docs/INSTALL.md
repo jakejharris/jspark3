@@ -54,10 +54,13 @@ export JSPARK_SRC="$PWD"
 export JSPARK_RUNTIME="$(realpath -m ../jspark3-runtime-v1.8.3)"
 ```
 
-Use the exported tarball or `git archive`. A shallow clone of the release tag
-also works; a full clone can fail because the privacy validator scans all Git
-refs, including unrelated historical commit messages. Keep builds and evidence
-outside the source directory. The following controller blocks use one shell.
+The exported tarball, `git archive`, and a normal clone checked out at the release
+tag all work. Once published, the Git alternative is
+`git clone --branch v1.8.3 https://github.com/jakejharris/jspark3.git`.
+Validation scans the current file names and contents, including untracked files;
+Git metadata and history are outside the source-export privacy guarantee.
+Keep builds and evidence outside the source directory. The following controller
+blocks use one shell.
 
 ## 2. Build one image, then transfer that image
 

@@ -223,6 +223,7 @@
     "tools/test_operator_admission.py": "Apache-2.0",
     "tools/test_operator_image.py": "Apache-2.0",
     "tools/test_publish_retry.py": "Apache-2.0",
+    "tools/test_release_privacy.py": "Apache-2.0",
     "tools/test_release_tooling.py": "Apache-2.0",
     "tools/v14/build_display_kv.sh": "Apache-2.0",
     "tools/v16/admission_gate.py": "Apache-2.0",

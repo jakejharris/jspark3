@@ -125,7 +125,7 @@ hold automatic refreshes during the serving window with `sudo snap refresh
 
 | Refusal | Action |
 |---|---|
-| Source privacy scan after full clone | Use release tarball, `git archive`, or a shallow release-tag clone. |
+| Source privacy scan | Inspect the named file, including untracked files; keep private work/evidence outside the source. Git history does not affect this check. |
 | `scripts/__pycache__` in recipe | Use a fresh prepared recipe; wrappers now disable bytecode writes. Do not edit checksum inventories. |
 | Checkpoint serving-byte gate | Run the four-path `validate_checkpoint.py` command in INSTALL on the failing rank; its stderr identifies the missing view, ledger or shard. |
 | Display host state | Make `full` hosts headless as INSTALL specifies, or choose `display0` and remove all DRM keys before a fresh start. |

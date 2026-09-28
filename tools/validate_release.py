@@ -112,16 +112,6 @@ def leaks(data):
     return sorted(set(errors))
 
 
-def commit_privacy(root):
-    if not git_admin(root):
-        return []
-    process = subprocess.run(['git', '-C', str(root), 'log', '--all', '--format=%B'],
-                             capture_output=True, timeout=30)
-    if process.returncode:
-        return ['commit messages could not be inspected']
-    return ['commit message: ' + label for label in leaks(process.stdout)]
-
-
 def sums(root, files):
     return ''.join(f'{sha256(p)}  {p.relative_to(root).as_posix()}\n' for p in sorted(files) if p != root / 'SHA256SUMS')
 
@@ -143,8 +133,11 @@ def verify(root, require_final=False):
             report.fail(name, type(exc).__name__)
     check('inventory', lambda: errors)
     check('required-files', lambda: [n for n in REQUIRED if not (root / n).is_file()])
+    # Validate every working-tree name and byte, including untracked files.
+    # Git administration/history is not shipped in the source export; refs can
+    # include unrelated releases. inventory() excludes only valid root Git admin.
     check('privacy-scan', lambda: [p.relative_to(root).as_posix() + ': ' + ', '.join(found)
-          for p in files if (found := leaks(p.relative_to(root).as_posix().encode() + b'\n' + p.read_bytes()))] + commit_privacy(root))
+          for p in files if (found := leaks(p.relative_to(root).as_posix().encode() + b'\n' + p.read_bytes()))])
     check('owner-identity', lambda: [] if load(root, 'manifests/release.json')['repository'] == 'https://github.com/jakejharris/jspark3'
           and not any(re.search(rb'(?:github.com/|ghcr.io/|pkg:github/)jakejh(?:/|$)', p.read_bytes()) for p in files) else ['repository identity mismatch'])
     check_syntax(root, files, report)
