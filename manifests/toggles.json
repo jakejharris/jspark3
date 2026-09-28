@@ -46,7 +46,7 @@
       "0",
       "1"
     ],
-    "qualification": "Off by example; a new arm requires qualification.",
+    "qualification": "On by default; operator builds require the native receipt seal and fresh hardware qualification.",
     "release_ship_value": "1",
     "sealed_base_value": "1"
   },

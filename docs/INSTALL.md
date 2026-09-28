@@ -8,10 +8,12 @@ weights. Hardware admission remains unqualified; see the local image procedure b
 2. Build and verify a local image using the command below. Obtain the exact model
    and source dependencies identified in `recipe/config/`. Image/module
    redistribution is outside this source package's license posture.
-3. Build the native artifacts locally using your verified image:
+3. On **one of your own DGX Sparks**, build the native artifacts using your
+   verified image (Python and Docker run on the Spark host; GCC/CUDA run inside
+   the ARM64 image):
    `python3 -B tools/build_native.py --image-receipt ../operator-image.json --output ../native-build`.
-   This requires an ARM64 Docker host or Docker ARM64 emulation (for example,
-   Docker Desktop's built-in emulation), but no GPU. It builds the display
+   No host CUDA compiler or GPU access is needed for compilation. An ARM64 Docker
+   host or Docker ARM64 emulation can also build them. It builds the display
    library, display probe and coop-MoE binary twice in fresh network-disabled
    containers at `/w`, checks byte identity, and writes a local receipt binding
    the exact source files, build recipe, image receipt and output hashes.
@@ -104,14 +106,21 @@ build record, with the same trust boundary as the image receipt, not a signature
 Receipt edits, source/build changes, a different image receipt and binary hash
 mismatches are refused. Keep both receipts and the source export together.
 
-Runtime preparation is a staging gate. If coop-MoE differs from the historical
-binary, `runtime-build-receipt.json` records `coop_hardware_seal_required=true`.
-The historical BUILD.json, bundle manifest and measured row policy remain intact;
-`coop=1` consequently stays refused by the existing bundle validator. Complete
-fresh 3-rank/3-geometry GPU qualification and the explicit reviewed seal procedure
-in `tools/v16/build_coop_moe.sh` before enabling that binary. Preparation does not
-rebind old profile hashes to new code, nor qualify display-memory behavior.
-The remaining hardware and production admission gates also stay closed.
+The default is `production-stock`, `coop=1`, display profile `full`, adaptive-K
+`ema`, and dense FP8 `trunk`. Preparation seals an operator-built coop bundle to
+its native and image receipts, rewrites its runtime manifest, and binds the
+reference row choices to the operator binary. The source export's historical
+records stay unchanged. The runtime seal identifies the reused reference policy
+and records `hardware_qualified=false`; it does not claim new profile measurements.
+Preflight, the patch installer and the runtime loader accept this verified native
+identity, so the default profile does not require the historical binaries.
+
+Build and prepare once, then copy that exact image and prepared recipe to all
+three of your Sparks. Full preflight still checks their GPU, fabric, checkpoints,
+memory, headless display/DRM configuration and all normal admission conditions.
+Keep traffic blocked until fresh correctness/performance and production-stock
+qualification passes. Build/preparation success does not qualify the GPU kernels
+or display-memory behavior. No full DGX fleet run is claimed by the local tests.
 
 The prepared runtime selects `config/operator-image.json` everywhere: controller,
 remote preflight, per-container receipts and patch installers. Without that

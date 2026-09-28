@@ -2,7 +2,7 @@
 """Install JSpark3 v1.6's boot-time TP3 ABI2 cooperative-MoE adapter.
 
 State ``0`` is an exact no-op over v1.5's stage-8 EXL3 bytes. State ``1``
-requires a twice-built, newly profiled, hash-bound native bundle and appends a
+requires a twice-built, hash-bound native bundle and appends a
 sealed footer to that exact stage-8 file. The footer runs before model
 construction, so the adapter prepares shared scratch after weight loading and
 before FULL CUDA-graph capture.
@@ -157,6 +157,12 @@ def verify_bundle(bundle: Path, build_record: Path, *, build_image: dict | None 
     if bundle.is_symlink() or not bundle.is_dir():
         raise Refusal("cooperative-MoE bundle root is missing or symlinked")
     record = _object(build_record, "cooperative-MoE build record")
+    if record.get("schema_version") == 2:
+        from _native_identity import verify_operator_bundle
+        try:
+            return verify_operator_bundle(bundle, build_record)
+        except (OSError, ValueError, KeyError, TypeError) as exc:
+            raise Refusal(f"operator cooperative-MoE seal refused: {exc}") from exc
     if set(record) != {
         "schema_version", "image", "source_manifest_sha256", "reproducibility",
         "qualification", "bundle",

@@ -177,7 +177,7 @@ def v16_artifacts(
                 recipe / "overlays/v16/coop/BUILD.json",
             )
         except apply_coop_moe.Refusal as exc:
-            raise Refusal(f"coop=1 requires the hardware-sealed BUILD.json and bundle: {exc}") from exc
+            raise Refusal(f"coop=1 requires a verified BUILD.json and bundle: {exc}") from exc
     return {
         "profile": profile,
         "coop": "on" if coop == "1" else "off",

@@ -7,8 +7,10 @@ consistently. The unpublished reference image is no longer a prerequisite for
 new installations. Images remain local and are not redistributed. Native artifacts
 can also be built locally and staged with receipts binding their source, fixed
 build recipe, image and observed output hashes. Historical pins remain the default
-without a native receipt. Changed coop-MoE outputs require fresh hardware sealing;
-hardware admission gates and v1.8.0 results are unchanged.
+without a native receipt. Operator-built coop bundles receive a receipt-bound
+artifact seal for the default profile, with reference row choices and no claim
+of new GPU measurements. Hardware checks, fresh production qualification and
+v1.8.0 results are unchanged.
 
 # JSpark3 v1.8.0
 
