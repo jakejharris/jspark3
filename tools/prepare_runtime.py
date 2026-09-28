@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Create a separate runtime recipe from this validated source and pinned local builds."""
+"""Create a runtime candidate from validated source and pinned or receipted local builds."""
 import argparse
 import hashlib
 import json
@@ -16,6 +16,8 @@ def main():
     parser.add_argument('--output', type=Path, required=True, help='new private runtime directory')
     parser.add_argument('--image-receipt', type=Path,
                         help='verified local build receipt; omit only for the historical reference image')
+    parser.add_argument('--native-receipt', type=Path,
+                        help='build_native.py receipt; requires the same --image-receipt')
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
     output = args.output.resolve()
@@ -30,10 +32,17 @@ def main():
         image_record = read_operator_record(args.image_receipt)
         if image_record['source_recipe_sha256'] != sha(root / 'recipe/SHA256SUMS'):
             raise SystemExit('REFUSE: image receipt belongs to a different source recipe')
+    native_record = None
+    if args.native_receipt:
+        if not image_record:
+            raise SystemExit('REFUSE: native receipt requires its operator image receipt')
+        from build_native import read_native_record
+        native_record = read_native_record(args.native_receipt, image_record)
     binaries = json.loads((root / 'manifests/binaries.json').read_text())
     for name, row in binaries.items():
         path = args.binary_root / name
-        if path.is_symlink() or not path.is_file() or sha(path) != row['expected_sha256']:
+        expected = native_record['binary_sha256'][name] if native_record else row['expected_sha256']
+        if path.is_symlink() or not path.is_file() or sha(path) != expected:
             raise SystemExit('REFUSE: missing or mismatched local build: ' + name)
     shutil.copytree(root / 'recipe', output / 'recipe')
     for name in binaries:
@@ -43,17 +52,31 @@ def main():
     import apply_display_kv as display
     import apply_coop_moe as coop
     display.verify_sources()
-    coop.verify_bundle(coop.DEFAULT_BUNDLE, coop.DEFAULT_BUILD_RECORD)
+    coop_native = 'recipe/overlays/v16/coop/bundle/cooperative_moe.so'
+    needs_coop_seal = sha(output / coop_native) != binaries[coop_native]['expected_sha256']
+    if needs_coop_seal:
+        # The receipt proves a source build, not the historical 3x3 GPU profiles.
+        # Keep BUILD.json, manifest and row policy unchanged: verify_bundle must
+        # continue to refuse coop=1 until this operator binary is hardware-sealed.
+        coop.verify_sources()
+    else:
+        coop.verify_bundle(coop.DEFAULT_BUNDLE, coop.DEFAULT_BUILD_RECORD)
     recipe = output / 'recipe'
     if image_record:
         (recipe / 'config/operator-image.json').write_text(json.dumps(image_record, sort_keys=True) + '\n')
+    if native_record:
+        (recipe / 'config/operator-native.json').write_text(json.dumps(native_record, sort_keys=True) + '\n')
     (recipe / 'SHA256SUMS').write_text(''.join(f'{sha(p)}  {p.relative_to(recipe).as_posix()}\n'
         for p in sorted(recipe.rglob('*')) if p.is_file() and p.name != 'SHA256SUMS'))
     (output / 'runtime-build-receipt.json').write_text(json.dumps({
         'source_tree_sha256': sha(root / 'SHA256SUMS'), 'recipe_manifest_sha256': sha(recipe / 'SHA256SUMS'),
         'operator_image_receipt_sha256': sha(recipe / 'config/operator-image.json') if image_record else None,
+        'operator_native_receipt_sha256': sha(recipe / 'config/operator-native.json') if native_record else None,
+        'coop_hardware_seal_required': needs_coop_seal,
         'binary_sha256': {n: sha(output / n) for n in binaries}, 'hardware_qualified': False}, indent=2) + '\n')
     print('PASS local runtime recipe prepared; hardware admission remains closed')
+    if needs_coop_seal:
+        print('Coop-MoE candidate differs from the historical seal; coop=1 remains refused pending fresh GPU qualification and seal')
 
 
 if __name__ == '__main__': main()

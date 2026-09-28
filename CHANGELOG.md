@@ -4,8 +4,11 @@ Outside operators can build the pinned Dockerfile, verify InstantTensor bytes,
 and record their own local image identity. Runtime preparation binds this receipt
 to the source recipe; preflight, lifecycle commands and patch installers use it
 consistently. The unpublished reference image is no longer a prerequisite for
-new installations. Images remain local and are not redistributed. Native artifact
-pins and hardware admission gates remain in force; v1.8.0 results are unchanged.
+new installations. Images remain local and are not redistributed. Native artifacts
+can also be built locally and staged with receipts binding their source, fixed
+build recipe, image and observed output hashes. Historical pins remain the default
+without a native receipt. Changed coop-MoE outputs require fresh hardware sealing;
+hardware admission gates and v1.8.0 results are unchanged.
 
 # JSpark3 v1.8.0
 

@@ -8,24 +8,22 @@ weights. Hardware admission remains unqualified; see the local image procedure b
 2. Build and verify a local image using the command below. Obtain the exact model
    and source dependencies identified in `recipe/config/`. Image/module
    redistribution is outside this source package's license posture.
-3. Build the native artifacts in a separate working copy using the pinned
-   image/toolchain. `tools/v14/build_display_kv.sh HOST --check` builds the
-   display library and probe twice and compares their expected record.
-   `tools/v16/build_coop_moe.sh HOST build BUILD_ID` builds the cooperative
-   kernel twice. Its native build entry is
-   `recipe/overlays/v16/coop/build_repro.sh`. A selected layout may require an
-   additional native build listed in `manifests/binaries.json`. Collect all outputs
-   under their exact paths in `manifests/binaries.json` beneath BINARY_ROOT.
-   Historical build records specify expected outputs; this export did not
-   rebuild or requalify them. A mismatch requires a reviewed source/build
-   update and fresh qualification, never an automatic acceptance of new hashes.
-4. Run `python3 -B tools/prepare_runtime.py --binary-root BINARY_ROOT --image-receipt ../operator-image.json --output RUNTIME_DIR`.
-   It verifies the source export and all local binary pins, runs native
-   artifact checks, copies `recipe/` and writes its runtime checksum inventory.
+3. Build the native artifacts locally using your verified image:
+   `python3 -B tools/build_native.py --image-receipt ../operator-image.json --output ../native-build`.
+   This requires an ARM64 Docker host or Docker ARM64 emulation (for example,
+   Docker Desktop's built-in emulation), but no GPU. It builds the display
+   library, display probe and coop-MoE binary twice in fresh network-disabled
+   containers at `/w`, checks byte identity, and writes a local receipt binding
+   the exact source files, build recipe, image receipt and output hashes.
+4. Run `python3 -B tools/prepare_runtime.py --binary-root ../native-build --native-receipt ../native-build/native-build-receipt.json --image-receipt ../operator-image.json --output RUNTIME_DIR`.
+   It verifies the source export, native receipt and actual output hashes,
+   copies `recipe/` and writes its runtime checksum inventory.
    Keep its runtime-build receipt. It installs the image receipt as
    `recipe/config/operator-image.json` and includes it in runtime checksums.
+   The native receipt is installed as `recipe/config/operator-native.json`.
    The source export stays unchanged. Run the controller from this prepared
    runtime's `recipe/scripts/`, and copy this same recipe to all three hosts.
+   Without `--native-receipt`, the original historical output pins remain mandatory.
 5. Copy the runtime recipe's `.env.example` to a private environment file.
    Replace documentation hosts, addresses, roots, interfaces and device paths.
    Point `JSPARK_RECIPE_ROOT` at the prepared runtime recipe on each host.
@@ -96,6 +94,24 @@ then use `docker save IMAGE_ID` and `docker load` on your other hosts. Do not
 independently rebuild three times: metadata may differ. Preflight refuses a
 different image on any rank. The native build helpers read `JSPARK_IMAGE_RECEIPT`;
 their source, toolchain and output hash checks still apply.
+
+An emulated ARM64 rebuild using the pinned GCC/CUDA versions produced identical
+outputs across two fresh builds. The display library matched its historical pin;
+the display probe and coop-MoE binary did not. The operator-native receipt records
+these local outputs without rewriting the published pins or claiming that a
+different binary inherits historical GPU results. It is a self-hashed local
+build record, with the same trust boundary as the image receipt, not a signature.
+Receipt edits, source/build changes, a different image receipt and binary hash
+mismatches are refused. Keep both receipts and the source export together.
+
+Runtime preparation is a staging gate. If coop-MoE differs from the historical
+binary, `runtime-build-receipt.json` records `coop_hardware_seal_required=true`.
+The historical BUILD.json, bundle manifest and measured row policy remain intact;
+`coop=1` consequently stays refused by the existing bundle validator. Complete
+fresh 3-rank/3-geometry GPU qualification and the explicit reviewed seal procedure
+in `tools/v16/build_coop_moe.sh` before enabling that binary. Preparation does not
+rebind old profile hashes to new code, nor qualify display-memory behavior.
+The remaining hardware and production admission gates also stay closed.
 
 The prepared runtime selects `config/operator-image.json` everywhere: controller,
 remote preflight, per-container receipts and patch installers. Without that
