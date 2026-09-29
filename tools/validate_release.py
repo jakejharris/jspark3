@@ -34,7 +34,7 @@ import xml.dom.minidom
 # Validation must not create the compiled caches that inventory rejects.
 # Set this before importing local helpers; pre-existing caches remain forbidden.
 sys.dont_write_bytecode = True
-from validate_live_evidence import EVIDENCE_PATH, validate as validate_live_evidence
+from validate_live_evidence import EVIDENCE_PATH, NOTICE_FILES, validate as validate_live_evidence
 from validate_c4_followup import validate as validate_c4_followup
 
 SKIP_DIRS = {".git", "dist", "__pycache__", ".pytest_cache"}
@@ -149,9 +149,6 @@ CURRENT_URL = "https://github.com/jakejharris/jspark3/releases/tag/v1.1.0"
 # `--landing` scopes the v1.1-specific content checks away from these two files only;
 # privacy, owner, links, syntax, checksums and the verbatim attribution still apply.
 LANDING_PAGES = ("README.md", "huggingface/README.md")
-# Legal text in recipe/. It never executes, so a notice fix may change it without
-# re-running the live witness; license-copies binds it to the root copies instead.
-NOTICE_FILES = ("LICENSE", "THIRD_PARTY_NOTICES.md", "REQUIRED_ATTRIBUTION.md")
 
 # Public prose whose numbers must reconcile with results.json or the structural allowlist.
 PROSE = [
