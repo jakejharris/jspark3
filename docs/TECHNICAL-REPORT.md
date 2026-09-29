@@ -12,7 +12,7 @@ release's measurement status and scope. Historical results remain in their
 [v1/v1.1 technical report](https://github.com/jakejharris/jspark3/blob/646b89930e001dddcbe734745f8c3245d391d3e9/docs/TECHNICAL-REPORT.md)
 remains a separate historical publication; its figures do not describe v1.8.4.
 
-The target model uses [ShapleyMcg](https://github.com/brandonmmusic-max/shapleymcg), created by Brandon M. Music.
+The target model uses [ShapleyMcg](https://github.com/brandonmmusic-max/shapleymcg/tree/4dc85c999983bf46ebdae3821839a5079cc5de17), created by Brandon M. Music.
 
 This work includes or was produced using ShapleyMcg, created by Brandon M. Music (https://github.com/brandonmmusic-max/shapleymcg). ShapleyMcg is licensed under the ShapleyMcg License v1.0, an attribution-required license that grants no rights to the person known as "0xSero." Use of ShapleyMcg without this attribution is unlicensed.
 

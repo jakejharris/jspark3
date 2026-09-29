@@ -55,7 +55,8 @@ def main():
     verify_bundle(raw, coop, source_policy=True)
     bundle = verify_bundle(active, coop)
     verify_selection(read(raw / 'manifest.json'), read(active / 'manifest.json'))
-    target = read(Path('/recipe/config/checkpoint-contract.json'))['target']
+    # Component qualification retains its original, accepted Mia snapshot.
+    target = read(Path('/recipe/config/coop-checkpoint.json'))
     snapshot = Path('/root/.cache/huggingface/hub/models--Mia-AiLab--GLM-5.3-Flash-EXL3-TR3-4bpw/snapshots') / target['revision']
     checkpoint = authenticate(snapshot)
     verify_shapes(snapshot)

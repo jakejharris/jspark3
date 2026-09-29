@@ -71,6 +71,12 @@ and the [v1.8.4 measurement record](release/results-v1.8.4.json).
 
 **Weights.** The default is GLM-5.3 Flash with EXL3 quantization, unedited (`ABLIT=0`), using `production-stock`. The routed experts are 4-bit (EXL3/TR3 checkpoint), and "stock" means unedited, not full precision. At load time the dense trunk uses INT8 weights and the default trunk FP8 path; the KV cache is FP8. Edited weights (`ABLIT=1`) are an explicit opt-in supplied separately; no edited checkpoint is redistributed. Changing modes requires a service restart and recomputes conversation prefixes.
 
+Fresh installs in the next point release default to [Brandon M. Music's pinned
+checkpoint](https://huggingface.co/brandonmusic/GLM-5.3-Flash-tr3-4bpw/tree/5ab363a8dcf6405955fd5f99671e01a1c9fb124b).
+The pinned Mia-AiLab copy and JSpark3 mirror remain accepted without a re-download.
+See [checkpoint provenance](docs/CHECKPOINT.md) for pins and verification scope.
+This unreleased change has offline checks only; the measurements above are unchanged.
+
 ## What's in it
 
 - **A controller that checks each rank.** `fleetctl` won't start until every rank matches its receipts. It checks the image and native builds you made, all 120 checkpoint shards by hash, the RoCE triangle at MTU 9000, the GID index, and memory and no-swap limits. Once the fleet is running, `verify` checks it end to end, down to retrieving a code word from a prompt longer than 32K tokens.
@@ -97,12 +103,15 @@ Read [installation](docs/INSTALL.md), [operations](docs/OPERATIONS.md),
 
 ## Credits
 
-JSpark3 builds on work by Z.AI, Inco AI, z-lab, Mia's AI Lab,
-FlyCockpit, vcruz305, sfxnz, Tony, turboderp, coolbho3k, gabewillen,
-plotarmordev, outstandly, the vLLM project and the InstantTensor contributors.
+JSpark3 builds on work by Brandon M. Music, who made the
+[EXL3/TR3 4-bpw checkpoint](https://huggingface.co/brandonmusic/GLM-5.3-Flash-tr3-4bpw/tree/5ab363a8dcf6405955fd5f99671e01a1c9fb124b)
+that every rank loads, and by Z.AI, Inco AI, z-lab, Mia's AI Lab, FlyCockpit,
+Victor Cruz (vcruz305), turboderp, Emi Huang (coolbho3k), Gabriel Willen (gabewillen),
+plotarmordev, Ratul Sarna (ratulsarna), nood-co1, Zbigniew Majewski (knapcio),
+Lilian Moraru (lilianmoraru), the vLLM project and the InstantTensor contributors.
 See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for component contributions,
 source revisions and license notices.
 
-The [ShapleyMcg](https://github.com/brandonmmusic-max/shapleymcg) attribution is reproduced below.
+The [ShapleyMcg](https://github.com/brandonmmusic-max/shapleymcg/tree/4dc85c999983bf46ebdae3821839a5079cc5de17) attribution is reproduced below.
 
 This work includes or was produced using ShapleyMcg, created by Brandon M. Music (https://github.com/brandonmmusic-max/shapleymcg). ShapleyMcg is licensed under the ShapleyMcg License v1.0, an attribution-required license that grants no rights to the person known as "0xSero." Use of ShapleyMcg without this attribution is unlicensed.

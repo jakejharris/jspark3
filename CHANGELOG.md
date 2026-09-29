@@ -1,3 +1,20 @@
+## Next point release (unreleased)
+
+Fresh installs default to Brandon M. Music's
+[EXL3/TR3 checkpoint](https://huggingface.co/brandonmusic/GLM-5.3-Flash-tr3-4bpw/tree/5ab363a8dcf6405955fd5f99671e01a1c9fb124b).
+The pin retains ShapleyMcg License v1.0. The pinned Mia-AiLab copy and JSpark3
+mirror remain accepted alternatives, with no re-download for existing installs.
+The compatibility directory and serving tensors are unchanged. Validation now
+accepts the original snapshot's complete publication-file layout as well as the
+mirrors' exact omissions, and checks the pinned license and model-card bytes.
+See [checkpoint provenance](docs/CHECKPOINT.md) and
+[installation](docs/INSTALL.md). Credits and citations identify Brandon as the
+quant author; the retained upstream notices include Victor Cruz's MIT notice.
+
+This source change has offline verification only. It adds no serving measurements
+or hardware qualification; the v1.8.4 results below remain historical. Release
+packaging, new receipts and publication are still pending.
+
 # JSpark3 v1.8.4
 
 Cooperative MoE is on by default. Default builds compile display and coop twice

@@ -5493,17 +5493,12 @@
       "sites": []
     },
     "recipe/scripts/_coop_checkpoint.py": {
-      "disposition": "Library only: authenticates pinned full checkpoint inventory and tensor shapes; returns exact shipped authority document. No independent shared writer; errors private through caller boundary.",
-      "sha256": "817ce5b765b28d94b206839c9dc51c18acfd2531d94d06fc6ae1a49b78180711",
+      "disposition": "Library only: authenticates pinned full checkpoint inventory and tensor shapes; returns exact shipped authority document. No independent shared writer; errors private through caller boundary. Reviewed for the checkpoint-source change; fixed snapshot identities and existing private diagnostic boundaries retained. Reviewed for the checkpoint-source change; fixed snapshot identities and existing private diagnostic boundaries retained.",
+      "sha256": "2106a7bb03d121f691c86fb9cc71ccd920b14c0f1c32039b034b8fe028b19858",
       "sites": [
         {
-          "function": "authenticate",
-          "line": 39,
-          "operation": "str"
-        },
-        {
           "function": "verify_shapes",
-          "line": 51,
+          "line": 53,
           "operation": "open"
         }
       ]
@@ -7078,27 +7073,27 @@
       ]
     },
     "recipe/scripts/validate_checkpoint.py": {
-      "disposition": "Validated source/checkpoint/install receipt producer: fixed states, numeric counts, expected names and SHA identities; source writes confined to runtime setup. CLI exceptions use private boundary; container worker output captured by controller.",
-      "sha256": "7054745830128e5f9249bb987c62c5870b380a1758e6d1a4b7baff902c3c63a2",
+      "disposition": "Validated source/checkpoint/install receipt producer: fixed states, numeric counts, expected names and SHA identities; source writes confined to runtime setup. CLI exceptions use private boundary; container worker output captured by controller. Reviewed for the checkpoint-source change; fixed snapshot identities and existing private diagnostic boundaries retained.",
+      "sha256": "a56eb8b07929ebeffe3c6c60d1c0311ec4763d214ff1e0c60c1d4e4b5eab11cf",
       "sites": [
         {
           "function": "sha",
-          "line": 38,
+          "line": 44,
           "operation": "open"
         },
         {
           "function": "main",
-          "line": 162,
+          "line": 183,
           "operation": "print"
         },
         {
           "function": "main",
-          "line": 174,
+          "line": 195,
           "operation": "report_failure"
         },
         {
           "function": "main",
-          "line": 176,
+          "line": 197,
           "operation": "print"
         }
       ]
@@ -7477,8 +7472,8 @@
       ]
     },
     "tools/release_packaging.patch": {
-      "disposition": "Maintainer patch: package failure diagnostics private; publication replies projected to validated numeric IDs/revision hashes; HF unchanged inventory hashed. Shared bundles contain validated local source/assets only; no raw API JSON or diagnostic sidecars.",
-      "sha256": "e4d7b9580ccabbea78f6351b18b2609926dbe2a2afa6fa14cff7684f78dae5f0",
+      "disposition": "Maintainer patch: package failure diagnostics private; publication replies projected to validated numeric IDs/revision hashes; HF unchanged inventory hashed. Shared bundles contain validated local source/assets only; no raw API JSON or diagnostic sidecars. Reviewed for the checkpoint-source change; fixed snapshot identities and existing private diagnostic boundaries retained. Reviewed for the checkpoint-source change; fixed snapshot identities and existing private diagnostic boundaries retained.",
+      "sha256": "15d598338cc95fbdd9c073d97c6f0a29ff76b722781cc086ead8361f507967b0",
       "sites": [
         {
           "function": "<native/shell/patch>",
@@ -7649,6 +7644,117 @@
         {
           "function": "test_complete_public_evidence_uses_unchanged_operator_gate",
           "line": 170,
+          "operation": "write_bytes"
+        }
+      ]
+    },
+    "tools/test_checkpoint_sources.py": {
+      "disposition": "Synthetic local test output and temporary fixtures only; no network, hardware or publication operations. Reviewed for the checkpoint-source change; fixed snapshot identities and existing private diagnostic boundaries retained.",
+      "sha256": "b0854c968117aa6c4710a165d9b7243c826ee724b415f8bf8ca6c0bb735df15a",
+      "sites": [
+        {
+          "function": "snapshot",
+          "line": 69,
+          "operation": "write_bytes"
+        },
+        {
+          "function": "snapshot",
+          "line": 70,
+          "operation": "write_bytes"
+        },
+        {
+          "function": "snapshot",
+          "line": 73,
+          "operation": "write_bytes"
+        },
+        {
+          "function": "snapshot",
+          "line": 76,
+          "operation": "symlink_to"
+        },
+        {
+          "function": "test_each_snapshot_refuses_corrupt_shard_config_tokenizer_and_license",
+          "line": 95,
+          "operation": "write_bytes"
+        },
+        {
+          "function": "test_each_snapshot_refuses_corrupt_shard_config_tokenizer_and_license",
+          "line": 98,
+          "operation": "write_bytes"
+        },
+        {
+          "function": "test_source_refuses_missing_or_corrupt_publication_files",
+          "line": 105,
+          "operation": "unlink"
+        },
+        {
+          "function": "test_source_refuses_missing_or_corrupt_publication_files",
+          "line": 108,
+          "operation": "write_bytes"
+        },
+        {
+          "function": "test_source_refuses_missing_or_corrupt_publication_files",
+          "line": 111,
+          "operation": "write_bytes"
+        },
+        {
+          "function": "test_mirrors_refuse_partial_publication_downloads",
+          "line": 119,
+          "operation": "write_bytes"
+        },
+        {
+          "function": "test_missing_and_extra_shards_and_broken_runtime_links_refuse",
+          "line": 127,
+          "operation": "unlink"
+        },
+        {
+          "function": "test_missing_and_extra_shards_and_broken_runtime_links_refuse",
+          "line": 130,
+          "operation": "write_bytes"
+        },
+        {
+          "function": "test_missing_and_extra_shards_and_broken_runtime_links_refuse",
+          "line": 132,
+          "operation": "write_bytes"
+        },
+        {
+          "function": "test_missing_and_extra_shards_and_broken_runtime_links_refuse",
+          "line": 135,
+          "operation": "unlink"
+        },
+        {
+          "function": "test_missing_and_extra_shards_and_broken_runtime_links_refuse",
+          "line": 137,
+          "operation": "unlink"
+        },
+        {
+          "function": "test_missing_and_extra_shards_and_broken_runtime_links_refuse",
+          "line": 138,
+          "operation": "symlink_to"
+        },
+        {
+          "function": "test_symlinked_native_files_refuse",
+          "line": 148,
+          "operation": "write_bytes"
+        },
+        {
+          "function": "test_symlinked_native_files_refuse",
+          "line": 149,
+          "operation": "unlink"
+        },
+        {
+          "function": "test_symlinked_native_files_refuse",
+          "line": 150,
+          "operation": "symlink_to"
+        },
+        {
+          "function": "test_symlinked_native_files_refuse",
+          "line": 153,
+          "operation": "unlink"
+        },
+        {
+          "function": "test_symlinked_native_files_refuse",
+          "line": 154,
           "operation": "write_bytes"
         }
       ]
@@ -8363,72 +8469,57 @@
       ]
     },
     "tools/test_release_tooling.py": {
-      "disposition": "Synthetic local test output only; never release/qualification evidence. Covers real producers with private sentinels and negative controls.",
-      "sha256": "506a7f5360ccd51e4c3fe98c3db49280f63f33439dd4c76bdba47afa5ced1506",
+      "disposition": "Synthetic local test output only; never release/qualification evidence. Covers real producers with private sentinels and negative controls. Reviewed for the checkpoint-source change; fixed snapshot identities and existing private diagnostic boundaries retained. Reviewed for the checkpoint-source change; fixed snapshot identities and existing private diagnostic boundaries retained.",
+      "sha256": "aa3d025cc4c65e7f3e5237c06a66e7a45f6f920142796b9526e421392b6bd95d",
       "sites": [
         {
           "function": "test_variant_copy_gate_accepts_corrected_wording_and_refuses_missing_mode.write",
-          "line": 105,
+          "line": 120,
           "operation": "write_bytes"
         },
         {
           "function": "test_variant_copy_gate_accepts_corrected_wording_and_refuses_missing_mode",
-          "line": 110,
+          "line": 125,
           "operation": "write"
         },
         {
           "function": "test_variant_copy_gate_accepts_corrected_wording_and_refuses_missing_mode",
-          "line": 113,
+          "line": 128,
           "operation": "write"
         },
         {
           "function": "test_variant_copy_gate_accepts_corrected_wording_and_refuses_missing_mode",
-          "line": 117,
+          "line": 132,
           "operation": "write"
         },
         {
           "function": "test_variant_copy_gate_accepts_corrected_wording_and_refuses_missing_mode",
-          "line": 118,
+          "line": 133,
           "operation": "write"
         },
         {
           "function": "test_variant_copy_gate_accepts_corrected_wording_and_refuses_missing_mode",
-          "line": 119,
+          "line": 134,
           "operation": "write"
         },
         {
           "function": "test_variant_copy_gate_accepts_corrected_wording_and_refuses_missing_mode",
-          "line": 122,
+          "line": 137,
           "operation": "write"
         },
         {
           "function": "publish",
-          "line": 131,
+          "line": 146,
           "operation": "write_text"
         },
         {
           "function": "publish",
-          "line": 153,
-          "operation": "embedded output (private worker/test or fixed template)"
-        },
-        {
-          "function": "publish",
-          "line": 154,
-          "operation": "embedded output (private worker/test or fixed template)"
-        },
-        {
-          "function": "publish",
-          "line": 155,
-          "operation": "embedded output (private worker/test or fixed template)"
-        },
-        {
-          "function": "publish",
-          "line": 159,
+          "line": 174,
           "operation": "write_text"
         },
         {
           "function": "publish",
-          "line": 164,
+          "line": 179,
           "operation": "run"
         }
       ]
@@ -8841,8 +8932,8 @@
       ]
     },
     "tools/v16/coop_environment.py": {
-      "disposition": "Private environment worker verifies save/read/print-level options in the pinned tool. Exact driver/toolchain identities still hashed by the same projection; arbitrary child output remains in the campaign private capture.",
-      "sha256": "a9cc85a327bdb0ba9041230eb2533ebe6b5ec545ec72102667cb55b4da106bb2",
+      "disposition": "Private environment worker verifies save/read/print-level options in the pinned tool. Exact driver/toolchain identities still hashed by the same projection; arbitrary child output remains in the campaign private capture. Reviewed for the checkpoint-source change; fixed snapshot identities and existing private diagnostic boundaries retained.",
+      "sha256": "1edac182b2b366d453ce753f80fa312714d54e0601aeb91178604d9a4743893d",
       "sites": [
         {
           "function": "output",
@@ -8866,17 +8957,17 @@
         },
         {
           "function": "main",
-          "line": 88,
+          "line": 89,
           "operation": "retain"
         },
         {
           "function": "main",
-          "line": 90,
+          "line": 91,
           "operation": "write_text"
         },
         {
           "function": "main",
-          "line": 97,
+          "line": 98,
           "operation": "print"
         }
       ]

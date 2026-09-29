@@ -1,9 +1,8 @@
 {
   "grade": "ENGINEERING-EVIDENCE",
   "target": {
-    "repository": "Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw",
-    "revision": "25a44fdbf16862a46b7cc9921142c6c81350af2f",
-    "declared_byte_identical_source": "brandonmusic/GLM-5.3-Flash-tr3-4bpw@5ab363a8dcf6405955fd5f99671e01a1c9fb124b",
+    "repository": "brandonmusic/GLM-5.3-Flash-tr3-4bpw",
+    "revision": "5ab363a8dcf6405955fd5f99671e01a1c9fb124b",
     "native_config_sha256": "4f5341e048984459471bfb9c894e6bf87e69b9c67402672af901631d1349f265",
     "runtime_config_sha256": "55201c73ed092c5a77f9b87ce40298edb450790ad864c1256cb6ca3a182683bd",
     "model_index_sha256": "2f64d21c67c90bbafeb36c4e9b2f06f54063ed439e9f7cf95962d425a1d8515d",
@@ -22,7 +21,20 @@
     "native_shared_expert_width": 2048,
     "runtime_shared_expert_width": 2112,
     "publication_ledger_sha256": "cb0da1f97a53aebc3fbc5478f19c82b25586b0bf8533c99fb4ed5321a48f5342",
-    "publication_ledger_complete": false
+    "publication_ledger_complete": false,
+    "accepted_alternates": [
+      {
+        "repository": "Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw",
+        "revision": "25a44fdbf16862a46b7cc9921142c6c81350af2f"
+      },
+      {
+        "repository": "jakejharris/jspark3",
+        "revision": "e7c34dba923916754cfcb0bdf6c2c75a9b7ff1fc"
+      }
+    ],
+    "local_directory": "Mia-AiLab--GLM-5.3-Flash-EXL3-TR3-4bpw-25a44fdb",
+    "local_directory_note": "Compatibility path shared by all accepted snapshots; not the download repository.",
+    "license_sha256": "9a354667162e40201fa556e29ae7a327cdb112eacaa8ef100106e6063635e28a"
   },
   "draft": {
     "repository": "incoai/GLM-5.3-Flash-DFlash2",

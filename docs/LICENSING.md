@@ -4,7 +4,7 @@ Root `LICENSE` covers original JSpark3 code and prose under Apache-2.0.
 Upstream code keeps its per-file license. SPDX headers identify source files;
 `REUSE.toml` records metadata and pinned cooperative-MoE files without inserting
 headers into their source. Vendored ExLlamaV3 headers retain their MIT notices
-and original bytes. Fifty source files retain AGPL-3.0-only terms, including scheduler, prefix-cache,
+and original bytes. Fifty-two files retain AGPL-3.0-only terms, including scheduler, prefix-cache,
 display-KV and cooperative-MoE code; see the per-file manifest.
 
 The assembled serving process includes AGPL-3.0-only components and is not
@@ -24,8 +24,12 @@ Obtain those separately under their own terms. The controller always uses the DF
 licenses it under CC BY-NC-ND 4.0 for non-commercial research/evaluation;
 commercial licensing requires separate permission from Inco AI. The recipe's
 Apache-2.0 license does not remove that required dependency's restrictions.
-The target checkpoint retains the [ShapleyMcg License v1.0](https://huggingface.co/Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw/blob/25a44fdbf16862a46b7cc9921142c6c81350af2f/LICENSE),
+The target checkpoint, Brandon M. Music's EXL3/TR3 quant downloaded from his
+repository at `5ab363a8dcf6405955fd5f99671e01a1c9fb124b` by default, retains the [ShapleyMcg License v1.0](https://huggingface.co/brandonmusic/GLM-5.3-Flash-tr3-4bpw/blob/5ab363a8dcf6405955fd5f99671e01a1c9fb124b/LICENSE),
 including attribution and its named exclusion. Preserve the
-[required ShapleyMcg attribution](../REQUIRED_ATTRIBUTION.md). InstantTensor's
+[required ShapleyMcg attribution](../REQUIRED_ATTRIBUTION.md). The accepted
+Mia-AiLab and JSpark3 mirror pins carry the same license bytes. The pin is
+intentional: later upstream revisions use a different license. See
+[checkpoint provenance](CHECKPOINT.md). InstantTensor's
 native module has additional linked-library obligations; neither that module
 nor the serving image is redistributed here.

@@ -14,6 +14,12 @@ from pathlib import Path, PurePosixPath
 import re
 
 LEDGER_SHA = "cb0da1f97a53aebc3fbc5478f19c82b25586b0bf8533c99fb4ed5321a48f5342"
+LICENSE_SHA = "9a354667162e40201fa556e29ae7a327cdb112eacaa8ef100106e6063635e28a"
+SOURCE_README = "f7adf502e7ac90e752a5bd0dfbced0aea619c8ce9b66e612658a285f092a2d88"
+MIRROR_READMES = {
+    "ad818d1fb7c02d6d10c1cd9fa0a378f6e636879bded387d3d4d90037a726235f",  # Mia
+    "ca1aa1885f861edd621c7d10f685fc88a0464854ac3859f650303f263c9d7a58",  # JSpark3
+}
 INDEX_SHA = "2f64d21c67c90bbafeb36c4e9b2f06f54063ed439e9f7cf95962d425a1d8515d"
 TARGET_NATIVE = "4f5341e048984459471bfb9c894e6bf87e69b9c67402672af901631d1349f265"
 TARGET_RUNTIME = "55201c73ed092c5a77f9b87ce40298edb450790ad864c1256cb6ca3a182683bd"
@@ -91,7 +97,18 @@ def validate_target(root: Path, runtime: Path, workers: int) -> dict[str, object
     runtime_rows = {name for name in rows if name.startswith("runtime/")}
     if len(runtime_rows) != 72:
         raise Refusal("target runtime omission inventory drift")
-    allowed_missing = materialization | runtime_rows
+    # The source publishes every ledger row. Both pinned re-hosts omit the
+    # same 192 publication files. Keep these exact layouts, not arbitrary subsets.
+    readme = root / "README.md"
+    if readme.is_symlink() or not readme.is_file():
+        raise Refusal("target README must be a regular file")
+    readme_sha = sha(readme)
+    if readme_sha == SOURCE_README:
+        allowed_missing = set()
+    elif readme_sha in MIRROR_READMES:
+        allowed_missing = materialization | runtime_rows
+    else:
+        raise Refusal("target snapshot README hash drift")
     missing = {name for name in rows if not (root / name).is_file()}
     if missing != allowed_missing:
         raise Refusal("target publication-only omission inventory drift")
@@ -103,6 +120,10 @@ def validate_target(root: Path, runtime: Path, workers: int) -> dict[str, object
     mismatches = {name for name in present if observed[name] != rows[name]}
     if mismatches != {"LICENSE", "README.md"}:
         raise Refusal("target checksum mismatch inventory drift")
+    # The upstream ledger predates these files. Bind the known replacements
+    # instead of accepting arbitrary license or card changes at newer revisions.
+    if observed["LICENSE"] != LICENSE_SHA or observed["README.md"] != readme_sha:
+        raise Refusal("target pinned license or README drift")
     critical = {
         "config.json": TARGET_NATIVE,
         "model.safetensors.index.json": INDEX_SHA,

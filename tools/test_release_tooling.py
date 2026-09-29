@@ -71,6 +71,21 @@ class ReleaseToolingTests(unittest.TestCase):
                     with self.assertRaisesRegex(ValueError, 'ShapleyMcg'):
                         self.render.check_hf_license(bad)
 
+    def test_checkpoint_default_alternates_and_credits_survive_render(self):
+        content = self.render.render(self.raw, 'b', True)
+        card = content['hf-card']
+        self.assertIn('brandonmusic/GLM-5.3-Flash-tr3-4bpw/tree/5ab363a8dcf6405955fd5f99671e01a1c9fb124b', card)
+        self.assertIn('Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw/tree/25a44fdbf16862a46b7cc9921142c6c81350af2f', card)
+        self.assertIn('jakejharris/jspark3/tree/e7c34dba923916754cfcb0bdf6c2c75a9b7ff1fc', card)
+        self.assertIn('Existing copies need no re-download', card)
+        for name in ('README.md', 'release/RELEASE-NOTES.md', 'hf-card'):
+            text = content[name]
+            self.assertIn('Brandon M. Music, who made the', text)
+            self.assertIn('Fresh installs default to', text)
+            self.assertIn('Existing copies need no re-download', text)
+            for author in ('Ratul Sarna', 'Zbigniew Majewski', 'Lilian Moraru', 'Victor Cruz'):
+                self.assertIn(author, text)
+
     def test_public_copy_identifies_quantization_and_coop_without_changing_figures(self):
         content = self.render.render(self.raw, 'b', True)
         for name in ('README.md', 'release/RELEASE-NOTES.md', 'hf-card'):

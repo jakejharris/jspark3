@@ -350,3 +350,33 @@ SPDX-License-Identifier = "Apache-2.0"
 path = ["release/archive-clone-v1.8.4.json", "release/v1.8.4-archive-clone/parity.json"]
 precedence = "aggregate"
 SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ["CITATION.bib"]
+precedence = "aggregate"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ["CITATION.cff"]
+precedence = "aggregate"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ["docs/CHECKPOINT.md"]
+precedence = "aggregate"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ["huggingface/README.md"]
+precedence = "aggregate"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ["third_party/licenses/vcruz305-MIT.txt"]
+precedence = "aggregate"
+SPDX-License-Identifier = "LicenseRef-Retained-Notice"
+
+[[annotations]]
+path = ["tools/test_checkpoint_sources.py"]
+precedence = "aggregate"
+SPDX-License-Identifier = "Apache-2.0"
