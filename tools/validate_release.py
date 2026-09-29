@@ -1393,7 +1393,7 @@ def check_sums(root: Path, report: Report, write: bool) -> None:
         elif not manifest.is_file() or manifest.read_text(encoding="utf-8") != expected:
             recorded = set(manifest.read_text(encoding="utf-8").splitlines()) if manifest.is_file() else set()
             stale = sorted(line.split("  ", 1)[1] for line in set(expected.splitlines()) - recorded)
-            problems.append(f"{manifest.relative_to(root).as_posix()} is stale for {', '.join(stale[:8]) or 'removed files'} "
+            problems.append(f"{manifest.relative_to(root).as_posix()} is stale for {', '.join(stale[:8]) or 'extra or malformed rows'} "
                             "(run with --write-sums)")
     if problems:
         report.fail("sha256sums", "; ".join(problems))
