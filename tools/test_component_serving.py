@@ -5,7 +5,7 @@ import sys
 sys.dont_write_bytecode = True
 from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
-sys.path[:0] = [str(ROOT / 'tools/v16'), str(ROOT / 'recipe/scripts')]
+sys.path[:0] = [str(ROOT / 'tools/v16'), str(ROOT / 'recipe/scripts'), str(ROOT / 'tools')]
 import copy
 import json
 import os
@@ -19,6 +19,7 @@ import _shared_output_audit as audit
 import apply_coop_moe as installer
 import build_native as native
 import integrate_coop_seal as integration
+import test_prepared_fixture as prepared_fixture
 from test_coop_qualification import RecordTests, host_identity
 from test_operator_image import write_record
 from validate_release import inventory, sums
@@ -52,11 +53,9 @@ class ServingTests(unittest.TestCase):
         self.addCleanup(temp.cleanup)
         self.root = Path(temp.name)
         self.source = self.root / 'source'
-        files, _ = inventory(ROOT)
-        for path in files:
-            dest = self.source / path.relative_to(ROOT)
-            dest.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(path, dest)
+        # The integrator consumes the prepared (component-pending) source, not the
+        # integrated release tree. Build that state explicitly.
+        prepared_fixture.prepare(self.source)
         fixture = RecordTests()
         fixture.setUp()
         self.addCleanup(fixture.doCleanups)
@@ -65,7 +64,7 @@ class ServingTests(unittest.TestCase):
         self.record = fixture.record
         self.output = self.root / 'integrated'
         # Model the actual seal: original source/seed, newly selected bundle.
-        original = ROOT / integration.COOP
+        original = self.source / integration.COOP
         shutil.copyfile(original / 'source/dispatch_policy.json', self.seal / 'source/dispatch_policy.json')
         shutil.copyfile(original / 'SOURCE_MANIFEST.json', self.seal / 'SOURCE_MANIFEST.json')
         raw_source_hash = q.sha(self.seal / 'SOURCE_MANIFEST.json')
@@ -92,7 +91,7 @@ class ServingTests(unittest.TestCase):
         # The only substituted authority is the native target in this temporary
         # test tree. All source, seal, policy and admission verifiers run intact.
         module = self.source / 'recipe/scripts/_coop_qualification.py'
-        real_target = q.read(ROOT / 'recipe/config/coop-release.json')['native_sha256']
+        real_target = q.read(self.source / 'recipe/config/coop-release.json')['native_sha256']
         module.write_text(module.read_text().replace(real_target, q.TARGET_NATIVE))
         for name in ('recipe/config/coop-release.json', 'manifests/final-binding.json',
                      'manifests/final-catalog.json', 'release/results-v1.8.4.json'):

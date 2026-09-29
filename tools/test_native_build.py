@@ -17,6 +17,7 @@ from unittest.mock import patch
 
 sys.dont_write_bytecode = True
 import build_native as native
+import test_prepared_fixture as prepared_fixture
 from _coop_qualification import independent_builders
 
 
@@ -354,26 +355,35 @@ class BuildSelectionTests(unittest.TestCase):
 
 class DefaultProfileTests(unittest.TestCase):
     def test_prepare_and_default_consumers_with_operator_receipts(self):
-        self.prepare_and_check(with_coop=False)
+        # Written for the component-pending source: coop=1 is refused for the pending seal.
+        self.prepare_and_check(with_coop=False, prepared=True)
+
+    def test_released_coop_off_runtime_refuses_coop_on_without_sealed_native(self):
+        # From the sealed release tree, a --coop-off runtime lacks the qualified native bytes.
+        self.prepare_and_check(with_coop=False, coop_refusal='missing evidence: cooperative_moe.so')
 
     def test_default_refuses_missing_coop(self):
         self.prepare_and_check(with_coop=False, default_refusal=True)
 
-    def prepare_and_check(self, with_coop, default_refusal=False):
+    def prepare_and_check(self, with_coop, default_refusal=False, prepared=False, coop_refusal='component seal'):
         # Synthetic receipt/output fixtures exercise the trust policy and real
         # preparation/consumer code. They are not a compiler or GPU test.
         from test_operator_image import fixture, write_record
         with tempfile.TemporaryDirectory() as directory:
             work = Path(directory)
             source, binaries, runtime = (work / n for n in ('source', 'binaries', 'runtime'))
-            for line in (native.ROOT / 'SHA256SUMS').read_text().splitlines():
-                name = line.split('  ', 1)[1]
-                dest = source / name
-                dest.parent.mkdir(parents=True, exist_ok=True)
-                shutil.copy2(native.ROOT / name, dest)
-            shutil.copyfile(native.ROOT / 'SHA256SUMS', source / 'SHA256SUMS')
+            if prepared:
+                prepared_fixture.prepare(source)
+            else:
+                for line in (native.ROOT / 'SHA256SUMS').read_text().splitlines():
+                    name = line.split('  ', 1)[1]
+                    dest = source / name
+                    dest.parent.mkdir(parents=True, exist_ok=True)
+                    shutil.copy2(native.ROOT / name, dest)
+                shutil.copyfile(native.ROOT / 'SHA256SUMS', source / 'SHA256SUMS')
             image_path = work / 'image.json'
-            write_record(image_path, fixture())
+            # Receipts bind the source actually prepared (identical to fixture() for the live tree).
+            write_record(image_path, dict(fixture(), source_recipe_sha256=native.sha(source / 'recipe/SHA256SUMS')))
             image = native.read_operator_record(image_path)
             outputs = {}
             for kind in (['display', 'coop'] if with_coop else ['display']):
@@ -383,9 +393,11 @@ class DefaultProfileTests(unittest.TestCase):
                     path.parent.mkdir(parents=True, exist_ok=True)
                     path.write_bytes(b'\x7fELF synthetic ARM64 build fixture ' + name.encode())
                     outputs[name] = native.sha(path)
+            with patch.object(native, 'ROOT', source):
+                inputs = native.build_inputs()
             record = {'schema_version': 2, 'verification': 'fixed-native-build-v2',
                       'source_recipe_sha256': image['source_recipe_sha256'],
-                      'image_receipt_sha256': image['payload_sha256'], 'build_inputs': native.build_inputs(),
+                      'image_receipt_sha256': image['payload_sha256'], 'build_inputs': inputs,
                       'builder_host': diagnostic_host(),
                        'reproducibility': {'runs': 2, 'comparison': 'bit-identical'},
                       'binary_sha256': outputs, 'hardware_qualified': False}
@@ -436,7 +448,7 @@ for check in (lambda: fleet.expected_v16_row(values),
     try:
         check()
     except preflight.Refusal as exc:
-        assert 'hardware-sealed' in str(exc) and 'component seal' in str(exc), str(exc)
+        assert 'hardware-sealed' in str(exc) and sys.argv[2] in str(exc), str(exc)
     else:
         raise AssertionError('coop=1 accepted an unsealed operator binary')
 for name in ('overlays/v14/display_kv/display_kv_probe', 'overlays/v14/display_kv/libglm53_display_kv.so',
@@ -457,7 +469,7 @@ for name in ('overlays/v14/display_kv/display_kv_probe', 'overlays/v14/display_k
         path.write_bytes(original)
 print('PASS prepared production-stock coop=0 full: controller/preflight; coop=1 and installed binary tampers refused')
 '''
-            process = subprocess.run([sys.executable, '-B', '-c', code, str(runtime / 'recipe/scripts')],
+            process = subprocess.run([sys.executable, '-B', '-c', code, str(runtime / 'recipe/scripts'), coop_refusal],
                                      capture_output=True, text=True)
             self.assertEqual(process.returncode, 0, process.stdout + process.stderr)
             self.assertFalse(list(runtime.rglob('__pycache__')))

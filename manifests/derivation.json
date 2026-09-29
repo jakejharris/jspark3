@@ -59,8 +59,8 @@
       "changed": true,
       "input_sha256": "17ad9fc5f274886f3a6243287a3431d3dbc1d77b29f20fbb26270e203d61dd08",
       "origin": "release-package-render",
-      "public_sha256": "016d4e741a1c1f78261213d6dc570a9d18b3883f79215b40f93c0a81d8325d39",
-      "revision": "v184-release-evidence"
+      "public_sha256": "81a0ce150bf7177df037d636b432dc1d7e260e5cd307ef32534aec5fa4ae800a",
+      "revision": "v184-test-fixtures"
     },
     "THIRD_PARTY_NOTICES.md": {
       "changed": true,
@@ -228,8 +228,8 @@
       "changed": true,
       "input_sha256": "f968bb8ad61c217d1c955e5a6209b35cebfae065e3f1ef6d3077ed6a07f25739",
       "origin": "release-package-render",
-      "public_sha256": "7d1763c3e63dca81444b541d0dcc7ad01f6057bc44c2a592327f68f7c61ebe32",
-      "revision": "v184-release-evidence"
+      "public_sha256": "2a961c4a862c0c5f33d2bd27990a11743a41b88957c548883c639f9fb37244d4",
+      "revision": "v184-test-fixtures"
     },
     "manifests/qualification.json": {
       "changed": false,
@@ -261,8 +261,8 @@
       "changed": true,
       "input_sha256": "fad5c997be3187d1ce467088572677544c60652fda500ea822e89392d7f8bca2",
       "origin": "v1.8.3-shared-output-r5",
-      "public_sha256": "b53d967d4cea996c3c14ac60d0fb4571cc991b994b1f0f370bdeec453cee889a",
-      "revision": "v184-release-binding"
+      "public_sha256": "213857143260b58148898813c4859a0a525888c3efadad1a11580cc0870b6317",
+      "revision": "v184-test-fixtures"
     },
     "manifests/stock-profile.json": {
       "changed": false,
@@ -1717,8 +1717,8 @@
       "changed": true,
       "input_sha256": "392cdc93c6d90a4f7c1fa03387d76c30b1271502564e328f73f996df4f32f0da",
       "origin": "v184-private-serving-source",
-      "public_sha256": "30ff0668b11c9f4f08e4a7538169fc8a53944f8069735347ff68bde782cccd81",
-      "revision": "v184-entry-seam"
+      "public_sha256": "3558cdb5ffce2379923fedf01d78f4cfdf5d3e7ed66dc9b675324c0efb217efc",
+      "revision": "v184-test-fixtures"
     },
     "tools/test_fleetctl_errors.py": {
       "changed": true,
@@ -1731,8 +1731,8 @@
       "changed": true,
       "input_sha256": "3c2a88afa4a706483170c9b2e2aa67537b135c167ef2742a58a9b71bef8d7b3b",
       "origin": "v1.8.1-operator-native",
-      "public_sha256": "4b2576f4d6a68a448ec12fcb7934b63be1b29cd9a9ea154fbcbe9e1019e54ea1",
-      "revision": "native-display-reproducibility-fix"
+      "public_sha256": "c565e0fa2645f361cf2c5d5bced54a98fecedb2d3f0137db171b30cbd0c81b65",
+      "revision": "v184-test-fixtures"
     },
     "tools/test_operator_admission.py": {
       "changed": true,
@@ -1747,6 +1747,20 @@
       "origin": "v1.8.1-operator-image",
       "public_sha256": "ea38b128d9bc5eb368950c3d1091a6b1475e62235bc36d9c59bb0757f4e0b3e9",
       "revision": "v1.8.4-on-v1.8.3"
+    },
+    "tools/test_prepared_fixture.py": {
+      "changed": true,
+      "input_sha256": "f53925a0836a52128573113a8bfe276a82c5ebde6835074558bfc67ba9bbc8f6",
+      "origin": "v1.8.4-test-fixtures",
+      "public_sha256": "17c82170287d7ee71ba14b4275965e9134e7a7ed8097824b4056d2028113e8f5",
+      "revision": "v184-test-fixtures"
+    },
+    "tools/test_prepared_v184_source.json": {
+      "changed": false,
+      "input_sha256": "5bd64ebe1b24186bc1abdf00bd3f639cc21f4c0af0a6ae9ef963a29cb963a32c",
+      "origin": "v1.8.4-test-fixtures",
+      "public_sha256": "5bd64ebe1b24186bc1abdf00bd3f639cc21f4c0af0a6ae9ef963a29cb963a32c",
+      "revision": "v184-test-fixtures"
     },
     "tools/test_projection_consumers.py": {
       "changed": false,
@@ -1948,8 +1962,8 @@
       "changed": true,
       "input_sha256": "4b3b956349535cae552427aa559ec5552564120cf190866c687cabf10f3719c9",
       "origin": "v1.8.4-offline-implementation",
-      "public_sha256": "b24e88c916161455dda6557d45bdae5a251bab5edb606f65bebecd1ba5100f11",
-      "revision": "sanitizer-launch-record-fix"
+      "public_sha256": "49ab60bbdb2d50f49281f2a2c042948e6bf9467f430d2489d457c8d9fede195c",
+      "revision": "v184-test-fixtures"
     },
     "tools/v16/test_coop_sanitizer.py": {
       "changed": false,

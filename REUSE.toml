@@ -335,3 +335,8 @@ SPDX-License-Identifier = "Apache-2.0"
 path = ["release/component-v1.8.4.json", "release/v1.8.4-component/sanitizer-controls.json"]
 precedence = "aggregate"
 SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ["tools/test_prepared_v184_source.json"]
+precedence = "aggregate"
+SPDX-License-Identifier = "Apache-2.0"

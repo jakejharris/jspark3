@@ -278,6 +278,8 @@
     "tools/test_native_build.py": "Apache-2.0",
     "tools/test_operator_admission.py": "Apache-2.0",
     "tools/test_operator_image.py": "Apache-2.0",
+    "tools/test_prepared_fixture.py": "Apache-2.0",
+    "tools/test_prepared_v184_source.json": "Apache-2.0",
     "tools/test_projection_consumers.py": "Apache-2.0",
     "tools/test_publish_retry.py": "Apache-2.0",
     "tools/test_release_privacy.py": "Apache-2.0",

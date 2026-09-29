@@ -470,11 +470,16 @@ class RunnerTests(unittest.TestCase):
                 self.assertFalse(Path(str(args.output) + '.check').exists())
 
     def test_legacy_seal_cannot_be_reminted_with_placeholder_profiles(self):
-        record = q.read(ROOT / 'recipe/overlays/v16/coop/BUILD.json')
+        # The release tree carries the integrated schema-2 seal; start from the
+        # pre-integration legacy record explicitly.
+        import test_prepared_fixture as prepared_fixture
+        record = prepared_fixture.legacy_build_record()
         q.verify_legacy_record(record)
         record['qualification']['profile_log_sha256']['rank0-geo0.jsonl'] = '0' * 64
         with self.assertRaisesRegex(ValueError, 'legacy seals cannot be reminted'):
             q.verify_legacy_record(record)
+        with self.assertRaisesRegex(ValueError, 'legacy seals cannot be reminted'):
+            q.verify_legacy_record(q.read(ROOT / 'recipe/overlays/v16/coop/BUILD.json'))
 
     def test_serving_refuses_every_maintenance_override(self):
         import _fleetctl as fleet
