@@ -3,10 +3,10 @@
   "hardware_validation": "not-performed",
   "license_clearance": "approved-per-file-source-posture",
   "publication_authorized": false,
-  "qualification": "Component-qualified for private serving and measurement; final-source rebuilds, serving measurements and same-boot admission remain required.",
+  "qualification": "Final v1.8.4 source: the qualified component seal, serving measurements and the same-boot admission of one owner boot are bound. That boot's full admission logs and three private JSON records are hash-bound in its finalization receipt and not published. Each operator boot still requires its own admission.",
   "release_version": "v1.8.4",
   "repository": "https://github.com/jakejharris/jspark3",
   "schema_version": 1,
   "scope": "recipe-only",
-  "stage": "component-qualified"
+  "stage": "final"
 }

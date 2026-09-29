@@ -85,9 +85,13 @@ An ON epoch, partial/aliased graph bank, source drift or any dual-graph activity
 refuses. The passing state is `INACTIVE_NCCL_B45`; no active TRIAR or thirds
 performance is claimed, and no activation command is supported here.
 
-[Final binding](../manifests/final-binding.json) records the historical v1.8.0
-measured configuration, including coop on. The prepared operator environment
-has coop off. Epoch changes and mode changes invalidate admission. Keep requests
+[Final binding](../manifests/final-binding.json) identifies the v1.8.4 component,
+policy and release evidence. The prepared operator environment has coop on
+(`JSPARK3_V16_COOP=1`) and uses the exact qualified native bytes.
+`prepare_runtime.py --coop-off` and `build_native.py --display-only` are explicit
+diagnostic opt-outs. Historical v1.8.0 measurements retain their original binary
+and settings; they do not establish performance for this release's binary.
+Epoch changes and mode changes invalidate admission. Keep requests
 drained and restart/requalify for source, image, weight mode, memory layout or
 runtime-setting changes. Live stock/edited switching is not qualified.
 

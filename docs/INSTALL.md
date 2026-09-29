@@ -2,7 +2,7 @@
 
 JSpark3 serves GLM-5.3 Flash with EXL3/TR3 quantization across three DGX Sparks.
 The target's routed experts use 4 bits per weight; "stock" means unedited
-(`ABLIT=0`), not full precision. The default is `production-stock`, coop off,
+(`ABLIT=0`), not full precision. The default is `production-stock`, coop on,
 adaptive-K `ema`, dense FP8 `trunk`, and display profile `full`.
 The required DFlash2 draft model is non-commercial; read [licensing](LICENSING.md)
 before choosing this stack.
@@ -37,16 +37,19 @@ host with SSH to all ranks and HTTP access to rank 0. The recipe, model, Fly
 source and work roots must each have the **same absolute path on every Spark**.
 Use new, dedicated recipe/work directories for each installation.
 
-This is the pending v1.8.4 installation path. `--require-final` deliberately
-refuses this first-pass candidate: no measured component seal or v1.8.4 results
-have been inserted. The owner uses the pre-seal workflow in
-[component qualification](COOP_REPRODUCIBILITY.md) before this public flow can pass.
+The v1.8.4 release includes the qualified cooperative-MoE component seal and
+measured dispatch policy. Default installation builds and installs exactly the
+qualified native bytes, with coop on. `--require-final` verifies the bound
+release evidence before installation; missing or mismatched evidence still
+refuses. The component seal does not admit your fleet: complete the same-boot
+checks below before serving traffic. `prepare_runtime.py --coop-off` and
+`build_native.py --display-only` are explicit diagnostic opt-outs.
 
 ## 1. Obtain and validate the source
 
 Download the recipe tarball and its distribution `SHA256SUMS` from the
 [release page](https://github.com/jakejharris/jspark3/releases). Choose the
-v1.8.4 assets when published; this document describes that source version.
+v1.8.4 assets; this document describes that source version.
 In the download directory, verify the tarball before extracting it:
 
 ```sh
@@ -60,7 +63,7 @@ export JSPARK_RUNTIME="$(realpath -m ../jspark3-runtime-v1.8.4)"
 ```
 
 The exported tarball, `git archive`, and a normal clone checked out at the release
-tag all work. Once published, the Git alternative is
+tag all work. The Git alternative is
 `git clone --branch v1.8.4 https://github.com/jakejharris/jspark3.git`.
 Validation scans the current file names and contents, including untracked files;
 Git metadata and history are outside the source-export privacy guarantee.
@@ -103,13 +106,16 @@ cp "$JSPARK_RUNTIME/recipe/.env.example" "$JSPARK_RUNTIME/operator.env"
 ```
 
 Display and coop must each match across two fresh builds. Coop must additionally
-match `3212a3b0a308e2ec3673878212fcb0504a463c5f7df84eced5db7bb301cc3c07`.
+match the exact GPU-qualified native SHA-256 in the
+[release pin](../recipe/config/coop-release.json); the
+[BUILD record](../recipe/overlays/v16/coop/BUILD.json) binds the component seal
+and measured policy. The release notes show those same filled-in identities.
 The receipt remains `hardware_qualified=false`. Preparation validates the
 release-pinned component seal and measured policy, installs your matching binary,
 and selects `production-stock`, `ABLIT=0`, `JSPARK3_V16_COOP=1`.
 Missing, wrong or unsealed coop refuses preparation. `--with-coop` is a
 compatibility alias; `build_native.py --display-only` and
-`prepare_runtime.py --coop-off` are explicit diagnostic options.
+`prepare_runtime.py --coop-off` are explicit diagnostic opt-outs from the qualified default.
 
 The display compiler uses stable intermediate filenames and distinct translation
 unit seeds. It does not strip or normalize completed binaries. If a comparison

@@ -1,13 +1,26 @@
+# JSpark3 v1.8.4
+
+Cooperative MoE is on by default. Default builds compile display and coop twice
+and require coop to match the exact native bytes qualified and sealed for this
+release. The [release pin](recipe/config/coop-release.json) and
+[BUILD record](recipe/overlays/v16/coop/BUILD.json) identify the native, component
+seal and measured policy. `prepare_runtime.py --coop-off` and
+`build_native.py --display-only` are explicit diagnostic opt-outs.
+
+Serving throughput is at parity with v1.8.0. Of 12 measured cells from one
+admitted coop-on boot, 8 overlap the frozen v1.8.0 ranges, 2 are above and 2 are
+below ([measurements](release/MEASUREMENTS-v1.8.4.md)). The coop on/off
+comparison is pending; no uplift is claimed.
+
+The component campaign includes integration/H1, memcheck, racecheck, profile
+and policy checks. Operators must still admit their own exact boot before
+traffic. The release boot's full admission logs are private and hash-bound in
+its [finalization receipt](release/v1.8.4-admission/finalize.json). See the
+[release notes](release/RELEASE-NOTES.md) for filled-in seal identities and the
+[v1.8.4 record](release/results-v1.8.4.json) for its serving measurements.
+Frozen v1.8.0 results are unchanged.
+
 # JSpark3 v1.8.3
-
-## v1.8.4 candidate — pending hardware evidence
-
-Default builds include display and deterministic coop, each compiled twice.
-Preparation and stock admission support the release-pinned schema-2 component
-seal. The owner runner checks fixtures before an exclusive GPU campaign and
-seals complete integration/H1/sanitizer/profile/policy evidence into a new output.
-Measured policy, final source rebuilds, clean-room stock admission and v1.8.4
-numbers remain pending. Frozen v1.8.0 results are unchanged.
 
 Runnable operator admission with all-rank hygiene, fine-hit prefix-cache gates,
 readiness waiting and native TRIAR-inactive proof. Complete install/upgrade

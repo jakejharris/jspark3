@@ -33,7 +33,7 @@ SBOM. Reports live beside the export so validation never changes hashed bytes.
 The validator uses shared inventory helpers, syntax checks, link checks and
 lifecycle dry-runs from the latest local release-validator lineage, whose
 hash is recorded in the derivation manifest. This recipe-only profile has
-seventeen checks. Historic weight-mirror, model-card and result-table checks
+eighteen checks. Historic weight-mirror, model-card and result-table checks
 belong to the separate final publication validation and are not claimed here.
 
 ## Final source binding
@@ -51,3 +51,13 @@ startup settings. The binding records runtime epoch choices separately from
 resident startup switches. A seal and a passing offline validator do not confer
 hardware admission: the exact shipped configuration still needs fresh hardware
 qualification. Historical validation-profile results remain a separate measured cohort.
+
+For v1.8.4, final validation also rechecks the release boot's admission receipts
+in `release/v1.8.4-admission/`. That boot's full admission logs and three JSON
+records containing private network addresses or paths are private: they are
+represented only by the SHA-256 values in its finalization receipt, and
+`attestation.json` records the owner's full private recheck. The validator
+requires every published dependency to match its receipt hash, the unpublished
+set to equal the attested private set and the receipt's qualification tools to
+match the shipped tools, and it runs every receipt-level admission check. With
+complete public evidence it runs the unchanged operator gate instead.

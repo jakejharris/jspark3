@@ -1,0 +1,7 @@
+{
+  "comparison": "matched-coop-on-off",
+  "component_seal_sha256": "42ea2a36ab5b9de05e7e8b1d690bd1fe7014968ec7381ac4a62516143deb05ec",
+  "native_sha256": "3212a3b0a308e2ec3673878212fcb0504a463c5f7df84eced5db7bb301cc3c07",
+  "status": "pending",
+  "summary": "coop on/off comparison pending; no uplift claimed"
+}

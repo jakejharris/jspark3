@@ -1,14 +1,18 @@
 # Cooperative MoE: reproducible builds and component qualification
 
-The unchanged deterministic builder targets
-`3212a3b0a308e2ec3673878212fcb0504a463c5f7df84eced5db7bb301cc3c07`.
+The deterministic builder must reproduce the exact GPU-qualified native bytes
+identified by the [release pin](../recipe/config/coop-release.json). The
+[BUILD record](../recipe/overlays/v16/coop/BUILD.json) binds the component seal
+and measured policy; the release notes display their filled-in identities.
 It uses fixed `/w` paths, source timestamps, per-unit seeds and retained compiler
 intermediates, with shared cudart. It never strips or normalizes completed ELFs.
 The earlier build experiment remains separate evidence; repeating its old-builder
-controls is not a release prerequisite. New GPU qualification remains pending.
+controls is not a release prerequisite. The release includes the completed
+component seal. Default preparation selects coop on; `prepare_runtime.py --coop-off`
+and `build_native.py --display-only` are explicit diagnostic opt-outs.
 
 `tools/build_native.py` builds display and coop twice in fresh, network-disabled
-containers. Both runs must agree and coop must hit the exact candidate hash.
+containers. Both runs must agree and coop must hit the exact qualified hash.
 It retains raw build directories and a receipt bound to the current source and
 operator image. `--with-coop` is a compatibility alias. A failed coop build cannot
 silently yield a display-only result; `--display-only` is diagnostic.
@@ -25,11 +29,12 @@ are accepted; duplicate collected board identities are refused before check-only
 Old native receipts must be rebuilt, not edited. Remote Docker builders and
 emulated x86 builders cannot satisfy independent native qualification.
 
-Use a clean candidate source export or ordinary clone with no private working
-files. Run `python3 -B tools/validate_release.py .` for this pending candidate;
-`--require-final` must refuse until all component, admission and measurement pins
-are integrated. Build the operator image and native outputs as documented in
-[installation](INSTALL.md), omitting only that premature final-release assertion.
+The workflow below is for maintainers qualifying a component before release.
+Use a clean prepared candidate export or ordinary clone with no private working
+files. Run `python3 -B tools/validate_release.py .` during that preparation;
+`--require-final` rejects a candidate without integrated component, admission
+and measurement evidence. Users installing published v1.8.4 follow
+[installation](INSTALL.md), including its required `--require-final` check.
 
 Stage these immutable inputs before reserving a GPU:
 
@@ -148,7 +153,10 @@ pre-policy qualification source identity and final source identity. Verify the
 compiled-input map is unchanged, then rebuild twice from the final source and
 repeat on the second physical machine. Only reviewed actual hashes enter
 `coop-release.json`, the binary inventory and the distinct v1.8.4 delivery.
-Until then default preparation and final-release validation refuse.
+For an unintegrated candidate, default preparation refuses. A verified
+component-qualified candidate permits private serving; final-release validation
+also requires serving measurements and admission. The published release uses
+the completed binding, while each operator still admits their own boot.
 
 The schema records the actual qualification image separately from operator image
 eligibility. Every operator still passes the fixed Dockerfile/InstantTensor policy

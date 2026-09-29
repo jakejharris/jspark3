@@ -325,3 +325,8 @@ SPDX-License-Identifier = "AGPL-3.0-only"
 path = ["release/v1.8.4-admission/apc-fixtures.json", "release/v1.8.4-admission/attestation.json", "release/v1.8.4-admission/finalize.json", "release/v1.8.4-admission/first-prompt.json", "release/v1.8.4-admission/hygiene-rank0.json", "release/v1.8.4-admission/hygiene-rank1.json", "release/v1.8.4-admission/hygiene-rank2.json", "release/v1.8.4-admission/triar-inactive-rank0.json", "release/v1.8.4-admission/triar-inactive-rank1.json", "release/v1.8.4-admission/triar-inactive-rank2.json", "release/v1.8.4-admission/verify-final.json", "release/v1.8.4-admission/verify-first.json"]
 precedence = "aggregate"
 SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ["release/coop-ab-v1.8.4.json"]
+precedence = "aggregate"
+SPDX-License-Identifier = "Apache-2.0"

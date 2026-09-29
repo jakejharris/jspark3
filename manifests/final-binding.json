@@ -1,5 +1,5 @@
 {
-  "admission_receipt_sha256": null,
+  "admission_receipt_sha256": "594f2def282509c01e3a530c4454eb7ae28b42b613d042ff12f64682c6a2533b",
   "component_seal_sha256": "42ea2a36ab5b9de05e7e8b1d690bd1fe7014968ec7381ac4a62516143deb05ec",
   "delivery_id": "v1.8.4-coop",
   "hardware_qualified": false,
@@ -7,7 +7,7 @@
   "native_sha256": "3212a3b0a308e2ec3673878212fcb0504a463c5f7df84eced5db7bb301cc3c07",
   "policy_sha256": "3623acda4ea998cb53dbeb24c7ac815240a393a31d2e56997df2ce5291bc316b",
   "release_version": "v1.8.4",
-  "results_sha256": null,
+  "results_sha256": "489382dca0621041d8b5441e164c4cf3f511c16b6c995eb016e42c79da171285",
   "runtime_settings": {
     "adaptive": "ema",
     "b5": "default",
@@ -25,5 +25,5 @@
     "JSPARK3_V16_DENSE_FP8": "trunk",
     "JSPARK3_V16_PROFILE": "production-stock"
   },
-  "state": "component-qualified"
+  "state": "bound"
 }

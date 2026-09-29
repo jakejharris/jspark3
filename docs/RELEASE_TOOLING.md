@@ -53,7 +53,7 @@ Before publishing a new source release, review the actual staged source archive,
 release body, landing README, HF card and any GitHub-hosted HF-card copy together.
 They must name/link the release being published, while historical tables retain
 their v1.8.0 identity. Link the current INSTALL, preserve model license metadata
-and attribution, disclose coop off beside coop-on numbers, and use the pinned
+and attribution, label historical coop-off results and the qualified coop-on default, and use the pinned
 weight-download revision. Updating these live pages is a publication step;
 source edits alone do not change them. Do not re-run the historical frozen
 assembler as though it were a new v1.8.3 package.

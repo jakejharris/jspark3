@@ -3,11 +3,11 @@
   "candidate_manifest_sha256": "dd8ef472ded8195420d8015a260e6d4fe08ff02f14bbd6d76b849645e6301877",
   "composition_builder_sha256": "0050e13f12fe482a29e5cda0ee4b3ac53e9c4f95c823b3acc1063d2decf8ebcd",
   "delivery_candidate": {
-    "binding_sha256": "3b0af25e80b7ca9f9f1d8c476021943f7fb869b5b217469bf72aa1deb310f223",
+    "binding_sha256": "7b29ac2193c19508719bdb7e14f8d150eb8e06b8a1047acac9c96c81e7540de5",
     "qualification_build_sha256": "8f64afec460986f94cbabd4e578476a5439f849f74495734306bdbdc87b19168",
     "release_version": "v1.8.4",
     "source_recipe_sha256": "81dff1ded6e3310fbca81a7167c9bdddf98d802579893588ecb9d9f0bfc1b083",
-    "state": "component-qualified"
+    "state": "bound"
   },
   "files": {
     ".gitattributes": {
@@ -27,8 +27,8 @@
       "changed": true,
       "input_sha256": "9e1306317b68af4677c2b6d2cd8a40cb3a27d9b13cde6a05264c59d007954814",
       "origin": "release-package-render",
-      "public_sha256": "b92435bdf9cc33a6085297f69bc55d817b1ea7ef345f9e2b24c4d3f66d89677f",
-      "revision": "v1.8.4-pass1"
+      "public_sha256": "ff222d8d4a2b08b777648548799b8126844b5ff0efaa12777e21dd36f1ec3297",
+      "revision": "v184-release-binding"
     },
     "LICENSE": {
       "changed": false,
@@ -59,8 +59,8 @@
       "changed": true,
       "input_sha256": "17ad9fc5f274886f3a6243287a3431d3dbc1d77b29f20fbb26270e203d61dd08",
       "origin": "release-package-render",
-      "public_sha256": "9bc5e1e669be88c2e8adc4014be14b9865dc759aeac507eb7377a91befe3863c",
-      "revision": "v184-public-admission"
+      "public_sha256": "3934c39ec284f05712db4f56a9a2ae773eb391c5424fd1376b4c82d001a9ae0d",
+      "revision": "v184-release-binding"
     },
     "THIRD_PARTY_NOTICES.md": {
       "changed": true,
@@ -84,15 +84,15 @@
       "changed": true,
       "input_sha256": "37368db2e341869babdf091708221fbb6693a97ccdd1239ccb6ac0ae3cbbe714",
       "origin": "release-package-render",
-      "public_sha256": "70cc1b1072a0e2ece8df54466973eac6454153cfa956b1eab398781cb90a9d40",
-      "revision": "v1.8.4-pass1"
+      "public_sha256": "976a644514635ac44b3dd6a4b7d6c7471247ae95989e04441bed3f3520afe5d4",
+      "revision": "v184-release-binding"
     },
     "docs/COOP_QUALIFICATION_HANDOFF.md": {
       "changed": true,
       "input_sha256": "b99e219ae2c3ec2e09349149ae1a6b43fd8335cbd730f9a279a1064b34741fd9",
       "origin": "v1.8.4-offline-implementation",
-      "public_sha256": "c8d641f97647c816b6ed17e4c2141770ce4c48acad9b5f9d39a987989aa3c6c9",
-      "revision": "v184-private-serving-source"
+      "public_sha256": "df9d1113ec4c0ec18e8133260df78e6a5889a7f32221764f282681bcf2d6da0c",
+      "revision": "v184-release-binding"
     },
     "docs/COOP_RELEASE_CHECKLIST.md": {
       "changed": true,
@@ -105,15 +105,15 @@
       "changed": true,
       "input_sha256": "803c4a240052f86f21329234b924a53133ca81237e82b41bc45a64cdda807b8c",
       "origin": "v1.8.1-operator-native",
-      "public_sha256": "e338724e467c5f6f81fbae932ec2e6cd5283556722f9cf2c25d77cac6c497345",
-      "revision": "sanitizer-launch-record-fix"
+      "public_sha256": "d09ad42ca9bf8b9dafa2efb05de48911d46a66e65e4bd717edd91766b5e370ec",
+      "revision": "v184-release-binding"
     },
     "docs/INSTALL.md": {
       "changed": true,
       "input_sha256": "0a0d871fca9b3369747f1c0117074f4b5b164eca467c727efd88f4f53038bb63",
       "origin": "release-package-render",
-      "public_sha256": "88646b40e5e604aaf5313b7ff92654bca40f0a5fd0101ba1386ddf25b1968fb3",
-      "revision": "native-display-reproducibility-fix"
+      "public_sha256": "7a1b5f1db71edc9ffa8aedb4b9f3e4eec4e1dfb068bc1f6137f7e8b7c90e7294",
+      "revision": "v184-release-binding"
     },
     "docs/LICENSING.md": {
       "changed": true,
@@ -126,8 +126,8 @@
       "changed": true,
       "input_sha256": "2227303f7e58d12284062c1646c020c0e69f825dfab5cfb8cff85892996a7f71",
       "origin": "release-package-render",
-      "public_sha256": "2537ea5b56268c8a59af04da5d52ce82df76ce63699929aba47a8bbeca2defe4",
-      "revision": "v1.8.3-docs-r2"
+      "public_sha256": "f35a285136d22c1eb6c554d3c7dfa30566a20e0db001a136d49c653c2c34da05",
+      "revision": "v184-release-binding"
     },
     "docs/NATIVE_REPRODUCIBILITY.md": {
       "changed": false,
@@ -140,21 +140,22 @@
       "changed": true,
       "input_sha256": "468123e9465240a884465ebaa14641cfedeac27d36f8b494ab6c5cb77523611c",
       "origin": "release-package-render",
-      "public_sha256": "99d61549dad395abe571e4c29443bf094f3eecebdb9c440a718931f14a10ca08",
-      "revision": "v1.8.4-on-v1.8.3"
+      "public_sha256": "13adfa371e08873dea16df3555b7a92f050ac0ea0fba5af5ae8db3030f5b316b",
+      "revision": "v184-release-binding"
     },
     "docs/RELEASE_TOOLING.md": {
       "changed": true,
       "input_sha256": "92f7e965ea70130a8aa5296ed8724aecb2a66948e1aae2c69fb11bd578ca2c58",
       "origin": "v1.8.3-docs-tooling",
-      "public_sha256": "8d7202b669c21e95019b68b1ed6e708a55772c19240ec222d7066706cc380371",
-      "revision": "v1.8.3-docs-r2"
+      "public_sha256": "3b3b3f1d9317c0bc6f5005f8d353481206feffcde94f8f671c5135423dd28dfa",
+      "revision": "v184-release-binding"
     },
     "docs/REPRODUCIBILITY.md": {
       "changed": true,
       "input_sha256": "3abffbc0f8a09c025a564d6edba2ce8c887d0565e041ba6cd94690bb91d89f38",
       "origin": "release-package-render",
-      "public_sha256": "e2f78386aa068723381ab99a23fa736cfa25bb45fc3a84997617906cfeadc8aa"
+      "public_sha256": "734aa7183e92028cd2fde801052ec6cf37670ae3ba0b63e81e8fb23c58b50e04",
+      "revision": "v184-release-binding"
     },
     "docs/SHARED_OUTPUT.md": {
       "changed": true,
@@ -193,8 +194,8 @@
       "changed": true,
       "input_sha256": "9830d95de98135c7d36d7ecc66e0f2fbd493a717227059317df57c1f654cbab6",
       "origin": "release-package-render",
-      "public_sha256": "5dddcde2ee657999689dab350641b04502c06b0f8acf1cfb660e2ba623837b77",
-      "revision": "v184-post-seal-documentation"
+      "public_sha256": "ef516d702fefdf1d2c63439b7125d506d0e899c761f1ef986a76d7353d294e71",
+      "revision": "v184-release-binding"
     },
     "manifests/figure-bindings.json": {
       "changed": false,
@@ -213,8 +214,8 @@
       "changed": true,
       "input_sha256": "bc72b806fb419ce47abc215e0fabee37695c194df843a37736b3060c984e3e53",
       "origin": "generated",
-      "public_sha256": "3b0af25e80b7ca9f9f1d8c476021943f7fb869b5b217469bf72aa1deb310f223",
-      "revision": "v1.8.4-component-qualified"
+      "public_sha256": "7b29ac2193c19508719bdb7e14f8d150eb8e06b8a1047acac9c96c81e7540de5",
+      "revision": "v184-release-binding"
     },
     "manifests/final-catalog.json": {
       "changed": true,
@@ -227,8 +228,8 @@
       "changed": true,
       "input_sha256": "f968bb8ad61c217d1c955e5a6209b35cebfae065e3f1ef6d3077ed6a07f25739",
       "origin": "release-package-render",
-      "public_sha256": "5416cc3a6e019b78195328137940623dcd985aef05cfea7cb6839100024ec025",
-      "revision": "v184-public-admission"
+      "public_sha256": "377fccaf59932bc51c862d96371483f48418e5398b4ee30e3e5960a06ab36fa7",
+      "revision": "v184-release-binding"
     },
     "manifests/qualification.json": {
       "changed": false,
@@ -240,8 +241,8 @@
       "changed": true,
       "input_sha256": "749e7c674aab4461e3e1d9ee1b6c730fb02f99de572b36ee8a25cd6658121907",
       "origin": "generated",
-      "public_sha256": "8abcd9a85271ed6b3483661871f408f718bb7d1ce128afc12d998a96fa160aeb",
-      "revision": "v1.8.4-component-qualified"
+      "public_sha256": "00d9b13d957119e69aea147d5439c99451902e3993920cbe5ff541efeece8153",
+      "revision": "v184-release-binding"
     },
     "manifests/sbom.cdx.json": {
       "changed": true,
@@ -273,8 +274,8 @@
       "changed": true,
       "input_sha256": "4385da5b65ce5e0fe108c5ea2a02b0bde63c22911593cdb4df42ec4fe169a6f8",
       "origin": "generated",
-      "public_sha256": "cc97c7c43e519eb255b2486cfef2c50388418aec5142a342f54b4cd79fe37151",
-      "revision": "v184-publish-preparation"
+      "public_sha256": "df21e6b71d1abb321047c2e494aafaa63c8f143b040868d3f60c7618d39ab4ab",
+      "revision": "v184-release-binding"
     },
     "recipe/.env.example": {
       "changed": true,
@@ -1454,11 +1455,11 @@
       "public_sha256": "ca75b5b751517ef2361be1e27bf733b43142a9c2277e7fda4bed01d584f322da"
     },
     "release/MEASUREMENTS-v1.8.4.md": {
-      "changed": false,
+      "changed": true,
       "input_sha256": "e6d57e5e08d8b06e281089dcfca114befde7778673223d3f4ce993797b50ead7",
       "origin": "v1.8.4-offline-implementation",
-      "public_sha256": "e6d57e5e08d8b06e281089dcfca114befde7778673223d3f4ce993797b50ead7",
-      "revision": "v1.8.4-pass1"
+      "public_sha256": "39b0ad0c4fcdac3044274ed90348e1f428884689684b23a15444aa85da0efc09",
+      "revision": "v184-release-binding"
     },
     "release/RELEASE-NOTES-v1.8.0.md": {
       "changed": false,
@@ -1480,6 +1481,13 @@
       "origin": "release-package-render",
       "public_sha256": "1cdae5245a48b161278136dd7b54ddf439845d68072c72c4b4bbba1cce42644e"
     },
+    "release/coop-ab-v1.8.4.json": {
+      "changed": false,
+      "input_sha256": "e37aadef58067b333571bc0a6654ec1e562a83d771e1e0f8aab1f39b3efb8c6a",
+      "origin": "v1.8.4-release-binding",
+      "public_sha256": "e37aadef58067b333571bc0a6654ec1e562a83d771e1e0f8aab1f39b3efb8c6a",
+      "revision": "v184-release-binding"
+    },
     "release/operator-cleanroom-v1.8.2.json": {
       "changed": false,
       "input_sha256": "b1dfc51397051a3cba48a5264e66d135b07ecc4a802793a28494a1b3116e7195",
@@ -1494,11 +1502,11 @@
       "public_sha256": "056faf5047b836f43baad062583c07bdace2b25172cf1db15afdf0309e33b99c"
     },
     "release/results-v1.8.4.json": {
-      "changed": false,
+      "changed": true,
       "input_sha256": "8ab8c41bc5860106dd79bac071410293606a7919edcb0d113102e3aa5aba8f61",
       "origin": "v1.8.4-offline-implementation",
-      "public_sha256": "8ab8c41bc5860106dd79bac071410293606a7919edcb0d113102e3aa5aba8f61",
-      "revision": "v1.8.4-pass1"
+      "public_sha256": "489382dca0621041d8b5441e164c4cf3f511c16b6c995eb016e42c79da171285",
+      "revision": "v184-release-binding"
     },
     "release/results.json": {
       "changed": true,

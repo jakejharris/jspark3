@@ -1,6 +1,7 @@
 # Benchmark records
 
-v1.8.4 measurements are pending in [the separate record](../release/results-v1.8.4.json).
+v1.8.4 measurements are recorded in [the separate record](../release/results-v1.8.4.json)
+and compared with the frozen v1.8.0 cohort in [v1.8.4 measurements](../release/MEASUREMENTS-v1.8.4.md).
 All numerical results below remain historical and do not qualify the new native binary.
 
 Decode is the aggregate rate of 1, 2, 4 or 8 code or prose requests (as labeled) started together (this build serves the Pi coding agent), each forced to 512 output tokens at temperature 0 with thinking off and no prefix-cache reuse, counted from the first to the last streamed token; prefill is the range over eight Pi-shaped coding-agent turns, each extending a cached prefix, measured right after a page-cache hygiene step.
@@ -22,7 +23,10 @@ coop's speedup. The frozen files below are unchanged.
 
 Build `v1.8.0`; weight mode `0` (`ABLIT=0`, unedited EXL3/TR3). Measured settings:
 coop on, adaptive-K `ema`, dense FP8 `trunk`, display `full`, prefix-cache LRU on,
-TRIAR resident but inactive. The operator default differs: **coop off**. Serving starts: 1; sweeps/repetitions: 2. Bands are within-start ranges, not confidence intervals.
+TRIAR resident but inactive. The v1.8.4 operator default is also coop on, using
+its separately qualified native bytes; these historical rates do not transfer
+to that binary. Serving starts: 1; sweeps/repetitions: 2. Bands are within-start
+ranges, not confidence intervals.
 
 | Metric | tok/s range |
 |---|---|

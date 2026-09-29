@@ -1,9 +1,12 @@
 # v1.8.4 component qualification handoff
 
-Run this document from the exact reviewed commit, alongside its source. It stages
-component qualification and produces a separate reviewable seal. It does not
-schedule or authorize serving changes. Final release validation intentionally
-refuses until measured component and serving evidence is integrated.
+This maintainer procedure stages component qualification and produces a
+reviewable seal before release. Run it from the exact reviewed candidate commit,
+alongside its source; it does not schedule or authorize serving changes.
+Final validation rejects candidates lacking measured component and serving
+evidence. Published v1.8.4 installation uses the integrated seal and coop-on
+default described in [INSTALL](INSTALL.md), then requires admission of the
+operator's own boot.
 
 ## 1. Exact source and two independent builders
 
@@ -423,7 +426,7 @@ final release and publication until the real serving evidence is bound.
 3. Pin the actual reviewed BUILD digest, gate index, policy and native in
    `recipe/config/coop-release.json`, `manifests/binaries.json` and the distinct
    v1.8.4 delivery binding/catalog. No null, dummy profile hash or old delivery
-   record may be promoted. The prepared branch presently refuses final release.
+   record may be promoted. A prepared candidate cannot pass final release validation.
 4. Finish and review the owner's edited-mode admission handoff and pin/adapt the
    retained decode benchmark tooling before scheduling the two serving starts.
    The owner's retained epoch-oriented decode harness must be reviewed for
