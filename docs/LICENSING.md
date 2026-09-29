@@ -48,7 +48,7 @@ both to the download and to running the model.
 | Docker software package `ghcr.io/miaai-lab/glm-5.3-flash-2x-dgx-sparks` | MiaAI-Lab, pinned by digest | As published by MiaAI-Lab | v1.0.0 pulls and launches this exact upstream image by digest. The prepared local derivative retains its NVIDIA-derived upstream layers; adding labels and notices did not satisfy the NGC derived-container redistribution grant, so no JSpark3 GHCR image is published for v1.0.0. |
 | vLLM | vllm-project | Apache-2.0 | Transforms modify a copy inside the container only. |
 | ExLlamaV3 | turboderp-org | As published upstream | Kernel provider for EXL3 weights inside the image. |
-| FlyCockpit, vcruz305, sfxnz, tonyd2wild repositories | GitHub, pinned commits | As published by each author | Technique sources and reconstruction targets; credited in `THIRD_PARTY_NOTICES.md`. |
+| FlyCockpit and vcruz305 repositories | GitHub, pinned commits | As published by each author | Technique sources and reconstruction targets; credited in `THIRD_PARTY_NOTICES.md`. |
 
 Because the draft checkpoint is non-commercial and the target checkpoint is
 attribution-required, the assembled endpoint must not be described as
