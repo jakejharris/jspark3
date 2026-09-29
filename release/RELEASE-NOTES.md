@@ -90,15 +90,15 @@ and [licensing guide](https://github.com/jakejharris/jspark3/blob/v1.8.4/docs/LI
 ## Credits
 
 JSpark3 builds on work by Brandon M. Music, who made the
-[EXL3/TR3 4-bpw checkpoint](https://huggingface.co/brandonmusic/GLM-5.3-Flash-tr3-4bpw)
-that every rank loads, and by Z.AI, Inco AI, z-lab, Mia's AI Lab,
-FlyCockpit, vcruz305, sfxnz, Tony, turboderp, coolbho3k, gabewillen,
-plotarmordev, outstandly, ratulsarna, nood-co1, knapcio, lilianmoraru,
-the vLLM project and the InstantTensor contributors.
+[EXL3/TR3 4-bpw checkpoint](https://huggingface.co/brandonmusic/GLM-5.3-Flash-tr3-4bpw/tree/5ab363a8dcf6405955fd5f99671e01a1c9fb124b)
+that every rank loads, and by Z.AI, Inco AI, z-lab, Mia's AI Lab, FlyCockpit,
+Victor Cruz (vcruz305), turboderp, Emi Huang (coolbho3k), Gabriel Willen (gabewillen),
+plotarmordev, Ratul Sarna (ratulsarna), nood-co1, Zbigniew Majewski (knapcio),
+Lilian Moraru (lilianmoraru), the vLLM project and the InstantTensor contributors.
 See [THIRD_PARTY_NOTICES.md](https://github.com/jakejharris/jspark3/blob/v1.8.4/THIRD_PARTY_NOTICES.md) for component contributions,
 source revisions and license notices.
 
-The [ShapleyMcg](https://github.com/brandonmmusic-max/shapleymcg) attribution is reproduced below.
+The [ShapleyMcg](https://github.com/brandonmmusic-max/shapleymcg/tree/4dc85c999983bf46ebdae3821839a5079cc5de17) attribution is reproduced below.
 
 This work includes or was produced using ShapleyMcg, created by Brandon M. Music (https://github.com/brandonmmusic-max/shapleymcg). ShapleyMcg is licensed under the ShapleyMcg License v1.0, an attribution-required license that grants no rights to the person known as "0xSero." Use of ShapleyMcg without this attribution is unlicensed.
 
