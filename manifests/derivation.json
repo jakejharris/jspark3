@@ -59,8 +59,8 @@
       "changed": true,
       "input_sha256": "17ad9fc5f274886f3a6243287a3431d3dbc1d77b29f20fbb26270e203d61dd08",
       "origin": "release-package-render",
-      "public_sha256": "3c1a33479ebe7200aec672087c1c922c5bda3ba39556e8dc97f05ef012266bd3",
-      "revision": "v1.8.4-component-qualified"
+      "public_sha256": "9bc5e1e669be88c2e8adc4014be14b9865dc759aeac507eb7377a91befe3863c",
+      "revision": "v184-public-admission"
     },
     "THIRD_PARTY_NOTICES.md": {
       "changed": true,
@@ -227,8 +227,8 @@
       "changed": true,
       "input_sha256": "f968bb8ad61c217d1c955e5a6209b35cebfae065e3f1ef6d3077ed6a07f25739",
       "origin": "release-package-render",
-      "public_sha256": "9e46cd1c1a55ecbb0999938f9f2794b3c6a5fd87d294b2181b043cd9bf6fd896",
-      "revision": "v1.8.4-component-qualified"
+      "public_sha256": "5416cc3a6e019b78195328137940623dcd985aef05cfea7cb6839100024ec025",
+      "revision": "v184-public-admission"
     },
     "manifests/qualification.json": {
       "changed": false,
@@ -260,8 +260,8 @@
       "changed": true,
       "input_sha256": "fad5c997be3187d1ce467088572677544c60652fda500ea822e89392d7f8bca2",
       "origin": "v1.8.3-shared-output-r5",
-      "public_sha256": "65fa6e180df76b313782df9e642172df7644356172c07dd2e0d51d3e16ae338e",
-      "revision": "v1.8.4-component-qualified"
+      "public_sha256": "94b6f15b0a95217ff66f6a7e55aabc226fc09b14e261faed66dcbb9db3f47b97",
+      "revision": "v184-public-admission"
     },
     "manifests/stock-profile.json": {
       "changed": false,
@@ -1506,6 +1506,90 @@
       "origin": "release-package-render",
       "public_sha256": "056faf5047b836f43baad062583c07bdace2b25172cf1db15afdf0309e33b99c"
     },
+    "release/v1.8.4-admission/apc-fixtures.json": {
+      "changed": false,
+      "input_sha256": "59e88a651e5963181e731717db433d6aa5bfe32f8edaf8eb70b7986b91d966f2",
+      "origin": "v1.8.4-public-admission",
+      "public_sha256": "59e88a651e5963181e731717db433d6aa5bfe32f8edaf8eb70b7986b91d966f2",
+      "revision": "v184-public-admission"
+    },
+    "release/v1.8.4-admission/attestation.json": {
+      "changed": false,
+      "input_sha256": "574a36f019ea623b1bb4d785a73c4b2c47b0b5896c7438b4357a0c6d0c8ef71f",
+      "origin": "v1.8.4-public-admission",
+      "public_sha256": "574a36f019ea623b1bb4d785a73c4b2c47b0b5896c7438b4357a0c6d0c8ef71f",
+      "revision": "v184-public-admission"
+    },
+    "release/v1.8.4-admission/finalize.json": {
+      "changed": false,
+      "input_sha256": "594f2def282509c01e3a530c4454eb7ae28b42b613d042ff12f64682c6a2533b",
+      "origin": "v1.8.4-public-admission",
+      "public_sha256": "594f2def282509c01e3a530c4454eb7ae28b42b613d042ff12f64682c6a2533b",
+      "revision": "v184-public-admission"
+    },
+    "release/v1.8.4-admission/first-prompt.json": {
+      "changed": false,
+      "input_sha256": "86f62e55361ef77191e15995d91165e86d78e0f4c30a51407ad80befbd2d854b",
+      "origin": "v1.8.4-public-admission",
+      "public_sha256": "86f62e55361ef77191e15995d91165e86d78e0f4c30a51407ad80befbd2d854b",
+      "revision": "v184-public-admission"
+    },
+    "release/v1.8.4-admission/hygiene-rank0.json": {
+      "changed": false,
+      "input_sha256": "d8972c5217ac7f93eff49bc1c110efef09a0a7c622d74b0962fa053cdc8a07f7",
+      "origin": "v1.8.4-public-admission",
+      "public_sha256": "d8972c5217ac7f93eff49bc1c110efef09a0a7c622d74b0962fa053cdc8a07f7",
+      "revision": "v184-public-admission"
+    },
+    "release/v1.8.4-admission/hygiene-rank1.json": {
+      "changed": false,
+      "input_sha256": "2b4b729a5b42debd4da07ae631ad672713fbc71ed8eb3829b281e6e13abfcf57",
+      "origin": "v1.8.4-public-admission",
+      "public_sha256": "2b4b729a5b42debd4da07ae631ad672713fbc71ed8eb3829b281e6e13abfcf57",
+      "revision": "v184-public-admission"
+    },
+    "release/v1.8.4-admission/hygiene-rank2.json": {
+      "changed": false,
+      "input_sha256": "8c94ce3d98e1936100870b65e36360e90b442812a95cd7f36d27dc5856b2e036",
+      "origin": "v1.8.4-public-admission",
+      "public_sha256": "8c94ce3d98e1936100870b65e36360e90b442812a95cd7f36d27dc5856b2e036",
+      "revision": "v184-public-admission"
+    },
+    "release/v1.8.4-admission/triar-inactive-rank0.json": {
+      "changed": false,
+      "input_sha256": "2ada2ced5a81f007e01719c817b1e3e273a4599c2bdec21060b4ef753b053b6f",
+      "origin": "v1.8.4-public-admission",
+      "public_sha256": "2ada2ced5a81f007e01719c817b1e3e273a4599c2bdec21060b4ef753b053b6f",
+      "revision": "v184-public-admission"
+    },
+    "release/v1.8.4-admission/triar-inactive-rank1.json": {
+      "changed": false,
+      "input_sha256": "adec9c59711389d76a3d3a8aa4909a327a8e59a5e1070926bade00ad22a99251",
+      "origin": "v1.8.4-public-admission",
+      "public_sha256": "adec9c59711389d76a3d3a8aa4909a327a8e59a5e1070926bade00ad22a99251",
+      "revision": "v184-public-admission"
+    },
+    "release/v1.8.4-admission/triar-inactive-rank2.json": {
+      "changed": false,
+      "input_sha256": "0a0fcc1c1726045df4e29551d6df8a0141629ccd5c38601184dc5de29dc22ee0",
+      "origin": "v1.8.4-public-admission",
+      "public_sha256": "0a0fcc1c1726045df4e29551d6df8a0141629ccd5c38601184dc5de29dc22ee0",
+      "revision": "v184-public-admission"
+    },
+    "release/v1.8.4-admission/verify-final.json": {
+      "changed": false,
+      "input_sha256": "4bdb7c136a0e8af14f1ef769a1a28c7f3680899e38fcae059ede43770fa6be0b",
+      "origin": "v1.8.4-public-admission",
+      "public_sha256": "4bdb7c136a0e8af14f1ef769a1a28c7f3680899e38fcae059ede43770fa6be0b",
+      "revision": "v184-public-admission"
+    },
+    "release/v1.8.4-admission/verify-first.json": {
+      "changed": false,
+      "input_sha256": "739e2874cb9e1bf545871be176680924c2f491fd21465cc93d7ba4c59cd3e54c",
+      "origin": "v1.8.4-public-admission",
+      "public_sha256": "739e2874cb9e1bf545871be176680924c2f491fd21465cc93d7ba4c59cd3e54c",
+      "revision": "v184-public-admission"
+    },
     "third_party/licenses/ExLlamaV3-MIT.txt": {
       "changed": false,
       "input_sha256": "27a32b6263fcd96c79d3beeecf221c4366780bdf15ad51986f48650bd7369bff",
@@ -1541,8 +1625,8 @@
       "changed": true,
       "input_sha256": "1a55e0a43b073d6a2acb1e155afff4f663144290c7c9e9647a9ff9d851405bff",
       "origin": "export-template",
-      "public_sha256": "b294b5618d1985c426736d9cc67c63a44214b1262f33a754711549b73e0a17e4",
-      "revision": "v184-private-serving-source"
+      "public_sha256": "4eff509bbdd6b9b03da69e52fd7eac948b72b20d045d147b3f401a7252da9874",
+      "revision": "v184-public-admission"
     },
     "tools/_release_checks.py": {
       "changed": true,
@@ -1599,6 +1683,13 @@
       "origin": "v1.8.3-docs-tooling",
       "public_sha256": "e4d7b9580ccabbea78f6351b18b2609926dbe2a2afa6fa14cff7684f78dae5f0",
       "revision": "v1.8.4-on-v1.8.3"
+    },
+    "tools/test_admission_attestation.py": {
+      "changed": false,
+      "input_sha256": "49914d0ae15aa993b715619027eab2b936fbc9d735b7700e0bdfad594a748582",
+      "origin": "v1.8.4-public-admission",
+      "public_sha256": "49914d0ae15aa993b715619027eab2b936fbc9d735b7700e0bdfad594a748582",
+      "revision": "v184-public-admission"
     },
     "tools/test_component_serving.py": {
       "changed": true,

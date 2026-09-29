@@ -7130,12 +7130,17 @@
       "sites": []
     },
     "tools/_qualification.py": {
-      "disposition": "Read-only release contract validator: component-qualified state reuses exact release-pinned schema-2 seal checks, requires null serving evidence, and refuses final validation regardless of stage. Admission subprocess remains captured privately. No new output writer.",
-      "sha256": "b294b5618d1985c426736d9cc67c63a44214b1262f33a754711549b73e0a17e4",
+      "disposition": "Read-only release contract validator: component-qualified state reuses exact release-pinned schema-2 seal checks, requires null serving evidence, and refuses final validation regardless of stage. Final admission: complete public evidence runs the unchanged operator gate; a declared private set is accepted only as receipt-bound hashes, with every shipped dependency hash-checked and receipt-level gate checks run in a captured subprocess. Both admission subprocesses remain captured privately. No new output writer.",
+      "sha256": "4eff509bbdd6b9b03da69e52fd7eac948b72b20d045d147b3f401a7252da9874",
       "sites": [
         {
-          "function": "reviewed source integration/test/validator",
-          "line": 157,
+          "function": "verify_admission",
+          "line": 198,
+          "operation": "run"
+        },
+        {
+          "function": "verify_admission",
+          "line": 225,
           "operation": "run"
         }
       ]
@@ -7589,6 +7594,62 @@
           "function": "<native/shell/patch>",
           "line": 578,
           "operation": "output/child channel or source template"
+        }
+      ]
+    },
+    "tools/test_admission_attestation.py": {
+      "disposition": "Synthetic local test output only. Exercises real publication/refusal and comparison paths, retained private artifacts and opaque diagnostic controls; never hardware evidence.",
+      "sha256": "49914d0ae15aa993b715619027eab2b936fbc9d735b7700e0bdfad594a748582",
+      "sites": [
+        {
+          "function": "write",
+          "line": 32,
+          "operation": "write_text"
+        },
+        {
+          "function": "edit_attestation",
+          "line": 61,
+          "operation": "write"
+        },
+        {
+          "function": "rebind",
+          "line": 68,
+          "operation": "write"
+        },
+        {
+          "function": "rebind",
+          "line": 76,
+          "operation": "write"
+        },
+        {
+          "function": "test_shipped_dependency_bytes_are_bound",
+          "line": 92,
+          "operation": "write_bytes"
+        },
+        {
+          "function": "test_unbound_admission_file_refused",
+          "line": 116,
+          "operation": "write"
+        },
+        {
+          "function": "test_shipped_qualification_tools_must_match_receipt",
+          "line": 134,
+          "operation": "write_text"
+        },
+        {
+          "function": "test_receipt_payload_hash_still_checked",
+          "line": 157,
+          "operation": "write"
+        },
+        {
+          "function": "test_complete_public_evidence_uses_unchanged_operator_gate",
+          "line": 168,
+          "operation": "write_bytes"
+        },
+        {
+          "function": "test_complete_public_evidence_uses_unchanged_operator_gate",
+          "line": 170,
+          "operation": "write_bytes"
         }
       ]
     },

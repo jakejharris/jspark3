@@ -1,0 +1,27 @@
+{
+  "findings": [],
+  "gate": "tools/v16/admission_gate.py",
+  "gate_sha256": "07afd83b31843300a1f4487ffe87a78586dc0fa27c92e7b8c516d732601ed3e3",
+  "input_sha256": {
+    "finalize": "594f2def282509c01e3a530c4454eb7ae28b42b613d042ff12f64682c6a2533b",
+    "first_prompt": "86f62e55361ef77191e15995d91165e86d78e0f4c30a51407ad80befbd2d854b"
+  },
+  "original_admission_sha256": "6e42ab358b5d21fd5c5dbc83ca5ec2290ddd260b4732ec8669725274c51bac03",
+  "private_evidence_sha256": {
+    "apc.json": "3684d5788cebeda8278aadee4c34f05538b93f7c010f7148426b6991e4b34dc0",
+    "apc.log": "a129f277348dc5b36cd317772c50004df4994386b1bbc3e204d5820d308ee478",
+    "post-warmup-rank0.log": "076b25ef365acfa97a65303d943e4a22577526cb905234e050e0e80336f8b1b8",
+    "post-warmup-rank1.log": "a1cb4319455de502ed4e67b653517b753af8b80ff1cc9c5a8114c57f80a2ce77",
+    "post-warmup-rank2.log": "dc3d0f5c1cb4590aff06545a6083bc35bcb639829ad4029b3a5932bc78b8c545",
+    "prefill-first.json": "d056f2fa4159e4b43b4d7e6a72a40e240ce8c0f18da3db7ed3b9eb88dc37d9f2",
+    "prefill-first.log": "0f572943f25c3cede54a9cf7334b76a1142ed9bbed419bc4e180c78440c38bc7",
+    "prefill-post.json": "9ea679a4eda2ec98018362d1a5f94a45796f37abdabb0b32a07059524b7ac73a",
+    "prefill-post.log": "301c3df07f839abcf389df9363a795a3c93097451f9e9f3a6bb23656f033348e",
+    "verify-final.log": "45c706fd103a389746a8c0c0cacd32cfe3bc2541cf96299c49d24fe65064bd60",
+    "verify-first.log": "31c79bb0c4622a6944547ec51c0ae1ca9fb143ab4fa1fc1db2213d5d5a71e644"
+  },
+  "schema": "jspark3-v184-admission-attestation/1",
+  "source_commit": "adda4a11fd58ec593cacbbfce4919868d8916e9b",
+  "statement": "The complete admission evidence for the admitted v1.8.4 release boot is private. Eight operator logs and three JSON records containing private network addresses or local paths are represented here only by the SHA-256 values already bound in the payload-hashed finalize.json receipt. The owner reran the unchanged admission gate from a clean export of the source commit below against the original evidence directory; it returned PASS with no findings for these exact first-prompt and finalization receipts. The original gate output also records local input paths and is published only as its hash. This attests one owner boot; operators must still run full admission on their own boots.",
+  "verdict": "PASS"
+}

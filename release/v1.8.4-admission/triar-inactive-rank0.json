@@ -1,0 +1,8 @@
+{
+  "attestation": {
+    "rank": 0
+  },
+  "private_diagnostic": "diagnostic-z9ahsar1.may-contain-secrets-do-not-share.log",
+  "response_sha256": "8dd964ea90c2410210e53cc83870cc96fc3b13f32d6ab89dadb75ec7eb5aa4bf",
+  "verdict": "PASS"
+}

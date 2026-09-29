@@ -1,0 +1,8 @@
+{
+  "attestation": {
+    "rank": 1
+  },
+  "private_diagnostic": "diagnostic-rt4djrqi.may-contain-secrets-do-not-share.log",
+  "response_sha256": "8213567528c51f8d40ea6c4d7a4654c05c1a5b21a6e12c928ec725a861fc2164",
+  "verdict": "PASS"
+}

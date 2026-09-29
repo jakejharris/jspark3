@@ -2,6 +2,7 @@
 import ast
 import hashlib
 import json
+import os
 from pathlib import Path
 import re
 
@@ -147,13 +148,79 @@ def verify_v184(root, binding, release, require_final):
     assert len(stock['decode_sweeps']) == 2 and len(stock['prefill_turns']) == 8 and stock['quality_evidence']
     # The public admission producer revalidates boot/environment/component and
     # all supplied evidence. A standalone PASS string never qualifies a release.
-    import subprocess, sys, tempfile
     admission = root / 'release/v1.8.4-admission'
     assert hashlib.sha256((admission / 'finalize.json').read_bytes()).hexdigest() == binding['admission_receipt_sha256']
     final = load(root, 'release/v1.8.4-admission/finalize.json')
     assert final['producer'] == 'qualify_runtime.py' and final['identity_config']['coop'] == 'on'
     assert all(final['component_qualification'][key] == value for key, value in component.items())
-    with tempfile.TemporaryDirectory() as temp:
-        subprocess.run([sys.executable, '-B', str(root / 'tools/v16/admission_gate.py'),
-                        '--first-prompt', str(admission / 'first-prompt.json'), '--finalize', str(admission / 'finalize.json'),
-                        '--out', str(Path(temp) / 'admission.json')], check=True, capture_output=True)
+    verify_admission(root, admission, final)
+
+
+ATTESTATION_SCHEMA = 'jspark3-v184-admission-attestation/1'
+
+
+def verify_admission(root, admission, final):
+    """Recheck bound admission receipts in a source tree.
+
+    With every finalization dependency present, the unchanged operator gate
+    rechecks all receipt fields and evidence bytes. Evidence that cannot be
+    published (logs, private addresses or paths) may instead be represented only
+    by the hashes already inside the payload-hashed finalization receipt. That
+    unshipped set must equal the set declared in ``attestation.json``, every
+    shipped dependency must match its receipt hash, and every receipt-level gate
+    check still runs. The attestation records the owner's full private recheck;
+    it cannot replace a check that is possible on the public bytes.
+    """
+    import subprocess, sys, tempfile
+    sha = lambda path: hashlib.sha256(path.read_bytes()).hexdigest()
+    private_suffix = '.may-contain-secrets-do-not-share.log'
+    evidence = final.get('evidence_sha256')
+    assert isinstance(evidence, dict) and 'first-prompt.json' in evidence, 'operator evidence inventory is missing'
+    unshipped = set()
+    for name, expected in evidence.items():
+        assert Path(name).name == name and not name.endswith(private_suffix), 'unsafe evidence name'
+        assert isinstance(expected, str) and re.fullmatch('[0-9a-f]{64}', expected), 'invalid evidence hash'
+        path = admission / name
+        if not os.path.lexists(path):
+            unshipped.add(name)
+        else:
+            assert not path.is_symlink() and path.is_file() and sha(path) == expected, 'operator evidence changed: ' + name
+    assert 'first-prompt.json' not in unshipped, 'first-prompt receipt is required'
+    attestation = admission / 'attestation.json'
+    record = json.loads(attestation.read_text()) if os.path.lexists(attestation) else {}
+    declared = record.get('private_evidence_sha256', {}) if isinstance(record, dict) else None
+    assert isinstance(declared, dict) and set(declared) == unshipped, 'unshipped evidence differs from the declared private set'
+    assert all(declared[name] == evidence[name] for name in unshipped), 'declared private evidence hash differs'
+    expected_files = (set(evidence) - unshipped) | {'finalize.json'} | ({'attestation.json'} if declared else set())
+    assert {path.name for path in admission.iterdir()} == expected_files, 'unbound admission file'
+    if not declared:
+        with tempfile.TemporaryDirectory() as temp:
+            subprocess.run([sys.executable, '-B', str(root / 'tools/v16/admission_gate.py'),
+                            '--first-prompt', str(admission / 'first-prompt.json'), '--finalize', str(admission / 'finalize.json'),
+                            '--out', str(Path(temp) / 'admission.json')], check=True, capture_output=True)
+        return
+    assert not attestation.is_symlink() and attestation.is_file()
+    gates = root / 'tools/v16'
+    tools = final.get('qualification_tools_sha256')
+    assert isinstance(tools, dict) and 'admission_gate.py' in tools, 'receipt lacks qualification tool identities'
+    assert all(Path(name).name == name and sha(gates / name) == digest for name, digest in tools.items()), \
+        'shipped qualification tools differ from the admitted boot'
+    assert set(record) == {'schema', 'statement', 'source_commit', 'gate', 'gate_sha256', 'verdict', 'findings',
+                           'input_sha256', 'original_admission_sha256', 'private_evidence_sha256'}
+    assert record['schema'] == ATTESTATION_SCHEMA and isinstance(record['statement'], str) and record['statement'].strip()
+    assert re.fullmatch('[0-9a-f]{40}', record['source_commit']) and record['gate'] == 'tools/v16/admission_gate.py'
+    assert record['gate_sha256'] == sha(gates / 'admission_gate.py') == tools['admission_gate.py']
+    assert record['verdict'] == 'PASS' and record['findings'] == []
+    assert record['input_sha256'] == {'first_prompt': sha(admission / 'first-prompt.json'),
+                                      'finalize': sha(admission / 'finalize.json')}
+    assert re.fullmatch('[0-9a-f]{64}', record['original_admission_sha256'])
+    # Every receipt-level gate check (schemas, verdicts, identities, payload hash,
+    # first-prompt reconciliation, boot, stock profile and release component)
+    # runs on the public receipts in a separate process, as the gate itself does.
+    check = ('import sys\nfrom pathlib import Path\nsys.path.insert(0, sys.argv[1])\n'
+             'import admission_gate as gate\nfirst, final = Path(sys.argv[2]), Path(sys.argv[3])\n'
+             'report = gate.evaluate(gate.load_json(first), gate.load_json(final), first_path=str(first),\n'
+             '                       final_path=str(final), first_sha256=gate._sha(first))\n'
+             'sys.exit(0 if report["verdict"] == "PASS" and not report["findings"] else 1)\n')
+    subprocess.run([sys.executable, '-B', '-c', check, str(gates), str(admission / 'first-prompt.json'),
+                    str(admission / 'finalize.json')], check=True, capture_output=True)

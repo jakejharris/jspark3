@@ -1,0 +1,63 @@
+{
+  "boot": [
+    {
+      "container_id": "4a968c7fcc336570e4d5d4788982db8e3efc595c19a51783cec2dc89640c1a88",
+      "epochs": {
+        "adaptive-k-epoch.json": null,
+        "fatpath-epoch.json": null,
+        "sched-epoch.json": null,
+        "triar-epoch.json": null
+      },
+      "rank": 0,
+      "started_at_sha256": "7f90f3d91f60573299904b88ae39b4cf3a8a3db930ff43a51b41fe62297d5c19"
+    },
+    {
+      "container_id": "c097991ece5a330ff96e67ad4260f8b94665b468fcc63e4baf26534eb73257f6",
+      "epochs": {
+        "adaptive-k-epoch.json": null,
+        "fatpath-epoch.json": null,
+        "sched-epoch.json": null,
+        "triar-epoch.json": null
+      },
+      "rank": 1,
+      "started_at_sha256": "181ed9860637b297ad5772c634aa142b4d5931774c34401fa0c113dd55d5dfd3"
+    },
+    {
+      "container_id": "5f6905b31fb6ffff635463f5d09525a2e3f530dd323a21ca11a45026df999505",
+      "epochs": {
+        "adaptive-k-epoch.json": null,
+        "fatpath-epoch.json": null,
+        "sched-epoch.json": null,
+        "triar-epoch.json": null
+      },
+      "rank": 2,
+      "started_at_sha256": "fc1e2bd23318f60978d38a52fb4bb7a592b6cafd077825e1c561180675be864e"
+    }
+  ],
+  "component_qualification": {
+    "component_seal_sha256": "42ea2a36ab5b9de05e7e8b1d690bd1fe7014968ec7381ac4a62516143deb05ec",
+    "gate_index_sha256": "b61da17c39b78f36efcd059251b32c88d2aa5dd2231dd03fbc4e50c8a1d02f92",
+    "native_sha256": "3212a3b0a308e2ec3673878212fcb0504a463c5f7df84eced5db7bb301cc3c07",
+    "operator_image_config": "sha256:982558caac9bd57b87bb8a717266cf4b8a890ab8273ac2769843d15012566fe4",
+    "policy_sha256": "3623acda4ea998cb53dbeb24c7ac815240a393a31d2e56997df2ce5291bc316b"
+  },
+  "correctness": "fleetctl arithmetic, focused and long-context witnesses",
+  "evidence_sha256": {
+    "verify-first.json": "739e2874cb9e1bf545871be176680924c2f491fd21465cc93d7ba4c59cd3e54c",
+    "verify-first.log": "31c79bb0c4622a6944547ec51c0ae1ca9fb143ab4fa1fc1db2213d5d5a71e644"
+  },
+  "identity_config": {
+    "adaptive-k": "ema",
+    "coop": "on",
+    "dense-fp8": "trunk"
+  },
+  "manifest_sha256": "3b30a25bdabedf2fef3e15dca6da317872add4dc50c4e65ef4cb14a593b14c13",
+  "producer": "qualify_runtime.py",
+  "schema": "jspark3-v16-first-prompt/1",
+  "stock_profile": {
+    "ABLIT": "0",
+    "APC": "1",
+    "profile": "production-stock"
+  },
+  "verdict": "PASS"
+}
