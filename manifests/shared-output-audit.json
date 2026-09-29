@@ -8202,7 +8202,7 @@
     },
     "tools/test_release_privacy.py": {
       "disposition": "Synthetic local test output only; never release/qualification evidence. Covers real producers with private sentinels and negative controls.",
-      "sha256": "261497f6820886fca63e15920a21972a65b37903d7cb7e6236274138efb81056",
+      "sha256": "374a92677df06e346d2a28a84962023c55af615325a0f12d2b33f77e93728714",
       "sites": [
         {
           "function": "setUpClass.git",
@@ -8250,18 +8250,28 @@
           "operation": "run"
         },
         {
-          "function": "test_pending_component_candidate_refuses_final_validation",
+          "function": "test_bound_release_passes_final_validation_only_with_bound_admission",
           "line": 95,
           "operation": "run"
         },
         {
+          "function": "test_bound_release_passes_final_validation_only_with_bound_admission",
+          "line": 101,
+          "operation": "write_text"
+        },
+        {
+          "function": "test_bound_release_passes_final_validation_only_with_bound_admission",
+          "line": 102,
+          "operation": "run"
+        },
+        {
           "function": "test_export_and_checkout_still_reject_private_file_bytes_and_names",
-          "line": 111,
+          "line": 118,
           "operation": "write_text"
         },
         {
           "function": "test_export_and_checkout_still_reject_private_file_bytes_and_names",
-          "line": 122,
+          "line": 129,
           "operation": "write_bytes"
         }
       ]

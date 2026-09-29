@@ -91,9 +91,16 @@ class ReleasePrivacyTests(unittest.TestCase):
         self.assertNotIn('source export failed validation', proc.stderr)
         self.assertFalse((self.work / 'runtime').exists())
 
-    def test_pending_component_candidate_refuses_final_validation(self):
+    def test_bound_release_passes_final_validation_only_with_bound_admission(self):
         proc = subprocess.run([sys.executable, '-B', str(self.clone / 'tools/validate_release.py'),
                                str(self.clone), '--require-final'], capture_output=True, text=True)
+        self.assertEqual(proc.returncode, 0, proc.stdout)
+        self.assertIn('PASS release-manifest', proc.stdout)
+        export = self.work / 'unbound-admission'
+        shutil.copytree(self.clone, export, ignore=shutil.ignore_patterns('.git'))
+        (export / 'release/v1.8.4-admission/notes.json').write_text('{"verdict": "PASS"}\n')
+        proc = subprocess.run([sys.executable, '-B', str(export / 'tools/validate_release.py'),
+                               str(export), '--require-final'], capture_output=True, text=True)
         self.assertNotEqual(proc.returncode, 0)
         self.assertIn('FAIL release-manifest', proc.stdout)
 

@@ -261,8 +261,8 @@
       "changed": true,
       "input_sha256": "fad5c997be3187d1ce467088572677544c60652fda500ea822e89392d7f8bca2",
       "origin": "v1.8.3-shared-output-r5",
-      "public_sha256": "94b6f15b0a95217ff66f6a7e55aabc226fc09b14e261faed66dcbb9db3f47b97",
-      "revision": "v184-public-admission"
+      "public_sha256": "b53d967d4cea996c3c14ac60d0fb4571cc991b994b1f0f370bdeec453cee889a",
+      "revision": "v184-release-binding"
     },
     "manifests/stock-profile.json": {
       "changed": false,
@@ -1752,8 +1752,8 @@
       "changed": true,
       "input_sha256": "83ba59513e732814da59c1988bb5ce7409482819571c186041da9f7737181ea0",
       "origin": "v1.8.3-clone-privacy",
-      "public_sha256": "261497f6820886fca63e15920a21972a65b37903d7cb7e6236274138efb81056",
-      "revision": "v1.8.4-on-v1.8.3"
+      "public_sha256": "374a92677df06e346d2a28a84962023c55af615325a0f12d2b33f77e93728714",
+      "revision": "v184-release-binding"
     },
     "tools/test_release_tooling.py": {
       "changed": true,
