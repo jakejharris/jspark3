@@ -89,9 +89,12 @@ and [licensing guide](https://github.com/jakejharris/jspark3/blob/v1.8.4/docs/LI
 
 ## Credits
 
-JSpark3 builds on work by Z.AI, Inco AI, z-lab, Mia's AI Lab,
+JSpark3 builds on work by Brandon M. Music, who made the
+[EXL3/TR3 4-bpw checkpoint](https://huggingface.co/brandonmusic/GLM-5.3-Flash-tr3-4bpw)
+that every rank loads, and by Z.AI, Inco AI, z-lab, Mia's AI Lab,
 FlyCockpit, vcruz305, sfxnz, Tony, turboderp, coolbho3k, gabewillen,
-plotarmordev, outstandly, the vLLM project and the InstantTensor contributors.
+plotarmordev, outstandly, ratulsarna, nood-co1, knapcio, lilianmoraru,
+the vLLM project and the InstantTensor contributors.
 See [THIRD_PARTY_NOTICES.md](https://github.com/jakejharris/jspark3/blob/v1.8.4/THIRD_PARTY_NOTICES.md) for component contributions,
 source revisions and license notices.
 
