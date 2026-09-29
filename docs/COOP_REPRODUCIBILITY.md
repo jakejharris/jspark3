@@ -158,6 +158,15 @@ component-qualified candidate permits private serving; final-release validation
 also requires serving measurements and admission. The published release uses
 the completed binding, while each operator still admits their own boot.
 
+For v1.8.4 the final-source rebuild receipts are indexed in the
+[final-source rebuild summary](../release/final-rebuilds-v1.8.4.json): two
+bit-identical builds on a first machine and two on an independent second machine,
+each accepted by `build_native.py` against the release source and producing the
+pinned native. The builders are identified by GB10 GPU UUID; both share one
+machine-id from a cloned OS image. The first machine's image record is the copy
+installed in the locked prepared runtime of the measured release boot, bound by
+payload hash to its native receipt; the original on-host file was not fetched.
+
 The schema records the actual qualification image separately from operator image
 eligibility. Every operator still passes the fixed Dockerfile/InstantTensor policy
 and local image inspection. Independent eligible config digests may differ;

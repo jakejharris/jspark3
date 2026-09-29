@@ -1,0 +1,26 @@
+{
+  "builders": {
+    "first-machine": {
+      "comparison": "bit-identical",
+      "gpu_uuid_sha256": "990369341e289b8dc5b0da360eef596ae9135c03ab79ce52456e7c1f445c559e",
+      "machine_id_sha256": "8383859c16f2a14ee62645efb08f9f25723377856bfdbf47b28ac3d08fb8ceb5",
+      "runs": 2
+    },
+    "second-machine": {
+      "comparison": "bit-identical",
+      "gpu_uuid_sha256": "e50d479df1ab6239760451a2aa9c412ce49b949cb078c858ce8dfa570d5ff558",
+      "machine_id_sha256": "8383859c16f2a14ee62645efb08f9f25723377856bfdbf47b28ac3d08fb8ceb5",
+      "runs": 2
+    }
+  },
+  "component_seal_sha256": "42ea2a36ab5b9de05e7e8b1d690bd1fe7014968ec7381ac4a62516143deb05ec",
+  "evidence": {
+    "release/v1.8.4-final-rebuilds/first-machine-native-build-receipt.json": "a540d75facecb429d25f68d52b177845c1c38a0ac5e75b979bdd772fd5ab625c",
+    "release/v1.8.4-final-rebuilds/first-machine-operator-image.json": "5e977689ab5f328a8daeb6d779f53d37d49fcf4e5df670edd8d5eff1fc52195e",
+    "release/v1.8.4-final-rebuilds/second-machine-native-build-receipt.json": "881094ce488fa0fab4c7ba5b604cff1198a4affc27b69f50d3c5fc151cb4ad8b",
+    "release/v1.8.4-final-rebuilds/second-machine-operator-image.json": "d8ea628fc1c887d21340073958f24c3de7558632e443c0c82650aa91ad89c5a1"
+  },
+  "native_sha256": "3212a3b0a308e2ec3673878212fcb0504a463c5f7df84eced5db7bb301cc3c07",
+  "scope": "Final-source native rebuilds of this release recipe (source recipe inventory 81dff1ded6e3310fbca81a7167c9bdddf98d802579893588ecb9d9f0bfc1b083): two fresh bit-identical builds on a first machine and two on an independent second machine, each accepted by the release build_native.read_native_record against these source bytes and its operator image receipt. Every cooperative output equals the pinned native. The builders are identified by GB10 GPU UUID; both share one machine-id from a cloned OS image. The first machine image record is the one installed in the locked prepared runtime (prepared tree 02de30c7cca4a14ee21314ae64c1621228a167c066abe972dd093140a9b0ac8f), bound by payload hash to its native receipt; the original on-host file was not fetched. These builds are distinct from the pre-policy campaign builds indexed in QUALIFICATION.json.",
+  "status": "PASS"
+}

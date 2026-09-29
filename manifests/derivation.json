@@ -59,8 +59,8 @@
       "changed": true,
       "input_sha256": "17ad9fc5f274886f3a6243287a3431d3dbc1d77b29f20fbb26270e203d61dd08",
       "origin": "release-package-render",
-      "public_sha256": "81a0ce150bf7177df037d636b432dc1d7e260e5cd307ef32534aec5fa4ae800a",
-      "revision": "v184-test-fixtures"
+      "public_sha256": "7a5c015f7ae316772b42536ec1ca68eda4f779e3ab830702c45f665c2b89073a",
+      "revision": "v184-release-evidence"
     },
     "THIRD_PARTY_NOTICES.md": {
       "changed": true,
@@ -105,8 +105,8 @@
       "changed": true,
       "input_sha256": "803c4a240052f86f21329234b924a53133ca81237e82b41bc45a64cdda807b8c",
       "origin": "v1.8.1-operator-native",
-      "public_sha256": "d09ad42ca9bf8b9dafa2efb05de48911d46a66e65e4bd717edd91766b5e370ec",
-      "revision": "v184-release-binding"
+      "public_sha256": "c489ecf08c713cc1aa803968458bb515c05d21302f58e18883a70ad67348c797",
+      "revision": "v184-release-evidence"
     },
     "docs/INSTALL.md": {
       "changed": true,
@@ -194,8 +194,8 @@
       "changed": true,
       "input_sha256": "9830d95de98135c7d36d7ecc66e0f2fbd493a717227059317df57c1f654cbab6",
       "origin": "release-package-render",
-      "public_sha256": "ef516d702fefdf1d2c63439b7125d506d0e899c761f1ef986a76d7353d294e71",
-      "revision": "v184-release-binding"
+      "public_sha256": "2e9c68de0663761165fe6a540e3a6d3e235f02b8ab655fb088e9c11cc3a22159",
+      "revision": "v184-release-evidence"
     },
     "manifests/figure-bindings.json": {
       "changed": false,
@@ -228,8 +228,8 @@
       "changed": true,
       "input_sha256": "f968bb8ad61c217d1c955e5a6209b35cebfae065e3f1ef6d3077ed6a07f25739",
       "origin": "release-package-render",
-      "public_sha256": "2a961c4a862c0c5f33d2bd27990a11743a41b88957c548883c639f9fb37244d4",
-      "revision": "v184-test-fixtures"
+      "public_sha256": "01ae20b71fbfe38c410b869010a4dee44e419d09d0a5abb7cd5c36f7cab45fd6",
+      "revision": "v184-release-evidence"
     },
     "manifests/qualification.json": {
       "changed": false,
@@ -1495,6 +1495,13 @@
       "public_sha256": "e37aadef58067b333571bc0a6654ec1e562a83d771e1e0f8aab1f39b3efb8c6a",
       "revision": "v184-release-binding"
     },
+    "release/final-rebuilds-v1.8.4.json": {
+      "changed": false,
+      "input_sha256": "4637be15954491f71d79c373f81cd6c4b8e5568ad7a27486e09117d43460e4ca",
+      "origin": "v1.8.4-release-evidence",
+      "public_sha256": "4637be15954491f71d79c373f81cd6c4b8e5568ad7a27486e09117d43460e4ca",
+      "revision": "v184-release-evidence"
+    },
     "release/operator-cleanroom-v1.8.2.json": {
       "changed": false,
       "input_sha256": "b1dfc51397051a3cba48a5264e66d135b07ecc4a802793a28494a1b3116e7195",
@@ -1610,6 +1617,34 @@
       "input_sha256": "93adb0cd09ea391dc9e98f66a5a40fcd763e9a0e92c5ab86369ef566dacb6411",
       "origin": "v1.8.4-release-evidence",
       "public_sha256": "93adb0cd09ea391dc9e98f66a5a40fcd763e9a0e92c5ab86369ef566dacb6411",
+      "revision": "v184-release-evidence"
+    },
+    "release/v1.8.4-final-rebuilds/first-machine-native-build-receipt.json": {
+      "changed": false,
+      "input_sha256": "a540d75facecb429d25f68d52b177845c1c38a0ac5e75b979bdd772fd5ab625c",
+      "origin": "v1.8.4-release-evidence",
+      "public_sha256": "a540d75facecb429d25f68d52b177845c1c38a0ac5e75b979bdd772fd5ab625c",
+      "revision": "v184-release-evidence"
+    },
+    "release/v1.8.4-final-rebuilds/first-machine-operator-image.json": {
+      "changed": false,
+      "input_sha256": "5e977689ab5f328a8daeb6d779f53d37d49fcf4e5df670edd8d5eff1fc52195e",
+      "origin": "v1.8.4-release-evidence",
+      "public_sha256": "5e977689ab5f328a8daeb6d779f53d37d49fcf4e5df670edd8d5eff1fc52195e",
+      "revision": "v184-release-evidence"
+    },
+    "release/v1.8.4-final-rebuilds/second-machine-native-build-receipt.json": {
+      "changed": false,
+      "input_sha256": "881094ce488fa0fab4c7ba5b604cff1198a4affc27b69f50d3c5fc151cb4ad8b",
+      "origin": "v1.8.4-release-evidence",
+      "public_sha256": "881094ce488fa0fab4c7ba5b604cff1198a4affc27b69f50d3c5fc151cb4ad8b",
+      "revision": "v184-release-evidence"
+    },
+    "release/v1.8.4-final-rebuilds/second-machine-operator-image.json": {
+      "changed": false,
+      "input_sha256": "d8ea628fc1c887d21340073958f24c3de7558632e443c0c82650aa91ad89c5a1",
+      "origin": "v1.8.4-release-evidence",
+      "public_sha256": "d8ea628fc1c887d21340073958f24c3de7558632e443c0c82650aa91ad89c5a1",
       "revision": "v184-release-evidence"
     },
     "third_party/licenses/ExLlamaV3-MIT.txt": {
