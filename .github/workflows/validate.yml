@@ -18,8 +18,12 @@ jobs:
           python-version: "3.11"
       - name: Install validator dependency
         run: python3 -m pip install "pyyaml>=6"
-      - name: Validate release tree
-        run: python3 tools/validate_release.py . --report validation.json
+      # main = current-release landing pages + the frozen v1.1.0 export.
+      - name: Validate main (landing pages + frozen v1.1.0 export)
+        run: python3 tools/validate_release.py . --landing --report validation.json
+      - name: Run offline validator tests
+        if: always()
+        run: for t in tools/test_*.py; do echo "::group::$t"; python3 -B "$t" || fail=1; echo "::endgroup::"; done; exit ${fail:-0}
       - name: Upload validation report
         if: always()
         uses: actions/upload-artifact@v4

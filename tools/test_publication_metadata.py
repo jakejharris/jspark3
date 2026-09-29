@@ -16,7 +16,7 @@ ROOT = Path(__file__).resolve().parents[1]
 def check(root: Path) -> bool:
     report = release.Report()
     with contextlib.redirect_stdout(io.StringIO()):
-        release.check_release_manifest(root, report)
+        release.check_release_manifest(root, report, landing=True)
     return report.failed == 0
 
 

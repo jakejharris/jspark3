@@ -68,6 +68,21 @@ def main() -> None:
         else:
             raise AssertionError('accepted untested serving bytes')
         shutil.copyfile(ROOT / 'recipe/scripts/container_entry.sh', path)
+        # A notice fix with a refreshed manifest keeps the pin; the same edit to a
+        # serving file with a refreshed manifest does not.
+        manifest = root / 'recipe/SHA256SUMS'
+        for name, accepted in (('THIRD_PARTY_NOTICES.md', True), ('scripts/container_entry.sh', False)):
+            path = root / 'recipe' / name
+            path.write_text(path.read_text() + '\n# refreshed\n')
+            manifest.write_text(release.sums(root, root / 'recipe', {'SHA256SUMS'}))
+            try:
+                live.validate(root)
+            except ValueError:
+                assert not accepted, f'refused a notice-only edit: {name}'
+            else:
+                assert accepted, f'accepted untested serving bytes with a refreshed manifest: {name}'
+            shutil.copyfile(ROOT / 'recipe' / name, path)
+            shutil.copyfile(ROOT / 'recipe/SHA256SUMS', manifest)
         # Removing evidence cannot leave a PASS claim admitted by the full validator.
         (root / live.EVIDENCE_PATH).unlink()
         report = release.Report()
@@ -75,7 +90,7 @@ def main() -> None:
             release.check_current_claims(root, report)
         assert report.failed == 1
     print(f'PASS live evidence: accepted receipt, {len(changes)} gate/provenance mutations refused, '
-          'serving-byte drift refused, missing evidence fails current claims')
+          'serving-byte drift refused, notice-only edit accepted, missing evidence fails current claims')
 
 
 if __name__ == '__main__':
