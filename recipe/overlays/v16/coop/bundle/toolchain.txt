@@ -4,4 +4,6 @@ Built on Wed_Aug_20_01:57:39_PM_PDT_2025
 Cuda compilation tools, release 13.0, V13.0.88
 Build cuda_13.0.r13.0/compiler.36424714_0
 source_date_epoch=1789774362
-flags=-std=c++17 -O3 --use_fast_math -lineinfo --expt-relaxed-constexpr --frandom-seed jspark3-v16-coop-357fce7 -gencode arch=compute_121a\,code=sm_121a -Xcompiler=-fPIC -Xcompiler=-ffile-prefix-map=/w=. -Xcompiler=-fdebug-prefix-map=/w=. --ptxas-options=-v -I /w/out/headers 
+flags=-std=c++17 -O3 --use_fast_math -lineinfo --expt-relaxed-constexpr --cudart=shared -gencode arch=compute_121a\,code=sm_121a -Xcompiler=-fPIC -Xcompiler=-ffile-prefix-map=/w=. -Xcompiler=-fdebug-prefix-map=/w=. --ptxas-options=-v -I /w/out/headers 
+per_unit_seed=jspark3-v16-coop-357fce7-{rows32,rows64,dispatch}
+intermediates=--keep --keep-dir OUTPUT/keep/{rows32,rows64,dispatch}

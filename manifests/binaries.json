@@ -20,7 +20,7 @@
   "recipe/overlays/v16/coop/bundle/cooperative_moe.so": {
     "build_script": "recipe/overlays/v16/coop/build_repro.sh",
     "distributed": false,
-    "expected_sha256": "87706d4d25cc810e3039855a56a673317d20c7a0c6eb69cb33cd98df2f4e2470",
+    "expected_sha256": "3212a3b0a308e2ec3673878212fcb0504a463c5f7df84eced5db7bb301cc3c07",
     "sources": [
       "recipe/overlays/v16/coop/source/native/cooperative_moe.cu",
       "recipe/overlays/v16/coop/source/native/cooperative_moe_kernel.cuh",

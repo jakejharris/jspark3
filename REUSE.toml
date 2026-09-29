@@ -310,3 +310,13 @@ SPDX-License-Identifier = "Apache-2.0"
 path = ["docs/TECHNICAL-REPORT.md"]
 precedence = "aggregate"
 SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ["tools/v16/test_apc_gate.py"]
+precedence = "aggregate"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ["recipe/overlays/v16/coop/QUALIFICATION.json", "recipe/overlays/v16/coop/QUALIFICATION_SOURCE_MANIFEST.json"]
+precedence = "aggregate"
+SPDX-License-Identifier = "AGPL-3.0-only"
