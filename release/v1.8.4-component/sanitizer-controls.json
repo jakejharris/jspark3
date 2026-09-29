@@ -1,0 +1,29 @@
+{
+  "binary_sha256": "2e0e21bea77190bdc8ce468841d396c2423ebc18334b87e984a411bd5d3b67dc",
+  "controls": {
+    "legacy-clean": {
+      "exit_code": 9,
+      "launch_records": 2,
+      "reported_errors": 2
+    },
+    "memcheck-clean": {
+      "exit_code": 0,
+      "instrumented_launches": 1
+    },
+    "memcheck-oob": {
+      "errors": 2,
+      "exit_code": 9,
+      "invalid_global_write": true
+    },
+    "racecheck-clean": {
+      "exit_code": 0,
+      "instrumented_launches": 1
+    }
+  },
+  "driver": "9d7f00d548913dd797f0c40c378e8c953c6cc192801417621e1e6558d4619957",
+  "image_config": "sha256:9ea46a159c3f6556597150c7815aa97928ad776d7359bd9536f70c843e0f45cf",
+  "runner_sha256": "fcb4990977fc0802fdfac43aea1ee9d7f8c46cb322437d58ea424d17e5dd210c",
+  "sanitizer_package_sha256": "4e60c9c009bf9479295fee8174c0db5801aa57016a384b2022609373d87de00c",
+  "source_sha256": "e85467b13efb4c6a7f6ead94da24167aab4e1cb099ab351f5d104f456c3431d7",
+  "status": "PASS"
+}

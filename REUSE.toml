@@ -330,3 +330,8 @@ SPDX-License-Identifier = "Apache-2.0"
 path = ["release/coop-ab-v1.8.4.json"]
 precedence = "aggregate"
 SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ["release/component-v1.8.4.json", "release/v1.8.4-component/sanitizer-controls.json"]
+precedence = "aggregate"
+SPDX-License-Identifier = "Apache-2.0"

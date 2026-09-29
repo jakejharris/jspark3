@@ -59,8 +59,8 @@
       "changed": true,
       "input_sha256": "17ad9fc5f274886f3a6243287a3431d3dbc1d77b29f20fbb26270e203d61dd08",
       "origin": "release-package-render",
-      "public_sha256": "3934c39ec284f05712db4f56a9a2ae773eb391c5424fd1376b4c82d001a9ae0d",
-      "revision": "v184-release-binding"
+      "public_sha256": "016d4e741a1c1f78261213d6dc570a9d18b3883f79215b40f93c0a81d8325d39",
+      "revision": "v184-release-evidence"
     },
     "THIRD_PARTY_NOTICES.md": {
       "changed": true,
@@ -228,8 +228,8 @@
       "changed": true,
       "input_sha256": "f968bb8ad61c217d1c955e5a6209b35cebfae065e3f1ef6d3077ed6a07f25739",
       "origin": "release-package-render",
-      "public_sha256": "377fccaf59932bc51c862d96371483f48418e5398b4ee30e3e5960a06ab36fa7",
-      "revision": "v184-release-binding"
+      "public_sha256": "7d1763c3e63dca81444b541d0dcc7ad01f6057bc44c2a592327f68f7c61ebe32",
+      "revision": "v184-release-evidence"
     },
     "manifests/qualification.json": {
       "changed": false,
@@ -1481,6 +1481,13 @@
       "origin": "release-package-render",
       "public_sha256": "1cdae5245a48b161278136dd7b54ddf439845d68072c72c4b4bbba1cce42644e"
     },
+    "release/component-v1.8.4.json": {
+      "changed": false,
+      "input_sha256": "f956d6369211faa043f2f28a1fbe25019db67fef6060cb3cc51624c76193cdae",
+      "origin": "v1.8.4-release-evidence",
+      "public_sha256": "f956d6369211faa043f2f28a1fbe25019db67fef6060cb3cc51624c76193cdae",
+      "revision": "v184-release-evidence"
+    },
     "release/coop-ab-v1.8.4.json": {
       "changed": false,
       "input_sha256": "e37aadef58067b333571bc0a6654ec1e562a83d771e1e0f8aab1f39b3efb8c6a",
@@ -1597,6 +1604,13 @@
       "origin": "v1.8.4-public-admission",
       "public_sha256": "739e2874cb9e1bf545871be176680924c2f491fd21465cc93d7ba4c59cd3e54c",
       "revision": "v184-public-admission"
+    },
+    "release/v1.8.4-component/sanitizer-controls.json": {
+      "changed": false,
+      "input_sha256": "93adb0cd09ea391dc9e98f66a5a40fcd763e9a0e92c5ab86369ef566dacb6411",
+      "origin": "v1.8.4-release-evidence",
+      "public_sha256": "93adb0cd09ea391dc9e98f66a5a40fcd763e9a0e92c5ab86369ef566dacb6411",
+      "revision": "v184-release-evidence"
     },
     "third_party/licenses/ExLlamaV3-MIT.txt": {
       "changed": false,

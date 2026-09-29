@@ -1,0 +1,13 @@
+{
+  "component_seal_sha256": "42ea2a36ab5b9de05e7e8b1d690bd1fe7014968ec7381ac4a62516143deb05ec",
+  "evidence": {
+    "recipe/overlays/v16/coop/BUILD.json": "8ee953b627af290e4f4ad001b4d9b5e5e06b1d56dd427a389259bd0dd648c32e",
+    "recipe/overlays/v16/coop/QUALIFICATION.json": "b61da17c39b78f36efcd059251b32c88d2aa5dd2231dd03fbc4e50c8a1d02f92",
+    "release/v1.8.4-component/sanitizer-controls.json": "93adb0cd09ea391dc9e98f66a5a40fcd763e9a0e92c5ab86369ef566dacb6411",
+    "tools/v16/sanitizer_control.cu": "e85467b13efb4c6a7f6ead94da24167aab4e1cb099ab351f5d104f456c3431d7"
+  },
+  "memcheck_oob_exit_code": 9,
+  "native_sha256": "3212a3b0a308e2ec3673878212fcb0504a463c5f7df84eced5db7bb301cc3c07",
+  "scope": "Component campaign for the release-pinned native: all 54 gates in the qualification index are PASS (kinds: h1, policy, profile, sanitizer), bound to the sealed BUILD record. A separate detector control ran the shipped sanitizer_control.cu with the campaign sanitizer runner, sanitizer package and qualification image: the deliberate out-of-bounds memcheck control exited 9 with an invalid global write, and the clean memcheck and racecheck controls exited 0. Final-source rebuilds, archive/clone parity and boot admission are separate records.",
+  "status": "PASS"
+}
