@@ -57,3 +57,26 @@ and attribution, label historical coop-off results and the qualified coop-on def
 weight-download revision. Updating these live pages is a publication step;
 source edits alone do not change them. Do not re-run the historical frozen
 assembler as though it were a new v1.8.3 package.
+
+## Next point release checkpoint change
+
+The cumulative renderer patch now defaults to Brandon M. Music's checkpoint at
+`5ab363a8dcf6405955fd5f99671e01a1c9fb124b` and preserves both pinned re-hosts as
+accepted alternates. Its shared credits retain the notices audit's author names
+and Brandon's checkpoint contribution. The [prepared card](../huggingface/README.md)
+shows these changes over the v1.8.4 card; it is not a published next-release card.
+Keep the current card's presentation and version-specific measured claims when
+integrating the renderer changes. The old cumulative assembler still describes
+historical v1.8.0 measurements; do not upload its entire output over a newer card.
+
+The repository now includes version-neutral `CITATION.cff` and `CITATION.bib`,
+with the original Schedule B entry and Brandon's pinned checkpoint reference.
+They cite the project without falsely assigning this unreleased branch a release
+date or the old v1.1.0 version. Add the actual release version, date and immutable
+URL when packaging a tagged citation.
+
+The source PR is not a sealed release. Regenerate the derivation, SBOM and checksum
+inventories from the reviewed next-release source. Preserve historical results
+and qualification receipts, and obtain the required new install/admission receipts
+before making a new release claim. The card's existing upstream-tag omission is
+tracked separately from this checkpoint-source change.

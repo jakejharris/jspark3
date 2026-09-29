@@ -135,13 +135,14 @@
 +The headline cohort used production-stock with coop on; a separate v1.7.4 stock cohort used the qa test profile. Neither qualifies your fleet. This sanitized source distribution retains `hardware_qualified=false`; fresh qualification of the exact shipped configuration is required before production mode-0 admission. Measurements describe the separately identified serving configuration, not a hardware test of this source export.
 
  Thirds and active TRIAR are deferred to the next release. No TRIAR speedup is claimed. {resident}
-@@ -144,4 +161,5 @@
+@@ -144,4 +161,6 @@
  Original code and prose are Apache-2.0. Included derivatives retain AGPL-3.0-only and vendored headers retain MIT. The assembled service is not wholly Apache-2.0; per-file SPDX and REUSE records govern. The draft-model dependency retains its non-commercial research/evaluation restriction.
  """.format(resident=('The selected source retains TRIAR code resident but inactive under the NCCL graph path. Do not enable it; the startup resident flag is distinct from the runtime OFF state. The full positive inactive-path attestation and native qualification are required.' if variant == 'b' else 'This fallback has no resident TRIAR or thirds implementation enabled; optional screens are not inherited.'))
-+    engineering = "\n## What's in it\n\n\n- **A controller that checks each rank.** `fleetctl` won't start until every rank matches its receipts. It checks the image and native builds you made, all 120 checkpoint shards by hash, the RoCE triangle at MTU 9000, the GID index, and memory and no-swap limits. Once the fleet is running, `verify` checks it end to end, down to retrieving a code word from a prompt longer than 32K tokens.\n- **Three-Spark TP3 with expert parallelism,** built on FlyCockpit's TP3 recipe. TP3's head padding lives in derived runtime views, so the weights you download are never modified. MiaAI-Lab [credits JSpark3 and outstandly](https://github.com/MiaAI-Lab/GLM-5.3-Flash-EXL3-2x-DGX-Sparks/blob/f4970207e9fb2bdeac40d88b7cbef18c98aea310/README.md#3x-spark-tp3) as the route by which that recipe reached its kit.\n- **Prefix caching for coding agents.** Our LRU retention for DFlash2 drafter windows builds on MiaAI-Lab’s per-group retention to keep agent prefixes reusable. Upstream fine-grained prefix hits ([plotarmordev, MiaAI-Lab PR #251](https://github.com/MiaAI-Lab/GLM-5.3-Flash-EXL3-2x-DGX-Sparks/pull/251)) run with our replay-window fix.\n- **Warmup before admission.** GLM and DFlash2 variants compile at boot; the prefill gate warms request shapes and refuses compilation after warmup.\n- **Speculative decoding that keeps its width.** Adaptive verification selects how many DFlash2 draft tokens to verify. Grammar-constrained requests (`response_format` with `json_schema`) keep the full speculative width.\n- **A cooperative-MoE decode kernel for TP3,** adapted from MiaAI-Lab's TP2 extension (an ExLlamaV3-derived kernel) to expert-parallel ranks with up to 96 local experts. It produced the figures above; builds you make yourself leave it off for now.\n- **A release you can audit and rebuild.** Every file is hash-listed and checked by a 17-check validator, with a CycloneDX SBOM and per-file SPDX licensing. You build the serving image and native libraries on your own Spark, and the default native build is compiled twice and must match byte for byte.\n\nJSpark3 builds on work by Z.AI (GLM-5.3), Brandon M. Music (ShapleyMcg), Inco AI (DFlash2), MiaAI-Lab, FlyCockpit, turboderp (ExLlamaV3), coolbho3k, gabewillen, plotarmordev, the vLLM project and others named in [third-party notices](THIRD_PARTY_NOTICES.md). The ShapleyMcg attribution is in [REQUIRED_ATTRIBUTION.md](REQUIRED_ATTRIBUTION.md). Recipe code is Apache-2.0. A running service also loads AGPL-3.0-only components and always uses the DFlash2 draft model, which is licensed for non-commercial research and evaluation only ([licensing](docs/LICENSING.md)).\n"
++    engineering = "\n## What's in it\n\n\n- **A controller that checks each rank.** `fleetctl` won't start until every rank matches its receipts. It checks the image and native builds you made, all 120 checkpoint shards by hash, the RoCE triangle at MTU 9000, the GID index, and memory and no-swap limits. Once the fleet is running, `verify` checks it end to end, down to retrieving a code word from a prompt longer than 32K tokens.\n- **Three-Spark TP3 with expert parallelism.** TP3 head padding lives in derived runtime views, so the weights you download are never modified.\n- **Prefix caching for coding agents.** Our LRU retention for DFlash2 drafter windows builds on MiaAI-Lab’s per-group retention to keep agent prefixes reusable. Upstream fine-grained prefix hits ([plotarmordev, MiaAI-Lab PR #251](https://github.com/MiaAI-Lab/GLM-5.3-Flash-EXL3-2x-DGX-Sparks/pull/251)) run with our replay-window fix.\n- **Warmup before admission.** GLM and DFlash2 variants compile at boot; the prefill gate warms request shapes and refuses compilation after warmup.\n- **Speculative decoding that keeps its width.** Adaptive verification selects how many DFlash2 draft tokens to verify. Grammar-constrained requests (`response_format` with `json_schema`) keep the full speculative width.\n- **A cooperative-MoE decode kernel for TP3,** adapted from MiaAI-Lab's TP2 extension (an ExLlamaV3-derived kernel) to expert-parallel ranks with up to 96 local experts. It produced the figures above; builds you make yourself leave it off for now.\n- **A release you can audit and rebuild.** Every file is hash-listed and checked by a 17-check validator, with a CycloneDX SBOM and per-file SPDX licensing. You build the serving image and native libraries on your own Spark, and the default native build is compiled twice and must match byte for byte.\n\n## Credits\n\nJSpark3 builds on work by Brandon M. Music, who made the\n[EXL3/TR3 4-bpw checkpoint](https://huggingface.co/brandonmusic/GLM-5.3-Flash-tr3-4bpw/tree/5ab363a8dcf6405955fd5f99671e01a1c9fb124b)\nthat every rank loads, and by Z.AI, Inco AI, z-lab, Mia's AI Lab, FlyCockpit,\nVictor Cruz (vcruz305), turboderp, Emi Huang (coolbho3k), Gabriel Willen (gabewillen),\nplotarmordev, Ratul Sarna (ratulsarna), nood-co1, Zbigniew Majewski (knapcio),\nLilian Moraru (lilianmoraru), the vLLM project and the InstantTensor contributors.\nSee [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for component contributions,\nsource revisions and license notices.\n\nThe ShapleyMcg attribution is in [REQUIRED_ATTRIBUTION.md](REQUIRED_ATTRIBUTION.md). Recipe code is Apache-2.0. A running service also loads AGPL-3.0-only components and always uses the DFlash2 draft model, which is licensed for non-commercial research and evaluation only ([licensing](docs/LICENSING.md)).\n"
++    checkpoint = "\n## Checkpoint\n\nFresh installs default to [Brandon M. Music's EXL3/TR3 checkpoint](https://huggingface.co/brandonmusic/GLM-5.3-Flash-tr3-4bpw/tree/5ab363a8dcf6405955fd5f99671e01a1c9fb124b).\n[Mia-AiLab's pinned copy](https://huggingface.co/Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw/tree/25a44fdbf16862a46b7cc9921142c6c81350af2f) and\n[the pinned JSpark3 mirror](https://huggingface.co/jakejharris/jspark3/tree/e7c34dba923916754cfcb0bdf6c2c75a9b7ff1fc)\nremain accepted byte-identical weight re-hosts. Existing copies need no re-download.\nKeep the full revision pins and compatibility directory in the install guide.\nThe selected source retains ShapleyMcg License v1.0; later revisions change the license.\n"
      changes = """Changes since v1.1.0 include finer prefix reuse and retained replay windows, decode-floor scheduling and aligned prefill chunks, compact drafter KV, optional display-reserve KV, batched/cooperative MoE paths, adaptive draft width, optional dense-trunk FP8, the stock production profile, and grammar/termination fixes. These are source changes; the tables do not assign a speedup to an unmeasured feature.
 
-@@ -153,9 +171,6 @@
+@@ -153,9 +172,6 @@
      notes += f'\nRead [installation]({url}/blob/{ref}/docs/INSTALL.md), [operations]({url}/blob/{ref}/docs/OPERATIONS.md), [limitations]({url}/blob/{ref}/docs/LIMITATIONS.md), and [licensing]({url}/blob/{ref}/docs/LICENSING.md). Source archive, SBOM and checksums accompany this release.\n'
      readme = f'# JSpark3 {tag}\n\n{headline}{headline_label}\n\n{comparison}{headline_ranges}\nA serving recipe for GLM-5.3 Flash on three DGX Sparks.\n\n'+posture+f'\nRead [installation](docs/INSTALL.md), [operations](docs/OPERATIONS.md), [benchmarks](docs/BENCHMARKS.md), [release notes](release/RELEASE-NOTES.md) and [licensing](docs/LICENSING.md). Verify the source with `python3 -B tools/validate_release.py .`.\n'
 -    card = f'''---
@@ -152,7 +153,7 @@
 -library_name: transformers
  pipeline_tag: image-text-to-text
  language:
-@@ -170,5 +185,13 @@
+@@ -170,5 +186,11 @@
  # JSpark3 {tag}
 
 +License metadata covers the mirrored weights (ShapleyMcg v1.0). Recipe code:
@@ -162,11 +163,9 @@
  {headline}{headline_label}
 +
 +These frozen headline measurements used coop on; operator builds use coop off.
-+Download serving weights from Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw at
-+25a44fdbf16862a46b7cc9921142c6c81350af2f; card edits can change this mirror's ledger.
 
  {comparison}{headline_ranges}
-@@ -177,8 +200,13 @@
+@@ -177,8 +199,13 @@
  {posture}
 
 -The card's Apache-2.0 metadata follows the publication policy. It is not a relicensing of the model files or the assembled service. Existing model license and attribution documents continue to apply.
@@ -176,9 +175,9 @@
  '''
 +    for relative in ('THIRD_PARTY_NOTICES.md', 'REQUIRED_ATTRIBUTION.md', 'docs/LICENSING.md'):
 +        engineering = engineering.replace('](' + relative + ')', '](' + url + '/blob/' + ref + '/' + relative + ')')
-+    readme += engineering
-+    notes += engineering
-+    card += engineering
++    readme += checkpoint + engineering
++    notes += checkpoint + engineering
++    card += checkpoint + engineering
      return {'README.md': readme, 'release/RELEASE-NOTES.md': notes,
              'CHANGELOG.md': f'# JSpark3 {tag}\n\n'+changes+'\n'+posture,
 --- a/tools/package.py

@@ -71,6 +71,12 @@ and the [v1.8.4 measurement record](release/results-v1.8.4.json).
 
 **Weights.** The default is GLM-5.3 Flash with EXL3 quantization, unedited (`ABLIT=0`), using `production-stock`. The routed experts are 4-bit (EXL3/TR3 checkpoint), and "stock" means unedited, not full precision. At load time the dense trunk uses INT8 weights and the default trunk FP8 path; the KV cache is FP8. Edited weights (`ABLIT=1`) are an explicit opt-in supplied separately; no edited checkpoint is redistributed. Changing modes requires a service restart and recomputes conversation prefixes.
 
+Fresh installs in the next point release default to [Brandon M. Music's pinned
+checkpoint](https://huggingface.co/brandonmusic/GLM-5.3-Flash-tr3-4bpw/tree/5ab363a8dcf6405955fd5f99671e01a1c9fb124b).
+The pinned Mia-AiLab copy and JSpark3 mirror remain accepted without a re-download.
+See [checkpoint provenance](docs/CHECKPOINT.md) for pins and verification scope.
+This unreleased change has offline checks only; the measurements above are unchanged.
+
 ## What's in it
 
 - **A controller that checks each rank.** `fleetctl` won't start until every rank matches its receipts. It checks the image and native builds you made, all 120 checkpoint shards by hash, the RoCE triangle at MTU 9000, the GID index, and memory and no-swap limits. Once the fleet is running, `verify` checks it end to end, down to retrieving a code word from a prompt longer than 32K tokens.

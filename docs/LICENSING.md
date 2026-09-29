@@ -24,9 +24,12 @@ Obtain those separately under their own terms. The controller always uses the DF
 licenses it under CC BY-NC-ND 4.0 for non-commercial research/evaluation;
 commercial licensing requires separate permission from Inco AI. The recipe's
 Apache-2.0 license does not remove that required dependency's restrictions.
-The target checkpoint, Brandon M. Music's EXL3/TR3 quant fetched from Mia-AiLab's
-byte-identical re-host, retains the [ShapleyMcg License v1.0](https://huggingface.co/brandonmusic/GLM-5.3-Flash-tr3-4bpw/blob/5ab363a8dcf6405955fd5f99671e01a1c9fb124b/LICENSE),
+The target checkpoint, Brandon M. Music's EXL3/TR3 quant downloaded from his
+repository at `5ab363a8dcf6405955fd5f99671e01a1c9fb124b` by default, retains the [ShapleyMcg License v1.0](https://huggingface.co/brandonmusic/GLM-5.3-Flash-tr3-4bpw/blob/5ab363a8dcf6405955fd5f99671e01a1c9fb124b/LICENSE),
 including attribution and its named exclusion. Preserve the
-[required ShapleyMcg attribution](../REQUIRED_ATTRIBUTION.md). InstantTensor's
+[required ShapleyMcg attribution](../REQUIRED_ATTRIBUTION.md). The accepted
+Mia-AiLab and JSpark3 mirror pins carry the same license bytes. The pin is
+intentional: later upstream revisions use a different license. See
+[checkpoint provenance](CHECKPOINT.md). InstantTensor's
 native module has additional linked-library obligations; neither that module
 nor the serving image is redistributed here.

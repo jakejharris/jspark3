@@ -1,5 +1,8 @@
 # Install JSpark3 v1.8.4
 
+The checkpoint-source changes in this branch are for the next point release.
+The v1.8.4 release assets retain their original download instructions.
+
 JSpark3 serves GLM-5.3 Flash with EXL3/TR3 quantization across three DGX Sparks.
 The target's routed experts use 4 bits per weight; "stock" means unedited
 (`ABLIT=0`), not full precision. The default is `production-stock`, coop on,
@@ -138,17 +141,24 @@ for example `rsync -a "$JSPARK_RUNTIME/recipe/" HOST:/srv/jspark3-recipe-v1.8.4/
 Create the model, Fly parent and work directories as operator-writable paths
 before the next commands. Do not merge the recipe into an old installation.
 
-Run the following on **each Spark**. Set these paths to the same values used in
+For a fresh install, run the following on **each Spark**. Set these paths to the same values used in
 `operator.env`. Install the [HF CLI](https://huggingface.co/docs/huggingface_hub/guides/cli#install-with-pip)
 in a virtual environment outside the source and recipe, if needed.
+
+The target download defaults to Brandon M. Music's original checkpoint. The
+`Mia-AiLab--...-25a44fdb` local directory below is a compatibility path used by
+preflight and container mounts, not the source repository. Keep that name for
+all accepted snapshots. If it already contains either accepted alternate below,
+skip the target `hf download` command and reuse its existing runtime view. Do
+not merge a different snapshot into a populated directory.
 
 ```sh
 export JSPARK_MODEL_ROOT=/srv/models
 export JSPARK_FLY_ROOT=/srv/sources/FlyCockpit-GLM-5.3-Flash-EXL3-3x-DGX-Sparks
 export JSPARK_RECIPE_ROOT=/srv/jspark3-recipe-v1.8.4
 export HF_HUB_DISABLE_XET=1
-hf download Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw \
-  --revision 25a44fdbf16862a46b7cc9921142c6c81350af2f \
+hf download brandonmusic/GLM-5.3-Flash-tr3-4bpw \
+  --revision 5ab363a8dcf6405955fd5f99671e01a1c9fb124b \
   --local-dir "$JSPARK_MODEL_ROOT/Mia-AiLab--GLM-5.3-Flash-EXL3-TR3-4bpw-25a44fdb"
 hf download incoai/GLM-5.3-Flash-DFlash2 \
   --revision dc77ff1c99eeb2df044ee3d4f0094eb033fee410 \
@@ -173,8 +183,25 @@ Every rank needs the complete checkpoint as real files; the validator hashes
 all 120 target shards. Runtime views are sibling directories of relative
 symlinks plus derived configs (target heads 64→66; draft heads 32/8→36/9).
 Do not edit the downloads. Success includes `"serving_checkpoint_pass": true`.
-Use the pinned Mia-AiLab revision above: the current JSpark3 HF mirror's ledger
-can differ after card edits even when its weight shards are unchanged.
+The accepted target snapshots are:
+
+| Role | Repository | Immutable revision |
+|---|---|---|
+| Default | `brandonmusic/GLM-5.3-Flash-tr3-4bpw` | `5ab363a8dcf6405955fd5f99671e01a1c9fb124b` |
+| Alternate | `Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw` | `25a44fdbf16862a46b7cc9921142c6c81350af2f` |
+| Alternate | `jakejharris/jspark3` | `e7c34dba923916754cfcb0bdf6c2c75a9b7ff1fc` |
+
+To download an alternate into an empty target directory, substitute its repository
+and full revision in the target command above; keep the same `--local-dir`.
+Existing copies of these pinned alternates need no re-download. All three have
+the same serving weights and ledger. Brandon's pin also includes all 192
+publication files omitted by the mirrors. The validator accepts those exact
+layouts, checks each present ledger entry and pins the replacement README and
+LICENSE bytes. The upstream ledger remains stale for those last two files;
+`publication_ledger_complete` remains false. See [checkpoint provenance](CHECKPOINT.md).
+
+Keep the full revision pin. Later source revisions change the license, and later
+mirror cards may differ even when their weight shards are unchanged.
 
 ## 5. Select display configuration and isolate the endpoint
 

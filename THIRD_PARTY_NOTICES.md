@@ -4,8 +4,9 @@ This work includes or was produced using ShapleyMcg, created by Brandon M. Music
 
 The recipe references, but does not redistribute, Z.AI GLM-5.3;
 Brandon M. Music's ShapleyMcg EXL3/TR3 quant (`brandonmusic/GLM-5.3-Flash-tr3-4bpw`
-revision `5ab363a8dcf6405955fd5f99671e01a1c9fb124b`), fetched from Mia-AiLab's
-byte-identical re-host; Inco AI DFlash2 and `z-lab/dflash`; vLLM (Apache-2.0);
+revision `5ab363a8dcf6405955fd5f99671e01a1c9fb124b`), downloaded from his repository by default;
+Mia-AiLab's copy and the JSpark3 mirror remain accepted byte-identical weight
+re-hosts; Inco AI DFlash2 and `z-lab/dflash`; vLLM (Apache-2.0);
 exllamav3; MiaAI-Lab's image/recipe and its qualification helper at revision
 `2fb09425ab644f30c6b61fe3da2d567b99b36464`; and FlyCockpit revision
 `9093765c757bd1976372196e44af84a67cf86bad`. Review every upstream license.
