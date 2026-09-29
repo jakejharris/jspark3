@@ -8,6 +8,8 @@ from pathlib import Path
 import statistics
 
 EVIDENCE_PATH = 'results/evidence/candidate/cadence-v11/LIVE-VERIFY.json'
+# Recipe legal text: it never executes, so it is outside the live-tested byte pin.
+NOTICE_FILES = ('LICENSE', 'THIRD_PARTY_NOTICES.md', 'REQUIRED_ATTRIBUTION.md')
 
 
 def validate(root: Path) -> dict:
@@ -63,12 +65,16 @@ def validate(root: Path) -> dict:
     require(digest(candidate_bytes) == receipt['candidate_recipe_manifest_sha256'] ==
             '32784962571dfaa21634d8d290b011b3bbbe36ac8bdeaae0ceff5bd38fed7627',
             'candidate recipe binding drift')
-    require(digest(verifier_bytes) == receipt['verifier_recipe_manifest_sha256'] ==
+    candidate, verifier = sums(candidate_bytes), sums(verifier_bytes)
+    # Legal text never executes: a notice fix may change these rows. Every other row
+    # must still rebuild the exact live-tested manifest, byte for byte.
+    tested = ''.join(f'{candidate[name] if name in NOTICE_FILES else value}  {name}\n'
+                     for value, name in (line.split('  ', 1) for line in verifier_bytes.decode().splitlines()))
+    require(digest(tested.encode()) == receipt['verifier_recipe_manifest_sha256'] ==
             'afd1fca1f58bcece36a441e2479bc41f39504fcc0c4cad45ae9905e629e62a43',
             'package recipe differs from the live-tested host verifier recipe')
-    candidate, verifier = sums(candidate_bytes), sums(verifier_bytes)
     require(candidate.keys() == verifier.keys(), 'recipe inventory drift')
-    require([name for name in candidate if candidate[name] != verifier[name]] ==
+    require([name for name in candidate if candidate[name] != verifier[name] and name not in NOTICE_FILES] ==
             provenance['changed_recipe_files'] == ['scripts/fleetctl.py'],
             'candidate/package recipe delta exceeds the verifier controller')
     for name, expected in verifier.items():

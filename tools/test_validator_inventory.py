@@ -16,7 +16,7 @@ def main() -> None:
     env = dict(os.environ)
     env.pop('PYTHONDONTWRITEBYTECODE', None)
     env.pop('PYTHONPYCACHEPREFIX', None)
-    command = ['python3', 'tools/validate_release.py', '.', '--report', 'validation.json']
+    command = ['python3', 'tools/validate_release.py', '.', '--report', 'validation.json', '--landing']
     with tempfile.TemporaryDirectory() as raw:
         for supplied_cache in (False, True):
             root = Path(raw) / ('stale' if supplied_cache else 'clean')

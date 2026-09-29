@@ -34,7 +34,7 @@ import xml.dom.minidom
 # Validation must not create the compiled caches that inventory rejects.
 # Set this before importing local helpers; pre-existing caches remain forbidden.
 sys.dont_write_bytecode = True
-from validate_live_evidence import EVIDENCE_PATH, validate as validate_live_evidence
+from validate_live_evidence import EVIDENCE_PATH, NOTICE_FILES, validate as validate_live_evidence
 from validate_c4_followup import validate as validate_c4_followup
 
 SKIP_DIRS = {".git", "dist", "__pycache__", ".pytest_cache"}
@@ -143,6 +143,12 @@ CURRENT_VERSION = "1.1.0"
 CURRENT_STATUS = "v1.1.0-released"
 CURRENT_DATE = "2026-09-07"
 CURRENT_URL = "https://github.com/jakejharris/jspark3/releases/tag/v1.1.0"
+
+# On main, these two files are the landing page and Hub card for the newest release
+# (v1.8.x, validated on its own tag). The rest of main is the frozen v1.1.0 export.
+# `--landing` scopes the v1.1-specific content checks away from these two files only;
+# privacy, owner, links, syntax, checksums and the verbatim attribution still apply.
+LANDING_PAGES = ("README.md", "huggingface/README.md")
 
 # Public prose whose numbers must reconcile with results.json or the structural allowlist.
 PROSE = [
@@ -481,7 +487,7 @@ def constant(text: str, name: str) -> str | None:
     return match.group(1) if match else None
 
 
-def check_identity(root: Path, report: Report) -> None:
+def check_identity(root: Path, report: Report, landing: bool = False) -> None:
     deps = json.loads((root / "manifests/dependencies.json").read_text(encoding="utf-8"))
     image = deps["container_image"]
     reference, digest, config = image["reference"], image["manifest_digest"], image["config_digest"]
@@ -570,6 +576,8 @@ def check_identity(root: Path, report: Report) -> None:
     expect(sha256(root / "recipe/modules/zzz_b45.pth") == cadence_contract["import_owner"]["sha256"],
            "cadence import-owner hash drift")
     for name in ("README.md", "docs/INSTALL.md", "docs/TECHNICAL-REPORT.md", "huggingface/README.md"):
+        if landing and name in LANDING_PAGES:
+            continue
         text = (root / name).read_text(encoding="utf-8")
         expect(target["revision"] in text, f"{name} lacks the target revision")
         expect(draft["revision"] in text, f"{name} lacks the draft revision")
@@ -589,6 +597,8 @@ def check_identity(root: Path, report: Report) -> None:
            derivation["patched_base_loader"]["public_after_sha256"] == overlay["base_loader_after_sha256"],
            "derivation.json hashes differ from profile")
     for entry_row in derivation["files"]:
+        if entry_row["public"] in NOTICE_FILES:
+            continue  # legal text; bound to the root copies by license-copies
         path = root / "recipe" / entry_row["public"]
         expect(path.is_file() and sha256(path) == entry_row["public_sha256"], f"derivation record stale: {entry_row['public']}")
     if problems:
@@ -625,7 +635,7 @@ def check_copies(root: Path, report: Report) -> None:
         report.ok("license-copies", "license set byte-identical; attribution present verbatim")
 
 
-def check_hf_card(root: Path, report: Report) -> None:
+def check_hf_card(root: Path, report: Report, landing: bool = False) -> None:
     import yaml  # type: ignore
     text = (root / "huggingface/README.md").read_text(encoding="utf-8")
     problems = []
@@ -653,8 +663,11 @@ def check_hf_card(root: Path, report: Report) -> None:
         if "tags" not in meta or not isinstance(meta["tags"], list):
             problems.append("tags missing")
         else:
-            missing = [tag for tag in ("shapleymcg", "glm", "exl3", "tr3", "vllm", "quantized")
-                       if tag not in meta["tags"]]
+            # The landing card keeps the attribution and checkpoint tags; the v1.1 card
+            # also carried descriptive tags that the published Hub card has since dropped.
+            required = ("shapleymcg", "glm", "exl3") if landing else \
+                ("shapleymcg", "glm", "exl3", "tr3", "vllm", "quantized")
+            missing = [tag for tag in required if tag not in meta["tags"]]
             if missing:
                 problems.append("card drops upstream tags: " + ", ".join(missing))
     if problems:
@@ -827,7 +840,7 @@ def check_weights_mirror(root: Path, report: Report) -> None:
                   f"exact receipt and public main {HF_MAIN_REVISION} verified")
 
 
-def check_release_manifest(root: Path, report: Report) -> None:
+def check_release_manifest(root: Path, report: Report, landing: bool = False) -> None:
     release = json.loads((root / "manifests/release.json").read_text(encoding="utf-8"))
     problems = []
     expected = {"github": "https://github.com/jakejharris/jspark3",
@@ -893,6 +906,8 @@ def check_release_manifest(root: Path, report: Report) -> None:
     # The terminal v1.0.0 URL and date are the frozen historical record and must
     # remain present in the terminal documents.
     for relative in terminal_docs:
+        if landing and relative in LANDING_PAGES:
+            continue
         text = (root / relative).read_text(encoding="utf-8")
         if RELEASE_URL not in text:
             problems.append(f"{relative} lacks the terminal v1.0.0 release URL")
@@ -1253,7 +1268,8 @@ def check_current_claims(root: Path, report: Report) -> dict:
     return claims
 
 
-def check_claims(root: Path, results: dict, current: dict, report: Report, followup: dict | None = None) -> None:
+def check_claims(root: Path, results: dict, current: dict, report: Report, followup: dict | None = None,
+                 landing: bool = False) -> None:
     followup = followup or {}
     allowed = set(results["display"].values()) | set(current.get("display", {}).values()) | STRUCTURAL_NUMBERS
     allowed |= set(followup.get("display", {}).values())
@@ -1273,7 +1289,7 @@ def check_claims(root: Path, results: dict, current: dict, report: Report, follo
     units = 0
     for name in PROSE:
         path = root / name
-        if not path.is_file():
+        if (landing and name in LANDING_PAGES) or not path.is_file():
             continue
         text = path.read_text(encoding="utf-8")
         text = re.sub(r"\b\d{1,3}(?:\.\d{1,3}){3}(?:/\d{1,2})?\b", " ", text)          # addresses
@@ -1372,7 +1388,10 @@ def check_sums(root: Path, report: Report, write: bool) -> None:
         if write:
             manifest.write_text(expected, encoding="utf-8")
         elif not manifest.is_file() or manifest.read_text(encoding="utf-8") != expected:
-            problems.append(f"{manifest.relative_to(root).as_posix()} is stale (run with --write-sums)")
+            recorded = set(manifest.read_text(encoding="utf-8").splitlines()) if manifest.is_file() else set()
+            stale = sorted(line.split("  ", 1)[1] for line in set(expected.splitlines()) - recorded)
+            problems.append(f"{manifest.relative_to(root).as_posix()} is stale for {', '.join(stale[:8]) or 'extra or malformed rows'} "
+                            "(run with --write-sums)")
     if problems:
         report.fail("sha256sums", "; ".join(problems))
     else:
@@ -1409,6 +1428,9 @@ def main() -> int:
     parser.add_argument("root", type=Path, nargs="?", default=Path("."))
     parser.add_argument("--report", type=Path)
     parser.add_argument("--write-sums", action="store_true", help="regenerate recipe/SHA256SUMS and SHA256SUMS")
+    parser.add_argument("--landing", action="store_true",
+                        help="main branch: README.md and huggingface/README.md are the current-release landing "
+                             "pages, not v1.1.0 release prose")
     args = parser.parse_args()
     root = args.root.resolve()
     report = Report()
@@ -1419,13 +1441,13 @@ def main() -> int:
     check_syntax(root, files, report)
     check_links(root, files, report)
     try:
-        check_identity(root, report)
+        check_identity(root, report, args.landing)
     except Exception as exc:  # noqa: BLE001
         report.fail("identity-contracts", f"{type(exc).__name__}: {exc}")
     try:
         check_copies(root, report)
-        check_hf_card(root, report)
-        check_release_manifest(root, report)
+        check_hf_card(root, report, args.landing)
+        check_release_manifest(root, report, args.landing)
         check_weights_mirror(root, report)
         results = check_results(root, report)
         current = check_current_claims(root, report)
@@ -1435,7 +1457,7 @@ def main() -> int:
             report.ok("c4-followup", "hash-bound original and instrumented receipts; separate three-wave medians recomputed")
         except Exception as exc:
             report.fail("c4-followup", f"{type(exc).__name__}: {exc}")
-        check_claims(root, results, current, report, followup)
+        check_claims(root, results, current, report, followup, args.landing)
         check_sbom(root, report)
     except Exception as exc:  # noqa: BLE001
         report.fail("release-shape", f"{type(exc).__name__}: {exc}")
