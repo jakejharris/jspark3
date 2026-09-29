@@ -6,10 +6,8 @@ The recipe references, but does not redistribute, Z.AI GLM-5.3;
 Brandon M. Music's ShapleyMcg EXL3/TR3 quant (`brandonmusic/GLM-5.3-Flash-tr3-4bpw`
 revision `5ab363a8dcf6405955fd5f99671e01a1c9fb124b`), fetched from Mia-AiLab's
 byte-identical re-host; Inco AI DFlash2 and `z-lab/dflash`; vLLM (Apache-2.0);
-exllamav3; MiaAI-Lab's image/recipe; FlyCockpit revision
-`9093765c757bd1976372196e44af84a67cf86bad`; sfxnz revision
-`f59cb7cc41c3ee32146782900d87133f538b5d30`; and Tony scheduler context
-`3eef46632c45ffb6c397de0716c23b3d2d594798`. Review every upstream license.
+exllamav3; MiaAI-Lab's image/recipe; and FlyCockpit revision
+`9093765c757bd1976372196e44af84a67cf86bad`. Review every upstream license.
 
 The DFlash2 checkpoint declares CC BY-NC-ND 4.0 and research/evaluation use.
 The default DFlash2 path is non-commercial research/evaluation only;

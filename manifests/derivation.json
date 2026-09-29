@@ -25,10 +25,11 @@
       "public_sha256": "61cac2a6a6c47b4c1880af6c69845a9c41e54e3b091745616f0bfeddbf8f8d62"
     },
     {
-      "changed_lines": 0,
+      "changed_lines": 39,
       "measured_sha256": "3a72a3716e923fb993aa567eb7c24cec86a0635e969768b45271a5c85933a414",
       "public": "THIRD_PARTY_NOTICES.md",
-      "public_sha256": "3a72a3716e923fb993aa567eb7c24cec86a0635e969768b45271a5c85933a414"
+      "public_sha256": "23499bd2d4108c01f0309e4fa0514bdfb68f94f19eb7e1230ed5e5594d1cae32",
+      "changed_lines_scope": "legal-notice text only after v1.1.0: checkpoint credit wording, lineage-only references removed and vcruz305's MIT notice reproduced; not read or executed by the recipe"
     },
     {
       "changed_lines": 15,
