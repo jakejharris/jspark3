@@ -1,0 +1,24 @@
+{
+  "component_seal_sha256": "42ea2a36ab5b9de05e7e8b1d690bd1fe7014968ec7381ac4a62516143deb05ec",
+  "covers_commit": "69a45d8802602692a599a3763f24c05641dd0949",
+  "evidence": {
+    "release/v1.8.4-archive-clone/parity.json": "a6ec76ab983f8bb267cf36a22b0e6ada45b0f1f7c02076660bd2b34505e49023"
+  },
+  "final_commit_may_differ_only_in": [
+    "README.md",
+    "REUSE.toml",
+    "SHA256SUMS",
+    "manifests/derivation.json",
+    "manifests/docs-inputs.json",
+    "manifests/license-review.json",
+    "release/RELEASE-NOTES.md",
+    "release/archive-clone-v1.8.4.json",
+    "release/v1.8.4-archive-clone/parity.json"
+  ],
+  "native_sha256": "3212a3b0a308e2ec3673878212fcb0504a463c5f7df84eced5db7bb301cc3c07",
+  "not_run_offline": {
+    "docker_operator_image_verification": "inspects the built operator image on the serving host"
+  },
+  "scope": "A git archive export and an ordinary clone of commit 69a45d8802602692a599a3763f24c05641dd0949 are byte-identical (312 files). On both paths the root and recipe checksum inventories verify, validate_release.py --require-final passes, default coop-on preparation with the qualified native bytes and operator receipts succeeds with a prepared recipe identical to the qualified runtime (02de30c7cca4a14ee21314ae64c1621228a167c066abe972dd093140a9b0ac8f), and recipe-only preflight passes. Docker verification of the local operator image was not run offline, because it inspects the built operator image on the serving host. All 99 tools and 52 tools/v16 unit tests, including the component and admission tests, pass on both paths. The release commit adds only the rendered README and release notes, this summary and its record, and refreshed inventories.",
+  "status": "PASS"
+}

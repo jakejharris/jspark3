@@ -1,0 +1,181 @@
+{
+  "commit": "69a45d8802602692a599a3763f24c05641dd0949",
+  "inputs": {
+    "native_sha256": "3212a3b0a308e2ec3673878212fcb0504a463c5f7df84eced5db7bb301cc3c07",
+    "operator_image_receipt_sha256": "5e977689ab5f328a8daeb6d779f53d37d49fcf4e5df670edd8d5eff1fc52195e",
+    "operator_native_receipt_sha256": "b6431ed6e13b76ffd19cd2e957f579ba51afc3c774ed68e2bbb585c2f1b3a00f"
+  },
+  "not_run": [
+    "Docker verification of the local operator image during preparation (needs the image on a Spark)",
+    "Image build, native build and image-only preflight on hardware"
+  ],
+  "paths": {
+    "archive": "git archive of the commit, extracted",
+    "clone": "git clone of a bundle of the release branch at the commit"
+  },
+  "prepared_tree_matches_qualified_lock": true,
+  "qualified_prepared_tree_sha256": "02de30c7cca4a14ee21314ae64c1621228a167c066abe972dd093140a9b0ac8f",
+  "results": {
+    "archive": {
+      "prepare_default_coop_on": {
+        "docker_image_verification": "not run offline (needs the operator image on a Spark)",
+        "env_coop": [
+          "JSPARK3_V16_COOP=1"
+        ],
+        "env_sha256": "7eb94841ded50183d538c1ff8d933814ec425928a49a40e91c7f8067da9c1f6a",
+        "exit_code": 0,
+        "prepared_files": 191,
+        "prepared_recipe_manifest_sha256": "39bdad2524f9289c854723d0f48ce4cf095f005fd15191d8a9a281485fddcb8e",
+        "prepared_tree_sha256": "02de30c7cca4a14ee21314ae64c1621228a167c066abe972dd093140a9b0ac8f",
+        "recipe_only_preflight_exit_code": 0,
+        "runtime_receipt": {
+          "binary_sha256": {
+            "recipe/overlays/v14/display_kv/display_kv_probe": "71490ff43e9122288665f6862d2ff298a1c1cafbe445b9501cf8fac22172836f",
+            "recipe/overlays/v14/display_kv/libglm53_display_kv.so": "75eed665b248fd6e3467165a834d3d30d75face910a7bfa7aa3332bb60dc77f4",
+            "recipe/overlays/v16/coop/bundle/cooperative_moe.so": "3212a3b0a308e2ec3673878212fcb0504a463c5f7df84eced5db7bb301cc3c07"
+          },
+          "component_qualification": {
+            "component_seal_sha256": "42ea2a36ab5b9de05e7e8b1d690bd1fe7014968ec7381ac4a62516143deb05ec",
+            "gate_index_sha256": "b61da17c39b78f36efcd059251b32c88d2aa5dd2231dd03fbc4e50c8a1d02f92",
+            "native_sha256": "3212a3b0a308e2ec3673878212fcb0504a463c5f7df84eced5db7bb301cc3c07",
+            "policy_sha256": "3623acda4ea998cb53dbeb24c7ac815240a393a31d2e56997df2ce5291bc316b"
+          },
+          "coop_hardware_seal_required": false,
+          "hardware_qualified": false,
+          "operator_image_receipt_sha256": "5e977689ab5f328a8daeb6d779f53d37d49fcf4e5df670edd8d5eff1fc52195e",
+          "operator_native_receipt_sha256": "b6431ed6e13b76ffd19cd2e957f579ba51afc3c774ed68e2bbb585c2f1b3a00f",
+          "recipe_manifest_sha256": "39bdad2524f9289c854723d0f48ce4cf095f005fd15191d8a9a281485fddcb8e",
+          "source_tree_sha256": "5c4e25b206d963a7a4d2eeb7c86250fc196d0678d0f8ce6ea95f9c607aa7da73"
+        }
+      },
+      "sha256sum_recipe": {
+        "exit_code": 0,
+        "files": 185
+      },
+      "sha256sum_root": {
+        "exit_code": 0,
+        "files": 311
+      },
+      "tests_tools": {
+        "exit_code": 0,
+        "failed": [],
+        "ran": 99,
+        "skipped": 2
+      },
+      "tests_v16": {
+        "exit_code": 0,
+        "failed": [],
+        "ran": 52,
+        "skipped": 2
+      },
+      "validate_require_final": {
+        "checks": {
+          "binary-provenance": "PASS",
+          "derivation": "PASS",
+          "identity-contracts": "PASS",
+          "inventory": "PASS",
+          "license-copies": "PASS",
+          "license-review-inventory": "PASS",
+          "lifecycle-dry-runs": "PASS",
+          "markdown-links": "PASS",
+          "offline-composition": "PASS",
+          "owner-identity": "PASS",
+          "privacy-scan": "PASS",
+          "release-manifest": "PASS",
+          "required-files": "PASS",
+          "sbom": "PASS",
+          "sha256sums": "PASS",
+          "shared-output-audit": "PASS",
+          "syntax": "PASS",
+          "toggle-defaults": "PASS"
+        },
+        "exit_code": 0,
+        "verdict": "PASS"
+      }
+    },
+    "clone": {
+      "prepare_default_coop_on": {
+        "docker_image_verification": "not run offline (needs the operator image on a Spark)",
+        "env_coop": [
+          "JSPARK3_V16_COOP=1"
+        ],
+        "env_sha256": "7eb94841ded50183d538c1ff8d933814ec425928a49a40e91c7f8067da9c1f6a",
+        "exit_code": 0,
+        "prepared_files": 191,
+        "prepared_recipe_manifest_sha256": "39bdad2524f9289c854723d0f48ce4cf095f005fd15191d8a9a281485fddcb8e",
+        "prepared_tree_sha256": "02de30c7cca4a14ee21314ae64c1621228a167c066abe972dd093140a9b0ac8f",
+        "recipe_only_preflight_exit_code": 0,
+        "runtime_receipt": {
+          "binary_sha256": {
+            "recipe/overlays/v14/display_kv/display_kv_probe": "71490ff43e9122288665f6862d2ff298a1c1cafbe445b9501cf8fac22172836f",
+            "recipe/overlays/v14/display_kv/libglm53_display_kv.so": "75eed665b248fd6e3467165a834d3d30d75face910a7bfa7aa3332bb60dc77f4",
+            "recipe/overlays/v16/coop/bundle/cooperative_moe.so": "3212a3b0a308e2ec3673878212fcb0504a463c5f7df84eced5db7bb301cc3c07"
+          },
+          "component_qualification": {
+            "component_seal_sha256": "42ea2a36ab5b9de05e7e8b1d690bd1fe7014968ec7381ac4a62516143deb05ec",
+            "gate_index_sha256": "b61da17c39b78f36efcd059251b32c88d2aa5dd2231dd03fbc4e50c8a1d02f92",
+            "native_sha256": "3212a3b0a308e2ec3673878212fcb0504a463c5f7df84eced5db7bb301cc3c07",
+            "policy_sha256": "3623acda4ea998cb53dbeb24c7ac815240a393a31d2e56997df2ce5291bc316b"
+          },
+          "coop_hardware_seal_required": false,
+          "hardware_qualified": false,
+          "operator_image_receipt_sha256": "5e977689ab5f328a8daeb6d779f53d37d49fcf4e5df670edd8d5eff1fc52195e",
+          "operator_native_receipt_sha256": "b6431ed6e13b76ffd19cd2e957f579ba51afc3c774ed68e2bbb585c2f1b3a00f",
+          "recipe_manifest_sha256": "39bdad2524f9289c854723d0f48ce4cf095f005fd15191d8a9a281485fddcb8e",
+          "source_tree_sha256": "5c4e25b206d963a7a4d2eeb7c86250fc196d0678d0f8ce6ea95f9c607aa7da73"
+        }
+      },
+      "sha256sum_recipe": {
+        "exit_code": 0,
+        "files": 185
+      },
+      "sha256sum_root": {
+        "exit_code": 0,
+        "files": 311
+      },
+      "tests_tools": {
+        "exit_code": 0,
+        "failed": [],
+        "ran": 99,
+        "skipped": 2
+      },
+      "tests_v16": {
+        "exit_code": 0,
+        "failed": [],
+        "ran": 52,
+        "skipped": 2
+      },
+      "validate_require_final": {
+        "checks": {
+          "binary-provenance": "PASS",
+          "derivation": "PASS",
+          "identity-contracts": "PASS",
+          "inventory": "PASS",
+          "license-copies": "PASS",
+          "license-review-inventory": "PASS",
+          "lifecycle-dry-runs": "PASS",
+          "markdown-links": "PASS",
+          "offline-composition": "PASS",
+          "owner-identity": "PASS",
+          "privacy-scan": "PASS",
+          "release-manifest": "PASS",
+          "required-files": "PASS",
+          "sbom": "PASS",
+          "sha256sums": "PASS",
+          "shared-output-audit": "PASS",
+          "syntax": "PASS",
+          "toggle-defaults": "PASS"
+        },
+        "exit_code": 0,
+        "verdict": "PASS"
+      }
+    }
+  },
+  "results_identical_between_paths": true,
+  "schema": "jspark3-v184-archive-clone-parity/1",
+  "source_inventory_sha256": "5c4e25b206d963a7a4d2eeb7c86250fc196d0678d0f8ce6ea95f9c607aa7da73",
+  "source_recipe_inventory_sha256": "81dff1ded6e3310fbca81a7167c9bdddf98d802579893588ecb9d9f0bfc1b083",
+  "tree": "b6f6bafd351fe62f89f8fb3f188a3114946c3783",
+  "tree_files": 312,
+  "trees_identical": true
+}

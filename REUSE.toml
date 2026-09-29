@@ -345,3 +345,8 @@ SPDX-License-Identifier = "Apache-2.0"
 path = ["release/final-rebuilds-v1.8.4.json", "release/v1.8.4-final-rebuilds/first-machine-native-build-receipt.json", "release/v1.8.4-final-rebuilds/first-machine-operator-image.json", "release/v1.8.4-final-rebuilds/second-machine-native-build-receipt.json", "release/v1.8.4-final-rebuilds/second-machine-operator-image.json"]
 precedence = "aggregate"
 SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ["release/archive-clone-v1.8.4.json", "release/v1.8.4-archive-clone/parity.json"]
+precedence = "aggregate"
+SPDX-License-Identifier = "Apache-2.0"
