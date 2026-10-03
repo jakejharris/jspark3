@@ -1,0 +1,11 @@
+Ablit: refusal-removed (abliterated) weights from orcarouter/GLM-5.3-Flash-Uncensored-MLX, an opt-in install
+for ablit development, red-teaming and refusal research. The default install is base.
+
+License: MIT (Copyright (c) 2026 Z.AI Co., Ltd), plus the use conditions on the source's model card, quoted verbatim:
+
+- It is released **strictly for legitimate research** — interpretability, AI-safety and refusal-mechanism study, red-teaming, robustness evaluation, and controlled experiments.
+- **You assume full responsibility and liability** for how you use it and for everything it generates. Do not deploy it to end users or in production without adding your own safety, moderation, and abuse-prevention layers.
+
+By downloading or using this model you acknowledge and accept the above.
+
+You are responsible for complying with the source model's terms and for how you use this model and what it generates. JSpark3 provides conversion tooling only; it hosts none of these weights and does not endorse any use of them.

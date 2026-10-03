@@ -1,0 +1,86 @@
+{
+  "about": "Expected containers for the three ranks, in docker inspect format: the serve command each rank ran (the rank 0 address replaced by $MASTER_ADDR) and each container mount's destination and whether it was writable. scripts/serve.sh must render exactly this, except the idle /capture mount, which nothing in this configuration writes and serve.sh leaves out, and except the settings a weights profile changes. measured_settings are the profile keys' values in the measured boot (an unset knob ran the engine default); profiles are the shipped config/profiles files.",
+  "omitted_mounts": [
+    "/capture"
+  ],
+  "ranks": {
+    "0": {
+      "cmd": "pip install -q --no-index --find-links /bundle/wheels tensorfold pytest && exec python3 /bundle/fabric/launch.py tensorfold serve /models/Vontra--GLM-5.3-Flash-MLX-4bit-MTP-76add2a.rank0of3 --name glm53 --no-update-check --tp 3 --rank 0 --master $MASTER_ADDR --master-port 29561 --context 262144 --max-tokens 32768 --drafter /drafter --draft-policy fq7:0.3 --host 127.0.0.1 --port 8002 --parallel 8",
+      "mounts": {
+        "/bundle/fabric": false,
+        "/bundle/wheels": false,
+        "/capture": true,
+        "/drafter": false,
+        "/kernel-cache": true,
+        "/models/Vontra--GLM-5.3-Flash-MLX-4bit-MTP-76add2a.rank0of3": false,
+        "/models/Vontra--GLM-5.3-Flash-MLX-4bit-MTP-76add2a.rank0of3/chat_template.jinja": false,
+        "/root/.cache/tensorfold": true,
+        "/sessions": true
+      }
+    },
+    "1": {
+      "cmd": "pip install -q --no-index --find-links /bundle/wheels tensorfold pytest && exec python3 /bundle/fabric/launch.py tensorfold serve /models/Vontra--GLM-5.3-Flash-MLX-4bit-MTP-76add2a.rank1of3 --name glm53 --no-update-check --tp 3 --rank 1 --master $MASTER_ADDR --master-port 29561 --context 262144 --max-tokens 32768 --drafter /drafter --draft-policy fq7:0.3 --parallel 8",
+      "mounts": {
+        "/bundle/fabric": false,
+        "/bundle/wheels": false,
+        "/capture": true,
+        "/drafter": false,
+        "/kernel-cache": true,
+        "/models/Vontra--GLM-5.3-Flash-MLX-4bit-MTP-76add2a.rank1of3": false,
+        "/models/Vontra--GLM-5.3-Flash-MLX-4bit-MTP-76add2a.rank1of3/chat_template.jinja": false,
+        "/root/.cache/tensorfold": true,
+        "/sessions": true
+      }
+    },
+    "2": {
+      "cmd": "pip install -q --no-index --find-links /bundle/wheels tensorfold pytest && exec python3 /bundle/fabric/launch.py tensorfold serve /models/Vontra--GLM-5.3-Flash-MLX-4bit-MTP-76add2a.rank2of3 --name glm53 --no-update-check --tp 3 --rank 2 --master $MASTER_ADDR --master-port 29561 --context 262144 --max-tokens 32768 --drafter /drafter --draft-policy fq7:0.3 --parallel 8",
+      "mounts": {
+        "/bundle/fabric": false,
+        "/bundle/wheels": false,
+        "/capture": true,
+        "/drafter": false,
+        "/kernel-cache": true,
+        "/models/Vontra--GLM-5.3-Flash-MLX-4bit-MTP-76add2a.rank2of3": false,
+        "/models/Vontra--GLM-5.3-Flash-MLX-4bit-MTP-76add2a.rank2of3/chat_template.jinja": false,
+        "/root/.cache/tensorfold": true,
+        "/sessions": true
+      }
+    }
+  },
+  "measured_settings": {
+    "SERVE_DRAFT_POLICY": "fq7:0.3"
+  },
+  "profiles": {
+    "base": {
+      "file": "config/profiles/base.env",
+      "sha256": "d42a35d299095872c29610002e9e8507f3c4205098be8759dc704342c1d71191",
+      "settings": {
+        "SERVE_DRAFT_POLICY": "fq7:0.3",
+        "NO_DRAFTER_POLICY": "c7:0.45"
+      }
+    },
+    "ablit": {
+      "file": "config/profiles/ablit.env",
+      "sha256": "e2f7d289c22c1b127b26b8827e44d7ec3f72ae2f859682b19dec366d3e4e1220",
+      "settings": {
+        "SERVE_DRAFT_POLICY": "fq7:0.3",
+        "NO_DRAFTER_POLICY": "c7:0.3"
+      }
+    }
+  },
+  "container_options": [
+    "--gpus all",
+    "--ipc=host",
+    "--network host",
+    "--ulimit memlock=-1",
+    "--ulimit stack=67108864",
+    "--device /dev/infiniband",
+    "--cap-add IPC_LOCK"
+  ],
+  "per_box_env": [
+    "RING_PREV_IFACE",
+    "RING_NEXT_IFACE",
+    "NCCL_SOCKET_IFNAME",
+    "GLOO_SOCKET_IFNAME"
+  ]
+}

@@ -1,0 +1,149 @@
+{
+ "about": "Authors and license of each wheel in wheels.lock, as its project declares it in its PyPI metadata at the pinned version (license expression, else the license field, else the project's license file where the metadata only says 'BSD License' or 'Apache Software License'). Authors as each project's PyPI metadata names them (no addresses). Read by tools/release-assets.py for the SBOM and listed in THIRD_PARTY_NOTICES.md.",
+ "wheels": {
+  "anyio-4.15.1-py3-none-any.whl": {
+   "name": "anyio",
+   "version": "4.15.1",
+   "license": "MIT",
+   "authors": "Alex Grönholm"
+  },
+  "certifi-2026.7.22-py3-none-any.whl": {
+   "name": "certifi",
+   "version": "2026.7.22",
+   "license": "MPL-2.0",
+   "authors": "Kenneth Reitz"
+  },
+  "click-8.5.0-py3-none-any.whl": {
+   "name": "click",
+   "version": "8.5.0",
+   "license": "BSD-3-Clause",
+   "authors": "Pallets"
+  },
+  "filelock-4.0.6-py3-none-any.whl": {
+   "name": "filelock",
+   "version": "4.0.6",
+   "license": "MIT",
+   "authors": "Bernát Gábor"
+  },
+  "fsspec-2026.9.0-py3-none-any.whl": {
+   "name": "fsspec",
+   "version": "2026.9.0",
+   "license": "BSD-3-Clause",
+   "authors": "Martin Durant"
+  },
+  "h11-0.16.0-py3-none-any.whl": {
+   "name": "h11",
+   "version": "0.16.0",
+   "license": "MIT",
+   "authors": "Nathaniel J. Smith"
+  },
+  "hf_xet-1.6.0-cp38-abi3-manylinux_2_28_aarch64.whl": {
+   "name": "hf-xet",
+   "version": "1.6.0",
+   "license": "Apache-2.0",
+   "authors": "Rajat Arya, Jared Sulzdorf, Di Xiao, Assaf Vayner, Hoyt Koepke"
+  },
+  "httpcore-1.0.9-py3-none-any.whl": {
+   "name": "httpcore",
+   "version": "1.0.9",
+   "license": "BSD-3-Clause",
+   "authors": "Tom Christie"
+  },
+  "httpx-0.28.1-py3-none-any.whl": {
+   "name": "httpx",
+   "version": "0.28.1",
+   "license": "BSD-3-Clause",
+   "authors": "Tom Christie"
+  },
+  "huggingface_hub-1.33.0-py3-none-any.whl": {
+   "name": "huggingface-hub",
+   "version": "1.33.0",
+   "license": "Apache-2.0",
+   "authors": "Hugging Face, Inc."
+  },
+  "idna-3.20-py3-none-any.whl": {
+   "name": "idna",
+   "version": "3.20",
+   "license": "BSD-3-Clause",
+   "authors": "Kim Davies"
+  },
+  "iniconfig-2.3.0-py3-none-any.whl": {
+   "name": "iniconfig",
+   "version": "2.3.0",
+   "license": "MIT",
+   "authors": "Ronny Pfannschmidt, Holger Krekel"
+  },
+  "jinja2-3.1.6-py3-none-any.whl": {
+   "name": "Jinja2",
+   "version": "3.1.6",
+   "license": "BSD-3-Clause",
+   "authors": "Pallets"
+  },
+  "markupsafe-3.0.3-cp312-cp312-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl": {
+   "name": "MarkupSafe",
+   "version": "3.0.3",
+   "license": "BSD-3-Clause",
+   "authors": "Pallets"
+  },
+  "numpy-2.5.3-cp312-cp312-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl": {
+   "name": "numpy",
+   "version": "2.5.3",
+   "license": "BSD-3-Clause AND 0BSD AND MIT AND Zlib AND CC0-1.0",
+   "authors": "Travis E. Oliphant et al."
+  },
+  "packaging-26.3-py3-none-any.whl": {
+   "name": "packaging",
+   "version": "26.3",
+   "license": "Apache-2.0 OR BSD-2-Clause",
+   "authors": "Donald Stufft"
+  },
+  "pluggy-1.6.0-py3-none-any.whl": {
+   "name": "pluggy",
+   "version": "1.6.0",
+   "license": "MIT",
+   "authors": "Holger Krekel"
+  },
+  "pygments-2.21.0-py3-none-any.whl": {
+   "name": "Pygments",
+   "version": "2.21.0",
+   "license": "BSD-2-Clause",
+   "authors": "Georg Brandl"
+  },
+  "pytest-9.1.1-py3-none-any.whl": {
+   "name": "pytest",
+   "version": "9.1.1",
+   "license": "MIT",
+   "authors": "Holger Krekel, Bruno Oliveira, Ronny Pfannschmidt, Floris Bruynooghe and others"
+  },
+  "pyyaml-6.0.3-cp312-cp312-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl": {
+   "name": "PyYAML",
+   "version": "6.0.3",
+   "license": "MIT",
+   "authors": "Kirill Simonov"
+  },
+  "safetensors-0.8.0-cp310-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl": {
+   "name": "safetensors",
+   "version": "0.8.0",
+   "license": "Apache-2.0",
+   "authors": "Nicolas Patry, Luc Georges, Daniël De Kok"
+  },
+  "tokenizers-0.23.2-cp310-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl": {
+   "name": "tokenizers",
+   "version": "0.23.2",
+   "license": "Apache-2.0",
+   "authors": "Nicolas Patry, Anthony Moi"
+  },
+  "tqdm-4.70.1-py3-none-any.whl": {
+   "name": "tqdm",
+   "version": "4.70.1",
+   "license": "MPL-2.0 AND MIT",
+   "authors": "tqdm developers"
+  },
+  "typing_extensions-4.16.0-py3-none-any.whl": {
+   "name": "typing-extensions",
+   "version": "4.16.0",
+   "license": "PSF-2.0",
+   "authors": "Guido van Rossum, Jukka Lehtosalo, Łukasz Langa, Michael Lee"
+  }
+ }
+}

@@ -1,0 +1,19 @@
+JSpark3 v2.0.1
+Copyright 2026 JSpark3 authors
+
+The recipe (scripts, configuration, tests, tools and documentation) is
+licensed under the Apache License, Version 2.0 (LICENSE).
+
+engine/ is a fork of TensorFold 0.3.6.2 (MIT;
+https://github.com/ashhart/TensorFold), vendored as a single source
+snapshot under its own licenses: see engine/LICENSE, engine/NOTICE and
+engine/THIRD_PARTY_NOTICES.md.
+
+template/chat-template.jinja is the base weights' chat template (MIT,
+Copyright (c) 2026 Z.AI Co., Ltd; template/LICENSE) with six added
+lines, which are MIT, Copyright (c) 2026 the JSpark3 v2 contributors
+(scripts/ablit/TEMPLATE-ADDITIONS-LICENSE.txt).
+
+Model weights, the draft model and the container image are downloaded at
+install time from their publishers and are not part of this distribution.
+See THIRD_PARTY_NOTICES.md.

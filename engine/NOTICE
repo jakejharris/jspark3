@@ -1,0 +1,81 @@
+JSpark3 engine (TensorFold fork) NOTICE
+
+This engine is a fork of TensorFold (https://github.com/ashhart/TensorFold),
+modified by the JSpark3 project. It is distributed under the MIT License
+(see LICENSE), with the Apache-2.0 exception below.
+
+1. Base and copyright (MIT)
+   The base is the TensorFold 0.3.6.2 source (MIT):
+     Copyright (c) 2026 TensorFold contributors
+   Changes made by the JSpark3 project are modified from that base and are
+   offered under the same MIT License.
+
+2. Code ported from upstream after TensorFold's Apache-2.0 relicense (Apache-2.0)
+   TensorFold relicensed to Apache-2.0 from 0.6.0 (upstream commit e3ac0ea,
+   2026-09-30). The complete upstream NOTICE is reproduced below.
+   The following JSpark3 change contains Apache-2.0 code from upstream and
+   remains under Apache-2.0 (full text: LICENSES/Apache-2.0.txt):
+     - src/tensorfold/cuda/server.py: the two-line `Connection: close` header on
+       closing JSON replies, ported from upstream commit 50dfe38 ("fix(server):
+       a refused POST's body no longer reaches the next request on its
+       connection (#181)", by Dorian). Modified by the JSpark3 project: moved
+       into src/tensorfold/cuda/server.py and reduced to the header lines.
+
+
+3. Other upstream code (MIT era, pre-0.6.0)
+   Follower doorbell (src/tensorfold/families/glm5_next/cuda/idle_bell.py,
+   batched.py/engine.py hooks, tests/test_glm_idle_bell.py,
+   the associated integration changes): adapted from TensorFold commits
+   358875c (MiaAI-Lab) and 94c70c5 (ashhart). Both predate the relicense and
+   carry MIT, Copyright (c) 2026 TensorFold contributors.
+
+4. Third-party components named in THIRD_PARTY_NOTICES.md keep their own licenses
+   (ExLlamaV3 MIT, Turboderp; z-lab DFlash MLX drafter MIT; MLX/mlx-lm MIT, Apple).
+
+5. Model weights and drafter are NOT part of this distribution. They are fetched
+   separately from their publishers under their own licenses:
+   - zai-org/GLM-5.3-Flash: MIT License, Copyright (c) 2026 Z.AI Co., Ltd.
+   - TensorFold/GLM-5.3-Flash-MLX-4bit-MTP (formerly Vontra/...), rev 76add2a341a1:
+     MIT License (license file reproduced from the base model: Copyright (c) 2026
+     Z.AI Co., Ltd). Quantization of zai-org/GLM-5.3-Flash with its native
+     layer-45 MTP head.
+   - incoai/GLM-5.3-Flash-DFlash2, rev bf582e4: CC BY-NC-ND 4.0, research and
+     evaluation only. Commercial terms: https://huggingface.co/incoai/GLM-5.3-Flash-DFlash2. Not redistributed
+     here and not modified on disk; select `--drafter none --draft-policy c7:0.3` for the native MTP path.
+     Credit: Inco AI, "DFlash 2: Keep Drafting Parallel" (2026); DFlash,
+     Chen, Liang, Liu (ICML 2026).
+
+Upstream TensorFold NOTICE (verbatim):
+
+TensorFold
+Copyright 2026 TensorFold contributors
+https://github.com/ashhart/TensorFold
+
+TensorFold is licensed under the Apache License, Version 2.0 (LICENSE) from 0.6.0.
+Releases up to 0.5.0 were MIT-licensed, and code written before 0.6.0 keeps its
+MIT notice in LICENSES/MIT.txt. Third-party code and its licenses are listed in
+THIRD_PARTY_NOTICES.md.
+
+Retained base MIT license (verbatim):
+
+MIT License
+
+Copyright (c) 2026 TensorFold contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

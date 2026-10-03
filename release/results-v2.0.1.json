@@ -1,0 +1,600 @@
+{
+  "schema": "jspark3-release-results/1",
+  "release_version": "v2.0.1",
+  "version_label_public": "JSpark3 v2.0.1 (GLM-5.3 Flash)",
+  "results_tag": "v2.0.1",
+  "status": "measured",
+  "engine": {
+    "name": "TensorFold 0.3.6.2 (fork)",
+    "provenance": "a fork of TensorFold 0.3.6.2 (MIT)",
+    "upstream": "https://github.com/ashhart/TensorFold",
+    "source_ref": "509bfa8f60b14f956f14a4c5a58973b3f119c545"
+  },
+  "default_variant": "base",
+  "default_set": "V-D",
+  "headline_set": "V-D",
+  "statistic": "median",
+  "prompt_mix": {
+    "doc": "release/PROMPT-MIX.md",
+    "doc_sha256": "1c86b45f9b4897b4a18888135870d492411f137302c9bbe79acf1067b00342a2",
+    "list_sha256": "6b8a3b45354059d6a73065cdc2b99d77bfdafb3c3d73a314823a5505e7cf9ba3",
+    "prompts_jsonl": {
+      "file": "release/PROMPT-MIX.jsonl",
+      "sha256": "aed79029271045acfddf673433d368441343a87cdb25b723c9f16147f3aafacf"
+    }
+  },
+  "conditions": {
+    "shared": "Every set ran on the same build with the same benchmark harness and protocol, each on its weights variant's shipped settings profile. Each set's receipt records its label, the combined digest of the three hosts' data manifests, the draft model, the settings profile and the engine commit.",
+    "public": "Every set was measured on the same build, each on its weights variant's shipped settings, and no figure is a best run. Rates and times are medians, with the number of runs given below; the token gap is given as both a median and a maximum, and the context window is a setting, not a measurement. Short-reply decode is reported separately for code and for prose: the per-stream rate of replies capped at 256 tokens (median of 3 each). Long decode is one greedy code stream of up to 96 tokens after a 32K-token prompt (median of 3). Aggregate decode is the wall-clock rate of concurrent greedy replies, capped at 96 tokens, to a fixed mix of varied short prompts (41 to 62 tokens each) that is the same for every set (median of 3). Draft acceptance depends on the prompt, so it is also reported for a single repeated prompt. Cold time to first token uses exactly the stated number of prompt tokens with nothing cached (median of 2). The 8-request time to first token is the median wait for the first token when 8 short prompts from the mix (41 to 62 tokens) are sent at once; without the draft model, prompts that arrive together are not read together in one batch, and first tokens arrive later (see known issues). The 8-stream token gap is the longest pause seen by running streams while a prompt of about 8,000 or 36,000 tokens joins, reported as the median and the maximum of that pause across runs. Draft acceptance is the number of draft tokens accepted per verify step, not counting the token the model adds itself, with accepted over proposed tokens alongside, both measured at 8 concurrent requests. The no-draft-model set is a reduced run. The benchmark client runs on a separate machine on the same local network, so client-side times include one network hop. The benchmark figures in the result tables, including the stall bounds, come from chat requests at low reasoning effort. Installation, disk and startup figures are not chat measurements. Low effort still reasons before it answers, and decode and aggregate rates count reasoning tokens. A chat request that sets no reasoning effort runs at high effort, so its replies are longer and its rates can differ from these. Time to first token is measured to the first streamed token, reasoning or text. In the cold-prompt, newcomer and saved-session tests, that first token was visible text in all but two replies: one 64K cold-prompt reply with base weights and the saved-session return with refusal-removed (ablit) weights reached their eight-token limit on reasoning and showed no text. In the eight-client short-prompt test, most replies began with a short reasoning passage, so visible text arrives later than the first token, and some short replies spent their 96-token limit on reasoning and showed no text; each set's first-token figure is shown with its own visible-text note.",
+    "first_token_partner_estimators": "The first-token notes use two measures: with the draft model, the median time to first visible text; without it, the median gap from first token to first visible text in the replies that showed text, because a median taken only over replies that showed text would come out below the first-token median taken over all replies."
+  },
+  "sets": {
+    "V-D": {
+      "label_public": "base weights + draft model",
+      "status": "measured (see known issue 10)",
+      "config": {
+        "weights_variant": "base",
+        "weights_source": "TensorFold/GLM-5.3-Flash-MLX-4bit-MTP@76add2a341a1cd90ad0e86bb69839ea9c35827c6",
+        "data_manifest_sha256": "5ec35938b1f3e6ef81fbd8b94e3773fe8368f798a2237ace5ac3c1781d7f3497",
+        "data_manifest_recipe": "cd manifests/base && sha256sum rank0.sha256 rank1.sha256 rank2.sha256 | sha256sum",
+        "rank_manifest_sha256": [
+          "ccf72777a64775f4367d010dc78c15f8f09a4a81dbee6ed06a4441622e5a2386",
+          "2951ddb532db835452fe78dc52b8af005214c2ff9269bada00427962f8c1009f",
+          "eaabc541d7a354ae73d09143034e1aefd21c6d51190dcd9c6ed54a90e33e1ece"
+        ],
+        "draft_model": "incoai/GLM-5.3-Flash-DFlash2@bf582e4eacc1810f76656d1811693ff6c6737d2a",
+        "draft_policy": "fq7:0.3",
+        "engine_commit": "509bfa8f60b14f956f14a4c5a58973b3f119c545",
+        "env_file": "config/serve.env",
+        "profile": {
+          "name": "base",
+          "no_drafter": false,
+          "file": "config/profiles/base.env",
+          "sha256": "d42a35d299095872c29610002e9e8507f3c4205098be8759dc704342c1d71191"
+        }
+      },
+      "metrics": {
+        "decode_short_tok_s.code": {
+          "unit": "tok/s",
+          "display": "80.9",
+          "raw": 80.9492419963837
+        },
+        "decode_short_tok_s.prose": {
+          "unit": "tok/s",
+          "display": "59.6",
+          "raw": 59.569699924280854
+        },
+        "decode_long_tok_s": {
+          "unit": "tok/s",
+          "display": "83.6",
+          "raw": 83.60657678517646
+        },
+        "concurrency_aggregate_tok_s.c1": {
+          "unit": "tok/s",
+          "display": "59.8",
+          "raw": 59.7835913523438,
+          "condition": "short prompts, 41-62 tokens, 1 concurrent"
+        },
+        "concurrency_aggregate_tok_s.c2": {
+          "unit": "tok/s",
+          "display": "77.6",
+          "raw": 77.58804924984315,
+          "condition": "short prompts, 41-62 tokens, 2 concurrent"
+        },
+        "concurrency_aggregate_tok_s.c4": {
+          "unit": "tok/s",
+          "display": "97.5",
+          "raw": 97.45396951677897,
+          "condition": "short prompts, 41-62 tokens, 4 concurrent"
+        },
+        "concurrency_aggregate_tok_s.c8": {
+          "unit": "tok/s",
+          "display": "126.0",
+          "raw": 126.01293847787755,
+          "condition": "short prompts, 41-62 tokens, 8 concurrent"
+        },
+        "concurrency_aggregate_tok_s.c16": {
+          "unit": "tok/s",
+          "display": "106.8",
+          "raw": 106.83404538354615,
+          "condition": "short prompts, 41-62 tokens, 16 concurrent"
+        },
+        "c8_ttft_p50_s": {
+          "unit": "s",
+          "display": "0.54",
+          "raw": 0.5358500975416973,
+          "condition": "short prompts, 41-62 tokens, 8 concurrent",
+          "partner": "First visible text at about 1.5 s (median); 3 of 24 short replies spent their 96-token limit on reasoning and showed no text. Measured at reasoning effort low."
+        },
+        "c8_visible_text_p50_s": {
+          "unit": "s",
+          "display": "1.5",
+          "raw": 1.4954383820295334,
+          "condition": "short prompts, 41-62 tokens, 8 concurrent"
+        },
+        "c8_no_text_replies": {
+          "unit": "",
+          "display": "3 of 24",
+          "raw": {
+            "no_text": 3,
+            "total": 24,
+            "cap_tokens": 96
+          },
+          "condition": "short prompts, 41-62 tokens, 8 concurrent"
+        },
+        "c8_stall_s.median": {
+          "unit": "s",
+          "display": "0.52",
+          "raw": 0.5181229158770293,
+          "condition": "short prompts, 41-62 tokens, 8 concurrent, while a prompt of about 8,000 or 36,000 tokens joins"
+        },
+        "c8_stall_s.max": {
+          "unit": "s",
+          "display": "0.75",
+          "raw": 0.7470000830944628,
+          "condition": "short prompts, 41-62 tokens, 8 concurrent, while a prompt of about 8,000 or 36,000 tokens joins"
+        },
+        "cold_ttft_s.8k": {
+          "unit": "s",
+          "display": "3.8",
+          "raw": 3.773337076534517
+        },
+        "cold_ttft_s.32k": {
+          "unit": "s",
+          "display": "15.0",
+          "raw": 15.025156965013593
+        },
+        "cold_ttft_s.64k": {
+          "unit": "s",
+          "display": "30.4",
+          "raw": 30.41953520453535
+        },
+        "cold_ttft_s.128k": {
+          "unit": "s",
+          "display": "63.6",
+          "raw": 63.58130952657666
+        },
+        "draft_acceptance.mix.accepted_per_verify_step": {
+          "unit": "draft tokens accepted per verify step",
+          "display": "2.75",
+          "raw": 2.75,
+          "condition": "short prompts, 41-62 tokens, 8 concurrent"
+        },
+        "draft_acceptance.mix.accepted_over_proposed": {
+          "unit": "ratio",
+          "display": "0.67",
+          "raw": 0.6715425531914894,
+          "condition": "short prompts, 41-62 tokens, 8 concurrent"
+        },
+        "draft_acceptance.single_prompt.accepted_per_verify_step": {
+          "unit": "draft tokens accepted per verify step",
+          "display": "2.11",
+          "raw": 2.1147540983606556
+        },
+        "draft_acceptance.single_prompt.accepted_over_proposed": {
+          "unit": "ratio",
+          "display": "0.61",
+          "raw": 0.607773851590106
+        },
+        "max_context_tokens": {
+          "unit": "tokens",
+          "display": "262,144",
+          "raw": 262144
+        }
+      },
+      "evidence": [
+        {
+          "path": "V-D-RESUME-20261003T024220Z/manifest.json",
+          "sha256": "606b38ead2e3a6372f1c51cd45ea80b556a67a1cb9800598ec1ee98e44dafa61"
+        },
+        {
+          "path": "V-D-RESUME-20261003T024220Z/summary.json",
+          "sha256": "dfe1a8242415cc1a06998bb722f5e5ea665ecb6527bc70733dedafcd43d4d3da"
+        }
+      ],
+      "rigmark": "MODEL      glm53\nAPPLIANCE  3x NVIDIA DGX Spark (GB10), 128 GB unified memory each\nRUN        reasoning=low  •  protocol=1.1.0\nSOURCE     git:c5a0db01b054  •  clean\nWORKLOAD       DECODE EST.      LAST OUTPUT          RANGE          BASIC GATE\nCODE              91.3 tok/s      21.3s last     88.2–92.8     ✓ 5/5\nPROSE             51.6 tok/s      19.3s last     50.3–53.1     ✓ 5/5\nSTRUCTURED*      127.9 tok/s       3.8s last    127.4–128.3    ✓ 5/5\n* predictable-output ceiling; not a proxy for agent speed\n64K PREFILL   cold 2,124 tok/s  •  immediate replay 821,037 tok/s\nAGGREGATE   C1 64.8  •  C2 84.6  •  C4 113.4 tok/s   (short code, end-to-end, 256-token cap per agent)\nC4 OUTPUT STATE   normal stop 0/12  •  visible 12/12  •  reasoning may be included\nJSON       sha256:05051f88e880384c…"
+    },
+    "O-D": {
+      "label_public": "refusal-removed (ablit) weights + draft model",
+      "status": "measured (see known issue 10)",
+      "config": {
+        "weights_variant": "ablit",
+        "weights_source": "orcarouter/GLM-5.3-Flash-Uncensored-MLX@c02a5f6fa06f0aa444877b44d19fd5c96390329f",
+        "data_manifest_sha256": "3ced26475a36ecd398f679dff559c95a61ff6284e55433cb890c73838f772b2e",
+        "draft_model": "incoai/GLM-5.3-Flash-DFlash2@bf582e4eacc1810f76656d1811693ff6c6737d2a",
+        "draft_policy": "fq7:0.3",
+        "engine_commit": "509bfa8f60b14f956f14a4c5a58973b3f119c545",
+        "env_file": "config/serve.env",
+        "profile": {
+          "name": "ablit",
+          "no_drafter": false,
+          "file": "config/profiles/ablit.env",
+          "sha256": "e2f7d289c22c1b127b26b8827e44d7ec3f72ae2f859682b19dec366d3e4e1220"
+        },
+        "fresh_conversion_manifest_sha256": "b9f92cdf6ef55d642d20cb8db2c71fcd0c6925909ccfbb0e75ebe7a6328e0f33",
+        "fresh_conversion_manifest_recipe": "cd manifests/ablit && sha256sum rank0.sha256 rank1.sha256 rank2.sha256 | sha256sum",
+        "fresh_conversion_rank_manifest_sha256": [
+          "269647b527486185c2fd69469f584a1819d40c76fe14902e2153eda5ab549935",
+          "062b5948bc97b7a442ace065468bf5576bb5fdd8b27f163dd00d954526e05b62",
+          "1075cee1607a03e3afc1476ec938155617d6bd96befd5a7c3c24d10986d3ceba"
+        ]
+      },
+      "metrics": {
+        "decode_short_tok_s.code": {
+          "unit": "tok/s",
+          "display": "73.3",
+          "raw": 73.26118181191165
+        },
+        "decode_short_tok_s.prose": {
+          "unit": "tok/s",
+          "display": "63.6",
+          "raw": 63.56403178987223
+        },
+        "decode_long_tok_s": {
+          "unit": "tok/s",
+          "display": "72.3",
+          "raw": 72.34112325524168
+        },
+        "concurrency_aggregate_tok_s.c1": {
+          "unit": "tok/s",
+          "display": "69.8",
+          "raw": 69.80080837180219,
+          "condition": "short prompts, 41-62 tokens, 1 concurrent"
+        },
+        "concurrency_aggregate_tok_s.c2": {
+          "unit": "tok/s",
+          "display": "75.8",
+          "raw": 75.8333032292672,
+          "condition": "short prompts, 41-62 tokens, 2 concurrent"
+        },
+        "concurrency_aggregate_tok_s.c4": {
+          "unit": "tok/s",
+          "display": "96.4",
+          "raw": 96.44242789840527,
+          "condition": "short prompts, 41-62 tokens, 4 concurrent"
+        },
+        "concurrency_aggregate_tok_s.c8": {
+          "unit": "tok/s",
+          "display": "121.7",
+          "raw": 121.68338609274478,
+          "condition": "short prompts, 41-62 tokens, 8 concurrent"
+        },
+        "concurrency_aggregate_tok_s.c16": {
+          "unit": "tok/s",
+          "display": "110.0",
+          "raw": 109.95725405761158,
+          "condition": "short prompts, 41-62 tokens, 16 concurrent"
+        },
+        "c8_ttft_p50_s": {
+          "unit": "s",
+          "display": "0.54",
+          "raw": 0.5396256215171888,
+          "condition": "short prompts, 41-62 tokens, 8 concurrent",
+          "partner": "First visible text at about 1.2 s (median); 1 of 24 short replies spent its 96-token limit on reasoning and showed no text. Measured at reasoning effort low."
+        },
+        "c8_visible_text_p50_s": {
+          "unit": "s",
+          "display": "1.2",
+          "raw": 1.1895236904965714,
+          "condition": "short prompts, 41-62 tokens, 8 concurrent"
+        },
+        "c8_no_text_replies": {
+          "unit": "",
+          "display": "1 of 24",
+          "raw": {
+            "cap_tokens": 96,
+            "no_text": 1,
+            "total": 24
+          },
+          "condition": "short prompts, 41-62 tokens, 8 concurrent"
+        },
+        "c8_stall_s.median": {
+          "unit": "s",
+          "display": "0.49",
+          "raw": 0.49304011394269764,
+          "condition": "short prompts, 41-62 tokens, 8 concurrent, while a prompt of about 8,000 or 36,000 tokens joins"
+        },
+        "c8_stall_s.max": {
+          "unit": "s",
+          "display": "0.57",
+          "raw": 0.5714859180152416,
+          "condition": "short prompts, 41-62 tokens, 8 concurrent, while a prompt of about 8,000 or 36,000 tokens joins"
+        },
+        "cold_ttft_s.8k": {
+          "unit": "s",
+          "display": "3.8",
+          "raw": 3.76658977358602
+        },
+        "cold_ttft_s.32k": {
+          "unit": "s",
+          "display": "15.0",
+          "raw": 14.988410013495013
+        },
+        "cold_ttft_s.64k": {
+          "unit": "s",
+          "display": "30.4",
+          "raw": 30.40265390800778
+        },
+        "cold_ttft_s.128k": {
+          "unit": "s",
+          "display": "63.8",
+          "raw": 63.77890810195822
+        },
+        "draft_acceptance.mix.accepted_per_verify_step": {
+          "unit": "draft tokens accepted per verify step",
+          "display": "2.55",
+          "raw": 2.5545023696682465,
+          "condition": "short prompts, 41-62 tokens, 8 concurrent"
+        },
+        "draft_acceptance.mix.accepted_over_proposed": {
+          "unit": "ratio",
+          "display": "0.69",
+          "raw": 0.6859395532194481,
+          "condition": "short prompts, 41-62 tokens, 8 concurrent"
+        },
+        "draft_acceptance.single_prompt.accepted_per_verify_step": {
+          "unit": "draft tokens accepted per verify step",
+          "display": "2.04",
+          "raw": 2.04
+        },
+        "draft_acceptance.single_prompt.accepted_over_proposed": {
+          "unit": "ratio",
+          "display": "0.55",
+          "raw": 0.5549510337323177
+        },
+        "max_context_tokens": {
+          "unit": "tokens",
+          "display": "262,144",
+          "raw": 262144
+        }
+      },
+      "evidence": [
+        {
+          "path": "O-D-20261003T050903Z/manifest.json",
+          "sha256": "b60f152c84af63285c594d8017bef5b28f6ce2ab80d7f88443f9cbaf3a004a4e"
+        },
+        {
+          "path": "O-D-20261003T050903Z/summary.json",
+          "sha256": "1984477a1d2581291e9d7092f27a68e39e3cff59a8cdc1b74b965bad386f21a9"
+        }
+      ],
+      "rigmark": "MODEL      glm53\nAPPLIANCE  3x NVIDIA DGX Spark (GB10), 128 GB unified memory each\nRUN        reasoning=low  •  protocol=1.1.0\nSOURCE     git:c5a0db01b054  •  clean\nWORKLOAD       DECODE EST.      LAST OUTPUT          RANGE          BASIC GATE\nCODE              90.1 tok/s      23.8s last     88.4–92.0     ✓ 5/5\nPROSE             50.8 tok/s      19.3s last     50.6–51.6     ✓ 5/5\nSTRUCTURED*      127.4 tok/s       3.8s last    121.0–127.9    ✓ 5/5\n* predictable-output ceiling; not a proxy for agent speed\n64K PREFILL   cold 2,129 tok/s  •  immediate replay 812,054 tok/s\nAGGREGATE   C1 67.9  •  C2 93.8  •  C4 128.4 tok/s   (short code, end-to-end, 256-token cap per agent)\nC4 OUTPUT STATE   normal stop 0/12  •  visible 12/12  •  reasoning may be included\nJSON       sha256:1b42ea87215719ef…"
+    },
+    "V-N": {
+      "label_public": "base weights, no draft model (commercial use)",
+      "status": "measured (see known issue 10)",
+      "config": {
+        "weights_variant": "base",
+        "weights_source": "TensorFold/GLM-5.3-Flash-MLX-4bit-MTP@76add2a341a1cd90ad0e86bb69839ea9c35827c6",
+        "data_manifest_sha256": "5ec35938b1f3e6ef81fbd8b94e3773fe8368f798a2237ace5ac3c1781d7f3497",
+        "data_manifest_recipe": "cd manifests/base && sha256sum rank0.sha256 rank1.sha256 rank2.sha256 | sha256sum",
+        "rank_manifest_sha256": [
+          "ccf72777a64775f4367d010dc78c15f8f09a4a81dbee6ed06a4441622e5a2386",
+          "2951ddb532db835452fe78dc52b8af005214c2ff9269bada00427962f8c1009f",
+          "eaabc541d7a354ae73d09143034e1aefd21c6d51190dcd9c6ed54a90e33e1ece"
+        ],
+        "draft_model": "none",
+        "draft_policy": "no draft model (scripts/serve.sh --drafter none; the model's own multi-token prediction head)",
+        "engine_commit": "509bfa8f60b14f956f14a4c5a58973b3f119c545",
+        "env_file": "config/serve.env",
+        "profile": {
+          "name": "base",
+          "no_drafter": true,
+          "file": "config/profiles/base.env",
+          "sha256": "d42a35d299095872c29610002e9e8507f3c4205098be8759dc704342c1d71191"
+        }
+      },
+      "metrics": {
+        "decode_short_tok_s.code": {
+          "unit": "tok/s",
+          "display": "63.6",
+          "raw": 63.624163840896955
+        },
+        "decode_short_tok_s.prose": {
+          "unit": "tok/s",
+          "display": "57.7",
+          "raw": 57.73416268729368
+        },
+        "decode_long_tok_s": {
+          "unit": "tok/s",
+          "display": "not measured",
+          "raw": null
+        },
+        "concurrency_aggregate_tok_s.c1": {
+          "unit": "tok/s",
+          "display": "59.0",
+          "raw": 59.033327017283355,
+          "condition": "short prompts, 41-62 tokens, 1 concurrent"
+        },
+        "concurrency_aggregate_tok_s.c2": {
+          "unit": "tok/s",
+          "display": "not measured",
+          "raw": null,
+          "condition": "short prompts, 41-62 tokens, 2 concurrent"
+        },
+        "concurrency_aggregate_tok_s.c4": {
+          "unit": "tok/s",
+          "display": "not measured",
+          "raw": null,
+          "condition": "short prompts, 41-62 tokens, 4 concurrent"
+        },
+        "concurrency_aggregate_tok_s.c8": {
+          "unit": "tok/s",
+          "display": "81.2",
+          "raw": 81.15685549729908,
+          "condition": "short prompts, 41-62 tokens, 8 concurrent"
+        },
+        "concurrency_aggregate_tok_s.c16": {
+          "unit": "tok/s",
+          "display": "not measured",
+          "raw": null,
+          "condition": "short prompts, 41-62 tokens, 16 concurrent"
+        },
+        "c8_ttft_p50_s": {
+          "unit": "s",
+          "display": "1.9",
+          "raw": 1.9167211019666865,
+          "condition": "short prompts, 41-62 tokens, 8 concurrent",
+          "partner": "Visible text 0.41 s after the first token (median, p95 1.6 s) in the 21 replies that showed text; 3 of 24 short replies spent their 96-token limit on reasoning and showed no text. Measured at reasoning effort low."
+        },
+        "c8_visible_text_p50_s": {
+          "unit": "s",
+          "display": "see the note below the table",
+          "raw": {
+            "display": "see the note below the table",
+            "value": null
+          },
+          "condition": "short prompts, 41-62 tokens, 8 concurrent"
+        },
+        "c8_no_text_replies": {
+          "unit": "",
+          "display": "3 of 24",
+          "raw": {
+            "no_text": 3,
+            "total": 24,
+            "cap_tokens": 96
+          },
+          "condition": "short prompts, 41-62 tokens, 8 concurrent"
+        },
+        "c8_stall_s.median": {
+          "unit": "s",
+          "display": "not measured",
+          "raw": null,
+          "condition": "short prompts, 41-62 tokens, 8 concurrent, while a prompt of about 8,000 or 36,000 tokens joins"
+        },
+        "c8_stall_s.max": {
+          "unit": "s",
+          "display": "not measured",
+          "raw": null,
+          "condition": "short prompts, 41-62 tokens, 8 concurrent, while a prompt of about 8,000 or 36,000 tokens joins"
+        },
+        "cold_ttft_s.8k": {
+          "unit": "s",
+          "display": "3.9",
+          "raw": 3.901769836083986
+        },
+        "cold_ttft_s.32k": {
+          "unit": "s",
+          "display": "15.8",
+          "raw": 15.753602592973039
+        },
+        "cold_ttft_s.64k": {
+          "unit": "s",
+          "display": "not measured",
+          "raw": null
+        },
+        "cold_ttft_s.128k": {
+          "unit": "s",
+          "display": "not measured",
+          "raw": null
+        },
+        "draft_acceptance.mix.accepted_per_verify_step": {
+          "unit": "draft tokens accepted per verify step",
+          "display": "not measured",
+          "raw": null,
+          "condition": "short prompts, 41-62 tokens, 8 concurrent"
+        },
+        "draft_acceptance.mix.accepted_over_proposed": {
+          "unit": "ratio",
+          "display": "not measured",
+          "raw": null,
+          "condition": "short prompts, 41-62 tokens, 8 concurrent"
+        },
+        "draft_acceptance.single_prompt.accepted_per_verify_step": {
+          "unit": "draft tokens accepted per verify step",
+          "display": "not measured",
+          "raw": null
+        },
+        "draft_acceptance.single_prompt.accepted_over_proposed": {
+          "unit": "ratio",
+          "display": "not measured",
+          "raw": null
+        },
+        "max_context_tokens": {
+          "unit": "tokens",
+          "display": "262,144",
+          "raw": 262144
+        },
+        "c8_visible_gap_p50_s": {
+          "unit": "s",
+          "display": "0.41",
+          "raw": 0.4051605970598757,
+          "condition": "short prompts, 41-62 tokens, 8 concurrent"
+        }
+      },
+      "evidence": [
+        {
+          "path": "V-N-RESTART-20261003T044916Z/manifest.json",
+          "sha256": "f18d5febe60143f604793ed5753ad2c5b7277e192f62cd4e9cd75d1cfcbc28ca"
+        },
+        {
+          "path": "V-N-RESTART-20261003T044916Z/summary.json",
+          "sha256": "8ffb233be0178f5875c8e1a2370683c175027709b40eceb9d25cb1e075c1f029"
+        }
+      ],
+      "rigmark": null
+    }
+  },
+  "headline": {
+    "sentences": [
+      "With base weights and the draft model, eight concurrent requests produced 126.0 tok/s in total on short prompts of 41 to 62 tokens.",
+      "With refusal-removed (ablit) weights and the draft model, eight concurrent requests on the same short prompts (41 to 62 tokens) produced 121.7 tok/s in total."
+    ],
+    "cites": [
+      {
+        "file": "release/results-v2.0.1.json",
+        "set": "V-D",
+        "cell": "concurrency_aggregate_tok_s.c8",
+        "value": "126.0"
+      },
+      {
+        "file": "release/results-v2.0.1.json",
+        "set": "O-D",
+        "cell": "concurrency_aggregate_tok_s.c8",
+        "value": "121.7"
+      }
+    ]
+  },
+  "known_issues": [
+    "`stop` is ignored. A reply ends at the model's end of turn or at `max_tokens`.",
+    "`response_format` is ignored. JSON mode and `json_schema` are not enforced, so the reply is free text.",
+    "Identical prompts without a `seed` return identical outputs, even above temperature 0: a chat app's regenerate returns the same reply, and two users who send the same prompt get the same answer. Send a different `seed` with each request when you want a different sample.",
+    "`n`, `logprobs`, presence and frequency penalties and `logit_bias` are ignored.",
+    "A wrongly typed field, such as a string `temperature`, may return HTTP 500 instead of 400.",
+    "Non-streaming requests send nothing until the reply is complete. Behind a proxy with an idle timeout, use `stream: true`.",
+    "The `model` field is not validated; every request is served by GLM-5.3 Flash.",
+    "Without the draft model, a long conversation that includes images may not be saved to the disk session cache, and each saved state takes more memory, so fewer long conversations stay cached. Returning to such a conversation after it has left the memory cache can take as long as its first prompt. Text-only conversations of about 40,000 tokens are saved; longer text-only conversations were not tested.",
+    "Reasoning is always on, and no setting turns it fully off; v1.8.4 had it off by default. A request that sets no reasoning effort runs at High, and the lowest effort is low; a top-level `reasoning_effort: \"none\"` and `chat_template_kwargs: {\"enable_thinking\": false}` are both treated as low, so a reply can still begin with a short reasoning passage. Even at low effort, a small `max_tokens` can be used up by reasoning and return no visible text; allow a few hundred tokens or more.",
+    "With the draft model on, a short text request that arrives while no reply is streaming may wait up to 25 ms for a second request before its prompt is read. Without the draft model, prompts that arrive together are not read together in one batch, and first tokens arrive later: with the base weights and 8 requests at once, the median first token arrives after 1.9 s, with visible text 0.41 s later (median over the replies that showed text), against 0.54 s with the draft model, where the median first visible text arrives at 1.5 s; in both sets, 3 of 24 short replies spent their 96-token limit on reasoning and showed no text. Reading prompts that arrive together in one batch without the draft model is planned for v2.0.2. With 16 requests at once, twice the server's 8 reply slots, total output with the draft model on is about 10 to 15% lower than with 8 (about 15% with the base weights, about 10% with the refusal-removed (ablit) weights), because the second eight prompts are read in small steps while the first eight replies stream. A streaming reply can occasionally pause between updates, and the pauses are longest while a long new prompt is being read: the longest measured pause was about 0.75 seconds, with a 36,180-token prompt. While a prompt of that length is being read, one step can pause every streaming reply at once for up to about 0.53 seconds.",
+    "JSpark3 v2.0.1 saves the state at the end of each prompt it reads, whichever client sent it, and reuses it when a later prompt starts with that entire earlier prompt, such as the next turn of a conversation; it then reads only the rest. Sharing only a system prompt is not enough: no state is saved where a system prompt ends, so a prompt with the same system prompt but a different first message is read in full. With the draft model on, it also skips reading a prompt that exactly repeats the latest prompt of a conversation, such as regenerating the latest reply, while that state is still in memory. With the draft model on, only the latest state of each conversation stays in memory, so regenerating or resending an earlier turn after later turns have been sent does not get this shortcut. Such a request resumes only from a shorter state that the disk session store has finished saving. The store saves in the background while the server is idle and may not yet hold a given turn, or may have skipped it; in testing, these regenerations read the whole prompt again. Without the draft model, an exact repeat is never skipped, but earlier turns' states can stay in memory until evicted, so regenerating a later turn can resume from the previous turn's state. Regenerating the first reply of a conversation after later turns, or resending it without the draft model, reads the whole prompt again, because saved state is reused only when it is shorter than the new prompt.",
+    "Conversations that share only a system prompt do not share cached work. Saved state is matched by prompt content, not by conversation: a prompt reuses an earlier prompt's state only when it starts with that entire earlier prompt, whichever conversation sent it. No state is saved at the end of a system prompt, so a new conversation that starts with the same system prompt as an earlier one, but has a different first message, reads its whole prompt again. A fix is planned for v2.0.2.",
+    "A client that disconnects while its connection's socket number is 1024 or higher is not detected, so its generation runs to completion and holds its slot. Normal connection counts do not reach this; very many idle keep-alive clients could. A fix is planned for v2.0.2.",
+    "If `max_tokens` cuts off a tool call, `finish_reason` is `length` (or `tool_calls` if an earlier call in the same reply was complete), the cut-off call is left out of the final `tool_calls`, and its raw text is returned in `content`. When streaming, its name and partial `arguments` (incomplete JSON) have already been sent. Raise `max_tokens` for tool use.",
+    "The `usage` block in replies does not include `prompt_tokens_details.cached_tokens`. The number of prompt tokens the server reused from saved state is reported in the reply's `tensorfold.cached` field instead (in the final chunk when streaming). For a request that forces a tool call, this count can be too high, even above the prompt's length. v1.8.4 returned this field, so a client that reads it must switch to `tensorfold.cached` when upgrading. A fix for both is planned for v2.0.2.",
+    "v2.0.1 does not support per-request cache isolation. It ignores the `cache_salt` request field, and all clients of one server share its saved prompt state. A request whose prompt starts with another client's entire earlier prompt reuses that state, which shows in the reply's cached-token count and in a faster first token. v1.8.4's engine honored `cache_salt`, so a deployment that relied on it to keep clients apart is no longer isolated after upgrading. If clients must not learn about each other's prompts, give each one its own server with its own session folder. Per-request isolation is planned for v2.0.2."
+  ],
+  "rigmark_comparison": {
+    "scope": "Appliance comparison: different model IDs, not a same-weights claim. v1.8.4 ran with reasoning off, its default; v2.0.1 ran at reasoning effort low. Cold prefill and replay rows use raw token-ID completions, where reasoning effort does not apply.",
+    "c1_ttft_row": {
+      "label": "C1 per-stream time to first token, seconds (lower is better)",
+      "v1_8_4": "0.396",
+      "V-D": "0.405",
+      "O-D": "0.361",
+      "note": "With base weights, v1.8.4 is about 2% faster on this row. The first token is visible text in every reply in each column."
+    },
+    "prose_footnote": "Prose row: at reasoning effort low, v2.0.1 writes a short reasoning passage before the visible text (with base weights, 11 to 12 tokens, about 1% of each reply of about 1,000 tokens); v1.8.4, with reasoning off, wrote none. RigMark counts those tokens in the prose decode rate and in last output time.",
+    "prose_visible_ttft_row": {
+      "label": "Prose time to first visible text, seconds (lower is better)",
+      "v1_8_4": "0.380",
+      "V-D": "0.484",
+      "O-D": "0.497",
+      "note": "With base weights, v1.8.4 shows prose text about 0.10 s sooner; v2.0.1 takes about 1.27x as long. RigMark's own prose time to first token marks the first reasoning token, not visible text, so it is not shown."
+    }
+  },
+  "links": {
+    "release": "https://github.com/jakejharris/jspark3/releases/tag/v2.0.1",
+    "install": "https://github.com/jakejharris/jspark3/blob/v2.0.1/INSTALL.md",
+    "results": "https://github.com/jakejharris/jspark3/blob/v2.0.1/release/results-v2.0.1.json",
+    "measurements": "https://github.com/jakejharris/jspark3/blob/v2.0.1/release/MEASUREMENTS-v2.0.1.md"
+  }
+}

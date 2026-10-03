@@ -1,0 +1,234 @@
+"""The Qwen3.8-27B CUDA engine: one GPU or two ranks; prompt ends are kept, replies are prefilled again."""
+
+from __future__ import annotations
+
+import time
+from pathlib import Path
+from typing import Callable
+
+
+KEEP = 3             # prompt states a concurrent decoder keeps to resume from (each holds a DeltaNet copy)
+KEEP_ONE = 4         # prompt states one stream keeps (they share its attention buffers)
+
+
+class Qwen27Engine:
+    """Qwen3.8-27B on one GPU or two ranks (rank 0 here), DFlash2 drafting, prefix reuse."""
+
+    def __init__(self, model_dir: Path, draft_dir: Path | None, *, max_rows: int = 12, tp: int = 1,
+                 rank: int = 0, master: str = "", port: int = 29551, split_head: bool = False,
+                 tp_draft: bool = False, allow_copy: bool = True, streams: int = 1,
+                 context: int | None = None, context_explicit: bool | None = None):
+        import torch
+
+        from .exl3_load import admission, quant_config
+
+        exl3 = quant_config(Path(model_dir)) is not None
+        if exl3 and tp != 1:
+            raise ValueError("EXL3 packs of Qwen3.8-27B run on one GPU: drop --tp 2, or serve the MLX checkpoint "
+                             "(Vontra/Qwen3.8-27B-MLX-4bit) on two")
+        from .weights import load
+        from tensorfold.cuda.capacity import admit, gather_ints
+        from tensorfold.cuda.geometry import draft_geometry, gdn_geometry, stream_geometry
+        from .affine_memory import weight_transform
+
+        self.torch = torch
+        self.tp, self.rank, self.max_rows, self.allow_copy = tp, rank, max_rows, allow_copy
+        torch.cuda.set_device(0)
+        if streams > 1 and tp == 1:          # streams' caches of many sizes come and go: growable segments, less slack
+            torch.cuda.memory._set_allocator_settings("expandable_segments:True")
+        if tp == 2:
+            import torch.distributed as dist
+
+            from .distributed import split_weights
+
+            dist.init_process_group("nccl", init_method=f"tcp://{master}:{port}", rank=rank, world_size=2)
+            # both ranks must run the same calls: refuse to start when they were given different settings
+            flags = torch.tensor([int(draft_dir is not None and tp_draft), max_rows, int(split_head), int(allow_copy),
+                                  streams, -1 if context is None else int(context), int(bool(context_explicit))],
+                                 dtype=torch.int64, device="cuda")
+            both = torch.empty((2, flags.numel()), dtype=torch.int64, device="cuda")
+            dist.all_gather_into_tensor(both, flags)
+            if not torch.equal(both[0], both[1]):
+                raise RuntimeError("the two ranks were started with different settings (two-rank drafter, rows, "
+                                   f"head split, copies, --parallel, --context): rank 0 {both[0].tolist()}, rank 1 "
+                                   f"{both[1].tolist()}; pull the draft model on both machines, and pass the same "
+                                   "--no-drafts, --parallel and --context to both")
+            gather = lambda values: gather_ints(torch, lambda send, recv: dist.all_gather_into_tensor(recv, send), values)
+        else:
+            gather = None
+        many = streams > 1
+        geometry = ((lambda text: stream_geometry(text, tp, streams, KEEP)) if many else
+                    (lambda text: gdn_geometry(text, tp, max_rows)))
+        # an affine checkpoint's packed words at their stored precision; an EXL3 pack's by its own format
+        tensor_bytes = weight_transform(model_dir)
+        if exl3:
+            geometry, tensor_bytes = admission(geometry)
+        # one admission for one stream or many, on every rank, before any weight loads
+        self.capacity_plan = admit(model_dir, context, context_explicit, torch,
+                                   geometry, tensor_bytes,
+                                   rank=rank, world=tp, gather=gather,
+                                   draft_dir=draft_dir if rank == 0 or tp_draft else None,
+                                   draft_geometry=lambda text: draft_geometry(text, tp if tp_draft else 1, max_rows,
+                                                                              bounded=True, streams=streams,
+                                                                              kept=KEEP + 1 if many else 0),
+                                   startup_copies=int(tp == 2))
+        self.context_window = self.capacity_plan["context_window"]
+        if tp == 2:
+            full = load(model_dir)
+            self.w = split_weights(full, rank, tiled=True, split_head=split_head)
+        else:
+            full = load(model_dir, tiled=True)
+            self.w = full
+        self.draft = None
+        if draft_dir is not None and (rank == 0 or (tp == 2 and tp_draft)):
+            from .dflash2 import DFlash2
+
+            # tp_draft: both ranks hold half the drafter and draft together (rank 1 needs --draft too)
+            self.draft = DFlash2(draft_dir, full, rank=rank, world=2) if tp == 2 and tp_draft else DFlash2(draft_dir, full)
+        del full
+        torch.cuda.empty_cache()
+        from tensorfold.cuda.markers import resume_points
+        from tensorfold.cuda.streams import PrefixCache
+
+        self.eos = tuple(self.w.config.eos)
+        self.points = resume_points(model_dir)              # message starts a prefill keeps states at
+        self.cache = PrefixCache(KEEP_ONE)                  # (committed ids, state, drafter snapshot)
+        # ``streams`` > 1: up to that many requests decoded together, their windows verified in one forward
+        self.concurrent = streams > 1
+        self.multi = self.scheduler = None
+        if self.concurrent:
+            from tensorfold.cuda.scheduler import Scheduler
+
+            from .multi import MultiDecoder
+
+            self.multi = MultiDecoder(self.w, self.draft, allow_copy=allow_copy, rank=rank, world=tp,
+                                      context=self.capacity_plan["cache_slots"], keep=KEEP, points=self.points)
+            self.multi.calibrate(streams)
+            if rank == 0:
+                print(f"[tensorfold] {streams} streams of {self.context_window} prompt/reply tokens", flush=True)
+                curve = ", ".join(f"{r}: {ms:.1f}" for r, ms in self.multi.costs)
+                print(f"[tensorfold] verify ms by rows (tree widths follow it): {curve}", flush=True)
+                self.scheduler = Scheduler(self.multi, max_streams=streams)
+
+    def _resume(self, prompt: list[int]):
+        best = self.cache.longest(prompt)
+        if best is not None:
+            self._drop_extensions(best[0])
+        return best
+
+    def _drop_extensions(self, ids: list[int]) -> None:
+        """Drop cached extensions before resuming a shorter prefix because cloned states share KV buffers and resumed writes overwrite longer prefixes."""
+
+        n = len(ids)
+        self.cache.entries = [c for c in self.cache.entries if len(c[0]) <= n or c[0][:n] != ids]
+
+    def _remember(self, ids: list[int], st, snap) -> None:
+        self.cache.add(ids, st, snap)
+
+    def _stops(self, prompt: list[int], hit, draft: bool) -> tuple[list[int], Callable | None]:
+        """Message starts past the resumed prefix, and the callback that keeps their states."""
+
+        from tensorfold.cuda.markers import MIN_GAP
+
+        if not draft or self.points is None:
+            return [], None
+        base = len(hit[0]) if hit else 0
+        stops = [p for p in self.points(prompt) if p >= base + MIN_GAP]
+        return stops, lambda p, st, snap: self._remember(list(prompt[:p]), st, snap)
+
+    def _ends(self, prompt: list[int], stops: list[int]) -> bool:
+        """Whether to keep the prompt end too: not when a kept message start sits just before it."""
+
+        from tensorfold.cuda.markers import MIN_GAP
+
+        return not (stops and len(prompt) - stops[-1] < MIN_GAP)
+
+    def generate(self, prompt: list[int], max_tokens: int, sampling, on_tokens: Callable[[list[int]], bool | None],
+                 draft: bool = True):
+        """``draft=False`` runs serial decoding from a fresh prefill without draft proposals, copies, or prefix-cache changes."""
+
+        from .decode import draft_decode, prefill
+
+        if len(prompt) >= self.context_window:
+            raise ValueError(f"prompt of {len(prompt)} tokens exceeds the {self.context_window}-token safe capacity; "
+                             "shorten the prompt or reserve fewer reply tokens")
+        max_tokens = max(1, min(int(max_tokens), self.context_window - len(prompt)))
+        if self.scheduler is not None:
+            return self.scheduler.submit(list(prompt), max_tokens, sampling, draft, on_tokens)
+        t0 = time.perf_counter()
+        hit = self._resume(prompt) if draft else None
+        if self.tp == 2:
+            return self._generate_tp(prompt, max_tokens, sampling, on_tokens, hit, t0, draft)
+        drafter = self.draft if draft else None
+        if hit is not None and drafter is not None:
+            drafter.restore(hit[2])
+        elif drafter is not None:
+            drafter.restore(([None] * drafter.layers, [None] * drafter.layers, 0, 0))
+        stops, keep = self._stops(prompt, hit, draft)
+        st, pending = prefill(self.w, prompt, sampling, drafter, state=hit[1] if hit else None,
+                              limit=self.context_window, stops=stops, keep=keep)
+        if draft and self._ends(prompt, stops):
+            self._remember(list(prompt), st, drafter.snapshot() if drafter else None)
+        prefill_s = time.perf_counter() - t0
+        if on_tokens([pending]):
+            return {"prefill_s": prefill_s, "cached": hit[1].pos if hit else 0}
+        result = draft_decode(self.w, st, prompt, pending, max_tokens, sampling, drafter,
+                              max_rows=self.max_rows, allow_copy=self.allow_copy and draft, on_tokens=on_tokens)
+        return {"prefill_s": prefill_s, "decode_s": result.seconds, "rounds": result.rounds,
+                "cached": hit[1].pos if hit else 0, "drafts": draft, "min_rows": min(result.widths, default=0)}
+
+    # two ranks: rank 0 sends each request's header and prompt to rank 1, both run the same calls
+    def _generate_tp(self, prompt, max_tokens, sampling, on_tokens, hit, t0, draft):
+        from .decode_tp import _share, decode_tp, pack_sampling, prefill_tp
+
+        dev = self.w.norm.device
+        cached = hit[1].pos if hit else 0
+        _share([1, max_tokens, cached, int(draft), *pack_sampling(sampling)], 0, dev)
+        _share(prompt, 0, dev)
+        drafter = self.draft if draft else None
+        if hit is not None and drafter is not None:
+            drafter.restore(hit[2])
+        elif drafter is not None:
+            drafter.restore(([None] * drafter.layers, [None] * drafter.layers, 0, 0))
+        stops, keep = self._stops(prompt, hit, draft)
+        st, pending = prefill_tp(self.w, prompt, sampling, 0, drafter, state=hit[1] if hit else None,
+                                 limit=self.context_window, stops=stops, keep=keep)
+        if draft and self._ends(prompt, stops):
+            self._remember(list(prompt), st, drafter.snapshot() if drafter else None)
+        prefill_s = time.perf_counter() - t0
+        stop_now = bool(on_tokens([pending]))
+        result = decode_tp(self.w, st, prompt, pending, 1 if stop_now else max_tokens, sampling, 0, drafter,
+                           max_rows=self.max_rows, allow_copy=self.allow_copy and draft, on_tokens=on_tokens)
+        return {"prefill_s": prefill_s, "decode_s": result.seconds, "rounds": result.rounds, "cached": cached,
+                "drafts": draft, "min_rows": min(result.widths, default=0)}
+
+    def follow(self) -> None:
+        """Rank 1: mirror every request rank 0 serves, forever."""
+
+        if self.multi is not None:
+            self.multi.follow()
+            return
+
+        from .decode_tp import _share, decode_tp, prefill_tp, unpack_sampling
+
+        dev = self.w.norm.device
+        while True:
+            header = _share(None, 1, dev)
+            _, max_tokens, cached, draft = header[:4]
+            sampling = unpack_sampling(header[4:18])
+            prompt = _share(None, 1, dev)
+            drafter = self.draft if draft else None
+            hit = self.cache.named(prompt, cached) if cached else None
+            if cached and hit is None:
+                raise RuntimeError(f"rank 1 has no cached state for the {cached} tokens rank 0 resumes from")
+            if hit is not None:
+                self._drop_extensions(hit[0])
+            if drafter is not None:             # a two-rank drafter: mirror rank 0's drafter state
+                drafter.restore(hit[2] if hit is not None else
+                                ([None] * drafter.layers, [None] * drafter.layers, 0, 0))
+            stops, keep = self._stops(prompt, hit, draft)
+            st, pending = prefill_tp(self.w, prompt, sampling, 1, drafter, state=hit[1] if hit else None,
+                                     limit=self.context_window, stops=stops, keep=keep)
+            if draft and self._ends(prompt, stops):
+                self._remember(list(prompt), st, drafter.snapshot() if drafter else None)
+            result = decode_tp(self.w, st, prompt, pending, max_tokens, sampling, 1, drafter, max_rows=self.max_rows)
