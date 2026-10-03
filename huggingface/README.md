@@ -24,7 +24,33 @@ tags:
 <h1 style="margin:0;font-size:2.4em;line-height:1;letter-spacing:-0.01em;">JSpark3 <span style="font-weight:500;color:#8b8b90;">v2.0.1 · GLM-5.3 Flash</span></h1>
 </div>
 
-**With base weights and the draft model, eight concurrent requests produced 126.0 tok/s in total on short prompts of 41 to 62 tokens. With refusal-removed (ablit) weights and the draft model, eight concurrent requests on the same short prompts (41 to 62 tokens) produced 121.7 tok/s in total.**
+**v2.0.1 is out. New engine, new weights, still three DGX Sparks, and big RigMark throughput gains over v1.8.4.**
+
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:14px;margin:18px 0 8px;">
+  <div style="background:linear-gradient(160deg,#1d1d20 0%,#0e0e10 100%);border:1px solid rgba(255,255,255,0.09);border-radius:12px;padding:18px 20px 16px;box-shadow:2px 2px 0 #f0a8a8,inset 0 1px 0 rgba(255,255,255,0.05);">
+    <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#9a9a9f;">Code, decode estimate</div>
+    <div style="margin-top:10px;font-size:36px;line-height:1;font-weight:800;letter-spacing:-0.02em;color:#f0a8a8;">91.3 <span style="font-size:18px;font-weight:600;letter-spacing:0;color:#c9c9ce;">tok/s</span></div>
+    <div style="margin-top:8px;font-size:13px;line-height:1.45;color:#a4a4a9;">v1.8.4: 61.1 tok/s</div>
+  </div>
+  <div style="background:linear-gradient(160deg,#1d1d20 0%,#0e0e10 100%);border:1px solid rgba(255,255,255,0.09);border-radius:12px;padding:18px 20px 16px;box-shadow:2px 2px 0 #f2c6a6,inset 0 1px 0 rgba(255,255,255,0.05);">
+    <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#9a9a9f;">Prose, decode estimate</div>
+    <div style="margin-top:10px;font-size:36px;line-height:1;font-weight:800;letter-spacing:-0.02em;color:#f2c6a6;">51.6 <span style="font-size:18px;font-weight:600;letter-spacing:0;color:#c9c9ce;">tok/s</span></div>
+    <div style="margin-top:8px;font-size:13px;line-height:1.45;color:#a4a4a9;">v1.8.4: 31.5 tok/s</div>
+  </div>
+  <div style="background:linear-gradient(160deg,#1d1d20 0%,#0e0e10 100%);border:1px solid rgba(255,255,255,0.09);border-radius:12px;padding:18px 20px 16px;box-shadow:2px 2px 0 #a8e6c7,inset 0 1px 0 rgba(255,255,255,0.05);">
+    <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#9a9a9f;">Cold prefill, 64K prompt</div>
+    <div style="margin-top:10px;font-size:36px;line-height:1;font-weight:800;letter-spacing:-0.02em;color:#a8e6c7;">2,124 <span style="font-size:18px;font-weight:600;letter-spacing:0;color:#c9c9ce;">tok/s</span></div>
+    <div style="margin-top:8px;font-size:13px;line-height:1.45;color:#a4a4a9;">v1.8.4: 1,505 tok/s</div>
+  </div>
+  <div style="background:linear-gradient(160deg,#1d1d20 0%,#0e0e10 100%);border:1px solid rgba(255,255,255,0.09);border-radius:12px;padding:18px 20px 16px;box-shadow:2px 2px 0 #a6d2f2,inset 0 1px 0 rgba(255,255,255,0.05);">
+    <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#9a9a9f;">Four at once, end to end</div>
+    <div style="margin-top:10px;font-size:36px;line-height:1;font-weight:800;letter-spacing:-0.02em;color:#a6d2f2;">113.4 <span style="font-size:18px;font-weight:600;letter-spacing:0;color:#c9c9ce;">tok/s</span></div>
+    <div style="margin-top:8px;font-size:13px;line-height:1.45;color:#a4a4a9;">short code, end-to-end, 256-token cap per agent · v1.8.4: 86.6 tok/s</div>
+  </div>
+</div>
+<p style="font-size:12.5px;line-height:1.5;color:#8b8b90;margin:0 0 18px;">RigMark, v2.0.1 with base weights + draft model · base profile (tok/s, higher is better), with the v1.8.4 figure under each one.</p>
+
+Appliance comparison: different model IDs, not a same-weights claim. v1.8.4 ran with reasoning off, its default; v2.0.1 ran at reasoning effort low. Cold prefill and replay rows use raw token-ID completions, where reasoning effort does not apply. With base weights, v1.8.4 shows the first visible text sooner in two measured cases (about 2% on single-client short code replies, about 0.10 s on prose); both rows are in the RigMark section below.
 
 > **v2.0.1 does not use the EXL3 files in this repository.** Those files are the v1.8.x weights, kept for the v1.8.4 rollback. v2.0.1 downloads public weights from [`TensorFold/GLM-5.3-Flash-MLX-4bit-MTP`](https://huggingface.co/TensorFold/GLM-5.3-Flash-MLX-4bit-MTP/tree/76add2a341a1cd90ad0e86bb69839ea9c35827c6) (formerly `Vontra/GLM-5.3-Flash-MLX-4bit-MTP`, which redirects) at revision `76add2a341a1cd90ad0e86bb69839ea9c35827c6`, verifies every file against a pinned SHA-256 list, and splits them across your three Sparks on your own machine. Install from the [v2.0.1 release on GitHub](https://github.com/jakejharris/jspark3/releases/tag/v2.0.1).
 
@@ -35,6 +61,14 @@ tags:
   <a href="https://github.com/jakejharris/jspark3"><img src="https://img.shields.io/badge/recipe_license-Apache--2.0-d73a49?style=for-the-badge" alt="Recipe license Apache-2.0"></a>
   <a href="https://huggingface.co/incoai/GLM-5.3-Flash-DFlash2"><img src="https://img.shields.io/badge/draft_model-DFlash2_non--commercial-6e7781?style=for-the-badge" alt="DFlash2 draft model, non-commercial license"></a>
 </p>
+
+- **80.9 tok/s** decode on one stream on our own benchmark (short code replies).
+- **97.5 tok/s** aggregate decode on our own benchmark (short prompts, 41-62 tokens, 4 concurrent).
+- **1.5 s** to first visible text when you continue a conversation of at least 100,000 tokens that had been pushed out of memory, against 49.9 s to read it from scratch.
+- **Images in chat:** up to 16 per request, as inline `data:` URLs.
+- **Two weight variants, one switch:** MIT base weights by default, or opt-in refusal-removed (ablit) weights.
+
+All figures above: base weights + draft model unless marked. Every figure, with its conditions, is in the RigMark and Results sections below.
 
 JSpark3 serves GLM-5.3 Flash on three NVIDIA DGX Sparks, connected by a direct high-speed (RDMA) link, as one OpenAI-compatible endpoint. v2.0.1 replaces the vLLM engine of v1.8.x with [a fork of TensorFold 0.3.6.2 (MIT)](https://github.com/ashhart/TensorFold). v2.0.1 also saves conversation state to each Spark's disk by default: with base weights and the draft model, a conversation of at least 100,000 tokens that had been pushed out of memory showed its first visible text 1.5 s after it was continued, against 49.9 s to read it from scratch.
 
@@ -70,6 +104,77 @@ JSpark3 serves GLM-5.3 Flash on three NVIDIA DGX Sparks, connected by a direct h
     <div style="margin-top:8px;font-size:13px;line-height:1.45;color:#a4a4a9;">tokens per request · base profile</div>
   </div>
 </div>
+
+## RigMark
+
+RigMark against our own v1.8.4, with one column per v2.0.1 weight variant.
+
+Appliance comparison: different model IDs, not a same-weights claim. v1.8.4 ran with reasoning off, its default; v2.0.1 ran at reasoning effort low. Cold prefill and replay rows use raw token-ID completions, where reasoning effort does not apply.
+
+<div style="background:linear-gradient(160deg,#1d1d20 0%,#0e0e10 100%);border:1px solid rgba(255,255,255,0.09);border-radius:12px;padding:0;box-shadow:2px 2px 0 #f0a8a8,inset 0 1px 0 rgba(255,255,255,0.05);overflow:hidden;margin:14px 0 6px;">
+<table style="width:100%;border-collapse:separate;border-spacing:0;margin:0;background:transparent;">
+  <thead><tr>
+    <th style="text-align:left;padding:11px 14px;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#9a9a9f;border-bottom:1px solid rgba(255,255,255,0.10);background:rgba(255,255,255,0.03);">RigMark row</th>
+    <th style="text-align:center;padding:11px 14px;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#9a9a9f;border-bottom:1px solid rgba(255,255,255,0.10);background:rgba(255,255,255,0.03);">v1.8.4</th>
+    <th style="text-align:center;padding:11px 14px;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#9a9a9f;border-bottom:1px solid rgba(255,255,255,0.10);background:rgba(255,255,255,0.03);">base weights + draft model · base profile</th>
+    <th style="text-align:center;padding:11px 14px;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#9a9a9f;border-bottom:1px solid rgba(255,255,255,0.10);background:rgba(255,255,255,0.03);">refusal-removed (ablit) weights + draft model · ablit profile</th>
+  </tr></thead>
+  <tbody>
+  <tr>
+    <td style="text-align:left;padding:10px 14px;font-size:14px;line-height:1.45;color:#e6e6ea;border-bottom:1px solid rgba(255,255,255,0.06);">Code, decode estimate (tok/s, higher is better)</td>
+    <td style="text-align:center;padding:10px 14px;font-size:14px;line-height:1.45;color:#e6e6ea;border-bottom:1px solid rgba(255,255,255,0.06);">61.1</td>
+    <td style="text-align:center;padding:10px 14px;font-size:14px;line-height:1.45;color:#e6e6ea;border-bottom:1px solid rgba(255,255,255,0.06);color:#f0a8a8;font-weight:700;">91.3</td>
+    <td style="text-align:center;padding:10px 14px;font-size:14px;line-height:1.45;color:#e6e6ea;border-bottom:1px solid rgba(255,255,255,0.06);">90.1</td>
+  </tr>
+  <tr>
+    <td style="text-align:left;padding:10px 14px;font-size:14px;line-height:1.45;color:#e6e6ea;border-bottom:1px solid rgba(255,255,255,0.06);">Prose, decode estimate (tok/s, higher is better)</td>
+    <td style="text-align:center;padding:10px 14px;font-size:14px;line-height:1.45;color:#e6e6ea;border-bottom:1px solid rgba(255,255,255,0.06);">31.5</td>
+    <td style="text-align:center;padding:10px 14px;font-size:14px;line-height:1.45;color:#e6e6ea;border-bottom:1px solid rgba(255,255,255,0.06);color:#f0a8a8;font-weight:700;">51.6</td>
+    <td style="text-align:center;padding:10px 14px;font-size:14px;line-height:1.45;color:#e6e6ea;border-bottom:1px solid rgba(255,255,255,0.06);">50.8</td>
+  </tr>
+  <tr>
+    <td style="text-align:left;padding:10px 14px;font-size:14px;line-height:1.45;color:#e6e6ea;border-bottom:1px solid rgba(255,255,255,0.06);">Structured output ceiling* (tok/s, higher is better)</td>
+    <td style="text-align:center;padding:10px 14px;font-size:14px;line-height:1.45;color:#e6e6ea;border-bottom:1px solid rgba(255,255,255,0.06);">95.4</td>
+    <td style="text-align:center;padding:10px 14px;font-size:14px;line-height:1.45;color:#e6e6ea;border-bottom:1px solid rgba(255,255,255,0.06);color:#f0a8a8;font-weight:700;">127.9</td>
+    <td style="text-align:center;padding:10px 14px;font-size:14px;line-height:1.45;color:#e6e6ea;border-bottom:1px solid rgba(255,255,255,0.06);">127.4</td>
+  </tr>
+  <tr>
+    <td style="text-align:left;padding:10px 14px;font-size:14px;line-height:1.45;color:#e6e6ea;border-bottom:1px solid rgba(255,255,255,0.06);">Cold prefill, 64K prompt (tok/s, higher is better)</td>
+    <td style="text-align:center;padding:10px 14px;font-size:14px;line-height:1.45;color:#e6e6ea;border-bottom:1px solid rgba(255,255,255,0.06);">1,505</td>
+    <td style="text-align:center;padding:10px 14px;font-size:14px;line-height:1.45;color:#e6e6ea;border-bottom:1px solid rgba(255,255,255,0.06);color:#f0a8a8;font-weight:700;">2,124</td>
+    <td style="text-align:center;padding:10px 14px;font-size:14px;line-height:1.45;color:#e6e6ea;border-bottom:1px solid rgba(255,255,255,0.06);">2,129</td>
+  </tr>
+  <tr>
+    <td style="text-align:left;padding:10px 14px;font-size:14px;line-height:1.45;color:#e6e6ea;border-bottom:1px solid rgba(255,255,255,0.06);">Four at once, end to end (tok/s, higher is better): short code, end-to-end, 256-token cap per agent</td>
+    <td style="text-align:center;padding:10px 14px;font-size:14px;line-height:1.45;color:#e6e6ea;border-bottom:1px solid rgba(255,255,255,0.06);">86.6</td>
+    <td style="text-align:center;padding:10px 14px;font-size:14px;line-height:1.45;color:#e6e6ea;border-bottom:1px solid rgba(255,255,255,0.06);color:#f0a8a8;font-weight:700;">113.4</td>
+    <td style="text-align:center;padding:10px 14px;font-size:14px;line-height:1.45;color:#e6e6ea;border-bottom:1px solid rgba(255,255,255,0.06);">128.4</td>
+  </tr>
+  <tr>
+    <td style="text-align:left;padding:10px 14px;font-size:14px;line-height:1.45;color:#e6e6ea;border-bottom:1px solid rgba(255,255,255,0.06);">C1 per-stream time to first token, seconds (lower is better)</td>
+    <td style="text-align:center;padding:10px 14px;font-size:14px;line-height:1.45;color:#e6e6ea;border-bottom:1px solid rgba(255,255,255,0.06);">0.396</td>
+    <td style="text-align:center;padding:10px 14px;font-size:14px;line-height:1.45;color:#e6e6ea;border-bottom:1px solid rgba(255,255,255,0.06);color:#f0a8a8;font-weight:700;">0.405</td>
+    <td style="text-align:center;padding:10px 14px;font-size:14px;line-height:1.45;color:#e6e6ea;border-bottom:1px solid rgba(255,255,255,0.06);">0.361</td>
+  </tr>
+  <tr>
+    <td style="text-align:left;padding:10px 14px;font-size:14px;line-height:1.45;color:#e6e6ea;border-bottom:1px solid rgba(255,255,255,0.06);">Prose time to first visible text, seconds (lower is better)</td>
+    <td style="text-align:center;padding:10px 14px;font-size:14px;line-height:1.45;color:#e6e6ea;border-bottom:1px solid rgba(255,255,255,0.06);">0.380</td>
+    <td style="text-align:center;padding:10px 14px;font-size:14px;line-height:1.45;color:#e6e6ea;border-bottom:1px solid rgba(255,255,255,0.06);color:#f0a8a8;font-weight:700;">0.484</td>
+    <td style="text-align:center;padding:10px 14px;font-size:14px;line-height:1.45;color:#e6e6ea;border-bottom:1px solid rgba(255,255,255,0.06);">0.497</td>
+  </tr>
+  </tbody>
+</table>
+</div>
+
+\* predictable-output ceiling; not a proxy for agent speed
+
+*C1 per-stream time to first token:* With base weights, v1.8.4 is about 2% faster on this row. The first token is visible text in every reply in each column.
+
+*Prose time to first visible text:* With base weights, v1.8.4 shows prose text about 0.10 s sooner; v2.0.1 takes about 1.27x as long. RigMark's own prose time to first token marks the first reasoning token, not visible text, so it is not shown.
+
+Prose row: at reasoning effort low, v2.0.1 writes a short reasoning passage before the visible text (with base weights, 11 to 12 tokens, about 1% of each reply of about 1,000 tokens); v1.8.4, with reasoning off, wrote none. RigMark counts those tokens in the prose decode rate and in last output time.
+
+Both raw RigMark blocks, one per weight variant, are in the [v2.0.1 release notes](https://github.com/jakejharris/jspark3/releases/tag/v2.0.1).
 
 ## Results
 
