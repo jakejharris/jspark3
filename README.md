@@ -4,7 +4,26 @@ A serving recipe for GLM-5.3 Flash on three NVIDIA DGX Sparks.
 
 **Current release: JSpark3 v2.0.1 (GLM-5.3 Flash).** Start with the [v2.0.1 release](https://github.com/jakejharris/jspark3/releases/tag/v2.0.1) and the [v2.0.1 installation guide](https://github.com/jakejharris/jspark3/blob/v2.0.1/INSTALL.md).
 
-With base weights and the draft model, eight concurrent requests produced 126.0 tok/s in total on short prompts of 41 to 62 tokens. With refusal-removed (ablit) weights and the draft model, eight concurrent requests on the same short prompts (41 to 62 tokens) produced 121.7 tok/s in total.
+**v2.0.1 is out. New engine, new weights, still three DGX Sparks, and big RigMark throughput gains over v1.8.4.**
+
+RigMark, v2.0.1 with base weights + draft model (tok/s, higher is better):
+
+| RigMark row | v1.8.4 | v2.0.1 |
+|---|---:|---:|
+| Code, decode estimate | 61.1 | **91.3** |
+| Prose, decode estimate | 31.5 | **51.6** |
+| Cold prefill, 64K prompt | 1,505 | **2,124** |
+| Four at once, end to end (short code, end-to-end, 256-token cap per agent) | 86.6 | **113.4** |
+
+Appliance comparison: different model IDs, not a same-weights claim. v1.8.4 ran with reasoning off, its default; v2.0.1 ran at reasoning effort low. Cold prefill and replay rows use raw token-ID completions, where reasoning effort does not apply. With base weights, v1.8.4 shows the first visible text sooner in two measured cases (about 2% on single-client short code replies, about 0.10 s on prose); both rows are in the RigMark section below.
+
+- **80.9 tok/s** decode on one stream on our own benchmark (short code replies).
+- **97.5 tok/s** aggregate decode on our own benchmark (short prompts, 41-62 tokens, 4 concurrent).
+- **1.5 s** to first visible text when you continue a conversation of at least 100,000 tokens that had been pushed out of memory, against 49.9 s to read it from scratch.
+- **Images in chat:** up to 16 per request, as inline `data:` URLs.
+- **Two weight variants, one switch:** MIT base weights by default, or opt-in refusal-removed (ablit) weights.
+
+All figures above: base weights + draft model unless marked. The full RigMark table is below; every result set, with its conditions, is in the [v2.0.1 release notes](https://github.com/jakejharris/jspark3/releases/tag/v2.0.1).
 
 v2.0.1 replaces the vLLM engine of v1.8.x with [a fork of TensorFold 0.3.6.2 (MIT)](https://github.com/ashhart/TensorFold), and serves public 4-bit GLM-5.3 Flash weights that the installer downloads, verifies against pinned hashes and splits across your three Sparks. v2.0.1 also saves conversation state to each Spark's disk by default: with base weights and the draft model, a conversation of at least 100,000 tokens that had been pushed out of memory showed its first visible text 1.5 s after it was continued, against 49.9 s to read it from scratch.
 
@@ -21,6 +40,38 @@ v2.0.1 replaces the vLLM engine of v1.8.x with [a fork of TensorFold 0.3.6.2 (MI
 - After splitting: the full download ($DATA/base/weights) is not needed to serve, so you may delete it.
 
 **Before you connect a client:** The server listens on loopback (127.0.0.1) only, with no authentication and no CORS. Reach it through an SSH tunnel or a reverse proxy that adds authentication; don't expose the port.
+
+## RigMark
+
+RigMark against our own v1.8.4, with one column per v2.0.1 weight variant.
+
+Appliance comparison: different model IDs, not a same-weights claim. v1.8.4 ran with reasoning off, its default; v2.0.1 ran at reasoning effort low. Cold prefill and replay rows use raw token-ID completions, where reasoning effort does not apply.
+
+| RigMark row | v1.8.4 | base weights + draft model · base profile | refusal-removed (ablit) weights + draft model · ablit profile |
+|---|---:|---:|---:|
+| Code, decode estimate (tok/s, higher is better) | 61.1 | 91.3 | 90.1 |
+| Prose, decode estimate (tok/s, higher is better) | 31.5 | 51.6 | 50.8 |
+| Structured output ceiling* (tok/s, higher is better) | 95.4 | 127.9 | 127.4 |
+| Cold prefill, 64K prompt (tok/s, higher is better) | 1,505 | 2,124 | 2,129 |
+| Four at once, end to end (tok/s, higher is better): short code, end-to-end, 256-token cap per agent | 86.6 | 113.4 | 128.4 |
+| C1 per-stream time to first token, seconds (lower is better) | 0.396 | 0.405 | 0.361 |
+| Prose time to first visible text, seconds (lower is better) | 0.380 | 0.484 | 0.497 |
+
+\* predictable-output ceiling; not a proxy for agent speed
+
+*C1 per-stream time to first token:* With base weights, v1.8.4 is about 2% faster on this row. The first token is visible text in every reply in each column.
+
+*Prose time to first visible text:* With base weights, v1.8.4 shows prose text about 0.10 s sooner; v2.0.1 takes about 1.27x as long. RigMark's own prose time to first token marks the first reasoning token, not visible text, so it is not shown.
+
+Prose row: at reasoning effort low, v2.0.1 writes a short reasoning passage before the visible text (with base weights, 11 to 12 tokens, about 1% of each reply of about 1,000 tokens); v1.8.4, with reasoning off, wrote none. RigMark counts those tokens in the prose decode rate and in last output time.
+
+Both raw RigMark blocks, one per weight variant, are in the [v2.0.1 release notes](https://github.com/jakejharris/jspark3/releases/tag/v2.0.1).
+
+## Results
+
+With base weights and the draft model, eight concurrent requests produced 126.0 tok/s in total on short prompts of 41 to 62 tokens. With refusal-removed (ablit) weights and the draft model, eight concurrent requests on the same short prompts (41 to 62 tokens) produced 121.7 tok/s in total.
+
+Every result set, with its conditions, is in the [v2.0.1 release notes](https://github.com/jakejharris/jspark3/releases/tag/v2.0.1).
 
 ## Weights
 
