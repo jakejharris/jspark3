@@ -123,6 +123,10 @@ SUPERSEDED_OWNER_FORMS = re.compile(
 )
 DOTTED_QUAD = re.compile(rb"(?<![\d.])(\d{1,3}(?:\.\d{1,3}){3})(?![\d.])")
 ALLOWED_QUADS = re.compile(rb"^(?:0\.0\.0\.0|127\.0\.0\.1|192\.0\.2\.\d+|198\.51\.100\.\d+|203\.0\.113\.\d+)$")
+# Release versions that read as dotted quads. Literal and narrow: TensorFold 0.3.6.2 is the
+# engine release v2.0.x forks, named on the landing page and Hub card ("a fork of TensorFold
+# 0.3.6.2 (MIT)"). Any other dotted quad remains a privacy finding.
+PERMITTED_VERSION_QUADS = (b"0.3.6.2",)
 
 # Measured-construction identifiers the frozen evidence contract requires in public.
 # CONTRACTS.md permits exactly the `jspark3.b45=boot41` provenance label and the exact
@@ -361,7 +365,7 @@ def check_leaks(root: Path, files: list[Path], report: Report) -> None:
                 f"{match.group(0).decode('utf-8', 'replace')}"
             )
         for quad in DOTTED_QUAD.findall(data):
-            if not ALLOWED_QUADS.match(quad):
+            if not ALLOWED_QUADS.match(quad) and quad not in PERMITTED_VERSION_QUADS:
                 problems.append(f"non-documentation address in {rel}: {quad.decode()}")
                 break
     if problems:
