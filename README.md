@@ -4,6 +4,10 @@ A serving recipe for GLM-5.3 Flash on three NVIDIA DGX Sparks.
 
 **Current release: JSpark3 v2.0.1 (GLM-5.3 Flash).** Start with the [v2.0.1 release](https://github.com/jakejharris/jspark3/releases/tag/v2.0.1) and the [v2.0.1 installation guide](INSTALL.md).
 
+See [v2.0.1 known issues and hotfixes](docs/TROUBLESHOOTING.md#v201-known-issues-and-hotfixes) for startup rebuilds,
+possible compile locks, unavailable downloads and no-drafter preflight. The kernel rebuild hotfix is **pending
+hardware validation (target 2026-10-04)**.
+
 **v2.0.1 is out. New engine, new weights, still three DGX Sparks, and big RigMark throughput gains over v1.8.4.**
 
 RigMark, v2.0.1 with base weights + draft model (tok/s, higher is better):

@@ -4,6 +4,7 @@ This page is for JSpark3 v2.0.1 (GLM-5.3 Flash). Find the message you see, then 
 It is maintained on main alongside the [current install guide](../INSTALL.md); run the commands from your
 `v2.0.1` tagged checkout.
 
+- [v2.0.1 known issues and hotfixes](#v201-known-issues-and-hotfixes)
 - [How script messages look](#how-script-messages-look)
 - [Preflight](#preflight)
 - [Settings and options](#settings-and-options): [settings profile](#settings-profile)
@@ -20,6 +21,202 @@ It is maintained on main alongside the [current install guide](../INSTALL.md); r
 - [API behaviour clients notice](#api-behaviour-clients-notice): [images in requests](#images-in-requests)
 - [Reaching the server safely](#reaching-the-server-safely)
 - [Asking for help](#asking-for-help)
+
+## v2.0.1 known issues and hotfixes
+
+These four install/startup entries supplement the release's API limitations; they do not renumber its known
+issues. Source links below point to the immutable **v2.0.1** tree. Commands run in that tagged checkout unless
+they explicitly invoke the checker from the separate main/docs checkout shown in [INSTALL](../INSTALL.md#quick-start-base-weights-the-default).
+
+### Kernels rebuild on every start
+
+**Pending validation (target 2026-10-04).**
+
+**Symptom:** later starts compile Torch extensions again despite keeping `$DATA/kernel-cache`.
+**Cause:** a fresh container runs pip on every start; new compiler-source timestamps invalidate Ninja's cached
+outputs. The startup command is [scripts/serve.sh:125–126](https://github.com/jakejharris/jspark3/blob/v2.0.1/scripts/serve.sh#L125-L126),
+the persistent mount is [scripts/serve.sh:114–116](https://github.com/jakejharris/jspark3/blob/v2.0.1/scripts/serve.sh#L114-L116),
+and TensorFold calls Torch's extension loader at
+[engine/src/tensorfold/cuda/build.py:23–29](https://github.com/jakejharris/jspark3/blob/v2.0.1/engine/src/tensorfold/cuda/build.py#L23-L29).
+
+**Fix:** follow the standalone [kernel rebuild hotfix](hotfixes/v2.0.1-kernel-rebuild.md), which contains the exact
+diff, before/after checksums and shutdown prerequisites. It adds the reviewed F1 timestamp helper and one
+startup call; this documentation does not patch the shipped engine. **Verify:** its cold and retained-cache
+boots must both pass readiness and smoke, and compiled artifact paths, timestamps and hashes must be unchanged
+on the second boot on all three hosts. **Undo:** use that file's guarded reverse patch and cache restoration.
+Hardware validation is pending; the entry cannot be published as a validated fix until it passes.
+
+**If skipped:** starts remain slower because of compilation, with repeated exposure to the **hypothetical**
+interrupted-compile lock below. No specific startup speedup is promised. Applying the hotfix does not remove
+an existing lock.
+
+### Possible stale Torch extension lock
+
+**Symptom:** after stopping during compilation, a later start produces no further compiler output and never
+becomes ready. **Cause — HYPOTHESIS, not observed in the boot walk:** an interrupted Torch build may leave its
+file lock behind and a new process may wait on it. A lock's presence or age alone is not proof; active builds
+also use locks. The recipe delegates locking/building to the installed Torch dependency
+([engine/src/tensorfold/cuda/build.py:26–29](https://github.com/jakejharris/jspark3/blob/v2.0.1/engine/src/tensorfold/cuda/build.py#L26-L29));
+Torch's implementation is not vendored in this tree, so this is a recovery hypothesis, not a demonstrated bug.
+
+**Detect:** the host path to inspect is **`$DATA/kernel-cache/torch_extensions/<extension-name>/lock`**, not
+`$DATA/kernel-cache/tensorfold`. `TORCH_EXTENSIONS_DIR=/kernel-cache/torch_extensions` is set in
+[config/serve.env:61](https://github.com/jakejharris/jspark3/blob/v2.0.1/config/serve.env#L61)
+and the host mapping is in [scripts/serve.sh:116](https://github.com/jakejharris/jspark3/blob/v2.0.1/scripts/serve.sh#L116).
+For example, the expert extension name is `tensorfold_experts_v8`
+([engine/src/tensorfold/cuda/experts.py:23](https://github.com/jakejharris/jspark3/blob/v2.0.1/engine/src/tensorfold/cuda/experts.py#L23));
+use the actual path printed below. On the affected box:
+
+```bash
+(
+set -euo pipefail
+source scripts/lib.sh
+load_cluster
+docker logs --tail 100 "${CONTAINER_PREFIX}-rank${RANK}"
+sudo find "$DATA/kernel-cache/torch_extensions" -type f -name lock -print
+)
+```
+
+If the directory is absent or no lock is listed, this recovery does not apply. Preserve the container logs
+before stopping: [scripts/stop.sh:46–48](https://github.com/jakejharris/jspark3/blob/v2.0.1/scripts/stop.sh#L46-L48)
+removes the container. Run `scripts/stop.sh` on **all three boxes**, using `--container-prefix` for any CLI-only
+prefix used at launch. Prevent automatic/concurrent restarts. Stop any other container and any host Python,
+serving or build job using this cache; an empty compiler-process list alone is not enough. Include other
+Docker daemons when checking. If you cannot establish that no process uses it, leave the locks alone.
+
+**Fix:** only with **no container running** and no host cache user, on the affected box run the following for
+each suspected leftover. It prompts for the exact listed path, confines it to this cache, and removes it from
+the active `lock` name by renaming it to a backup. It does not delete compiled files or the cache.
+
+```bash
+(
+set -euo pipefail
+source scripts/lib.sh
+load_cluster
+running=$(docker ps -q)
+test -z "$running" || { echo 'Stop all containers on this box first.' >&2; exit 1; }
+cache=$(realpath -e -- "$DATA/kernel-cache/torch_extensions")
+sudo find "$cache" -type f -name lock -print
+read -r -p 'Exact lock path from the list above: ' lock_file
+test ! -L "$lock_file"
+lock_file=$(realpath -e -- "$lock_file")
+[[ "$lock_file" == "$cache"/*/lock && -f "$lock_file" ]]
+[[ ! -e "$lock_file.v201-backup" && ! -L "$lock_file.v201-backup" ]]
+sudo mv -T -- "$lock_file" "$lock_file.v201-backup"
+test ! -e "$lock_file"
+printf 'Quarantined lock: %s\n' "$lock_file.v201-backup"
+)
+```
+
+**Verify:** start ranks 2, 1, then 0 with the same settings. Require advancing logs, rank 0 readiness and
+`scripts/smoke.sh` exit 0 / `SMOKE PASS`
+([scripts/serve.sh:2–11](https://github.com/jakejharris/jspark3/blob/v2.0.1/scripts/serve.sh#L2-L11),
+[scripts/wait-ready.sh:71–98](https://github.com/jakejharris/jspark3/blob/v2.0.1/scripts/wait-ready.sh#L71-L98),
+[scripts/smoke.sh:2–7](https://github.com/jakejharris/jspark3/blob/v2.0.1/scripts/smoke.sh#L2-L7)).
+Readiness timeout does not run a stop or lock cleanup
+([scripts/wait-ready.sh:84–96](https://github.com/jakejharris/jspark3/blob/v2.0.1/scripts/wait-ready.sh#L84-L96));
+waiting longer alone cannot remove a leftover. If the stall returns, keep the logs and investigate the first
+error instead of repeatedly clearing locks.
+
+**Undo:** restoring a stale lock may reproduce the stall, so normally retain the backup only for diagnosis.
+To restore the exact pre-recovery state, stop all three ranks and all other cache users as above, then run on
+the affected box. It refuses to overwrite a new lock:
+
+```bash
+(
+set -euo pipefail
+source scripts/lib.sh
+load_cluster
+running=$(docker ps -q)
+test -z "$running" || { echo 'Stop all containers first.' >&2; exit 1; }
+cache=$(realpath -e -- "$DATA/kernel-cache/torch_extensions")
+read -r -p 'Exact quarantined lock path (ending in lock.v201-backup): ' backup
+test ! -L "$backup"
+backup=$(realpath -e -- "$backup")
+[[ "$backup" == "$cache"/*/lock.v201-backup && -f "$backup" ]]
+lock_file=${backup%.v201-backup}
+[[ ! -e "$lock_file" && ! -L "$lock_file" ]]
+sudo mv -T -- "$backup" "$lock_file"
+test -f "$lock_file"
+)
+```
+
+### Dead or unavailable upstream weight source
+
+**Symptom:** a pinned download fails, or the source checker prints `FAIL`. **Cause:** a repository/revision may
+be removed, made private, renamed or gated; a network failure is another possibility and does not prove deletion.
+v2.0.1 pins distinct base, drafter and gated ablit sources at
+[pins.env:26–46](https://github.com/jakejharris/jspark3/blob/v2.0.1/pins.env#L26-L46),
+and downloads exact revisions at
+[scripts/fetch-weights.sh:102–118](https://github.com/jakejharris/jspark3/blob/v2.0.1/scripts/fetch-weights.sh#L102-L118).
+The unavailable Mia-AiLab EXL3 source concerns **v1.8.4 rollback**, not v2.0.1's MLX base weights; use the
+[pinned rollback mirror instructions](../UPGRADING.md#going-back-to-v184). v2.0.1 requires a separate installation
+([UPGRADING.md:34–36](https://github.com/jakejharris/jspark3/blob/v2.0.1/UPGRADING.md#L34-L36)).
+
+**Detect / fix:** from the v2.0.1 checkout, with the sibling docs checkout from INSTALL:
+
+```bash
+../jspark3-install-docs/scripts/check-sources.sh "$PWD/pins.env"
+```
+
+The checker was added after the tag; its behavior is defined by
+[scripts/check-sources.sh:87–163](../scripts/check-sources.sh#L87-L163), not by a v2.0.1 script.
+Expect `check-sources: 4 passed, 0 failed` and exit 0. It makes anonymous metadata/HEAD checks; it does not
+verify every shard. The gated ablit **401 / GatedRepo** weight response is expected only when its pinned
+revision's metadata also resolves. If it fails, retain the output and investigate network access or the named
+source before downloading. For ablit account access, follow the tag's token/terms diagnostics at
+[scripts/fetch-weights.sh:144–157](https://github.com/jakejharris/jspark3/blob/v2.0.1/scripts/fetch-weights.sh#L144-L157).
+
+If a source is gone, preserve any local files and their manifests. Recheck existing downloads with
+`scripts/fetch-weights.sh --verify-only` using your configured weights/drafter. If the full source snapshot was
+already removed after splitting, recheck the retained third with `scripts/split.sh --verify-only` instead;
+when using DFlash2, also run `scripts/fetch-weights.sh --drafter-only --verify-only`. These paths rehash local
+files and refresh their verification markers without fetching
+([scripts/fetch-weights.sh:39–58](https://github.com/jakejharris/jspark3/blob/v2.0.1/scripts/fetch-weights.sh#L39-L58),
+[scripts/fetch-weights.sh:153–192](https://github.com/jakejharris/jspark3/blob/v2.0.1/scripts/fetch-weights.sh#L153-L192),
+[scripts/split.sh:79–88](https://github.com/jakejharris/jspark3/blob/v2.0.1/scripts/split.sh#L79-L88)).
+If you need replacement bytes, use a maintainer-confirmed mirror at an immutable revision, stage its files
+separately, and require agreement with the **original tag's manifests** before replacing anything. Keep the
+old files for rollback. No replacement v2.0.1 mirror is prescribed here: without matching bytes, stop and
+report the failing repository and pinned revision. Do not substitute `main`, change hashes or bypass verification.
+If only DFlash2 is unavailable, the [no-drafter path](../INSTALL.md#running-without-the-draft-model) avoids its
+download ([scripts/fetch-weights.sh:186–192](https://github.com/jakejharris/jspark3/blob/v2.0.1/scripts/fetch-weights.sh#L186-L192)).
+
+**Verify:** the applicable local verifier must report every file matches / the third is verified; then use
+preflight, readiness and smoke before serving clients. The checker may still fail upstream even when your
+local files verify. **Undo:** the checker changes nothing; local verification only refreshes `.verified`
+markers as cited above. No pin/config edit is required. If you replaced files from a mirror, stop all ranks,
+restore your saved originals and rerun the same verifier; never restore a success marker without checking bytes.
+
+### No-drafter preflight flag
+
+**Symptom:** preflight reports `the drafter is downloaded and verified` as a failure although you intend to
+serve without DFlash2. **Cause:** a `--drafter none` option on another command does not persist into preflight;
+the latter reads its own options/settings
+([scripts/preflight.py:225–238](https://github.com/jakejharris/jspark3/blob/v2.0.1/scripts/preflight.py#L225-L238),
+[scripts/lib.sh:128–131](https://github.com/jakejharris/jspark3/blob/v2.0.1/scripts/lib.sh#L128-L131)).
+It checks drafter files only for `dflash2`
+([scripts/preflight.py:123–125](https://github.com/jakejharris/jspark3/blob/v2.0.1/scripts/preflight.py#L123-L125)).
+
+**Fix:** before starting, on **each box** run the corrected command:
+
+```bash
+python3 scripts/preflight.py --for serve --drafter none
+```
+
+**Verify:** require exit 0 / `0 failed`, with no drafter-file check; address unrelated failures normally
+([scripts/preflight.py:239–241](https://github.com/jakejharris/jspark3/blob/v2.0.1/scripts/preflight.py#L239-L241)).
+Then start ranks 2, 1, 0 with `scripts/serve.sh --drafter none` on every box. This selects the model's own
+prediction head rather than DFlash2
+([scripts/serve.sh:10–11](https://github.com/jakejharris/jspark3/blob/v2.0.1/scripts/serve.sh#L10-L11),
+[scripts/serve.sh:85–90](https://github.com/jakejharris/jspark3/blob/v2.0.1/scripts/serve.sh#L85-L90)).
+**Undo:** this CLI flag changes no saved setting. To return to DFlash2, stop all ranks, download/verify it with
+`scripts/fetch-weights.sh --drafter dflash2 --drafter-only`, run
+`python3 scripts/preflight.py --for serve --drafter dflash2`, then start every rank with
+`scripts/serve.sh --drafter dflash2`. Explicit flags override `cluster.env`
+([scripts/lib.sh:129–131](https://github.com/jakejharris/jspark3/blob/v2.0.1/scripts/lib.sh#L129-L131));
+drafter download and verification are at
+[scripts/fetch-weights.sh:167–192](https://github.com/jakejharris/jspark3/blob/v2.0.1/scripts/fetch-weights.sh#L167-L192).
 
 ## How script messages look
 
@@ -332,52 +529,8 @@ The documented first and later start times are both about 5 minutes for all thre
 If compiler output is still advancing, wait longer with `scripts/wait-ready.sh --timeout <seconds>`. A compile
 error needs diagnosis from the log; a retained cache does not guarantee a successful or faster start.
 
-### Possible stale Torch extension lock
-
-**Possible case, not observed in the boot walk:** stopping or killing a container during extension compilation
-may leave a Torch build lock under `$DATA/kernel-cache/torch_extensions`. Torch waits for that file to disappear;
-the lock itself has no timeout. A later start could then sit without new compiler output until rank 0's
-40-minute readiness timeout. Extending that timeout does not clear the lock or stop the waiting containers.
-
-Check this only if a prior start was interrupted during compilation and the new log has stopped advancing.
-A `lock` file during an active build is normal; its presence or age alone does not prove it is stale.
-
-1. On the affected box, from the tagged checkout, load the settings and inspect the log and locks:
-
-   ```bash
-   . ./cluster.env
-   docker logs --tail 100 "${CONTAINER_PREFIX:-jspark3}-rank${RANK}"
-   sudo find "$DATA/kernel-cache/torch_extensions" -type f -name lock -print
-   ```
-
-   If that directory is absent or no lock is listed, this recovery does not apply. Save any needed container logs
-   before the next step: `stop.sh` removes the container and its logs.
-2. Run `scripts/stop.sh` on **all three boxes**, using `--container-prefix` if the stopped run used a different
-   prefix. Prevent any concurrent restart. On the affected box, check for other containers and host jobs that
-   could use this same cache:
-
-   ```bash
-   docker ps -q | xargs -r docker inspect --format '{{.Name}} {{range .Mounts}}{{.Source}} -> {{.Destination}}; {{end}}'
-   ps -eo pid,comm,args | grep -E '[n]inja|[n]vcc|[c]c1plus|[t]ensorfold'
-   ```
-
-   Check mounts of both `DATA` and any parent directory. Stop any other build or Python/serving job sharing the
-   cache with its own tools. An empty compiler-process list alone is not proof: a Python process may still own
-   a lock. If you cannot establish that no process uses this cache, do not remove its locks.
-3. Once all users of the cache are stopped, list the locks again. For each remaining file, substitute the exact
-   path reported by `find` below, confirm that it is under this `DATA/kernel-cache/torch_extensions`, then remove
-   **only that lock file**:
-
-   ```bash
-   lock_file="$DATA/kernel-cache/torch_extensions/<extension>/lock"
-   sudo rm -i -- "$lock_file"
-   ```
-
-   Do not delete the whole cache or a lock held by a running build. The confirmation prompt lets you check the
-   exact path before removal.
-4. Start ranks 2 and 1, then 0, using the same weights and drafter settings on all three. Watch the logs for
-   compilation progress and run `scripts/smoke.sh` after readiness. If the stall returns, keep the logs and
-   investigate the first error rather than repeatedly deleting locks.
+See [v2.0.1 known issues and hotfixes](#v201-known-issues-and-hotfixes) for the pending rebuild hotfix and
+[hypothetical stale-lock recovery](#possible-stale-torch-extension-lock), including verification and undo.
 
 ## Status, stop and clearing the session store
 

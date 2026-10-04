@@ -4,6 +4,9 @@ This is the maintained v2.0.1 guide. The `main` branch carries this guide and th
 recipe is at the `v2.0.1` tag. Keep the two checkouts separate as step 1 shows. The older `docs/INSTALL.md` on main
 belongs to v1.1.0. These corrections do not change the v2.0.1 engine or its launch scripts.
 
+Before troubleshooting an install or restart, see [v2.0.1 known issues and hotfixes](docs/TROUBLESHOOTING.md#v201-known-issues-and-hotfixes).
+The separate kernel rebuild hotfix instructions are **pending hardware validation (target 2026-10-04)**.
+
 This guide takes three NVIDIA DGX Sparks from nothing to a running GLM-5.3 Flash server, using only public downloads.
 Every download is pinned and checked by sha256, and the engine is built from the source in the tagged recipe.
 
@@ -19,6 +22,7 @@ Every download is pinned and checked by sha256, and the engine is built from the
 
 ## Contents
 
+- [v2.0.1 known issues and hotfixes](docs/TROUBLESHOOTING.md#v201-known-issues-and-hotfixes)
 - [What you need](#what-you-need)
 - [Choose: weights, draft model, session tier](#choose-weights-draft-model-session-tier)
   - [Tuned settings per weights](#tuned-settings-per-weights)
@@ -325,8 +329,11 @@ totals in the last column cover this check. A base box that splits all three thi
 **Restart timing in v2.0.1:** `serve.sh` creates a fresh container and installs the wheel on every start. Pip gives
 the installed compiler sources fresh modification times, so Ninja rebuilds the Torch extensions even though
 `$DATA/kernel-cache` persists. The roughly five-minute first and later start figures both include compilation;
-retaining the cache does not promise a faster restart. See [possible stale compile lock](docs/TROUBLESHOOTING.md#possible-stale-torch-extension-lock)
-if an interrupted start leaves the next one stuck.
+retaining the cache does not promise a faster restart
+([v2.0.1 scripts/serve.sh:125–126](https://github.com/jakejharris/jspark3/blob/v2.0.1/scripts/serve.sh#L125-L126),
+[engine/src/tensorfold/cuda/build.py:23–29](https://github.com/jakejharris/jspark3/blob/v2.0.1/engine/src/tensorfold/cuda/build.py#L23-L29)).
+See the [pending kernel rebuild hotfix](docs/hotfixes/v2.0.1-kernel-rebuild.md) and
+[possible stale compile lock](docs/TROUBLESHOOTING.md#possible-stale-torch-extension-lock).
 
 After `split.sh` has verified this box's third, the full download (`$DATA/base/weights`) is not needed to serve, so
 you may delete it. Splitting again then means downloading it again.
