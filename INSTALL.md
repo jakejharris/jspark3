@@ -5,7 +5,7 @@ recipe is at the `v2.0.1` tag. Keep the two checkouts separate as step 1 shows. 
 belongs to v1.1.0. These corrections do not change the v2.0.1 engine or its launch scripts.
 
 Before troubleshooting an install or restart, see [v2.0.1 known issues and hotfixes](docs/TROUBLESHOOTING.md#v201-known-issues-and-hotfixes).
-The separate kernel rebuild hotfix instructions are **pending hardware validation (target 2026-10-04)**.
+The separate kernel rebuild hotfix instructions are **validated on 3x DGX Spark (2026-10-04): retained boot reused the kernel cache; undo restored the original files**.
 
 This guide takes three NVIDIA DGX Sparks from nothing to a running GLM-5.3 Flash server, using only public downloads.
 Every download is pinned and checked by sha256, and the engine is built from the source in the tagged recipe.

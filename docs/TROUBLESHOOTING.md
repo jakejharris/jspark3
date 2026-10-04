@@ -30,11 +30,11 @@ they explicitly invoke the checker from the separate main/docs checkout shown in
 
 ### Kernels rebuild on every start
 
-**Pending validation (target 2026-10-04).**
+**Validated on 3x DGX Spark (2026-10-04): retained boot reused the kernel cache; undo restored the original files.**
 
 **Symptom:** later starts compile Torch extensions again despite keeping `$DATA/kernel-cache`.
 **Cause:** a fresh container runs pip on every start; new compiler-source timestamps invalidate Ninja's cached
-outputs. The startup command is [scripts/serve.sh:125–126](https://github.com/jakejharris/jspark3/blob/v2.0.1/scripts/serve.sh#L125-L126),
+outputs (not separately measured in the validation run). The startup command is [scripts/serve.sh:125–126](https://github.com/jakejharris/jspark3/blob/v2.0.1/scripts/serve.sh#L125-L126),
 the persistent mount is [scripts/serve.sh:114–116](https://github.com/jakejharris/jspark3/blob/v2.0.1/scripts/serve.sh#L114-L116),
 and TensorFold calls Torch's extension loader at
 [engine/src/tensorfold/cuda/build.py:23–29](https://github.com/jakejharris/jspark3/blob/v2.0.1/engine/src/tensorfold/cuda/build.py#L23-L29).
@@ -44,7 +44,7 @@ diff, before/after checksums and shutdown prerequisites. It adds the reviewed F1
 startup call; this documentation does not patch the shipped engine. **Verify:** its cold and retained-cache
 boots must both pass readiness and smoke, and compiled artifact paths, timestamps and hashes must be unchanged
 on the second boot on all three hosts. **Undo:** use that file's guarded reverse patch and cache restoration.
-Hardware validation is pending; the entry cannot be published as a validated fix until it passes.
+Hardware validation passed on 2026-10-04 with exactly that scope: three DGX Spark systems, retained-cache reuse and undo.
 
 **If skipped:** starts remain slower because of compilation, with repeated exposure to the **hypothetical**
 interrupted-compile lock below. No specific startup speedup is promised. Applying the hotfix does not remove
