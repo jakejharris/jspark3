@@ -65,13 +65,13 @@ Appliance comparison: different model IDs, not a same-weights claim. v1.8.4 ran 
 
 - **80.9 tok/s** decode on one stream on our own benchmark (short code replies).
 - **97.5 tok/s** aggregate decode on our own benchmark (short prompts, 41-62 tokens, 4 concurrent).
-- **1.5 s** to first visible text when you continue a conversation of at least 100,000 tokens that had been pushed out of memory, against 49.9 s to read it from scratch.
+- **1.5 s** to first visible text when you continue a conversation of at least 100,000 tokens that had been pushed out of memory, against 49.9 s to read it from scratch (see known issue 17).
 - **Images in chat:** up to 16 per request, as inline `data:` URLs.
 - **Two weight variants, one switch:** MIT base weights by default, or opt-in refusal-removed (ablit) weights.
 
 All figures above: base weights + draft model unless marked. Every figure, with its conditions, is in the RigMark and Results sections below.
 
-JSpark3 serves GLM-5.3 Flash on three NVIDIA DGX Sparks, connected by a direct high-speed (RDMA) link, as one OpenAI-compatible endpoint. v2.0.1 replaces the vLLM engine of v1.8.x with [a fork of TensorFold 0.3.6.2 (MIT)](https://github.com/ashhart/TensorFold). v2.0.1 also saves conversation state to each Spark's disk by default: with base weights and the draft model, a conversation of at least 100,000 tokens that had been pushed out of memory showed its first visible text 1.5 s after it was continued, against 49.9 s to read it from scratch.
+JSpark3 serves GLM-5.3 Flash on three NVIDIA DGX Sparks, connected by a direct high-speed (RDMA) link, as one OpenAI-compatible endpoint. v2.0.1 replaces the vLLM engine of v1.8.x with [a fork of TensorFold 0.3.6.2 (MIT)](https://github.com/ashhart/TensorFold). v2.0.1 also saves conversation state to each Spark's disk by default: with base weights and the draft model, a conversation of at least 100,000 tokens that had been pushed out of memory showed its first visible text 1.5 s after it was continued, against 49.9 s to read it from scratch (see known issue 17).
 
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin:18px 0 8px;">
   <div style="background:linear-gradient(160deg,#1d1d20 0%,#0e0e10 100%);border:1px solid rgba(255,255,255,0.09);border-radius:12px;padding:18px 20px 16px;box-shadow:2px 2px 0 #f0a8a8,inset 0 1px 0 rgba(255,255,255,0.05);">
