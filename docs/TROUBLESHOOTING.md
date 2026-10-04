@@ -521,6 +521,11 @@ The file check lists each problem on its own line, then a count:
 4. `python3 scripts/preflight.py --for serve`. It tests the interfaces, the links, MTU 9000 and a full-size ping over each ring cable.
 5. Check the start order: rank 2, rank 1, then rank 0. The ranks find rank 0 at `MASTER_ADDR` over the LAN. If you started them in another order, stop all three and start again in order.
 6. After a reboot, run `scripts/stop.sh` and then `scripts/host-prep.sh` on each box before starting (see [OPERATIONS.md](https://github.com/jakejharris/jspark3/blob/v2.0.1/docs/OPERATIONS.md#reboot)).
+   **Erratum:** that tagged section's claim that warm starts are quick because kernels are cached is incorrect
+   for unmodified v2.0.1. Every start installs the engine wheel in a fresh container, refreshing source timestamps
+   and rebuilding kernels even with the cache retained. Allow compilation to finish; see
+   [kernels rebuild on every start](#kernels-rebuild-on-every-start) for the pending hotfix and
+   [possible stale Torch extension lock](#possible-stale-torch-extension-lock) if compiler output stops advancing.
 7. If other programs on the boxes use GPU memory, loading can run out of memory. See [OPERATIONS.md](https://github.com/jakejharris/jspark3/blob/v2.0.1/docs/OPERATIONS.md#other-work-on-the-boxes).
 
 **When it is just slow:** every v2.0.1 start installs the engine wheel in a fresh container. Pip refreshes the

@@ -104,6 +104,9 @@ Results for both variants, and for the base weights without the draft model, are
 
 The default draft model, Inco AI's [DFlash2](https://huggingface.co/incoai/GLM-5.3-Flash-DFlash2), is CC BY-NC-ND 4.0: non-commercial research and evaluation use only. The installer downloads it unmodified from Inco AI; this project never redistributes it. For commercial use, run the base weights without the draft model: start with `scripts/serve.sh --drafter none` on all three hosts (or set `DRAFTER=none` in `cluster.env`), and the model drafts with its own multi-token prediction head. That path runs MIT weights on a permissively licensed engine (MIT, with some Apache-2.0 code) and an Apache-2.0 recipe, inside NVIDIA's container under NVIDIA's terms. On the base weights, the draft model is the only non-commercial component.
 
+For installation and the required `--drafter none` serving preflight, follow
+[Running without the draft model](INSTALL.md#running-without-the-draft-model).
+
 ## Upgrade from v1.8.x and rollback
 
 v2.0.1 is a new installation, not an in-place upgrade. The engine changes from vLLM to a fork of TensorFold 0.3.6.2 (MIT), and the weights change from the v1.8.x EXL3 files to public 4-bit MLX-format weights split across the three hosts. Stop v1.8.x before you start v2.0.1, and keep your v1.8.4 checkout and weights if you might roll back.
@@ -144,12 +147,12 @@ See [upgrade and rollback](UPGRADING.md).
 ## Releases
 
 - **v2.0.1**: current; the engine is a fork of TensorFold 0.3.6.2 (MIT). [release](https://github.com/jakejharris/jspark3/releases/tag/v2.0.1) · [installation guide](INSTALL.md)
-- **v1.8.4** (previous, vLLM): the documented rollback. [release](https://github.com/jakejharris/jspark3/releases/tag/v1.8.4) · [installation guide](https://github.com/jakejharris/jspark3/blob/v1.8.4/docs/INSTALL.md)
+- **v1.8.4** (previous, vLLM): the documented rollback. [release](https://github.com/jakejharris/jspark3/releases/tag/v1.8.4) · [installation guide](https://github.com/jakejharris/jspark3/blob/v1.8.4/docs/INSTALL.md) · [required download-source correction](UPGRADING.md#going-back-to-v184)
 - v2.0.0: internal build, not published.
 - v1.8.0: do not install. It requires a container image that was never published.
 - v1.1.0 (Cadence): [historical guide](https://github.com/jakejharris/jspark3/blob/v1.1.0/README.md)
 
-The files on this default branch are the frozen v1.1.0 export. Each release since v1.8.0 lives on its own tag, so install from a tag, never from this branch.
+The runnable recipe files on this default branch are the frozen v1.1.0 export; the maintained v2.0.1 guides linked above accompany the separate tagged recipe. Each release since v1.8.0 lives on its own tag, so install the recipe from a tag, following the maintained guides.
 
 JSpark3 Tempo, a separate named release for DeepSeek-V4.1 Flash with its own version numbers, lives in [jspark3-deepseek](https://github.com/jakejharris/jspark3-deepseek).
 

@@ -508,3 +508,6 @@ session state without sudo; to remove `DATA` entirely, stop all three boxes and 
 - **Upgrading from v1.8.x, and going back to v1.8.4:** see [UPGRADING.md](UPGRADING.md).
 - Operations and troubleshooting: [docs/OPERATIONS.md](https://github.com/jakejharris/jspark3/blob/v2.0.1/docs/OPERATIONS.md),
   [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md).
+  **Operations erratum:** the tagged guide's claim that warm starts are quick because kernels are cached is
+  incorrect for unmodified v2.0.1. Kernels rebuild on every start, including after a reboot; use the maintained
+  [startup and recovery notes](docs/TROUBLESHOOTING.md#v201-known-issues-and-hotfixes).
