@@ -43,7 +43,7 @@ copies predate it. All existing authors, license texts and pins are retained.
 - orcarouter (the refusal-removed source weights)
 - z-lab (DFlash)
 - MiaAI-Lab (upstream TensorFold: follower doorbell 358875c, DFlash ring 7c088eb, prefill row-blocking b23c10a and typed-parser hunk fe2b514)
-- mikolaj92 (visible-pool and radix-selection optimizations, via upstream TensorFold commits b3b8a39 and f119334)
+- mikolaj92 (sparse-attention pool optimizations: skipping invisible pool tiles and bounding radix selection to visible pools, via upstream TensorFold commits b3b8a39 and f119334)
 - Dorian (an upstream TensorFold server fix, ported)
 - turboderp (ExLlamaV3's EXL3 format, which the engine's own decoders read)
 - QTIP and QuIP# authors (trellis and incoherence-processing foundations used through ExLlamaV3's EXL3 format)
@@ -68,7 +68,7 @@ inventory. Taus Soe's foundations are distinct from JSpark3's later extensions.
 | MiaAI-Lab: DFlash ring/window adaptation | Upstream TensorFold `7c088eb`, historical MIT | `G/dflash2.py`, `G/decode.py`, `G/batched.py`, `T/cuda/geometry.py`; local pooled integration around upstream ring logic |
 | MiaAI-Lab: row-blocked prefill | Upstream TensorFold `b23c10a`, historical MIT | `G/forward.py`, `G/latent.py`, `G/sparse.py`, `T/cuda/geometry.py`; row/block/scratch adaptation |
 | MiaAI-Lab: typed-tool-parameter parsing hunk | Upstream TensorFold `fe2b514`, historical MIT; exact overlap verified, direct derivation inferred | `T/cuda/reply_text.py:109–112` and schema/import context; attribution covers that hunk, not the entire parser/streamer |
-| mikolaj92: visible-pool skip and bounded radix selection | Upstream TensorFold `b3b8a39`, `f119334`, historical MIT | `G/sparse.py`; local integration with prefill controls |
+| mikolaj92: invisible pool-tile skip and visible-pool radix bound | Upstream TensorFold `b3b8a39`, `f119334`, historical MIT | `G/sparse.py`; local integration with prefill controls |
 | Ash Hart: DFlash saved-ring follow-up | Upstream TensorFold `47bf822`, historical MIT | `G/decode.py`; consulted follow-up to the ring adaptation, not a separate wholesale module port |
 | Taus Soe: multi-stream primitives, disk-chain design, CUDA image preprocessing and tower | `taussoe/TensorFold` commits `20dbaba`, `b8a555a`/`bb16122`, `19680d9`, respectively; historical MIT, TensorFold contributors | `G/multi.py`, `G/forward.py`, `G/disk.py`, `G/session_disk.py`, `G/vision.py` and hooks; JSpark3 extends these foundations with its pooled scheduler, session format, direct I/O, request limits and rank integration |
 | Albert Tseng, Qingyao Sun, David Hou, Christopher De Sa and the QTIP/QuIP# authors: trellis and incoherence-processing foundations | Intellectual lineage through ExLlamaV3's EXL3 format; no newly verified direct paper/code port or separate license assignment | `G/exl3.py`; existing ExLlamaV3 MIT format/math notice retained; the three-Spark GLM recipe uses MLX weights |
