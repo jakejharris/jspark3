@@ -412,6 +412,19 @@ Or from a fresh clone:
 git clone --branch v1.8.4 https://github.com/jakejharris/jspark3.git jspark3-v1.8.4
 ```
 
+v1.8.4's installation guide downloads its weights from `Mia-AiLab/GLM-5.3-Flash-EXL3-TR3-4bpw`, which is no longer public. If you kept your v1.8.4 weights, use them. Otherwise, fetch the same weight and config files, with the hashes v1.8.4 checks, from this repository at revision [`e6cb0b09`](https://huggingface.co/jakejharris/jspark3/tree/e6cb0b09b3bf9f2ce35721426c570c8e714c5fc4), which carries v1.8.4's own checksum list. In step 4 of the v1.8.4 guide, run this in place of the `hf download Mia-AiLab/...` command. Keep the directory name: v1.8.4's scripts expect it.
+
+```sh
+export HF_HUB_DISABLE_XET=1
+hf download jakejharris/jspark3 \
+  --revision e6cb0b09b3bf9f2ce35721426c570c8e714c5fc4 \
+  --local-dir "$JSPARK_MODEL_ROOT/Mia-AiLab--GLM-5.3-Flash-EXL3-TR3-4bpw-25a44fdb"
+sha256sum "$JSPARK_MODEL_ROOT/Mia-AiLab--GLM-5.3-Flash-EXL3-TR3-4bpw-25a44fdb/SHA256SUMS"
+# expected: cb0da1f97a53aebc3fbc5478f19c82b25586b0bf8533c99fb4ed5321a48f5342
+```
+
+Use that revision, not `main`: later revisions changed the card and the checksum list. Then continue with the guide as written: its `validate_checkpoint.py` hashes every file against that list and must report `"serving_checkpoint_pass": true`. The v1.8.4 tag, recipe and guide stay unchanged.
+
 ## The EXL3 files in this repository
 
 This repository also hosts an exact mirror of Brandon M. Music's
