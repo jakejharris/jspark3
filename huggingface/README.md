@@ -53,7 +53,7 @@ tags:
 
 Appliance comparison: different model IDs, not a same-weights claim. v1.8.4 ran with reasoning off, its default; v2.0.1 ran at reasoning effort low. Cold prefill and replay rows use raw token-ID completions, where reasoning effort does not apply. With base weights, v1.8.4 shows the first visible text sooner in two measured cases (about 2% on single-client short code replies, about 0.10 s on prose); both rows are in the RigMark section below.
 
-> **v2.0.1 does not use the EXL3 files in this repository.** Those files are the v1.8.x weights, kept in the [`v1.8.x-exl3/`](https://huggingface.co/jakejharris/jspark3/tree/main/v1.8.x-exl3) folder for the v1.8.4 rollback. v2.0.1 downloads public weights from [`TensorFold/GLM-5.3-Flash-MLX-4bit-MTP`](https://huggingface.co/TensorFold/GLM-5.3-Flash-MLX-4bit-MTP/tree/76add2a341a1cd90ad0e86bb69839ea9c35827c6) (formerly `Vontra/GLM-5.3-Flash-MLX-4bit-MTP`, which redirects) at revision `76add2a341a1cd90ad0e86bb69839ea9c35827c6`, verifies every file against a pinned SHA-256 list, and splits them across your three Sparks on your own machine. Install from the [v2.0.1 release on GitHub](https://github.com/jakejharris/jspark3/releases/tag/v2.0.1).
+> **v2.0.1 does not use the EXL3 files in this repository.** Those files are the v1.8.x weights, kept in the [`v1.8.x-exl3/`](https://huggingface.co/jakejharris/jspark3/tree/main/v1.8.x-exl3) folder for the v1.8.4 rollback. v2.0.1 downloads public weights from [`TensorFold/GLM-5.3-Flash-MLX-4bit-MTP`](https://huggingface.co/TensorFold/GLM-5.3-Flash-MLX-4bit-MTP/tree/76add2a341a1cd90ad0e86bb69839ea9c35827c6) (formerly `Vontra/GLM-5.3-Flash-MLX-4bit-MTP`, which redirects) at revision `76add2a341a1cd90ad0e86bb69839ea9c35827c6`, verifies every file against a pinned SHA-256 list, and splits them across your three Sparks on your own machine. Use the maintained [v2.0.1 installation guide](https://github.com/jakejharris/jspark3/blob/main/INSTALL.md) and [startup known issues](https://github.com/jakejharris/jspark3/blob/main/docs/TROUBLESHOOTING.md#v201-known-issues-and-hotfixes); the runnable recipe is in the [v2.0.1 release on GitHub](https://github.com/jakejharris/jspark3/releases/tag/v2.0.1).
 
 <p>
   <a href="https://github.com/jakejharris/jspark3/releases/tag/v2.0.1"><img src="https://img.shields.io/badge/release-v2.0.1-0a7c3f?style=for-the-badge&amp;logo=github&amp;logoColor=white" alt="Release v2.0.1"></a>
@@ -355,17 +355,24 @@ The default draft model is Inco AI's [DFlash2](https://huggingface.co/incoai/GLM
 
 **Commercial path.** For commercial use, run the base weights without the draft model: start with `scripts/serve.sh --drafter none` on all three hosts (or set `DRAFTER=none` in `cluster.env`), and the model drafts with its own multi-token prediction head. That path runs MIT weights on a permissively licensed engine (MIT, with some Apache-2.0 code) and an Apache-2.0 recipe, inside NVIDIA's container under NVIDIA's terms. On the base weights, the draft model is the only non-commercial component.
 
+For installation and the required `--drafter none` serving preflight, follow the maintained
+[Running without the draft model](https://github.com/jakejharris/jspark3/blob/main/INSTALL.md#running-without-the-draft-model) instructions.
+
 ## Install
 
-The download, build and splitting steps were run from public sources on a Spark that had never run this project, and the packaged release was started and checked on three Sparks. Follow the [installation guide](https://github.com/jakejharris/jspark3/blob/v2.0.1/INSTALL.md) at the `v2.0.1` tag on GitHub.
+The download, build and splitting steps were run from public sources on a Spark that had never run this project, and the packaged release was started and checked on three Sparks. Follow the maintained [v2.0.1 installation guide](https://github.com/jakejharris/jspark3/blob/main/INSTALL.md) and [upgrade and rollback guide](https://github.com/jakejharris/jspark3/blob/main/UPGRADING.md) on GitHub. These guides carry corrections made after the release; run the recipe from the immutable `v2.0.1` tag as they describe.
+
+**Before installing or restarting:** read [v2.0.1 known issues and hotfixes](https://github.com/jakejharris/jspark3/blob/main/docs/TROUBLESHOOTING.md#v201-known-issues-and-hotfixes) for kernel rebuilds, possible compile locks, unavailable downloads and no-drafter preflight. The optional kernel rebuild hotfix is **pending hardware validation (target 2026-10-04)**.
 
 **Security.** The server listens on loopback (127.0.0.1) only, with no authentication and no CORS. Reach it through an SSH tunnel or a reverse proxy that adds authentication; don't expose the port.
 
 **Images.** Both weight variants accept images in chat messages as inline `data:` URLs (base64). Remote image URLs are refused. Each request takes up to 16 images, at most 32 MB per image and 32 MB in total, and at most 32 megapixels per image. This release does not measure how well the model understands images.
 
-Conversation state, including the prompt's token ids, is cached on each host's own disk (up to 64 GiB per host) so returning to a long conversation is fast. It never leaves your machines. OPERATIONS explains where it lives, how to clear it and how to turn it off (SESSION_TIER=off).
+Conversation state, including the prompt's token ids, is cached on each host's own disk (up to 64 GiB per host) so returning to a long conversation is fast. It never leaves your machines. The maintained [session-tier instructions](https://github.com/jakejharris/jspark3/blob/main/INSTALL.md#session-tier) explain where it lives, how to clear it and how to turn it off (SESSION_TIER=off).
 
 ## Known issues
+
+For installation and restart corrections, see the maintained [v2.0.1 known issues and hotfixes](https://github.com/jakejharris/jspark3/blob/main/docs/TROUBLESHOOTING.md#v201-known-issues-and-hotfixes). The API issue numbers below are unchanged.
 
 1. `stop` is ignored. A reply ends at the model's end of turn or at `max_tokens`.
 2. `response_format` is ignored. A request that sets it to `json_schema` or `json_object` (JSON mode) is accepted without an error, and neither JSON nor the schema is enforced, so the reply is free text. Forcing a tool call with `tool_choice` (`required` or a named function) works, but the call's arguments are not held to the tool's schema. A clear HTTP 400 error for `json_schema` and `json_object` requests is planned for v2.0.2.
@@ -426,13 +433,15 @@ sha256sum "$JSPARK_MODEL_ROOT/Mia-AiLab--GLM-5.3-Flash-EXL3-TR3-4bpw-25a44fdb/SH
 
 Use that revision, not `main`: later revisions changed the card and the checksum list. Then continue with the guide as written: its `validate_checkpoint.py` hashes every file against that list and must report `"serving_checkpoint_pass": true`. The v1.8.4 tag, recipe and guide stay unchanged.
 
+See the maintained [upgrade and rollback guide](https://github.com/jakejharris/jspark3/blob/main/UPGRADING.md#going-back-to-v184) for the complete procedure.
+
 ## The EXL3 files in this repository
 
 This repository also hosts an exact mirror of Brandon M. Music's
 [ShapleyMcg](https://huggingface.co/brandonmusic/GLM-5.3-Flash-tr3-4bpw) EXL3/TR3 4-bpw
 quantization of GLM-5.3 Flash, as re-hosted by Mia-AiLab on Hugging Face. JSpark3 v1.8.x
 served those files; v2.0.1 does not. They stay here, in the [`v1.8.x-exl3/`](https://huggingface.co/jakejharris/jspark3/tree/main/v1.8.x-exl3) folder, under the ShapleyMcg
-License v1.0 in [`LICENSE`](LICENSE), for the [v1.8.4 rollback](https://github.com/jakejharris/jspark3/releases/tag/v1.8.4).
+License v1.0 in [`LICENSE`](LICENSE), for the [v1.8.4 rollback](https://github.com/jakejharris/jspark3/blob/main/UPGRADING.md#going-back-to-v184).
 
 ## Credits
 

@@ -2,7 +2,11 @@
 
 A serving recipe for GLM-5.3 Flash on three NVIDIA DGX Sparks.
 
-**Current release: JSpark3 v2.0.1 (GLM-5.3 Flash).** Start with the [v2.0.1 release](https://github.com/jakejharris/jspark3/releases/tag/v2.0.1) and the [v2.0.1 installation guide](https://github.com/jakejharris/jspark3/blob/v2.0.1/INSTALL.md).
+**Current release: JSpark3 v2.0.1 (GLM-5.3 Flash).** Start with the [v2.0.1 release](https://github.com/jakejharris/jspark3/releases/tag/v2.0.1) and the [v2.0.1 installation guide](INSTALL.md).
+
+See [v2.0.1 known issues and hotfixes](docs/TROUBLESHOOTING.md#v201-known-issues-and-hotfixes) for startup rebuilds,
+possible compile locks, unavailable downloads and no-drafter preflight. The kernel rebuild hotfix is **pending
+hardware validation (target 2026-10-04)**.
 
 **v2.0.1 is out. New engine, new weights, still three DGX Sparks, and big RigMark throughput gains over v1.8.4.**
 
@@ -27,7 +31,7 @@ All figures above: base weights + draft model unless marked. The full RigMark ta
 
 v2.0.1 replaces the vLLM engine of v1.8.x with [a fork of TensorFold 0.3.6.2 (MIT)](https://github.com/ashhart/TensorFold), and serves public 4-bit GLM-5.3 Flash weights that the installer downloads, verifies against pinned hashes and splits across your three Sparks. v2.0.1 also saves conversation state to each Spark's disk by default: with base weights and the draft model, a conversation of at least 100,000 tokens that had been pushed out of memory showed its first visible text 1.5 s after it was continued, against 49.9 s to read it from scratch (see known issue 17).
 
-**What you need:** three NVIDIA DGX Sparks, connected by a direct high-speed (RDMA) link. Cable the boxes' ConnectX-7 ports in a ring (rank 0 to rank 1, rank 1 to rank 2, rank 2 to rank 0), with each port up, RDMA working and MTU 9000; tensors travel over these cables. Every box also needs a shared LAN on which it can reach rank 0. The engine uses that LAN only to coordinate startup; tensor traffic stays on the cables. Follow the [installation guide](https://github.com/jakejharris/jspark3/blob/v2.0.1/INSTALL.md) to install and run it on three DGX Sparks. The download, build and splitting steps were run from public sources on a Spark that had never run this project, and the packaged release was started and checked on three Sparks.
+**What you need:** three NVIDIA DGX Sparks, connected by a direct high-speed (RDMA) link. Cable the boxes' ConnectX-7 ports in a ring (rank 0 to rank 1, rank 1 to rank 2, rank 2 to rank 0), with each port up, RDMA working and MTU 9000; tensors travel over these cables. Every box also needs a shared LAN on which it can reach rank 0. The engine uses that LAN only to coordinate startup; tensor traffic stays on the cables. Follow the [installation guide](INSTALL.md) to install and run it on three DGX Sparks. The download, build and splitting steps were run from public sources on a Spark that had never run this project, and the packaged release was started and checked on three Sparks.
 
 **Disk on each Spark**, by component:
 
@@ -100,6 +104,9 @@ Results for both variants, and for the base weights without the draft model, are
 
 The default draft model, Inco AI's [DFlash2](https://huggingface.co/incoai/GLM-5.3-Flash-DFlash2), is CC BY-NC-ND 4.0: non-commercial research and evaluation use only. The installer downloads it unmodified from Inco AI; this project never redistributes it. For commercial use, run the base weights without the draft model: start with `scripts/serve.sh --drafter none` on all three hosts (or set `DRAFTER=none` in `cluster.env`), and the model drafts with its own multi-token prediction head. That path runs MIT weights on a permissively licensed engine (MIT, with some Apache-2.0 code) and an Apache-2.0 recipe, inside NVIDIA's container under NVIDIA's terms. On the base weights, the draft model is the only non-commercial component.
 
+For installation and the required `--drafter none` serving preflight, follow
+[Running without the draft model](INSTALL.md#running-without-the-draft-model).
+
 ## Upgrade from v1.8.x and rollback
 
 v2.0.1 is a new installation, not an in-place upgrade. The engine changes from vLLM to a fork of TensorFold 0.3.6.2 (MIT), and the weights change from the v1.8.x EXL3 files to public 4-bit MLX-format weights split across the three hosts. Stop v1.8.x before you start v2.0.1, and keep your v1.8.4 checkout and weights if you might roll back.
@@ -135,17 +142,17 @@ sha256sum "$JSPARK_MODEL_ROOT/Mia-AiLab--GLM-5.3-Flash-EXL3-TR3-4bpw-25a44fdb/SH
 
 Use that revision, not `main`: later revisions changed the card and the checksum list. Then continue with the guide as written: its `validate_checkpoint.py` hashes every file against that list and must report `"serving_checkpoint_pass": true`. The v1.8.4 tag, recipe and guide stay unchanged.
 
-See [upgrade and rollback](https://github.com/jakejharris/jspark3/blob/v2.0.1/UPGRADING.md).
+See [upgrade and rollback](UPGRADING.md).
 
 ## Releases
 
-- **v2.0.1**: current; the engine is a fork of TensorFold 0.3.6.2 (MIT). [release](https://github.com/jakejharris/jspark3/releases/tag/v2.0.1) · [installation guide](https://github.com/jakejharris/jspark3/blob/v2.0.1/INSTALL.md)
-- **v1.8.4** (previous, vLLM): the documented rollback. [release](https://github.com/jakejharris/jspark3/releases/tag/v1.8.4) · [installation guide](https://github.com/jakejharris/jspark3/blob/v1.8.4/docs/INSTALL.md)
+- **v2.0.1**: current; the engine is a fork of TensorFold 0.3.6.2 (MIT). [release](https://github.com/jakejharris/jspark3/releases/tag/v2.0.1) · [installation guide](INSTALL.md)
+- **v1.8.4** (previous, vLLM): the documented rollback. [release](https://github.com/jakejharris/jspark3/releases/tag/v1.8.4) · [installation guide](https://github.com/jakejharris/jspark3/blob/v1.8.4/docs/INSTALL.md) · [required download-source correction](UPGRADING.md#going-back-to-v184)
 - v2.0.0: internal build, not published.
 - v1.8.0: do not install. It requires a container image that was never published.
 - v1.1.0 (Cadence): [historical guide](https://github.com/jakejharris/jspark3/blob/v1.1.0/README.md)
 
-The files on this default branch are the frozen v1.1.0 export. Each release since v1.8.0 lives on its own tag, so install from a tag, never from this branch.
+The runnable recipe files on this default branch are the frozen v1.1.0 export; the maintained v2.0.1 guides linked above accompany the separate tagged recipe. Each release since v1.8.0 lives on its own tag, so install the recipe from a tag, following the maintained guides.
 
 JSpark3 Tempo, a separate named release for DeepSeek-V4.1 Flash with its own version numbers, lives in [jspark3-deepseek](https://github.com/jakejharris/jspark3-deepseek).
 
