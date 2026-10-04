@@ -53,7 +53,7 @@ tags:
 
 Appliance comparison: different model IDs, not a same-weights claim. v1.8.4 ran with reasoning off, its default; v2.0.1 ran at reasoning effort low. Cold prefill and replay rows use raw token-ID completions, where reasoning effort does not apply. With base weights, v1.8.4 shows the first visible text sooner in two measured cases (about 2% on single-client short code replies, about 0.10 s on prose); both rows are in the RigMark section below.
 
-> **v2.0.1 does not use the EXL3 files in this repository.** Those files are the v1.8.x weights, kept for the v1.8.4 rollback. v2.0.1 downloads public weights from [`TensorFold/GLM-5.3-Flash-MLX-4bit-MTP`](https://huggingface.co/TensorFold/GLM-5.3-Flash-MLX-4bit-MTP/tree/76add2a341a1cd90ad0e86bb69839ea9c35827c6) (formerly `Vontra/GLM-5.3-Flash-MLX-4bit-MTP`, which redirects) at revision `76add2a341a1cd90ad0e86bb69839ea9c35827c6`, verifies every file against a pinned SHA-256 list, and splits them across your three Sparks on your own machine. Install from the [v2.0.1 release on GitHub](https://github.com/jakejharris/jspark3/releases/tag/v2.0.1).
+> **v2.0.1 does not use the EXL3 files in this repository.** Those files are the v1.8.x weights, kept in the [`v1.8.x-exl3/`](https://huggingface.co/jakejharris/jspark3/tree/main/v1.8.x-exl3) folder for the v1.8.4 rollback. v2.0.1 downloads public weights from [`TensorFold/GLM-5.3-Flash-MLX-4bit-MTP`](https://huggingface.co/TensorFold/GLM-5.3-Flash-MLX-4bit-MTP/tree/76add2a341a1cd90ad0e86bb69839ea9c35827c6) (formerly `Vontra/GLM-5.3-Flash-MLX-4bit-MTP`, which redirects) at revision `76add2a341a1cd90ad0e86bb69839ea9c35827c6`, verifies every file against a pinned SHA-256 list, and splits them across your three Sparks on your own machine. Install from the [v2.0.1 release on GitHub](https://github.com/jakejharris/jspark3/releases/tag/v2.0.1).
 
 <p>
   <a href="https://github.com/jakejharris/jspark3/releases/tag/v2.0.1"><img src="https://img.shields.io/badge/release-v2.0.1-0a7c3f?style=for-the-badge&amp;logo=github&amp;logoColor=white" alt="Release v2.0.1"></a>
@@ -430,7 +430,7 @@ Use that revision, not `main`: later revisions changed the card and the checksum
 This repository also hosts an exact mirror of Brandon M. Music's
 [ShapleyMcg](https://huggingface.co/brandonmusic/GLM-5.3-Flash-tr3-4bpw) EXL3/TR3 4-bpw
 quantization of GLM-5.3 Flash, as re-hosted by Mia-AiLab on Hugging Face. JSpark3 v1.8.x
-served those files; v2.0.1 does not. They stay here, under the ShapleyMcg
+served those files; v2.0.1 does not. They stay here, in the [`v1.8.x-exl3/`](https://huggingface.co/jakejharris/jspark3/tree/main/v1.8.x-exl3) folder, under the ShapleyMcg
 License v1.0 in [`LICENSE`](LICENSE), for the [v1.8.4 rollback](https://github.com/jakejharris/jspark3/releases/tag/v1.8.4).
 
 ## Credits
