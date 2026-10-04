@@ -368,7 +368,7 @@ Conversation state, including the prompt's token ids, is cached on each host's o
 ## Known issues
 
 1. `stop` is ignored. A reply ends at the model's end of turn or at `max_tokens`.
-2. `response_format` is ignored. JSON mode and `json_schema` are not enforced, so the reply is free text.
+2. `response_format` is ignored. A request that sets it to `json_schema` or `json_object` (JSON mode) is accepted without an error, and neither JSON nor the schema is enforced, so the reply is free text. Forcing a tool call with `tool_choice` (`required` or a named function) works, but the call's arguments are not held to the tool's schema. A clear HTTP 400 error for `json_schema` and `json_object` requests is planned for v2.0.2.
 3. Identical prompts without a `seed` return identical outputs, even above temperature 0: a chat app's regenerate returns the same reply, and two users who send the same prompt get the same answer. Send a different `seed` with each request when you want a different sample.
 4. `n`, `logprobs`, presence and frequency penalties and `logit_bias` are ignored.
 5. A wrongly typed field, such as a string `temperature`, may return HTTP 500 instead of 400.
@@ -383,6 +383,7 @@ Conversation state, including the prompt's token ids, is cached on each host's o
 14. If `max_tokens` cuts off a tool call, `finish_reason` is `length` (or `tool_calls` if an earlier call in the same reply was complete), the cut-off call is left out of the final `tool_calls`, and its raw text is returned in `content`. When streaming, its name and partial `arguments` (incomplete JSON) have already been sent. Raise `max_tokens` for tool use.
 15. The `usage` block in replies does not include `prompt_tokens_details.cached_tokens`. The number of prompt tokens the server reused from saved state is reported in the reply's `tensorfold.cached` field instead (in the final chunk when streaming). For a request that forces a tool call, this count can be too high, even above the prompt's length. v1.8.4 returned this field, so a client that reads it must switch to `tensorfold.cached` when upgrading. A fix for both is planned for v2.0.2.
 16. v2.0.1 does not support per-request cache isolation. It ignores the `cache_salt` request field, and all clients of one server share its saved prompt state. A request whose prompt starts with another client's entire earlier prompt reuses that state, which shows in the reply's cached-token count and in a faster first token. v1.8.4's engine honored `cache_salt`, so a deployment that relied on it to keep clients apart is no longer isolated after upgrading. If clients must not learn about each other's prompts, give each one its own server with its own session folder. Per-request isolation is planned for v2.0.2.
+17. Saving a conversation to the disk session store is best-effort. The store saves in the background while the server is idle, so back-to-back requests from other long conversations can keep it from saving a conversation. A later return to that conversation, after it has left the memory cache, then reads its whole prompt again. In testing, returns sent after a pause of several seconds resumed from the disk store.
 
 ## Licenses
 
@@ -448,7 +449,7 @@ v2.0.1 builds on work by:
 - orcarouter (the refusal-removed source weights)
 - z-lab (DFlash)
 - MiaAI-Lab (upstream TensorFold: follower doorbell 358875c, DFlash ring 7c088eb, prefill row-blocking b23c10a and typed-parser hunk fe2b514)
-- mikolaj92 (visible-pool and radix-selection optimizations, via upstream TensorFold commits b3b8a39 and f119334)
+- mikolaj92 (sparse-attention pool optimizations: skipping invisible pool tiles and bounding radix selection to visible pools, via upstream TensorFold commits b3b8a39 and f119334)
 - Dorian (an upstream TensorFold server fix, ported)
 - turboderp (ExLlamaV3's EXL3 format, which the engine's own decoders read)
 - QTIP and QuIP# authors (trellis and incoherence-processing foundations used through ExLlamaV3's EXL3 format)
