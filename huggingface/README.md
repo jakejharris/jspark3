@@ -107,7 +107,7 @@ JSpark3 serves GLM-5.3 Flash on three NVIDIA DGX Sparks, connected by a direct h
 
 ## RigMark
 
-RigMark against our own v1.8.4, with one column per v2.0.1 weight variant.
+v2.0.1 on RigMark, against our own v1.8.4 as the baseline, with one column per v2.0.1 weight variant.
 
 Appliance comparison: different model IDs, not a same-weights claim. v1.8.4 ran with reasoning off, its default; v2.0.1 ran at reasoning effort low. Cold prefill and replay rows use raw token-ID completions, where reasoning effort does not apply.
 
@@ -426,17 +426,23 @@ v2.0.1 builds on work by:
 - Z.AI (GLM-5.3 Flash, the base model, and its chat template)
 - Hugging Face and the transformers contributors (the GLM-5.3 Flash model code the engine's CUDA path implements)
 - Vontra, now TensorFold on Hugging Face (the 4-bit MLX base weights)
-- Ash Hart and the TensorFold contributors (TensorFold 0.3.6.2, the engine release this project forks)
+- Ash Hart and the TensorFold contributors (TensorFold 0.3.6.2, the engine release this project forks; DFlash ring-snapshot follow-up 47bf822)
+- Taus Soe (GLM multi-stream foundation 20dbaba, disk-chain foundation b8a555a/bb16122 and CUDA image input 19680d9, via taussoe/TensorFold)
+- FlyCockpit (zero-padding dimensions for three-way splitting, credited since v1.0.0)
+- BTCXoomer (reporting the three-Spark NCCL subnet-routing requirement, credited in v1.1.0)
 - Inco AI (the DFlash2 draft model)
 - orcarouter (the refusal-removed source weights)
 - z-lab (DFlash)
-- MiaAI-Lab (the follower doorbell, adapted from upstream TensorFold)
+- MiaAI-Lab (upstream TensorFold: follower doorbell 358875c, DFlash ring 7c088eb, prefill row-blocking b23c10a and typed-parser hunk fe2b514)
+- mikolaj92 (visible-pool and radix-selection optimizations, via upstream TensorFold commits b3b8a39 and f119334)
 - Dorian (an upstream TensorFold server fix, ported)
 - turboderp (ExLlamaV3's EXL3 format, which the engine's own decoders read)
+- QTIP and QuIP# authors (trellis and incoherence-processing foundations used through ExLlamaV3's EXL3 format)
 - Apple (MLX)
+- Google DeepMind (Gemma 4, supported by the vendored engine's MLX backend)
 - Prince Canuma and the mlx-vlm contributors (GLM-5.3 Flash code the engine follows and ports)
 
-The [third-party notices](https://github.com/jakejharris/jspark3/blob/v2.0.1/THIRD_PARTY_NOTICES.md) are the complete record: every third-party component of v2.0.1, its authors and its license.
+The [third-party notices](https://github.com/jakejharris/jspark3/blob/main/THIRD_PARTY_NOTICES.md) are the complete record: every third-party component of v2.0.1, its authors and its license (credits corrected 2026-10-03; the v2.0.1 tag's copy predates this).
 
 v1.8.x credits are in the [v1.8.4 third-party notices](https://github.com/jakejharris/jspark3/blob/v1.8.4/THIRD_PARTY_NOTICES.md).
 

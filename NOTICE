@@ -9,3 +9,28 @@ checkpoints, a container image, and upstream source revisions. Their terms are
 listed in THIRD_PARTY_NOTICES.md. The ShapleyMcg attribution in
 REQUIRED_ATTRIBUTION.md must remain byte-for-byte intact in copies and
 generated reports.
+
+JSpark3 v2.0.1 attribution correction, 2026-10-03
+
+The v1 notice above is preserved. The following credits describe v2.0.1;
+the tagged release and its license texts remain unchanged. See
+THIRD_PARTY_NOTICES.md for the correction and component/license inventories.
+
+- Z.AI (GLM-5.3 Flash, the base model, and its chat template)
+- Hugging Face and the transformers contributors (the GLM-5.3 Flash model code the engine's CUDA path implements)
+- Vontra, now TensorFold on Hugging Face (the 4-bit MLX base weights)
+- Ash Hart and the TensorFold contributors (TensorFold 0.3.6.2, the engine release this project forks; DFlash ring-snapshot follow-up 47bf822)
+- Taus Soe (GLM multi-stream foundation 20dbaba, disk-chain foundation b8a555a/bb16122 and CUDA image input 19680d9, via taussoe/TensorFold)
+- FlyCockpit (zero-padding dimensions for three-way splitting, credited since v1.0.0)
+- BTCXoomer (reporting the three-Spark NCCL subnet-routing requirement, credited in v1.1.0)
+- Inco AI (the DFlash2 draft model)
+- orcarouter (the refusal-removed source weights)
+- z-lab (DFlash)
+- MiaAI-Lab (upstream TensorFold: follower doorbell 358875c, DFlash ring 7c088eb, prefill row-blocking b23c10a and typed-parser hunk fe2b514)
+- mikolaj92 (visible-pool and radix-selection optimizations, via upstream TensorFold commits b3b8a39 and f119334)
+- Dorian (an upstream TensorFold server fix, ported)
+- turboderp (ExLlamaV3's EXL3 format, which the engine's own decoders read)
+- QTIP and QuIP# authors (trellis and incoherence-processing foundations used through ExLlamaV3's EXL3 format)
+- Apple (MLX)
+- Google DeepMind (Gemma 4, supported by the vendored engine's MLX backend)
+- Prince Canuma and the mlx-vlm contributors (GLM-5.3 Flash code the engine follows and ports)

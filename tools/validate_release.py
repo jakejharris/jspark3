@@ -611,10 +611,19 @@ def check_identity(root: Path, report: Report, landing: bool = False) -> None:
         report.ok("identity-contracts", "manifest, recipe constants, profile, contracts, Dockerfile, docs agree")
 
 
-def check_copies(root: Path, report: Report) -> None:
+def check_copies(root: Path, report: Report, landing: bool = False) -> None:
     problems = []
+
+    def root_copy(name: str) -> bytes:
+        data = (root / name).read_bytes()
+        if landing and name == "THIRD_PARTY_NOTICES.md":
+            # Main may append the dated v2 credit correction. The v1 notice prefix
+            # and both frozen recipe copies must still match byte for byte.
+            data = data.partition(b"\n## v2.0.1 attribution correction (2026-10-03)\n")[0]
+        return data
+
     for name in ("LICENSE", "THIRD_PARTY_NOTICES.md", "REQUIRED_ATTRIBUTION.md"):
-        base = (root / name).read_bytes()
+        base = root_copy(name)
         if (root / "recipe" / name).read_bytes() != base:
             problems.append(f"recipe/{name} differs from root copy")
     # The Hugging Face repository root carries the checkpoint's own license and notices,
@@ -622,7 +631,7 @@ def check_copies(root: Path, report: Report) -> None:
     for name, copy in (("LICENSE", "huggingface/jspark3/RECIPE-LICENSE"),
                        ("THIRD_PARTY_NOTICES.md", "huggingface/jspark3/THIRD_PARTY_NOTICES.md"),
                        ("REQUIRED_ATTRIBUTION.md", "huggingface/jspark3/REQUIRED_ATTRIBUTION.md")):
-        if (root / copy).read_bytes() != (root / name).read_bytes():
+        if (root / copy).read_bytes() != root_copy(name):
             problems.append(f"{copy} differs from the root {name}")
     if (root / "huggingface/RESULTS.json").read_bytes() != (root / "results/results.json").read_bytes():
         problems.append("huggingface/RESULTS.json differs from results/results.json")
@@ -636,7 +645,7 @@ def check_copies(root: Path, report: Report) -> None:
     if problems:
         report.fail("license-copies", "; ".join(problems))
     else:
-        report.ok("license-copies", "license set byte-identical; attribution present verbatim")
+        report.ok("license-copies", "historical license copies byte-identical; attribution present verbatim")
 
 
 def check_hf_card(root: Path, report: Report, landing: bool = False) -> None:
@@ -1434,7 +1443,7 @@ def main() -> int:
     parser.add_argument("--write-sums", action="store_true", help="regenerate recipe/SHA256SUMS and SHA256SUMS")
     parser.add_argument("--landing", action="store_true",
                         help="main branch: README.md and huggingface/README.md are the current-release landing "
-                             "pages, not v1.1.0 release prose")
+                             "pages, not v1.1.0 release prose; root notices may append the dated v2 credit correction")
     args = parser.parse_args()
     root = args.root.resolve()
     report = Report()
@@ -1449,7 +1458,7 @@ def main() -> int:
     except Exception as exc:  # noqa: BLE001
         report.fail("identity-contracts", f"{type(exc).__name__}: {exc}")
     try:
-        check_copies(root, report)
+        check_copies(root, report, args.landing)
         check_hf_card(root, report, args.landing)
         check_release_manifest(root, report, args.landing)
         check_weights_mirror(root, report)
