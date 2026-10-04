@@ -676,9 +676,10 @@ def check_hf_card(root: Path, report: Report, landing: bool = False) -> None:
         if "tags" not in meta or not isinstance(meta["tags"], list):
             problems.append("tags missing")
         else:
-            # The landing card keeps the attribution and checkpoint tags; the v1.1 card
-            # also carried descriptive tags that the published Hub card has since dropped.
-            required = ("shapleymcg", "glm", "exl3") if landing else \
+            # The landing card keeps the attribution and model tags. It drops `exl3`
+            # because v2.0.1 does not use the EXL3 files; the v1.1 card also carried
+            # descriptive tags that the published Hub card has since dropped.
+            required = ("shapleymcg", "glm") if landing else \
                 ("shapleymcg", "glm", "exl3", "tr3", "vllm", "quantized")
             missing = [tag for tag in required if tag not in meta["tags"]]
             if missing:

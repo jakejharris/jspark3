@@ -8,6 +8,7 @@ library_name: transformers
 pipeline_tag: image-text-to-text
 language:
   - en
+  - zh
 tags:
   - glm
   - glm-5.3-flash
@@ -15,7 +16,7 @@ tags:
   - serving-recipe
   - tensorfold
   - speculative-decoding
-  - exl3
+  - dflash
   - shapleymcg
 ---
 
