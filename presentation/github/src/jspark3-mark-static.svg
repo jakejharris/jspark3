@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-2.40 -0.40 44.80 44.80" width="48" height="48" role="img" aria-label="JSpark3 mark: three nodes joined in a triangle">
+<defs><radialGradient id="g" cx="35%" cy="32%" r="70%"><stop offset="0" stop-color="#fff" stop-opacity="0.42"/><stop offset="0.55" stop-color="#fff" stop-opacity="0.06"/><stop offset="1" stop-color="#000" stop-opacity="0.22"/></radialGradient></defs>
+<g stroke="#db7070" stroke-linecap="round" fill="none">
+<line x1="20.00" y1="18.64" x2="36.06" y2="24.30" stroke-width="2.33" opacity="0.75">
+</line>
+<line x1="36.06" y1="24.30" x2="3.94" y2="24.30" stroke-width="2.70" opacity="0.89">
+</line>
+<line x1="3.94" y1="24.30" x2="20.00" y2="18.64" stroke-width="2.33" opacity="0.75">
+</line>
+</g>
+<g transform="translate(20.00 18.64) scale(0.82)">
+<circle r="4.2" fill="#db7070"/>
+<circle r="4.2" fill="url(#g)"/>
+</g>
+<g transform="translate(36.06 24.30) scale(1.12)">
+<circle r="4.2" fill="#db7070"/>
+<circle r="4.2" fill="url(#g)"/>
+</g>
+<g transform="translate(3.94 24.30) scale(1.12)">
+<circle r="4.2" fill="#db7070"/>
+<circle r="4.2" fill="url(#g)"/>
+</g>
+</svg>
