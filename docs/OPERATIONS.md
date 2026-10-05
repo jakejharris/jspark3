@@ -329,7 +329,7 @@ Speed without the draft model is published separately, as the "base weights, no 
 
 [UPGRADING.md](../UPGRADING.md) has the full steps. Read it first. In short:
 
-- **v2.0.2 is a separate install.** It is its own checkout (tag `v2.0.2`) with its own `DATA` folder. Its weights are new public 4-bit weights, not the v1.8.x files, and nothing from v1.8.x is reused or converted.
+- **v2.0.2 is a separate install.** The candidate uses its own checkout (branch `release/v2.0.2`) with its own `DATA` folder. Its weights are new public 4-bit weights, not the v1.8.x files, and nothing from v1.8.x is reused or converted.
 - **Only one release runs at a time.** Each release uses nearly all of each box's memory.
 
 v1.8.4 stays available; see rolling back. With base weights, two measured cases favour it (three DGX Sparks; v1.8.4 at its default, reasoning off, and v2.0.1 at reasoning effort low; an appliance comparison with different model IDs, not a same-weights claim). On prose replies, v1.8.4 shows the first visible text about 0.1 s sooner, because v2.0.1 writes a short reasoning passage first (known issue 9). With base weights and a single client on short code replies, the first visible text arrives in about the same time, with v1.8.4 about 2% faster. If you keep very many idle keep-alive clients connected, read known issue 13 first; that fix is outside this release; no target version is assigned.

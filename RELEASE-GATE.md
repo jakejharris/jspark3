@@ -40,6 +40,8 @@ passes. No clean-install serving or v2.0.2 performance proof is claimed.
 The cache and GIF changes are separate commits directly above v2.0.1. If the live owner provides an
 incremental correction, cherry-pick it. If it replaces the cache change, revert only the cache commit
 and cherry-pick its replacement. Keep the GIF commit. Do not rewrite a published branch.
+Update `manifests/release.json`'s `fixes` entries to name the replacement or incremental source and applied
+commits, and update the evidence narrative. The repin command below preserves that lineage record.
 
 Build the resulting engine with `scripts/build-wheel.sh` in the pinned image, using an isolated checkout
 and empty wheel output. It intentionally rejects the old pin after leaving the newly built wheel for
