@@ -23,7 +23,7 @@
 <p align="center">
   <a href="https://github.com/jakejharris/jspark3/blob/v2.0.2/INSTALL.md"><b>Install</b></a> ·
   <a href="https://github.com/jakejharris/jspark3/releases/tag/v2.0.2">Release notes</a> ·
-  <a href="https://github.com/jakejharris/jspark3/blob/v2.0.2/LIMITATIONS.md">Known issues</a> ·
+  <a href="docs/TROUBLESHOOTING.md#v201-known-issues-and-hotfixes">Known issues</a> ·
   <a href="#rigmark">RigMark</a> ·
   <a href="#weights">Weights</a> ·
   <a href="https://github.com/jakejharris/jspark3/blob/v2.0.2/UPGRADING.md">Upgrading</a> ·
@@ -35,7 +35,10 @@
 **Current release: JSpark3 v2.0.2 (GLM-5.3 Flash).** Start with the [v2.0.2 release](https://github.com/jakejharris/jspark3/releases/tag/v2.0.2) and the [v2.0.2 installation guide](https://github.com/jakejharris/jspark3/blob/v2.0.2/INSTALL.md).
 
 > [!NOTE]
-> The installation and restart issues documented for v2.0.1 also apply to v2.0.2. The separate kernel-rebuild hotfix was validated with v2.0.1 on 2026-10-04; it is not a new v2.0.2 validation. See the [installation and restart notes](docs/TROUBLESHOOTING.md#v201-known-issues-and-hotfixes) for startup rebuilds, possible compile locks, unavailable downloads and no-drafter preflight.
+> See [v2.0.1 known issues and hotfixes](docs/TROUBLESHOOTING.md#v201-known-issues-and-hotfixes) for startup rebuilds,
+> possible compile locks, unavailable downloads and no-drafter preflight. The kernel rebuild hotfix is **validated on 3x DGX Spark (2026-10-04): retained boot reused the kernel cache; undo restored the original files**.
+
+**v2.0.1 is out. New engine, new weights, still three DGX Sparks, and big RigMark throughput gains over v1.8.4.**
 
 RigMark, v2.0.1 with base weights + draft model (tok/s, higher is better):
 
@@ -70,7 +73,7 @@ All figures above: base weights + draft model unless marked. The full RigMark ta
 
 v2.0.1 replaces the vLLM engine of v1.8.x with [a fork of TensorFold 0.3.6.2 (MIT)](https://github.com/ashhart/TensorFold), and serves public 4-bit GLM-5.3 Flash weights that the installer downloads, verifies against pinned hashes and splits across your three Sparks. v2.0.1 also saves conversation state to each Spark's disk by default: with base weights and the draft model, a conversation of at least 100,000 tokens that had been pushed out of memory showed its first visible text 1.5 s after it was continued, against 49.9 s to read it from scratch (see known issue 17).
 
-**What you need:** three NVIDIA DGX Sparks, connected by a direct high-speed (RDMA) link. Cable the boxes' ConnectX-7 ports in a ring (rank 0 to rank 1, rank 1 to rank 2, rank 2 to rank 0), with each port up, RDMA working and MTU 9000; tensors travel over these cables. Every box also needs a shared LAN on which it can reach rank 0. The engine uses that LAN only to coordinate startup; tensor traffic stays on the cables. Follow the [v2.0.2 installation guide](https://github.com/jakejharris/jspark3/blob/v2.0.2/INSTALL.md) for the current procedure. For v2.0.1, the download, build and splitting steps were run from public sources on a Spark that had never run this project, and that packaged release was started and checked on three Sparks.
+**What you need:** three NVIDIA DGX Sparks, connected by a direct high-speed (RDMA) link. Cable the boxes' ConnectX-7 ports in a ring (rank 0 to rank 1, rank 1 to rank 2, rank 2 to rank 0), with each port up, RDMA working and MTU 9000; tensors travel over these cables. Every box also needs a shared LAN on which it can reach rank 0. The engine uses that LAN only to coordinate startup; tensor traffic stays on the cables. Follow the [installation guide](https://github.com/jakejharris/jspark3/blob/v2.0.2/INSTALL.md) to install and run it on three DGX Sparks. The download, build and splitting steps were run from public sources on a Spark that had never run this project, and the packaged release was started and checked on three Sparks.
 
 **Disk on each Spark**, by component:
 
@@ -117,15 +120,11 @@ With base weights and the draft model, eight concurrent requests produced 126.0 
 
 Every result set, with its conditions, is in the [v2.0.1 release notes](https://github.com/jakejharris/jspark3/releases/tag/v2.0.1).
 
-## Known issues
-
-These known issues also apply to JSpark3 v2.0.2. Timings and earlier test observations within the issue descriptions remain v2.0.1 evidence. See the [v2.0.2 limitations](https://github.com/jakejharris/jspark3/blob/v2.0.2/LIMITATIONS.md) and [maintained public facts](release/RELEASE-FACTS.md).
-
 ## Weights
 
 The installer offers two weight variants. The default is `base` (base weights). Choose the variant with `WEIGHTS=ablit` in `cluster.env`, or `--weights ablit` on fetch-weights.sh, split.sh and serve.sh (default `base`).
 
-**`base`**: GLM-5.3 Flash in 4-bit MLX format, with the model's own multi-token prediction head, from [`TensorFold/GLM-5.3-Flash-MLX-4bit-MTP`](https://huggingface.co/TensorFold/GLM-5.3-Flash-MLX-4bit-MTP/tree/76add2a341a1cd90ad0e86bb69839ea9c35827c6) at revision `76add2a341a1cd90ad0e86bb69839ea9c35827c6` (MIT; formerly `Vontra/GLM-5.3-Flash-MLX-4bit-MTP`, which redirects). The installer downloads them at the pinned revision, verifies every file against a pinned SHA-256 list, and splits them into three per-host parts, checked against a shipped manifest. This project hosts none of the v2.0.1 weights. Download size: 181,741,759,037 bytes (181.7 GB; 54 files) for the weights; with the 2,342,460,697-byte draft model the download is 184,084,219,734 bytes (184.1 GB).
+**`base`**: GLM-5.3 Flash in 4-bit MLX format, with the model's own multi-token prediction head, from [`TensorFold/GLM-5.3-Flash-MLX-4bit-MTP`](https://huggingface.co/TensorFold/GLM-5.3-Flash-MLX-4bit-MTP/tree/76add2a341a1cd90ad0e86bb69839ea9c35827c6) at revision `76add2a341a1cd90ad0e86bb69839ea9c35827c6` (MIT; formerly `Vontra/GLM-5.3-Flash-MLX-4bit-MTP`, which redirects). The installer downloads them at the pinned revision, verifies every file against a pinned SHA-256 list, and splits them into three per-host parts, checked against a shipped manifest. This project hosts none of the v2.0.2 weights. Download size: 181,741,759,037 bytes (181.7 GB; 54 files) for the weights; with the 2,342,460,697-byte draft model the download is 184,084,219,734 bytes (184.1 GB).
 
 **`ablit`**: refusal-removed (abliterated) weights from [`orcarouter/GLM-5.3-Flash-Uncensored-MLX`](https://huggingface.co/orcarouter/GLM-5.3-Flash-Uncensored-MLX), an opt-in install for ablit development, red-teaming and refusal research. License: MIT (Copyright (c) 2026 Z.AI Co., Ltd), plus the use conditions on the source model card, quoted below. The installer downloads them with your own token at the pinned revision and converts them on your machine. Ready in this release: `scripts/fetch-weights.sh --weights ablit` downloads the source with your own token, `scripts/convert-ablit.sh` converts it and writes the three per-host parts, and `manifests/ablit/` checks a third you already have. We ran the shipped conversion on one DGX Spark, and its output matched these manifests file for file. On your own machine, `scripts/convert-ablit.sh` runs the pinned conversion scripts in `scripts/ablit/` inside the release's pinned container image, with no network and no GPU, then writes and checks the three per-host parts. The pinned base weights, TensorFold/GLM-5.3-Flash-MLX-4bit-MTP at revision 76add2a341a1cd90ad0e86bb69839ea9c35827c6 (MIT), supply the four-bit tensor layout and the native prediction layer that the conversion restores. The chat template is the base checkpoint's MIT template plus six lines added by this recipe, also under MIT; its reconstructed bytes are hash-checked. Measured on one DGX Spark: the 200.1 GB source download took about an hour on our connection. Converting, splitting and checking then took about 26 minutes of processing, used no GPU and under 4 GiB of process memory, and needed about 371 GB of free disk beyond the downloaded source (about 571 GB in all), on top of the base weights you already installed. `scripts/convert-ablit.sh` checks for about 400 GB free before it starts. To use it:
 
@@ -152,20 +151,15 @@ Results for both variants, and for the base weights without the draft model, are
 For installation and the required `--drafter none` serving preflight, follow
 [Running without the draft model](https://github.com/jakejharris/jspark3/blob/v2.0.2/INSTALL.md#running-without-the-draft-model).
 
-## Upgrade and rollback
+## Upgrade from v1.8.x and rollback
 
-From v2.0.1, use a separate checkout and session namespace. **All three ranks must run the same release.**
-Follow the [v2.0.2 upgrade and rollback guide](https://github.com/jakejharris/jspark3/blob/v2.0.2/UPGRADING.md). Keep v2.0.1 for rollback.
+v2.0.2 is a new installation, not an in-place upgrade. The engine changes from vLLM to a fork of TensorFold 0.3.6.2 (MIT), and the weights change from the v1.8.x EXL3 files to public 4-bit MLX-format weights split across the three hosts. Stop v1.8.x before you start v2.0.2, and keep your v1.8.4 checkout and weights if you might roll back.
 
-### Historical v2.0.1 upgrade notes
+Reasoning is now always on. v1.8.4 had it off by default and honoured requests to turn it off; v2.0.2 runs a request with no reasoning setting at High and treats a request to turn it off as low (known issue 9). Replies begin with a reasoning passage, returned as `reasoning_content`, before the visible text, and it uses part of `max_tokens`.
 
-v2.0.1 is a new installation, not an in-place upgrade. The engine changes from vLLM to a fork of TensorFold 0.3.6.2 (MIT), and the weights change from the v1.8.x EXL3 files to public 4-bit MLX-format weights split across the three hosts. Stop v1.8.x before you start v2.0.1, and keep your v1.8.4 checkout and weights if you might roll back.
+v1.8.4 stays available; see rolling back. With base weights, two measured cases favour it (three DGX Sparks; v1.8.4 at its default, reasoning off, and v2.0.1 at reasoning effort low; an appliance comparison with different model IDs, not a same-weights claim). On prose replies, v1.8.4 shows the first visible text about 0.1 s sooner, because v2.0.1 writes a short reasoning passage first (known issue 9). With base weights and a single client on short code replies, the first visible text arrives in about the same time, with v1.8.4 about 2% faster. If you keep very many idle keep-alive clients connected, read known issue 13 first; a fix is planned for v2.0.2.
 
-Reasoning is now always on. v1.8.4 had it off by default and honoured requests to turn it off; the server runs a request with no reasoning setting at High and treats a request to turn it off as low (known issue 9). Replies begin with a reasoning passage, returned as `reasoning_content`, before the visible text, and it uses part of `max_tokens`.
-
-v1.8.4 stays available; see rolling back. With base weights, two measured cases favour it (three DGX Sparks; v1.8.4 at its default, reasoning off, and v2.0.1 at reasoning effort low; an appliance comparison with different model IDs, not a same-weights claim). On prose replies, v1.8.4 shows the first visible text about 0.1 s sooner, because v2.0.1 writes a short reasoning passage first (known issue 9). With base weights and a single client on short code replies, the first visible text arrives in about the same time, with v1.8.4 about 2% faster. If you keep very many idle keep-alive clients connected, read known issue 13 first; that fix is outside v2.0.2; no target version is assigned.
-
-To roll back, stop v2.0.1 and start v1.8.4 from its tag, following its own installation guide. v1.8.4 is the documented rollback.
+To roll back, stop v2.0.2 and start v1.8.4 from its tag, following its own installation guide. v1.8.4 is the documented rollback.
 
 In your v1.8.4 checkout:
 
@@ -192,28 +186,27 @@ sha256sum "$JSPARK_MODEL_ROOT/Mia-AiLab--GLM-5.3-Flash-EXL3-TR3-4bpw-25a44fdb/SH
 
 Use that revision, not `main`: later revisions changed the card and the checksum list. Then continue with the guide as written: its `validate_checkpoint.py` hashes every file against that list and must report `"serving_checkpoint_pass": true`. The v1.8.4 tag, recipe and guide stay unchanged.
 
-See [upgrade and rollback](UPGRADING.md).
+See [upgrade and rollback](https://github.com/jakejharris/jspark3/blob/v2.0.2/UPGRADING.md).
 
 ## Releases
 
-- <a href="#releases"><img src="presentation/github/assets/status-current.svg" height="20" alt="Current"></a> **v2.0.2**: image checkpoint and GIF fixes. [release](https://github.com/jakejharris/jspark3/releases/tag/v2.0.2) · [installation guide](https://github.com/jakejharris/jspark3/blob/v2.0.2/INSTALL.md)
-- **v2.0.1**: previous; the engine is a fork of TensorFold 0.3.6.2 (MIT). [release](https://github.com/jakejharris/jspark3/releases/tag/v2.0.1) · [installation guide](INSTALL.md)
-- <a href="#releases"><img src="presentation/github/assets/status-rollback.svg" height="20" alt="Rollback"></a> **v1.8.4** (previous, vLLM): the documented rollback. [release](https://github.com/jakejharris/jspark3/releases/tag/v1.8.4) · [installation guide](https://github.com/jakejharris/jspark3/blob/v1.8.4/docs/INSTALL.md) · [required download-source correction](UPGRADING.md#going-back-to-v184)
+- <a href="#releases"><img src="presentation/github/assets/status-current.svg" height="20" alt="Current"></a> **v2.0.2**: current; the engine is a fork of TensorFold 0.3.6.2 (MIT). [release](https://github.com/jakejharris/jspark3/releases/tag/v2.0.2) · [installation guide](https://github.com/jakejharris/jspark3/blob/v2.0.2/INSTALL.md)
+- <a href="#releases"><img src="presentation/github/assets/status-rollback.svg" height="20" alt="Rollback"></a> **v1.8.4** (previous, vLLM): the documented rollback. [release](https://github.com/jakejharris/jspark3/releases/tag/v1.8.4) · [installation guide](https://github.com/jakejharris/jspark3/blob/v1.8.4/docs/INSTALL.md) · [required download-source correction](https://github.com/jakejharris/jspark3/blob/v2.0.2/UPGRADING.md#going-back-to-v184)
 - <a href="#releases"><img src="presentation/github/assets/status-not-published.svg" height="20" alt="Not published"></a> v2.0.0: internal build, not published.
 - <a href="#releases"><img src="presentation/github/assets/status-do-not-install.svg" height="20" alt="Do not install"></a> v1.8.0: do not install. It requires a container image that was never published.
 - <a href="#releases"><img src="presentation/github/assets/status-historical.svg" height="20" alt="Historical"></a> v1.1.0 (Cadence): [historical guide](https://github.com/jakejharris/jspark3/blob/v1.1.0/README.md)
 
-The runnable recipe files on this default branch are the frozen v1.1.0 export; the current v2.0.2 recipe and its guides live at the v2.0.2 tag. The maintained v2.0.1 notes are historical. Each release since v1.8.0 lives on its own tag, so install the recipe from a tag, following the maintained guides.
+The runnable recipe files on this default branch are the frozen v1.1.0 export; the maintained v2.0.2 guides linked above accompany the separate tagged recipe. Each release since v1.8.0 lives on its own tag, so install the recipe from a tag, following the maintained guides.
 
 JSpark3 Tempo, a separate named release for DeepSeek-V4.1 Flash with its own version numbers, lives in [jspark3-deepseek](https://github.com/jakejharris/jspark3-deepseek).
 
 ## Licenses
 
-Recipe files are Apache-2.0. The engine (`engine/`) is MIT: a fork of TensorFold 0.3.6.2 (MIT). It includes third-party code under its own permissive licenses (MIT and Apache-2.0), listed in its THIRD_PARTY_NOTICES, and two lines ported from upstream TensorFold that stay Apache-2.0, credited in its NOTICE. The base weights are MIT. The refusal-removed weights are MIT plus their source card's use conditions. The chat template is Z.AI's MIT template plus six lines added by this recipe, also under MIT. The draft model is CC BY-NC-ND 4.0 (non-commercial); it is downloaded at install and never redistributed here. The NVIDIA container image is pulled from NGC under NVIDIA's terms. See the [licensing guide](https://github.com/jakejharris/jspark3/blob/v2.0.1/NOTICE) and the [third-party notices](https://github.com/jakejharris/jspark3/blob/v2.0.1/THIRD_PARTY_NOTICES.md).
+Recipe files are Apache-2.0. The engine (`engine/`) is MIT: a fork of TensorFold 0.3.6.2 (MIT). It includes third-party code under its own permissive licenses (MIT and Apache-2.0), listed in its THIRD_PARTY_NOTICES, and two lines ported from upstream TensorFold that stay Apache-2.0, credited in its NOTICE. The base weights are MIT. The refusal-removed weights are MIT plus their source card's use conditions. The chat template is Z.AI's MIT template plus six lines added by this recipe, also under MIT. The draft model is CC BY-NC-ND 4.0 (non-commercial); it is downloaded at install and never redistributed here. The NVIDIA container image is pulled from NGC under NVIDIA's terms. See the [licensing guide](https://github.com/jakejharris/jspark3/blob/v2.0.2/NOTICE) and the [third-party notices](https://github.com/jakejharris/jspark3/blob/v2.0.2/THIRD_PARTY_NOTICES.md).
 
 ## Credits
 
-v2.0.1 builds on work by:
+v2.0.2 builds on work by:
 
 - Z.AI (GLM-5.3 Flash, the base model, and its chat template)
 - Hugging Face and the transformers contributors (the GLM-5.3 Flash model code the engine's CUDA path implements)
