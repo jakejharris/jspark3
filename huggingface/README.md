@@ -360,7 +360,7 @@ The default draft model is Inco AI's [DFlash2](https://huggingface.co/incoai/GLM
 **Commercial path.** For commercial use, run the base weights without the draft model: start with `scripts/serve.sh --drafter none` on all three hosts (or set `DRAFTER=none` in `cluster.env`), and the model drafts with its own multi-token prediction head. That path runs MIT weights on a permissively licensed engine (MIT, with some Apache-2.0 code) and an Apache-2.0 recipe, inside NVIDIA's container under NVIDIA's terms. On the base weights, the draft model is the only non-commercial component.
 
 For installation and the required `--drafter none` serving preflight, follow the maintained
-[Running without the draft model](https://github.com/jakejharris/jspark3/blob/main/INSTALL.md#running-without-the-draft-model) instructions.
+[Running without the draft model](https://github.com/jakejharris/jspark3/blob/v2.0.2/INSTALL.md#running-without-the-draft-model) instructions.
 
 ## Install
 
@@ -372,7 +372,7 @@ The live image-cache acceptance passed on the prepared runtime. A clean installa
 
 **Images.** Both weight variants accept images in chat messages as inline `data:` URLs (base64). Remote image URLs are refused. Each request takes up to 16 images, at most 32 MB per image and 32 MB in total, and at most 32 megapixels per image. This release does not measure how well the model understands images.
 
-Conversation state, including the prompt's token ids, is cached on each host's own disk (up to 64 GiB per host) so returning to a long conversation is fast. It never leaves your machines. The maintained [session-tier instructions](https://github.com/jakejharris/jspark3/blob/main/INSTALL.md#session-tier) explain where it lives, how to clear it and how to turn it off (SESSION_TIER=off).
+Conversation state, including the prompt's token ids, is cached on each host's own disk (up to 64 GiB per host) so returning to a long conversation is fast. It never leaves your machines. The maintained [session-tier instructions](https://github.com/jakejharris/jspark3/blob/v2.0.2/INSTALL.md#session-tier) explain where it lives, how to clear it and how to turn it off (SESSION_TIER=off).
 
 ## Known issues
 
