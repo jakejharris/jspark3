@@ -25,12 +25,6 @@ tags:
 <h1 style="margin:0;font-size:2.4em;line-height:1;letter-spacing:-0.01em;">JSpark3 <span style="font-weight:500;color:#8b8b90;">v2.0.2 · GLM-5.3 Flash</span></h1>
 </div>
 
-**JSpark3 v2.0.2 fixes image-history checkpoint reuse and adds GIF frame-zero support.**
-
-Live 8/9/10-image resumes were 0 -> 68 -> 174 tokens, both nonzero hits from disk; GIF passed and smoke passed 6/6. Acceptance waited for durable checkpoints; continuous traffic can still skip optional disk saves.
-
-The live image-cache acceptance passed on the prepared runtime. A clean installation of the final v2.0.2 public recipe has not been demonstrated; the installation and performance receipts remain v2.0.1 evidence. No new speed measurements are claimed. See the [live evidence](https://github.com/jakejharris/jspark3/blob/v2.0.2/release/v2.0.2/ROOTCAUSE.md).
-
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:14px;margin:18px 0 8px;">
   <div style="background:linear-gradient(160deg,#1d1d20 0%,#0e0e10 100%);border:1px solid rgba(255,255,255,0.09);border-radius:12px;padding:18px 20px 16px;box-shadow:2px 2px 0 #f0a8a8,inset 0 1px 0 rgba(255,255,255,0.05);">
     <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#9a9a9f;">Code, decode estimate</div>

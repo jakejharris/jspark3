@@ -37,12 +37,6 @@
 > [!NOTE]
 > The installation and restart issues documented for v2.0.1 also apply to v2.0.2. The separate kernel-rebuild hotfix was validated with v2.0.1 on 2026-10-04; it is not a new v2.0.2 validation. See the [installation and restart notes](docs/TROUBLESHOOTING.md#v201-known-issues-and-hotfixes) for startup rebuilds, possible compile locks, unavailable downloads and no-drafter preflight.
 
-**JSpark3 v2.0.2 fixes image-history checkpoint reuse and adds GIF frame-zero support.**
-
-Live 8/9/10-image resumes were 0 -> 68 -> 174 tokens, both nonzero hits from disk; GIF passed and smoke passed 6/6. Acceptance waited for durable checkpoints; continuous traffic can still skip optional disk saves.
-
-The live image-cache acceptance passed on the prepared runtime. A clean installation of the final v2.0.2 public recipe has not been demonstrated; the installation and performance receipts remain v2.0.1 evidence. No new speed measurements are claimed. See the [live evidence](https://github.com/jakejharris/jspark3/blob/v2.0.2/release/v2.0.2/ROOTCAUSE.md).
-
 RigMark, v2.0.1 with base weights + draft model (tok/s, higher is better):
 
 <p align="center">
