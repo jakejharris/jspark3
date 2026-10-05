@@ -62,7 +62,7 @@ def configure(owner, cfg, model_dir, drafter_path, options, *, slots):
     owner.session_cache = None
     if not cfg.disk and not cfg.hash_gate:
         return
-    store, role_ids = None, []
+    store, role_ids, assistant_id = None, [], None
     error = None
     try:
         if cfg.disk:
@@ -80,9 +80,10 @@ def configure(owner, cfg, model_dir, drafter_path, options, *, slots):
                                       options=options, drafter=drafter_path)
             folder = Path(os.environ["TF_GLM_DISK_DIR"]) / "sessions-v2" / f"rank{owner.rank}"
             store = SessionStore(folder, int(float(os.environ.get("TF_GLM_DISK_GIB", "64")) * 2**30), stamp)
-        if cfg.checkpoints and owner.rank == 0:
+        if cfg.disk and owner.rank == 0:
             from tokenizers import Tokenizer
             tok = Tokenizer.from_file(str(Path(model_dir) / "tokenizer.json"))
+            assistant_id = tok.token_to_id("<|assistant|>")
             role_ids = [n for role in ("system", "user", "assistant", "observation")
                         if (n := tok.token_to_id(f"<|{role}|>")) is not None]
     except Exception as exc:
@@ -91,15 +92,18 @@ def configure(owner, cfg, model_dir, drafter_path, options, *, slots):
     good = owner._gather_ints([int(error is None)])
     if not all(row[0] for row in good):
         raise RuntimeError("one or more ranks could not initialize session persistence") from error
-    if cfg.checkpoints:
+    if cfg.disk:
         role_ids = owner._share(role_ids if owner.rank == 0 else None)
-    owner.session_cache = SessionCache(owner, cfg, store, role_ids)
+        assistant_id = owner._share([assistant_id if assistant_id is not None else -1]
+                                    if owner.rank == 0 else None)[0]
+    owner.session_cache = SessionCache(owner, cfg, store, role_ids, assistant_id=assistant_id)
 
 
 class SessionCache:
-    def __init__(self, owner, config, store=None, role_ids=()):
+    def __init__(self, owner, config, store=None, role_ids=(), *, assistant_id=None):
         self.owner, self.config, self.store = owner, config, store
         self.role_ids = frozenset(role_ids)
+        self.assistant_id = assistant_id if assistant_id is not None and assistant_id >= 0 else None
         self.staged = []                 # (stream id, snapshot, durable anchor)
         self.dropped = 0
         self.history = []    # at most 32 prior prompts as int32; no raw text in receipts
@@ -146,7 +150,19 @@ class SessionCache:
         import numpy as np
 
         s.session_boundaries = (tuple(i for i, token in enumerate(s.prompt) if i > 0 and token in self.role_ids)
-                                if self.role_ids else ())
+                                if self.config.checkpoints and self.role_ids else ())
+        # Rolling image clients rewrite the oldest tool result into archive text.
+        # Pi also moves its images into a following user message, so a checkpoint
+        # at the image itself is too late. Keep one anchor before the preceding
+        # assistant/tool turn, independently of the optional dense checkpoints.
+        first_image = (next((i for i, token in enumerate(s.prompt) if token < 0), None)
+                       if s.image_digests else None)
+        s.session_image_boundary = None
+        if first_image is not None and self.role_ids:
+            before = range(first_image - 1, 0, -1)
+            s.session_image_boundary = next((i for i in before if s.prompt[i] == self.assistant_id), None)
+            if s.session_image_boundary is None:
+                s.session_image_boundary = next((i for i in before if s.prompt[i] in self.role_ids), None)
         s.session_cache_source = source
         s.session_miss_reason = "none"
         s.session_reason_evidence = "hit" if s.cached else "unknown"
@@ -204,6 +220,9 @@ class SessionCache:
         if not s.draft or self.store is None:
             return None
         points = []
+        image_boundary = getattr(s, "session_image_boundary", None)
+        if image_boundary is not None and image_boundary > pos:
+            points.append(image_boundary)
         if self.config.checkpoints:
             points.append(self.owner.checkpoint_after(pos))
             points += [i for i in s.session_boundaries if i > pos][:1]
@@ -212,7 +231,8 @@ class SessionCache:
         return min(points) if points else None
 
     def prefill_kwargs(self, s):
-        if not s.draft or self.store is None or not (self.config.checkpoints or self.config.cancel):
+        if not s.draft or self.store is None or not (self.config.checkpoints or self.config.cancel or
+                                                    getattr(s, "session_image_boundary", None) is not None):
             return {}
         return {"mark": lambda pos: self.next_mark(s, pos), "keep": lambda snap: self.stage(s, snap)}
 
@@ -226,7 +246,7 @@ class SessionCache:
             return
         snap.image_digests = tuple(s.image_digests[:image_count(snap.ids)])
         at = len(snap.ids)
-        durable = final or (self.config.checkpoints and
+        durable = final or at == getattr(s, "session_image_boundary", None) or (self.config.checkpoints and
                             (at in s.session_boundaries or self.owner.checkpoint_after(at - 1) == at))
         # Checkpoint retention needs only the last finished chunk in addition to durable anchors.
         self.staged = [(sid, old, keep) for sid, old, keep in self.staged
