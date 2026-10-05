@@ -1,7 +1,9 @@
 # Limitations
 
-The v2.0.2 candidate adds only the image checkpoint and GIF fixes. Live cache validation is pending; see
-[the evidence](release/v2.0.2/ROOTCAUSE.md). Timing figures below were measured on v2.0.1, not this candidate.
+The v2.0.2 candidate adds only the image checkpoint and GIF fixes. The live retry passed; see
+[the evidence](release/v2.0.2/ROOTCAUSE.md). The acceptance sequence waited for durable checkpoints.
+Continuous traffic can still skip optional disk saves while the bounded writer is busy; lossless persistence
+under sustained backpressure is not promised. Timing figures below were measured on v2.0.1, not this candidate.
 
 ## API
 

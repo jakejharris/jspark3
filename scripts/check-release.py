@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check the draft release identity and, when supplied, its built engine wheel."""
+"""Check the candidate release identity, live evidence and optional built engine wheel."""
 import argparse
 import hashlib
 import json
@@ -52,7 +52,8 @@ def main():
             failures.append(name)
 
     check(version == 'v2.0.2' and meta['version'] == version, 'v2.0.2 release identity')
-    check(meta['status'] == 'draft' and meta['source_ref'] == f'release/{version}', 'draft source reference')
+    check(meta['status'] in ('draft', 'ready-for-review') and meta['source_ref'] == f'release/{version}',
+          'unpublished candidate source reference')
     check(meta['base_version'] == 'v2.0.1' and meta['base_commit'] ==
           '0be336670bb1ce8827ff7dbf1f33d1d61ea33cd7', 'v2.0.1 base')
     check(re.fullmatch(r'[0-9a-f]{40}', pins['ENGINE_COMMIT']) is not None and
@@ -68,7 +69,7 @@ def main():
     readme = (HERE / 'README.md').read_text()
     check(f'**Release candidate: JSpark3 {version}' in readme and
           '**Current published release:** [v2.0.1]' in readme, 'README candidate versus published release')
-    for name, title in [('CHANGELOG.md', f'# JSpark3 {version} (draft)'),
+    for name, title in [('CHANGELOG.md', f'# JSpark3 {version} (release candidate)'),
                         ('INSTALL.md', f'# Installing JSpark3 {version}'),
                         ('UPGRADING.md', f'# Upgrading to JSpark3 {version}'),
                         ('RELEASE-GATE.md', f'# JSpark3 {version} release gate'),
@@ -84,8 +85,37 @@ def main():
           meta['performance']['v2_0_2_measured'] is False, 'no relabeled performance measurement')
     for name, expected in meta['performance']['historical_sha256'].items():
         check(hashlib.sha256((HERE / name).read_bytes()).hexdigest() == expected, f'historical evidence: {name}')
-    check((HERE / meta['evidence']).is_file() and meta['live_validation']['retry'] == 'pending',
-          'live retry remains pending with evidence')
+    check((HERE / meta['evidence']).is_file(), 'root-cause and live evidence narrative')
+    live = meta['live_validation']
+    if meta['status'] == 'ready-for-review':
+        check(live['retry'] == 'passed', 'ready for review requires a passing live retry')
+        try:
+            raw = (HERE / live['retry_receipt']).read_bytes()
+            receipt = json.loads(raw)
+            check(hashlib.sha256(raw).hexdigest() == live['retry_receipt_sha256'], 'live receipt checksum')
+            check(receipt['wheel_content_sha256'] == pins['WHEEL_CONTENT_SHA256'] and
+                  receipt['engine_source_commits'] == [fix['source_commit'] for fix in meta['fixes']],
+                  'live proof matches the candidate wheel and engine fixes')
+            check(receipt['status'] == 'PASS' and receipt['swap_exit_code'] == 0 and
+                  receipt['passed_at'] == live['passed_at'], 'live acceptance verdict and timestamp')
+            rolling = receipt['rolling']
+            check([r['observations'] for r in rolling] == [8, 9, 10] and
+                  [r['resumed_tokens'] for r in rolling] == [0, 68, 174] and
+                  [r['cache_source'] for r in rolling] == ['cold', 'disk', 'disk'] and
+                  [r['new_durable_boundary'] for r in rolling] == [68, 174, 276] and
+                  all(r['answer_contract_pass'] and r['cache_resume_pass'] and
+                      r['boundary_and_full_prompt_durable_on_ranks'] == [0, 1, 2] for r in rolling),
+                  '8/9/10-image disk resumes and all-rank checkpoint durability')
+            check(receipt['gif']['passed'] and receipt['gif']['finish_reason'] == 'stop' and
+                  receipt['gif']['tool_calls'] is None and
+                  receipt['smoke']['passed'] == receipt['smoke']['total'] == 6, 'live GIF and smoke 6/6')
+            check(receipt['backpressure']['idle_persistence_opportunities'] is True and
+                  receipt['backpressure']['lossless_under_sustained_traffic'] is False,
+                  'live proof retains the persistence/backpressure limitation')
+        except (OSError, ValueError, KeyError, TypeError) as error:
+            check(False, f'valid live receipt required: {error}')
+    else:
+        check(live['retry'] == 'pending', 'draft engine revision requires renewed live acceptance')
     if args.wheel:
         try:
             actual = check_wheel(args.wheel)

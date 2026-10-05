@@ -1,6 +1,6 @@
 # Upgrading to JSpark3 v2.0.2
 
-**Draft candidate.** Keep v2.0.1 serving until the live cache retry passes and the release is approved.
+**Candidate ready for review.** The live cache retry passed with unchanged engine commits. Publication still awaits approval.
 See [the release gate](RELEASE-GATE.md) and [image-fix evidence](release/v2.0.2/ROOTCAUSE.md).
 
 ## From v2.0.1

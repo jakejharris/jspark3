@@ -1,6 +1,6 @@
 # Installing JSpark3 v2.0.2
 
-**Draft release candidate:** the live image-cache retry is pending. See [RELEASE-GATE.md](RELEASE-GATE.md).
+**Release candidate, ready for review:** the live image-cache retry passed; publication awaits approval. See [RELEASE-GATE.md](RELEASE-GATE.md).
 
 This guide takes three NVIDIA DGX Sparks from nothing to a running GLM-5.3 Flash server, using only public downloads.
 Every download is pinned and checked by sha256, and the engine is built from the source in this tree.

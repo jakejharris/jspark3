@@ -1,6 +1,6 @@
 {
   "version": "v2.0.2",
-  "status": "draft",
+  "status": "ready-for-review",
   "source_ref": "release/v2.0.2",
   "base_version": "v2.0.1",
   "base_commit": "0be336670bb1ce8827ff7dbf1f33d1d61ea33cd7",
@@ -24,13 +24,18 @@
   ],
   "evidence": "release/v2.0.2/ROOTCAUSE.md",
   "live_validation": {
-    "first_swap_started_at": "2026-10-05T17:37:27.545468+00:00",
-    "gif": "passed",
-    "cache": "failed",
-    "eight_image_resumed_tokens": 0,
-    "nine_and_ten_image_checks": "not run",
-    "rollback": "original v2.0.1 ring restored; identity and smoke passed",
-    "retry": "pending"
+    "first_attempt": {
+      "first_swap_started_at": "2026-10-05T17:37:27.545468+00:00",
+      "gif": "passed",
+      "cache": "fixture answer-contract failure; cache reuse not exercised",
+      "eight_image_resumed_tokens": 0,
+      "nine_and_ten_image_checks": "not run",
+      "rollback": "original v2.0.1 ring restored; identity and smoke passed"
+    },
+    "retry": "passed",
+    "passed_at": "2026-10-05T18:37:38.363615+00:00",
+    "retry_receipt": "release/v2.0.2/live-retry.json",
+    "retry_receipt_sha256": "4e0f945bd820ae2dcc9fc15b877da6f07a549dd742862ce98145d3c86141b260"
   },
   "performance": {
     "measured_version": "v2.0.1",
@@ -42,6 +47,6 @@
       "docs/BENCHMARKS.md": "e48a2f6345a8666e7611d215d09f7325d242624bb45a219e9e4d8fae55177bd1"
     }
   },
-  "publication": "pending live retry and release-owner approval",
+  "publication": "pending review and release-owner approval",
   "engine_package_sha256": "04f2a77806a8f0379d8e0aa329e290adc72b239230a4fda2bfeca41641bbfff1"
 }

@@ -1,6 +1,6 @@
 # JSpark3 v2.0.2 release gate
 
-**Draft candidate. The packaging gate is separate from live validation and permission to publish.**
+**Candidate ready for review. The live retry passed; publication still requires release-owner approval.**
 The release identity is in [manifests/release.json](manifests/release.json). Only the two image fixes
 are included; the benchmark records remain v2.0.1 measurements.
 
@@ -27,17 +27,27 @@ OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 python3 -m pytest -q -p no:cacheprovider \
   engine/tests/test_glm_image_lifetime.py
 ```
 
-## Live blocker
+## Live acceptance
 
-The GIF fix passed its first live request. The cache root cause is VERIFIED offline, but the first live
-swap at 17:37Z on 2026-10-05 failed its check and was rolled back. The eight-image request resumed 0 tokens;
-nine and ten images were not checked. [ROOTCAUSE.md](release/v2.0.2/ROOTCAUSE.md) preserves the failed
-attempt, the offline evidence and the limits of the log estimates. The PR stays draft until a live retry
-passes. No clean-install serving or v2.0.2 performance proof is claimed.
+The unchanged engine passed the retry at 18:37Z on 2026-10-05: 8/9/10-image resumes `0 -> 68 -> 174`,
+both nonzero hits from disk, GIF pass and smoke 6/6. Boundary and full-prompt checkpoints were durable
+on all three ranks. The gate requires a checksummed [live receipt](release/v2.0.2/live-retry.json) bound
+to the same wheel content and engine fix commits before accepting `ready-for-review` status.
+
+[ROOTCAUSE.md](release/v2.0.2/ROOTCAUSE.md) preserves the first attempt's fixture failure, rollback,
+corrected fixture and log estimates. The acceptance runner provided idle persistence opportunities;
+the bounded writer can still skip optional saves under continuous traffic. This proves the small CUDA
+sequence on the prepared runtime, not lossless persistence under load, a long-context latency benchmark
+or a clean installation of the final public recipe. No new speed result is claimed.
 
 ## Replacing the cache fix
 
-The cache and GIF changes are separate commits directly above v2.0.1. If the live owner provides an
+The cache and GIF changes are separate commits directly above v2.0.1. No replacement was needed for the
+passing retry. For a future engine change, first return the PR and metadata to draft, set
+`live_validation.retry` to `pending`, and remove its prior receipt binding. New engine bytes require new
+live acceptance; `tools/repin-release.py` deliberately refuses a candidate ready for review.
+
+If the live owner provides an
 incremental correction, cherry-pick it. If it replaces the cache change, revert only the cache commit
 and cherry-pick its replacement. Keep the GIF commit. Do not rewrite a published branch.
 Update `manifests/release.json`'s `fixes` entries to name the replacement or incremental source and applied

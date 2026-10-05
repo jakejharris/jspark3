@@ -2,14 +2,15 @@
 
 A serving recipe for GLM-5.3 Flash on three NVIDIA DGX Sparks.
 
-**Release candidate: JSpark3 v2.0.2 (GLM-5.3 Flash), draft.** This is v2.0.1 plus an image-history checkpoint
+**Release candidate: JSpark3 v2.0.2 (GLM-5.3 Flash), ready for review.** This is v2.0.1 plus an image-history checkpoint
 fix and GIF frame-zero support. See the [candidate installation guide](INSTALL.md), [upgrade guide](UPGRADING.md),
 [release gate](RELEASE-GATE.md) and [root-cause evidence](release/v2.0.2/ROOTCAUSE.md).
 
-The GIF fix passed its first live request. The cache root cause is VERIFIED offline, but the first live swap
-at 17:37Z on 2026-10-05 failed its check and was rolled back. The eight-image request resumed 0 tokens and
-returned a tool call instead of the expected color. Diagnosis continues; this PR stays draft until a live retry
-passes. No v2.0.2 speed or clean-install serving result is claimed.
+The live retry passed at 18:37Z on 2026-10-05 with unchanged engine commits: 8/9/10-image resumes were
+`0 -> 68 -> 174`, with both nonzero hits from disk; GIF passed and smoke passed 6/6. The first attempt's
+fixture failure and rollback remain recorded in the evidence. Acceptance waited for durable checkpoints;
+continuous traffic can still skip optional disk saves. This is a small CUDA acceptance sequence, not a
+long-context latency benchmark or a clean installation of the final public recipe. Publication awaits approval.
 
 **Current published release:** [v2.0.1](https://github.com/jakejharris/jspark3/releases/tag/v2.0.1).
 The performance and installation observations below are historical v2.0.1 results, sourced from
@@ -86,7 +87,7 @@ See [upgrade and rollback](https://github.com/jakejharris/jspark3/blob/v2.0.1/UP
 
 ## Releases
 
-- **v2.0.2**: draft candidate with the two image fixes; [status and gates](RELEASE-GATE.md).
+- **v2.0.2**: candidate ready for review with the two image fixes; [status and gates](RELEASE-GATE.md).
 
 - **v2.0.1**: current; the engine is a fork of TensorFold 0.3.6.2 (MIT). [release](https://github.com/jakejharris/jspark3/releases/tag/v2.0.1) · [installation guide](https://github.com/jakejharris/jspark3/blob/v2.0.1/INSTALL.md)
 - **v1.8.4** (previous, vLLM): the documented rollback. [release](https://github.com/jakejharris/jspark3/releases/tag/v1.8.4) · [installation guide](https://github.com/jakejharris/jspark3/blob/v1.8.4/docs/INSTALL.md)
@@ -95,7 +96,7 @@ See [upgrade and rollback](https://github.com/jakejharris/jspark3/blob/v2.0.1/UP
 - v1.1.0 (Cadence): [historical guide](https://github.com/jakejharris/jspark3/blob/v1.1.0/README.md)
 
 This branch contains the v2.0.2 candidate recipe. Published releases remain available at their tags.
-Use the published v2.0.1 tag until this candidate passes live validation and receives release approval.
+Use the published v2.0.1 tag until this candidate receives release approval.
 
 JSpark3 Tempo, a separate named release for DeepSeek-V4.1 Flash with its own version numbers, lives in [jspark3-deepseek](https://github.com/jakejharris/jspark3-deepseek).
 

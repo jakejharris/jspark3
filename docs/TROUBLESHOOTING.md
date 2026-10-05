@@ -1,6 +1,7 @@
 # Troubleshooting
 
-This is a draft candidate. Live cache validation is pending ([evidence](../release/v2.0.2/ROOTCAUSE.md)).
+This candidate is ready for review after a passing live retry ([evidence](../release/v2.0.2/ROOTCAUSE.md)).
+Optional disk saves can still be skipped under sustained backpressure; acceptance waited for durability.
 Timing figures below are historical v2.0.1 measurements, not v2.0.2 results.
 
 This page is for JSpark3 v2.0.2 (GLM-5.3 Flash). Find the message you see, then read what it means and what to do.

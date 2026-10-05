@@ -1,7 +1,7 @@
 # Image checkpoint and GIF fixes: v2.0.2 evidence
 
-**Cache root cause: VERIFIED offline. Live cache validation: failed on the first attempt; retry pending.**
-**GIF: offline HTTP reproduction changed from 400 to 200; the first live GIF check passed.**
+**Cache root cause: VERIFIED offline. Live retry: PASS at 18:37Z on 2026-10-05, engine unchanged.**
+**GIF: offline HTTP reproduction changed from 400 to 200; both live GIF checks passed. Smoke: 6/6.**
 This is a sanitized summary of the investigation's `ROOTCAUSE.md`, not a new benchmark.
 
 ## Image-history checkpoint
@@ -46,11 +46,46 @@ It uses deterministic CPU arithmetic, not a live serving benchmark.
 - The eight-image request had 510 prompt tokens and **resumed 0 tokens**. It returned a tool call
   instead of the expected newest-image color. The check failed; the nine- and ten-image checks did not run.
 - The swap exited unsuccessfully at 17:43:54Z and was rolled back. The original v2.0.1 ring
-  was restored, with identity checks and smoke passing. No successful advancing-cache-boundary check is claimed.
+  was restored, with identity checks and smoke passing. That attempt did not reach the advancing-cache-boundary checks.
 
-The first cold request's zero reuse alone does not diagnose the live failure. The unsuccessful check
-provides no live proof of the cache fix. Diagnosis may revise or replace that commit. **The PR stays draft
-until a live retry passes**, including advancing restored boundaries after image rotation.
+The first cold request's zero reuse was valid. The fixture supplied historical tool calls without a final
+question closing that sequence; the model continued it with raw tool-call text. The unchanged v2.0.1
+engine reproduced that answer, so it was not evidence of an image-cache regression. The revised fixture
+marks the log complete and asks explicitly about the last image. It also waits for checkpoint durability
+before testing reuse. No engine code, fix commit or wheel content changed.
+
+## Passing live retry, 2026-10-05 at 18:37Z
+
+| Observations | Prompt tokens | Answer | Resumed tokens | Cache source | New durable boundary |
+|---:|---:|---|---:|---|---:|
+| 8 | 549 | Blue | 0 | cold | 68 |
+| 9 | 659 | Green | 68 | disk | 174 |
+| 10 | 761 | Red | 174 | disk | 276 |
+
+The newest eight images remained in each request; older images were replaced with archive text.
+Both the boundary and full-prompt checkpoints were verified durable on all three ranks after every
+request, including snapshot-key, header and token checksums. Readiness and runtime identity passed,
+stock smoke passed **6/6**, and the supplied GIF correctly identified the pagoda without a tool call.
+Acceptance passed at **18:37:38Z**, the swap exited zero, and the candidate was released for Pi traffic.
+
+The same fixes are retained: `bd7a45f` / `258d1e8`, applied here as `e44eab4` / `9d376eb`.
+Wheel content remains `35b0ccd7ee67e4f0a1b22db95566c8924425045552a8e08b3ca49454d3571e60`.
+The [sanitized acceptance receipt](live-retry.json) binds these results to that wheel and the retained
+source records. This proves the small CUDA sequence on the prepared runtime with matching engine content,
+not a clean installation of the final public recipe or a long-context latency benchmark.
+
+## Persistence and backpressure limit
+
+The existing bounded writer refuses another optional snapshot batch while a write is pending. Its quiet
+gate requires **0.5 seconds** without model work or request preparation. Continuous traffic without that
+opportunity can therefore skip optional disk saves. The first attempt's cumulative count of nine was
+real skipped snapshots, seven already accumulated before its rolling request; it was not nine new drops
+from that last request. A CPU reproduction matched that behavior with no disk errors.
+
+The successful retry waited for a stable idle store after smoke and for durability between rolling
+requests. Its cumulative dropped-anchor counter was four after smoke and stayed four through the rolling
+sequence and GIF: **zero additional drops in the rolling sequence**. This does not promise lossless
+checkpoint persistence under sustained backpressure. The two fixes do not change that writer policy.
 
 ## Savings estimates from existing logs
 
@@ -82,3 +117,9 @@ SHA-256 values identify the records used for this summary; only sanitized findin
 | `analysis/run3-savings.json` | `ef0c934c7aad40b7eb643444743bf8739db1863509fed8ff53d10fcf7c07a3b0` |
 | `analysis/run4-savings.json` | `a864dc1e16dd8c6a53138574558b57f6067604a5ff7e608c4951326d661e76cf` |
 | `prep/swap-state/rollback.log` | `80accab5bfecd039e82b743eeeede6edf2d0915c69a1413fb81de751712b1f64` |
+| `prep/RETRY-RESULT.md` | `c1033e2745c26891026a71737e2fd0977ecdc611c9a8fae375252382f16d00f7` |
+| `retry/RESULT.md` | `f9c6650f6e9fabf93bcc28a8853bef1fa6a52b02a0093a02ea8a13c07ecf99e2` |
+| `prep/retry-state/postboot-check.jsonl` | `7c72c75be695fa0b5976de3ee065b47b21b80213037bb58e12edc61f24f2adea` |
+| `prep/retry-state/retry-exit.json` | `4473cf720be17a8d3d76601c59b33faa9341b1b4f917834319c5826603c575d5` |
+| `prep/retry-state/retry-timed.jsonl` | `c7abf3efc8fd6ef55e0fc28ae10f0b0e91abf47593809d5ce8dccbb0f1baf330` |
+| `prep/retry-state/final-verification.json` | `089ca7cc55699b340b49babfe0f528480a90b881c07dd1dae7b3204cf5644989` |

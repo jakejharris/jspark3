@@ -1,6 +1,6 @@
 # Operations
 
-The v2.0.2 candidate is not approved for publication or a serving upgrade. See [the release gate](../RELEASE-GATE.md).
+The v2.0.2 candidate passed the live retry and is ready for review; publication awaits approval. See [the release gate](../RELEASE-GATE.md).
 Any performance comparisons below describe the v2.0.1 measurements.
 
 This guide covers running JSpark3 v2.0.2 (GLM-5.3 Flash) after [INSTALL.md](../INSTALL.md) is done. It explains how to:
