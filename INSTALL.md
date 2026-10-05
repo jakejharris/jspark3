@@ -1,4 +1,6 @@
-# Installing JSpark3 v2.0.1
+# Installing JSpark3 v2.0.2
+
+**Draft release candidate:** the live image-cache retry is pending. See [RELEASE-GATE.md](RELEASE-GATE.md).
 
 This guide takes three NVIDIA DGX Sparks from nothing to a running GLM-5.3 Flash server, using only public downloads.
 Every download is pinned and checked by sha256, and the engine is built from the source in this tree.
@@ -94,7 +96,7 @@ Do steps 1 to 6 on **every box** unless a step says otherwise.
 **1. Get the recipe and describe your cluster.**
 
 ```bash
-git clone --branch v2.0.1 https://github.com/jakejharris/jspark3.git && cd jspark3
+git clone --branch release/v2.0.2 https://github.com/jakejharris/jspark3.git && cd jspark3
 cp cluster.env.example cluster.env
 ```
 
@@ -256,7 +258,7 @@ start this one ([UPGRADING.md](UPGRADING.md)).
 
 ## Disk, time and memory per step
 
-Per box, base weights with the draft model. Download, build, conversion and disk figures were measured on one DGX Spark over our connection while another job shared its network and disk. Start times and the kernel cache were measured on the three-Spark cluster. Pull and download times depend on your connection.
+Historical v2.0.1 measurements, per box with base weights and the draft model ([source](release/MEASUREMENTS-v2.0.1.md)). Download, build, conversion and disk figures were measured on one DGX Spark over our connection while another job shared its network and disk. Start times and the kernel cache were measured on the three-Spark cluster. Pull and download times depend on your connection.
 
 | Step | Disk | Time | Memory |
 |---|---|---|---|
@@ -279,7 +281,7 @@ you may delete it. Splitting again then means downloading it again.
 
 Refusal-removed (abliterated) weights from `orcarouter/GLM-5.3-Flash-Uncensored-MLX`, an opt-in install for ablit
 development, red-teaming and refusal research. The default install is base. The weights are converted on your own
-box from the gated source and the base weights; this project hosts none of the v2.0.1 weights.
+box from the gated source and the base weights; this project hosts none of the v2.0.2 weights.
 
 **License:** MIT (Copyright (c) 2026 Z.AI Co., Ltd), plus the use conditions on the source's model card, quoted
 verbatim:

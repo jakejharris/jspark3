@@ -32,6 +32,7 @@ else
   echo "SKIP  shellcheck (not installed)"
 fi
 step "python syntax" python3 -m py_compile scripts/*.py scripts/fabric/*.py tests/*.py tools/*.py
+step "release identity" python3 scripts/check-release.py
 # --help prints the script's header comment and nothing of its code.
 # shellcheck disable=SC2329  # called through step
 help_ok() { local out; out=$("$@" --help) && ! grep -qE '^(set -|source |shellcheck |#!)' <<<"$out"; }

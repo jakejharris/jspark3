@@ -1,6 +1,9 @@
 # Operations
 
-This guide covers running JSpark3 v2.0.1 (GLM-5.3 Flash) after [INSTALL.md](../INSTALL.md) is done. It explains how to:
+The v2.0.2 candidate is not approved for publication or a serving upgrade. See [the release gate](../RELEASE-GATE.md).
+Any performance comparisons below describe the v2.0.1 measurements.
+
+This guide covers running JSpark3 v2.0.2 (GLM-5.3 Flash) after [INSTALL.md](../INSTALL.md) is done. It explains how to:
 
 - start, check and stop the server;
 - look after the on-disk session store;
@@ -138,7 +141,7 @@ scripts/stop.sh        # on every box
 
 **Exact repeats, and other clients.** With the draft model on, when a prompt is exactly the same as one the server read recently, images included, the server does not read it again. For each prompt it keeps two things in memory: the processed state, and the model's scores for the first token of the reply. A repeat restores that state, picks its first token afresh with its own request settings, such as temperature and `seed`, and writes the rest of its reply as usual. No part of an earlier reply is stored or sent back. These entries count toward the memory layer's limits in the table below, and nothing expires with time. None is written to disk, so after a restart, or once an entry is pushed out of memory, a repeat is handled like any other prompt. With the draft model on, only the latest state of each conversation stays in memory, so regenerating or resending an earlier turn after later turns have been sent does not get this shortcut. Such a request resumes only from a shorter state that the disk session store has finished saving. The store saves in the background while the server is idle and may not yet hold a given turn, or may have skipped it; in testing, these regenerations read the whole prompt again. Without the draft model, an exact repeat is never skipped, but earlier turns' states can stay in memory until evicted, so regenerating a later turn can resume from the previous turn's state. Regenerating the first reply of a conversation after later turns, or resending it without the draft model, reads the whole prompt again, because saved state is reused only when it is shorter than the new prompt. Like the conversation cache, which skips the part of a prompt the server has already read, the exact-repeat shortcut applies to every client of the server. Cached work is shared across clients. Response timing and the returned `tensorfold.cached` count can reveal that a matching prompt or prefix was already cached, and how many tokens were reused. The cache does not return another client's stored reply.
 
-- v2.0.1 does not support per-request cache isolation (known issue 16 in [LIMITATIONS.md](../LIMITATIONS.md)). If clients must not learn about each other's prompts, give each one its own server with its own session folder.
+- v2.0.2 does not support per-request cache isolation (known issue 16 in [LIMITATIONS.md](../LIMITATIONS.md)). If clients must not learn about each other's prompts, give each one its own server with its own session folder.
 - This release has no setting that turns the conversation cache off. It is shared by every client, with the same effect: when another client recently sent a prompt that this one begins with, the reply can start sooner and its `tensorfold.cached` count shows how much was reused. Turning the session store off does not change that, because the memory layer stays shared.
 
 **What it keeps.** Each box keeps its own share of every saved conversation:
@@ -254,7 +257,7 @@ Each weight variant ships its own measured settings profile. The files are `conf
 
 ### Weights: base or ablit
 
-**base** (the default) is the public `TensorFold/GLM-5.3-Flash-MLX-4bit-MTP` weights (formerly `Vontra/GLM-5.3-Flash-MLX-4bit-MTP`, which redirects; MIT) at a pinned revision. INSTALL fetches, verifies and splits them. This project hosts none of the v2.0.1 weights. Download size: 181,741,759,037 bytes (181.7 GB; 54 files) for the weights; with the 2,342,460,697-byte draft model the download is 184,084,219,734 bytes (184.1 GB).
+**base** (the default) is the public `TensorFold/GLM-5.3-Flash-MLX-4bit-MTP` weights (formerly `Vontra/GLM-5.3-Flash-MLX-4bit-MTP`, which redirects; MIT) at a pinned revision. INSTALL fetches, verifies and splits them. This project hosts none of the v2.0.2 weights. Download size: 181,741,759,037 bytes (181.7 GB; 54 files) for the weights; with the 2,342,460,697-byte draft model the download is 184,084,219,734 bytes (184.1 GB).
 
 Weights the scripts split or convert from (`$DATA/base/weights`, `$DATA/ablit/source`) are read inside the container through `DATA`. If you already have them in another folder, move them into `DATA`, or copy them with `cp -al` (hard links: no extra disk, same filesystem only). Never symlink them: inside the container the link leads nowhere ([INSTALL.md](../INSTALL.md), step 5). Where a link is fine, link only the folders INSTALL's "Already have the files?" table names (for example `$DATA/base/rank<R>`), never a parent such as `DATA` or `$DATA/base`. Each check removes the `.verified` marker beside the folder it checks and writes it again only when every file matches. Once its space check passes, a later split or conversion replaces its own output folders. Through a linked parent, both would happen inside your original copy.
 
@@ -314,7 +317,7 @@ The draft model makes decoding faster by proposing several tokens at a time, whi
 
 To switch to `none`, set `DRAFTER=none` in `cluster.env` on all three boxes and start. To try it for one start, pass `scripts/serve.sh --drafter none` on all three boxes instead. `serve.sh` then starts the engine with no draft model, drafting with the built-in head at the [settings profile](#settings-profiles)'s `NO_DRAFTER_POLICY`. You set nothing else. With `dflash2`, the profile's `SERVE_DRAFT_POLICY` is used.
 
-Two lines in the engine's own files are out of date and will be corrected in v2.0.2. `engine/NOTICE` says to select `--drafter none --draft-policy c7:0.3`. Don't add `--draft-policy` yourself: `scripts/serve.sh --drafter none` (or `DRAFTER=none` in `cluster.env`) applies the value from the weights' own settings profile, and the default base weights use `c7:0.45`. `engine/README.md` points at a RELEASE-FACTS.md file that does not ship; the measured results are in the README's Results section, `docs/BENCHMARKS.md` and `release/MEASUREMENTS-v2.0.1.md`.
+Two lines in the engine's own files are out of date and remain outside the scope of v2.0.2. `engine/NOTICE` says to select `--drafter none --draft-policy c7:0.3`. Don't add `--draft-policy` yourself: `scripts/serve.sh --drafter none` (or `DRAFTER=none` in `cluster.env`) applies the value from the weights' own settings profile, and the default base weights use `c7:0.45`. `engine/README.md` points at a RELEASE-FACTS.md file that does not ship; the measured results are in the README's Results section, `docs/BENCHMARKS.md` and `release/MEASUREMENTS-v2.0.1.md`.
 
 - Without the draft model, a long conversation that includes images may not be saved to the disk session cache, and each saved state takes more memory, so fewer long conversations stay cached. Returning to such a conversation after it has left the memory cache can take as long as its first prompt. Text-only conversations of about 40,000 tokens are saved; longer text-only conversations were not tested. [TROUBLESHOOTING.md](TROUBLESHOOTING.md#a-long-conversations-next-reply-takes-as-long-as-the-first) has what to do for now.
 
@@ -326,21 +329,21 @@ Speed without the draft model is published separately, as the "base weights, no 
 
 [UPGRADING.md](../UPGRADING.md) has the full steps. Read it first. In short:
 
-- **v2.0.1 is a separate install.** It is its own checkout (tag `v2.0.1`) with its own `DATA` folder. Its weights are new public 4-bit weights, not the v1.8.x files, and nothing from v1.8.x is reused or converted.
+- **v2.0.2 is a separate install.** It is its own checkout (tag `v2.0.2`) with its own `DATA` folder. Its weights are new public 4-bit weights, not the v1.8.x files, and nothing from v1.8.x is reused or converted.
 - **Only one release runs at a time.** Each release uses nearly all of each box's memory.
 
-v1.8.4 stays available; see rolling back. With base weights, two measured cases favour it (three DGX Sparks; v1.8.4 at its default, reasoning off, and v2.0.1 at reasoning effort low; an appliance comparison with different model IDs, not a same-weights claim). On prose replies, v1.8.4 shows the first visible text about 0.1 s sooner, because v2.0.1 writes a short reasoning passage first (known issue 9). With base weights and a single client on short code replies, the first visible text arrives in about the same time, with v1.8.4 about 2% faster. If you keep very many idle keep-alive clients connected, read known issue 13 first; a fix is planned for v2.0.2.
+v1.8.4 stays available; see rolling back. With base weights, two measured cases favour it (three DGX Sparks; v1.8.4 at its default, reasoning off, and v2.0.1 at reasoning effort low; an appliance comparison with different model IDs, not a same-weights claim). On prose replies, v1.8.4 shows the first visible text about 0.1 s sooner, because v2.0.1 writes a short reasoning passage first (known issue 9). With base weights and a single client on short code replies, the first visible text arrives in about the same time, with v1.8.4 about 2% faster. If you keep very many idle keep-alive clients connected, read known issue 13 first; that fix is outside this release; no target version is assigned.
 
-Reasoning is now always on. v1.8.4 had it off by default and honoured requests to turn it off; v2.0.1 runs a request with no reasoning setting at High and treats a request to turn it off as low (known issue 9). Replies begin with a reasoning passage, returned as `reasoning_content`, before the visible text, and it uses part of `max_tokens`.
+Reasoning is now always on. v1.8.4 had it off by default and honoured requests to turn it off; v2.0.2 runs a request with no reasoning setting at High and treats a request to turn it off as low (known issue 9). Replies begin with a reasoning passage, returned as `reasoning_content`, before the visible text, and it uses part of `max_tokens`.
 
 **Upgrade:**
 
 1. Stop v1.8.x with its own stop command, from its own checkout (v1.8.4: OPERATIONS.md, "Stop, restart and upgrade").
-2. Install v2.0.1 by following [INSTALL.md](../INSTALL.md).
+2. Install v2.0.2 by following [INSTALL.md](../INSTALL.md).
 
 **Clients need changes too:**
 
-| | v1.8.4 | v2.0.1 |
+| | v1.8.4 | v2.0.2 |
 |---|---|---|
 | Base URL | port 8888, all interfaces | `http://127.0.0.1:8002/v1`, rank 0 loopback only |
 | Model id | `glm-5.3-flash` | `glm53` (the field is not checked; any value reaches the one model) |
@@ -356,10 +359,10 @@ To keep port 8888 for existing clients, set `API_PORT=8888` in rank 0's `cluster
   - `usage.completion_tokens` counts every output token, reasoning included. There is no separate count of reasoning tokens.
   - A small `max_tokens` can run out during the reasoning and return an empty `content` with `finish_reason: "length"`. Leave room in `max_tokens`, or ask for Low effort. Even at low effort, a small `max_tokens` can be used up by reasoning and return no visible text; allow a few hundred tokens or more.
   - Clients that expected v1.8.4's no-thinking replies should send `"reasoning_effort": "low"` and read only `content`.
-- **Ignored fields:** v2.0.1 accepts `stop`, `n`, `logprobs`, presence and frequency penalties, and `logit_bias`, then ignores them without an error. A client that relies on `stop` must trim the reply itself.
+- **Ignored fields:** v2.0.2 accepts `stop`, `n`, `logprobs`, presence and frequency penalties, and `logit_bias`, then ignores them without an error. A client that relies on `stop` must trim the reply itself.
 - **`seed`:** identical prompts without a `seed` return identical outputs, even above temperature 0. Send a different `seed` with each request when you want a different sample.
 - **Context window:** 262,144 tokens. Longer prompts get HTTP 400 `context_length_exceeded`.
-- **Cached prompt tokens:** v1.8.4 returned `usage.prompt_tokens_details.cached_tokens`; v2.0.1 does not (known issue 15 in [LIMITATIONS.md](../LIMITATIONS.md)). Read the reply's `tensorfold.cached` field instead, in the final chunk when streaming.
+- **Cached prompt tokens:** v1.8.4 returned `usage.prompt_tokens_details.cached_tokens`; v2.0.2 does not (known issue 15 in [LIMITATIONS.md](../LIMITATIONS.md)). Read the reply's `tensorfold.cached` field instead, in the final chunk when streaming.
 - [TROUBLESHOOTING.md](TROUBLESHOOTING.md#api-behaviour-clients-notice) lists the full set of API differences.
 
 **Roll back to v1.8.4:**
@@ -370,7 +373,7 @@ To keep port 8888 for existing clients, set `API_PORT=8888` in rank 0's `cluster
 4. Point clients back at port 8888 and model `glm-5.3-flash`.
 
 - v1.8.4 listens on all network interfaces, not loopback. Put its firewall rules back in place before you start it.
-- Rollback leaves v2.0.1's data untouched. Coming back later is a normal [start](#start).
+- Rollback leaves v2.0.2's data untouched. Coming back later is a normal [start](#start).
 - **Keep the v1.8.4 checkout and weights if you have the disk space.** Otherwise a rollback means downloading the v1.8.4 weights again. v1.8.4 needs roughly 164 GiB of weights, 2.34 GB of draft weights and a 21 GB image per Spark, plus build layers and caches (v1.8.4 INSTALL).
 
 ## Host changes

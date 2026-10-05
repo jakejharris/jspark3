@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Build the engine wheel from this tree's engine/ source inside the pinned image (no network; nothing is compiled
 # on the host: CUDA kernels compile at first start) and print its content digest. The wheel must match
-# WHEEL_CONTENT_SHA256 in pins.env, the content of the wheel the published numbers were measured with.
+# WHEEL_CONTENT_SHA256 in pins.env, the content of this release candidate wheel.
 # Run on every box, or build once and copy wheels/ to the others.
 #
 #   scripts/build-wheel.sh [--dry-run]
