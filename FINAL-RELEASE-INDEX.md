@@ -1,9 +1,5 @@
 # Current release: JSpark3 v2.0.2
 
-JSpark3 v2.0.2 fixes image-history checkpoint reuse and adds GIF frame-zero support.
-
-Live 8/9/10-image resumes were 0 -> 68 -> 174 tokens, both nonzero hits from disk; GIF passed and smoke passed 6/6. The live image-cache acceptance passed on the prepared runtime. A clean installation of the final v2.0.2 public recipe has not been demonstrated; the installation and performance receipts remain v2.0.1 evidence.
-
 - [Release and four downloadable assets](https://github.com/jakejharris/jspark3/releases/tag/v2.0.2)
 - [Source and payload checksums](https://github.com/jakejharris/jspark3/tree/v2.0.2)
 - [Public facts](https://github.com/jakejharris/jspark3/blob/main/release/RELEASE-FACTS.md)
