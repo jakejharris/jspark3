@@ -1,8 +1,8 @@
 # Installing JSpark3 v2.0.2
 
-**Release candidate, ready for review:** the live image-cache retry passed; publication awaits approval. See [RELEASE-GATE.md](RELEASE-GATE.md).
+The live image-cache acceptance passed on the prepared runtime. A clean installation of the final v2.0.2 public recipe has not been demonstrated; the installation and performance receipts remain v2.0.1 evidence. See [RELEASE-GATE.md](RELEASE-GATE.md).
 
-This guide takes three NVIDIA DGX Sparks from nothing to a running GLM-5.3 Flash server, using only public downloads.
+This guide describes the v2.0.2 installation procedure for three NVIDIA DGX Sparks using public downloads.
 Every download is pinned and checked by sha256, and the engine is built from the source in this tree.
 
 > **Security: the server has no authentication and no CORS policy.** By default rank 0 listens on loopback only
@@ -96,7 +96,7 @@ Do steps 1 to 6 on **every box** unless a step says otherwise.
 **1. Get the recipe and describe your cluster.**
 
 ```bash
-git clone --branch release/v2.0.2 https://github.com/jakejharris/jspark3.git && cd jspark3
+git clone --branch v2.0.2 https://github.com/jakejharris/jspark3.git && cd jspark3
 cp cluster.env.example cluster.env
 ```
 

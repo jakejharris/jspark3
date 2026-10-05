@@ -1,7 +1,7 @@
 {
   "version": "v2.0.2",
-  "status": "ready-for-review",
-  "source_ref": "release/v2.0.2",
+  "status": "published",
+  "source_ref": "v2.0.2",
   "base_version": "v2.0.1",
   "base_commit": "0be336670bb1ce8827ff7dbf1f33d1d61ea33cd7",
   "engine_commit": "9d376eb24bf0790e1e9cf73060b201f958d1202e",
@@ -47,6 +47,6 @@
       "docs/BENCHMARKS.md": "e48a2f6345a8666e7611d215d09f7325d242624bb45a219e9e4d8fae55177bd1"
     }
   },
-  "publication": "pending review and release-owner approval",
+  "publication": "release-owner approved publication on 2026-10-05",
   "engine_package_sha256": "04f2a77806a8f0379d8e0aa329e290adc72b239230a4fda2bfeca41641bbfff1"
 }

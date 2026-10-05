@@ -1,6 +1,6 @@
 # Operations
 
-The v2.0.2 candidate passed the live retry and is ready for review; publication awaits approval. See [the release gate](../RELEASE-GATE.md).
+The v2.0.2 release passed the live image-cache acceptance retry. See [the release gate](../RELEASE-GATE.md).
 Any performance comparisons below describe the v2.0.1 measurements.
 
 This guide covers running JSpark3 v2.0.2 (GLM-5.3 Flash) after [INSTALL.md](../INSTALL.md) is done. It explains how to:
@@ -317,7 +317,7 @@ The draft model makes decoding faster by proposing several tokens at a time, whi
 
 To switch to `none`, set `DRAFTER=none` in `cluster.env` on all three boxes and start. To try it for one start, pass `scripts/serve.sh --drafter none` on all three boxes instead. `serve.sh` then starts the engine with no draft model, drafting with the built-in head at the [settings profile](#settings-profiles)'s `NO_DRAFTER_POLICY`. You set nothing else. With `dflash2`, the profile's `SERVE_DRAFT_POLICY` is used.
 
-Two lines in the engine's own files are out of date and remain outside the scope of v2.0.2. `engine/NOTICE` says to select `--drafter none --draft-policy c7:0.3`. Don't add `--draft-policy` yourself: `scripts/serve.sh --drafter none` (or `DRAFTER=none` in `cluster.env`) applies the value from the weights' own settings profile, and the default base weights use `c7:0.45`. `engine/README.md` points at a RELEASE-FACTS.md file that does not ship; the measured results are in the README's Results section, `docs/BENCHMARKS.md` and `release/MEASUREMENTS-v2.0.1.md`.
+Two lines in the engine's own files are out of date and remain outside the scope of v2.0.2. `engine/NOTICE` says to select `--drafter none --draft-policy c7:0.3`. Don't add `--draft-policy` yourself: `scripts/serve.sh --drafter none` (or `DRAFTER=none` in `cluster.env`) applies the value from the weights' own settings profile, and the default base weights use `c7:0.45`. `engine/README.md` points at an outdated relative RELEASE-FACTS.md path; current public facts are in `release/RELEASE-FACTS.md`; the measured results are in the README's Results section, `docs/BENCHMARKS.md` and `release/MEASUREMENTS-v2.0.1.md`.
 
 - Without the draft model, a long conversation that includes images may not be saved to the disk session cache, and each saved state takes more memory, so fewer long conversations stay cached. Returning to such a conversation after it has left the memory cache can take as long as its first prompt. Text-only conversations of about 40,000 tokens are saved; longer text-only conversations were not tested. [TROUBLESHOOTING.md](TROUBLESHOOTING.md#a-long-conversations-next-reply-takes-as-long-as-the-first) has what to do for now.
 
@@ -329,7 +329,7 @@ Speed without the draft model is published separately, as the "base weights, no 
 
 [UPGRADING.md](../UPGRADING.md) has the full steps. Read it first. In short:
 
-- **v2.0.2 is a separate install.** The candidate uses its own checkout (branch `release/v2.0.2`) with its own `DATA` folder. Its weights are new public 4-bit weights, not the v1.8.x files, and nothing from v1.8.x is reused or converted.
+- **v2.0.2 is a separate install.** The release uses its own checkout (tag `v2.0.2`) with its own `DATA` folder. Its weights are new public 4-bit weights, not the v1.8.x files, and nothing from v1.8.x is reused or converted.
 - **Only one release runs at a time.** Each release uses nearly all of each box's memory.
 
 v1.8.4 stays available; see rolling back. With base weights, two measured cases favour it (three DGX Sparks; v1.8.4 at its default, reasoning off, and v2.0.1 at reasoning effort low; an appliance comparison with different model IDs, not a same-weights claim). On prose replies, v1.8.4 shows the first visible text about 0.1 s sooner, because v2.0.1 writes a short reasoning passage first (known issue 9). With base weights and a single client on short code replies, the first visible text arrives in about the same time, with v1.8.4 about 2% faster. If you keep very many idle keep-alive clients connected, read known issue 13 first; that fix is outside this release; no target version is assigned.

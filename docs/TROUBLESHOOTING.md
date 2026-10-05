@@ -1,6 +1,6 @@
 # Troubleshooting
 
-This candidate is ready for review after a passing live retry ([evidence](../release/v2.0.2/ROOTCAUSE.md)).
+This release passed the live image-cache acceptance retry ([evidence](../release/v2.0.2/ROOTCAUSE.md)).
 Optional disk saves can still be skipped under sustained backpressure; acceptance waited for durability.
 Timing figures below are historical v2.0.1 measurements, not v2.0.2 results.
 

@@ -1,8 +1,8 @@
-# JSpark3 v2.0.2 release candidate
+# JSpark3 v2.0.2
 
-**Ready for review after a passing live retry. Publication still waits for the release owner's approval.**
+**JSpark3 v2.0.2 fixes image-history checkpoint reuse and adds GIF frame-zero support.**
 
-This candidate is v2.0.1 plus two engine fixes: retain a checkpoint before the oldest image's tool turn,
+This release is v2.0.1 plus two engine fixes: retain a checkpoint before the oldest image's tool turn,
 and accept GIF inputs by decoding frame zero. Weights, native kernels and draft policies are unchanged.
 
 The GIF reproduction changed from HTTP 400 to 200 offline, and the first live GIF check passed. The cache
@@ -14,9 +14,11 @@ Boundary and full-prompt checkpoints were durable on all three ranks. Acceptance
 continuous traffic can still skip optional saves under the existing bounded writer policy. This is not
 lossless persistence under load or a long-context latency benchmark. See [ROOTCAUSE.md](v2.0.2/ROOTCAUSE.md).
 
+The live image-cache acceptance passed on the prepared runtime. A clean installation of the final v2.0.2 public recipe has not been demonstrated; the installation and performance receipts remain v2.0.1 evidence.
+
 There are no new performance measurements. Estimated savings from the existing logs are about 12.7 of
 29 summed server minutes in run 4 and about 3.8 minutes in run 3. These are log estimates with unmeasured
 overheads, not measured speedups. Historical benchmark files remain labeled v2.0.1.
 
-Install and rollback instructions are in [UPGRADING.md](../UPGRADING.md). The candidate uses a separate
+Install and rollback instructions are in [UPGRADING.md](../UPGRADING.md). The release uses a separate
 session namespace derived from its wheel digest; it starts with cold sessions.

@@ -52,8 +52,9 @@ def main():
             failures.append(name)
 
     check(version == 'v2.0.2' and meta['version'] == version, 'v2.0.2 release identity')
-    check(meta['status'] in ('draft', 'ready-for-review') and meta['source_ref'] == f'release/{version}',
-          'unpublished candidate source reference')
+    check(meta['status'] in ('draft', 'ready-for-review', 'published') and
+          meta['source_ref'] == (version if meta['status'] == 'published' else f'release/{version}'),
+          'release status and source reference')
     check(meta['base_version'] == 'v2.0.1' and meta['base_commit'] ==
           '0be336670bb1ce8827ff7dbf1f33d1d61ea33cd7', 'v2.0.1 base')
     check(re.fullmatch(r'[0-9a-f]{40}', pins['ENGINE_COMMIT']) is not None and
@@ -66,29 +67,33 @@ def main():
     check(settings(HERE / 'config/serve.conf')['SERVE_SESSION_NAMESPACE'] == namespace and
           settings(HERE / 'config/serve.env')['TF_GLM_DISK_MATH_VERSION'] == f'E:{namespace}' and
           meta['session_namespace'] == namespace, 'wheel-specific session namespace and arithmetic identity')
+    published = meta['status'] == 'published'
+    source_ref = version if published else f'release/{version}'
     readme = (HERE / 'README.md').read_text()
-    check(f'**Release candidate: JSpark3 {version}' in readme and
-          '**Current published release:** [v2.0.1]' in readme, 'README candidate versus published release')
-    for name, title in [('CHANGELOG.md', f'# JSpark3 {version} (release candidate)'),
+    check((f'**Current release: JSpark3 {version}' in readme and
+           f'**Current published release:** [{version}]' in readme) if published else
+          (f'**Release candidate: JSpark3 {version}' in readme and
+           '**Current published release:** [v2.0.1]' in readme), 'README release status')
+    for name, title in [('CHANGELOG.md', f'# JSpark3 {version}' + ('' if published else ' (release candidate)')),
                         ('INSTALL.md', f'# Installing JSpark3 {version}'),
                         ('UPGRADING.md', f'# Upgrading to JSpark3 {version}'),
                         ('RELEASE-GATE.md', f'# JSpark3 {version} release gate'),
-                        ('release/RELEASE-NOTES.md', f'# JSpark3 {version} release candidate')]:
+                        ('release/RELEASE-NOTES.md', f'# JSpark3 {version}' + ('' if published else ' release candidate'))]:
         check((HERE / name).read_text().splitlines()[0] == title, f'{name} identity')
     for name in ('CITATION.cff', 'CITATION.bib'):
         citation = (HERE / name).read_text()
         check(set(re.findall(r'v\d+\.\d+\.\d+', citation)) == {version} and
-              f'/tree/release/{version}' in citation, f'{name} candidate identity')
-    check(f'git clone --branch release/{version} ' in (HERE / 'INSTALL.md').read_text(),
-          'install selects the candidate branch')
+              f'/tree/{source_ref}' in citation, f'{name} release identity')
+    check(f'git clone --branch {source_ref} ' in (HERE / 'INSTALL.md').read_text(),
+          'install selects the release source')
     check(meta['performance']['measured_version'] == 'v2.0.1' and
           meta['performance']['v2_0_2_measured'] is False, 'no relabeled performance measurement')
     for name, expected in meta['performance']['historical_sha256'].items():
         check(hashlib.sha256((HERE / name).read_bytes()).hexdigest() == expected, f'historical evidence: {name}')
     check((HERE / meta['evidence']).is_file(), 'root-cause and live evidence narrative')
     live = meta['live_validation']
-    if meta['status'] == 'ready-for-review':
-        check(live['retry'] == 'passed', 'ready for review requires a passing live retry')
+    if meta['status'] in ('ready-for-review', 'published'):
+        check(live['retry'] == 'passed', 'validated release status requires a passing live retry')
         try:
             raw = (HERE / live['retry_receipt']).read_bytes()
             receipt = json.loads(raw)

@@ -1,21 +1,23 @@
 # Upgrading to JSpark3 v2.0.2
 
-**Candidate ready for review.** The live cache retry passed with unchanged engine commits. Publication still awaits approval.
+JSpark3 v2.0.2 fixes image-history checkpoint reuse and adds GIF frame-zero support.
 See [the release gate](RELEASE-GATE.md) and [image-fix evidence](release/v2.0.2/ROOTCAUSE.md).
 
 ## From v2.0.1
 
+**All three ranks must run the same release.** Stop all three old ranks before starting any v2.0.2 rank; mixed-version rings are unsupported.
+
 The engine changes only in the image checkpoint and GIF decoder fixes. Weights, draft policies, native CUDA
 sources and general checkpoint settings stay at v2.0.1. Use a separate checkout and DATA directory, retain the
 v2.0.1 containers and data for rollback, and verify any copied weights using the existing install checks.
-Build the candidate wheel with `scripts/build-wheel.sh`; its content must match `pins.env`.
+Build the v2.0.2 wheel with `scripts/build-wheel.sh`; its content must match `pins.env`.
 
 The session folder and arithmetic identity include the v2.0.2 wheel digest. Do not copy old session state into
 that folder. The first request is cold; useful image-boundary checkpoints must be saved before later rotations
 can reuse them. A cache fix revision gets a new digest and a new session folder.
 
-During an approved serving window, stop the old ranks, start the candidate ranks 2, 1, 0, then run readiness,
-identity and smoke checks plus the live GIF and rolling-image checks. To roll back, stop the candidate and
+During an approved serving window, stop the old ranks, start the v2.0.2 ranks 2, 1, 0, then run readiness,
+identity and smoke checks plus the live GIF and rolling-image checks. To roll back, stop v2.0.2 and
 restart the retained v2.0.1 ranks 2, 1, 0 with their original paths, then verify readiness and smoke again.
 Do not delete either release's sessions as part of this upgrade.
 

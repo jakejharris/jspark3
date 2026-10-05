@@ -1,6 +1,6 @@
 # JSpark3 v2.0.2 release gate
 
-**Candidate ready for review. The live retry passed; publication still requires release-owner approval.**
+**Released after a passing live retry and release-owner approval on 2026-10-05.**
 The release identity is in [manifests/release.json](manifests/release.json). Only the two image fixes
 are included; the benchmark records remain v2.0.1 measurements.
 
@@ -11,7 +11,7 @@ python3 scripts/check-release.py --wheel wheels/tensorfold-0.3.6.2-py3-none-any.
 bash tests/run.sh
 ```
 
-The first command checks release identity, citations, candidate install references, session namespace,
+The first command checks release identity, citations, tagged install references, session namespace,
 engine source and wheel pins, wheel-to-source agreement, historical result identity and every shipped
 file against `SHA256SUMS`. The existing offline suite also checks identity, rendered serving commands,
 download isolation, space guards, output hygiene and payload integrity. Neither command contacts a Spark.
@@ -32,7 +32,7 @@ OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 python3 -m pytest -q -p no:cacheprovider \
 The unchanged engine passed the retry at 18:37Z on 2026-10-05: 8/9/10-image resumes `0 -> 68 -> 174`,
 both nonzero hits from disk, GIF pass and smoke 6/6. Boundary and full-prompt checkpoints were durable
 on all three ranks. The gate requires a checksummed [live receipt](release/v2.0.2/live-retry.json) bound
-to the same wheel content and engine fix commits before accepting `ready-for-review` status.
+to the same wheel content and engine fix commits before accepting `ready-for-review` or `published` status.
 
 [ROOTCAUSE.md](release/v2.0.2/ROOTCAUSE.md) preserves the first attempt's fixture failure, rollback,
 corrected fixture and log estimates. The acceptance runner provided idle persistence opportunities;

@@ -1,9 +1,15 @@
 # Limitations
 
-The v2.0.2 candidate adds only the image checkpoint and GIF fixes. The live retry passed; see
+The v2.0.2 release adds only the image checkpoint and GIF fixes. The live retry passed; see
 [the evidence](release/v2.0.2/ROOTCAUSE.md). The acceptance sequence waited for durable checkpoints.
 Continuous traffic can still skip optional disk saves while the bounded writer is busy; lossless persistence
-under sustained backpressure is not promised. Timing figures below were measured on v2.0.1, not this candidate.
+under sustained backpressure is not promised. Timing figures below were measured on v2.0.1, not v2.0.2.
+
+The live image-cache acceptance passed on the prepared runtime. A clean installation of the final v2.0.2 public recipe has not been demonstrated; the installation and performance receipts remain v2.0.1 evidence.
+
+- Image decode allocation failures, including `MemoryError`, can surface as HTTP 400.
+- Pillow is not separately version-pinned by this recipe.
+- Boundary and full-prompt checkpoints share one optional save batch. Backpressure can drop both together; acceptance waited for both to become durable.
 
 ## API
 

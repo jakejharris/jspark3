@@ -1,4 +1,4 @@
-# JSpark3 v2.0.2 (release candidate)
+# JSpark3 v2.0.2
 
 v2.0.1 plus two image fixes:
 
