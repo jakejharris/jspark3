@@ -1,6 +1,3 @@
-> **Current release: v2.0.2.** Use the [v2.0.2 installation guide](https://github.com/jakejharris/jspark3/blob/v2.0.2/INSTALL.md). The live image-cache acceptance passed on the prepared runtime. A clean installation of the final v2.0.2 public recipe has not been demonstrated; the installation and performance receipts remain v2.0.1 evidence.
-> The v2.0.1 guide below is retained for historical installs and rollback.
-
 # Installing JSpark3 v2.0.1
 
 This is the maintained v2.0.1 guide. The `main` branch carries this guide and the source checker; the runnable
