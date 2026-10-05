@@ -1,0 +1,52 @@
+{
+  "version": "v2.0.2",
+  "status": "published",
+  "source_ref": "v2.0.2",
+  "base_version": "v2.0.1",
+  "base_commit": "0be336670bb1ce8827ff7dbf1f33d1d61ea33cd7",
+  "engine_commit": "9d376eb24bf0790e1e9cf73060b201f958d1202e",
+  "wheel": {
+    "filename": "tensorfold-0.3.6.2-py3-none-any.whl",
+    "content_sha256": "35b0ccd7ee67e4f0a1b22db95566c8924425045552a8e08b3ca49454d3571e60"
+  },
+  "session_namespace": "v2.0.2-35b0ccd7ee67",
+  "fixes": [
+    {
+      "name": "image checkpoint",
+      "source_commit": "bd7a45f0b2c7b4a03e08d23563a98a3d5cc673ea",
+      "applied_commit": "e44eab427ec30a811b3faa4522e2f929286a7727"
+    },
+    {
+      "name": "GIF frame zero",
+      "source_commit": "258d1e839e62a759808eb15b8938019cadcce4dd",
+      "applied_commit": "9d376eb24bf0790e1e9cf73060b201f958d1202e"
+    }
+  ],
+  "evidence": "release/v2.0.2/ROOTCAUSE.md",
+  "live_validation": {
+    "first_attempt": {
+      "first_swap_started_at": "2026-10-05T17:37:27.545468+00:00",
+      "gif": "passed",
+      "cache": "fixture answer-contract failure; cache reuse not exercised",
+      "eight_image_resumed_tokens": 0,
+      "nine_and_ten_image_checks": "not run",
+      "rollback": "original v2.0.1 ring restored; identity and smoke passed"
+    },
+    "retry": "passed",
+    "passed_at": "2026-10-05T18:37:38.363615+00:00",
+    "retry_receipt": "release/v2.0.2/live-retry.json",
+    "retry_receipt_sha256": "4e0f945bd820ae2dcc9fc15b877da6f07a549dd742862ce98145d3c86141b260"
+  },
+  "performance": {
+    "measured_version": "v2.0.1",
+    "results": "release/results-v2.0.1.json",
+    "v2_0_2_measured": false,
+    "historical_sha256": {
+      "release/results-v2.0.1.json": "1a78dd4e57494433dbb1cf1ce66813b8783c4f5b9fe88807efb03d42541b2923",
+      "release/MEASUREMENTS-v2.0.1.md": "7958962989f5cf60253531835a603afae93e3d3d3f91f9cd93dae4fc00909158",
+      "docs/BENCHMARKS.md": "e48a2f6345a8666e7611d215d09f7325d242624bb45a219e9e4d8fae55177bd1"
+    }
+  },
+  "publication": "release-owner approved publication on 2026-10-05",
+  "engine_package_sha256": "04f2a77806a8f0379d8e0aa329e290adc72b239230a4fda2bfeca41641bbfff1"
+}

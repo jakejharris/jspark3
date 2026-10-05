@@ -1,13 +1,12 @@
 cff-version: 1.2.0
 message: "If you use this release, please cite it as below."
-title: "JSpark3 v2.0.1: GLM-5.3 Flash on three NVIDIA DGX Sparks"
+title: "JSpark3 v2.0.2: GLM-5.3 Flash on three NVIDIA DGX Sparks"
 type: software
 authors:
   - name: "JSpark3 authors"
-version: "v2.0.1"
-date-released: "2026-10-03"
+version: "v2.0.2"
 repository-code: "https://github.com/jakejharris/jspark3"
-url: "https://github.com/jakejharris/jspark3/releases/tag/v2.0.1"
+url: "https://github.com/jakejharris/jspark3/tree/v2.0.2"
 license: Apache-2.0
 keywords:
   - GLM-5.3 Flash

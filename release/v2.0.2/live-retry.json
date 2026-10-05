@@ -1,0 +1,87 @@
+{
+  "description": "Sanitized live acceptance receipt; engine wheel unchanged, operator fixture and persistence barriers corrected.",
+  "status": "PASS",
+  "passed_at": "2026-10-05T18:37:38.363615+00:00",
+  "engine_source_commits": [
+    "bd7a45f0b2c7b4a03e08d23563a98a3d5cc673ea",
+    "258d1e839e62a759808eb15b8938019cadcce4dd"
+  ],
+  "wheel_content_sha256": "35b0ccd7ee67e4f0a1b22db95566c8924425045552a8e08b3ca49454d3571e60",
+  "rolling": [
+    {
+      "observations": 8,
+      "prompt_tokens": 549,
+      "answer": "Blue",
+      "answer_contract_pass": true,
+      "cache_resume_pass": true,
+      "resumed_tokens": 0,
+      "cache_source": "cold",
+      "new_durable_boundary": 68,
+      "boundary_and_full_prompt_durable_on_ranks": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "observations": 9,
+      "prompt_tokens": 659,
+      "answer": "Green",
+      "answer_contract_pass": true,
+      "cache_resume_pass": true,
+      "resumed_tokens": 68,
+      "cache_source": "disk",
+      "new_durable_boundary": 174,
+      "boundary_and_full_prompt_durable_on_ranks": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "observations": 10,
+      "prompt_tokens": 761,
+      "answer": "Red",
+      "answer_contract_pass": true,
+      "cache_resume_pass": true,
+      "resumed_tokens": 174,
+      "cache_source": "disk",
+      "new_durable_boundary": 276,
+      "boundary_and_full_prompt_durable_on_ranks": [
+        0,
+        1,
+        2
+      ]
+    }
+  ],
+  "gif": {
+    "passed": true,
+    "identified": "multi-tiered pagoda",
+    "finish_reason": "stop",
+    "tool_calls": null,
+    "prompt_tokens": 518
+  },
+  "smoke": {
+    "passed": 6,
+    "total": 6,
+    "at": "2026-10-05T18:37:19.116642+00:00"
+  },
+  "swap_exit_code": 0,
+  "backpressure": {
+    "idle_persistence_opportunities": true,
+    "dropped_anchor_counter_after_smoke": 4,
+    "dropped_anchor_counter_after_rolling_and_gif": 4,
+    "rolling_added_dropped_anchors": 0,
+    "lossless_under_sustained_traffic": false,
+    "limit": "The bounded writer can skip optional saves while a batch is pending. The quiet gate requires 0.5 seconds without model work or request preparation; acceptance waited for durability between requests."
+  },
+  "scope": "Small CUDA sequence on the prepared Pi runtime with matching engine wheel content; not a clean installation of the final public recipe or a long-context latency benchmark.",
+  "source_sha256": {
+    "prep/RETRY-RESULT.md": "c1033e2745c26891026a71737e2fd0977ecdc611c9a8fae375252382f16d00f7",
+    "retry/RESULT.md": "f9c6650f6e9fabf93bcc28a8853bef1fa6a52b02a0093a02ea8a13c07ecf99e2",
+    "prep/retry-state/postboot-check.jsonl": "7c72c75be695fa0b5976de3ee065b47b21b80213037bb58e12edc61f24f2adea",
+    "prep/retry-state/retry-exit.json": "4473cf720be17a8d3d76601c59b33faa9341b1b4f917834319c5826603c575d5",
+    "prep/retry-state/retry-timed.jsonl": "c7abf3efc8fd6ef55e0fc28ae10f0b0e91abf47593809d5ce8dccbb0f1baf330",
+    "prep/retry-state/final-verification.json": "089ca7cc55699b340b49babfe0f528480a90b881c07dd1dae7b3204cf5644989"
+  }
+}

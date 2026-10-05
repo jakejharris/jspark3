@@ -2,7 +2,20 @@
 
 A serving recipe for GLM-5.3 Flash on three NVIDIA DGX Sparks.
 
-**Current release: JSpark3 v2.0.1 (GLM-5.3 Flash).** Start with the [v2.0.1 release](https://github.com/jakejharris/jspark3/releases/tag/v2.0.1) and the [v2.0.1 installation guide](https://github.com/jakejharris/jspark3/blob/v2.0.1/INSTALL.md).
+**Current release: JSpark3 v2.0.2 (GLM-5.3 Flash).** JSpark3 v2.0.2 fixes image-history checkpoint reuse and adds GIF frame-zero support. See the [v2.0.2 installation guide](INSTALL.md), [upgrade guide](UPGRADING.md),
+[release gate](RELEASE-GATE.md) and [root-cause evidence](release/v2.0.2/ROOTCAUSE.md).
+
+The live retry passed at 18:37Z on 2026-10-05 with unchanged engine commits: 8/9/10-image resumes were
+`0 -> 68 -> 174`, with both nonzero hits from disk; GIF passed and smoke passed 6/6. The first attempt's
+fixture failure and rollback remain recorded in the evidence. Acceptance waited for durable checkpoints;
+continuous traffic can still skip optional disk saves. This is a small CUDA acceptance sequence, not a
+long-context latency benchmark or a clean installation of the final public recipe.
+
+**Current published release:** [v2.0.2](https://github.com/jakejharris/jspark3/releases/tag/v2.0.2).
+
+The live image-cache acceptance passed on the prepared runtime. A clean installation of the final v2.0.2 public recipe has not been demonstrated; the installation and performance receipts remain v2.0.1 evidence.
+The performance and installation observations below are historical v2.0.1 results, sourced from
+[the measurements](release/MEASUREMENTS-v2.0.1.md) and [benchmark methods](docs/BENCHMARKS.md).
 
 With base weights and the draft model, eight concurrent requests produced 126.0 tok/s in total on short prompts of 41 to 62 tokens. With refusal-removed (ablit) weights and the draft model, eight concurrent requests on the same short prompts (41 to 62 tokens) produced 121.7 tok/s in total.
 
@@ -55,7 +68,7 @@ v2.0.1 is a new installation, not an in-place upgrade. The engine changes from v
 
 Reasoning is now always on. v1.8.4 had it off by default and honoured requests to turn it off; v2.0.1 runs a request with no reasoning setting at High and treats a request to turn it off as low (known issue 9). Replies begin with a reasoning passage, returned as `reasoning_content`, before the visible text, and it uses part of `max_tokens`.
 
-v1.8.4 stays available; see rolling back. With base weights, two measured cases favour it (three DGX Sparks; v1.8.4 at its default, reasoning off, and v2.0.1 at reasoning effort low; an appliance comparison with different model IDs, not a same-weights claim). On prose replies, v1.8.4 shows the first visible text about 0.1 s sooner, because v2.0.1 writes a short reasoning passage first (known issue 9). With base weights and a single client on short code replies, the first visible text arrives in about the same time, with v1.8.4 about 2% faster. If you keep very many idle keep-alive clients connected, read known issue 13 first; a fix is planned for v2.0.2.
+v1.8.4 stays available; see rolling back. With base weights, two measured cases favour it (three DGX Sparks; v1.8.4 at its default, reasoning off, and v2.0.1 at reasoning effort low; an appliance comparison with different model IDs, not a same-weights claim). On prose replies, v1.8.4 shows the first visible text about 0.1 s sooner, because v2.0.1 writes a short reasoning passage first (known issue 9). With base weights and a single client on short code replies, the first visible text arrives in about the same time, with v1.8.4 about 2% faster. If you keep very many idle keep-alive clients connected, read known issue 13 first; that fix is outside this release; no target version is assigned.
 
 To roll back, stop v2.0.1 and start v1.8.4 from its tag, following its own installation guide. v1.8.4 is the documented rollback.
 
@@ -75,13 +88,15 @@ See [upgrade and rollback](https://github.com/jakejharris/jspark3/blob/v2.0.1/UP
 
 ## Releases
 
-- **v2.0.1**: current; the engine is a fork of TensorFold 0.3.6.2 (MIT). [release](https://github.com/jakejharris/jspark3/releases/tag/v2.0.1) · [installation guide](https://github.com/jakejharris/jspark3/blob/v2.0.1/INSTALL.md)
+- **v2.0.2**: current; image checkpoint and GIF fixes. [Release](https://github.com/jakejharris/jspark3/releases/tag/v2.0.2) · [evidence and gates](RELEASE-GATE.md).
+
+- **v2.0.1**: previous; the engine is a fork of TensorFold 0.3.6.2 (MIT). [release](https://github.com/jakejharris/jspark3/releases/tag/v2.0.1) · [installation guide](https://github.com/jakejharris/jspark3/blob/v2.0.1/INSTALL.md)
 - **v1.8.4** (previous, vLLM): the documented rollback. [release](https://github.com/jakejharris/jspark3/releases/tag/v1.8.4) · [installation guide](https://github.com/jakejharris/jspark3/blob/v1.8.4/docs/INSTALL.md)
 - v2.0.0: internal build, not published.
 - v1.8.0: do not install. It requires a container image that was never published.
 - v1.1.0 (Cadence): [historical guide](https://github.com/jakejharris/jspark3/blob/v1.1.0/README.md)
 
-The files on this default branch are the frozen v1.1.0 export. Each release since v1.8.0 lives on its own tag, so install from a tag, never from this branch.
+This is the v2.0.2 recipe. Previous releases remain available at their original tags.
 
 JSpark3 Tempo, a separate named release for DeepSeek-V4.1 Flash with its own version numbers, lives in [jspark3-deepseek](https://github.com/jakejharris/jspark3-deepseek).
 
