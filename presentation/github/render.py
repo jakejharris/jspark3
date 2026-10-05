@@ -20,7 +20,7 @@ import re
 import sys
 import xml.dom.minidom
 from pathlib import Path
-from xml.sax.saxutils import escape, quoteattr
+from xml.sax.saxutils import quoteattr
 
 from fontTools.pens.svgPathPen import SVGPathPen
 from fontTools.ttLib import TTFont
@@ -67,13 +67,12 @@ CHARTS = [
     ("four", "Four at once, end to end", "short code, end-to-end, 256-token cap per agent"),
 ]
 
-# Badges: file stem, label, value, value colour, value ink, link description for the alt text.
-# The first five are the Hugging Face card's badges, in its colours.
-ENGINE = "fork of TensorFold 0.3.6.2 (MIT)"
+# Badges: file stem, label, value (None for the current release), value colour, value ink. Release,
+# hardware, engine, recipe license and draft model are the Hugging Face card's badges, in its colours.
 BADGES = [
     ("release", "Release", None, "#0a7c3f", "#ffffff"),
     ("hardware", "Hardware", "3× DGX Spark", "#76b900", "#0f1a00"),
-    ("engine", "Engine", ENGINE, "#8250df", "#ffffff"),
+    ("engine", "Engine", "fork of TensorFold 0.3.6.2 (MIT)", "#8250df", "#ffffff"),
     ("api", "API", "OpenAI-compatible", "#4e6e8e", "#ffffff"),
     ("recipe-license", "Recipe license", "Apache-2.0", "#d73a49", "#ffffff"),
     ("base-weights", "Base weights", "MIT", GOLD, GOLD_INK),
