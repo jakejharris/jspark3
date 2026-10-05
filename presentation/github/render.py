@@ -39,7 +39,6 @@ FONTS = {
 }
 SOURCES = {
     "jspark3-mark.svg": "9837244666243476c054e7c275d24efc0106494e148896870cbb519e267bac41",
-    "jspark3-mark-static.svg": "10fd5c4d5b61f1778ad730c8111ca7f52292913317f7f3b356cfef9485df0d45",
     "three-sparks.svg": "d0f4a1e0d1eeddd381633fd83eac333c86439408153356ff47c6c00ad8311937",
 }
 
@@ -80,6 +79,15 @@ BADGES = [
     ("base-weights", "Base weights", "MIT", GOLD, GOLD_INK),
     ("draft-model", "Draft model", "DFlash2 non-commercial", "#6e7781", "#ffffff"),
 ]
+# Status tags for the README's release list, all one width so the versions after them line up.
+STATUSES = [
+    ("current", "Current", "#0a7c3f", "#ffffff"),
+    ("rollback", "Rollback", GOLD, GOLD_INK),
+    ("not-published", "Not published", "#6e7781", "#ffffff"),
+    ("do-not-install", "Do not install", "#d73a49", "#ffffff"),
+    ("historical", "Historical", "#4e6e8e", "#ffffff"),
+]
+
 # What the badges say, as the release's own guides say it.
 BADGE_FACTS = (("README.md", "three NVIDIA DGX Sparks"), ("README.md", "a fork of TensorFold 0.3.6.2 (MIT)"),
                ("INSTALL.md", "The API is OpenAI-compatible"), ("README.md", "Recipe files are Apache-2.0"),
@@ -221,7 +229,7 @@ def read_source(name: str) -> str:
 
 
 # The tumbling mark's frame 137 of 421, about 9.1 s into its 28 s turn: the triangle stands
-# upright, apex over a level base. (Frame 0, the static file's pose, is seen almost edge-on.)
+# upright, apex over a level base. (Frame 0, where the animation starts, is seen almost edge-on.)
 MARK_FRAME = 137
 
 
@@ -364,7 +372,7 @@ def hero(faces: dict, release: str, narrow: bool) -> str:
 
 def badge(faces: dict, label: str, value: str, fill: str, ink: str, icon: bool) -> str:
     semi = faces["semi"]
-    size, track, height, pad = 10, 0.85, 28, 9.5
+    size, track, height, pad = 10, 0.7, 28, 8.5
     left_text, right_text = label.upper(), value.upper()
     icon_width = 16 + 6 if icon else 0
     left = pad + icon_width + width_of(semi, left_text, size, track) + pad
@@ -379,6 +387,16 @@ def badge(faces: dict, label: str, value: str, fill: str, ink: str, icon: bool) 
     baseline = 18
     svg.text(semi, left_text, pad + icon_width, baseline, size, "#ecebe6", tracking=track)
     svg.text(semi, right_text, left + pad, baseline, size, ink, tracking=track)
+    return svg.render()
+
+
+def status(faces: dict, label: str, fill: str, ink: str) -> str:
+    semi = faces["semi"]
+    size, track, height = 9.5, 0.7, 20
+    width = max(width_of(semi, text.upper(), size, track) for _, text, _, _ in STATUSES) + 20
+    svg = Svg(round(width), height, label)
+    svg.add(f'<rect width="{round(width)}" height="{height}" rx="10" fill="{fill}"/>')
+    svg.text(semi, label.upper(), round(width) / 2, 13.5, size, ink, tracking=track, anchor="middle")
     return svg.render()
 
 
@@ -425,12 +443,17 @@ def chart(faces: dict, theme: str, title: str, subtitle: str | None, before: str
 
 def artwork(faces: dict) -> dict[str, str]:
     facts = readme_facts()
+    still = Svg(44, 44, "JSpark3")
+    still.add(mark(0, 0, 44))
     files = {
+        "mark-still.svg": still.render(),
         "hero.svg": hero(faces, facts["release"], narrow=False),
         "hero-narrow.svg": hero(faces, facts["release"], narrow=True),
     }
     for stem, label, value, fill, ink in BADGES:
         files[f"badge-{stem}.svg"] = badge(faces, label, value or facts["release"], fill, ink, stem == "release")
+    for stem, label, fill, ink in STATUSES:
+        files[f"status-{stem}.svg"] = status(faces, label, fill, ink)
     for key, title, subtitle in CHARTS:
         before, now = facts["figures"][key]
         for theme in THEMES:

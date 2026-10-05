@@ -190,11 +190,11 @@ See [upgrade and rollback](UPGRADING.md).
 
 ## Releases
 
-- **v2.0.1**: current; the engine is a fork of TensorFold 0.3.6.2 (MIT). [release](https://github.com/jakejharris/jspark3/releases/tag/v2.0.1) · [installation guide](INSTALL.md)
-- **v1.8.4** (previous, vLLM): the documented rollback. [release](https://github.com/jakejharris/jspark3/releases/tag/v1.8.4) · [installation guide](https://github.com/jakejharris/jspark3/blob/v1.8.4/docs/INSTALL.md) · [required download-source correction](UPGRADING.md#going-back-to-v184)
-- v2.0.0: internal build, not published.
-- v1.8.0: do not install. It requires a container image that was never published.
-- v1.1.0 (Cadence): [historical guide](https://github.com/jakejharris/jspark3/blob/v1.1.0/README.md)
+- <a href="#releases"><img src="presentation/github/assets/status-current.svg" height="20" alt="Current"></a> **v2.0.1**: current; the engine is a fork of TensorFold 0.3.6.2 (MIT). [release](https://github.com/jakejharris/jspark3/releases/tag/v2.0.1) · [installation guide](INSTALL.md)
+- <a href="#releases"><img src="presentation/github/assets/status-rollback.svg" height="20" alt="Rollback"></a> **v1.8.4** (previous, vLLM): the documented rollback. [release](https://github.com/jakejharris/jspark3/releases/tag/v1.8.4) · [installation guide](https://github.com/jakejharris/jspark3/blob/v1.8.4/docs/INSTALL.md) · [required download-source correction](UPGRADING.md#going-back-to-v184)
+- <a href="#releases"><img src="presentation/github/assets/status-not-published.svg" height="20" alt="Not published"></a> v2.0.0: internal build, not published.
+- <a href="#releases"><img src="presentation/github/assets/status-do-not-install.svg" height="20" alt="Do not install"></a> v1.8.0: do not install. It requires a container image that was never published.
+- <a href="#releases"><img src="presentation/github/assets/status-historical.svg" height="20" alt="Historical"></a> v1.1.0 (Cadence): [historical guide](https://github.com/jakejharris/jspark3/blob/v1.1.0/README.md)
 
 The runnable recipe files on this default branch are the frozen v1.1.0 export; the maintained v2.0.1 guides linked above accompany the separate tagged recipe. Each release since v1.8.0 lives on its own tag, so install the recipe from a tag, following the maintained guides.
 
@@ -238,5 +238,5 @@ This work includes or was produced using ShapleyMcg, created by Brandon M. Music
 <br>
 
 <p align="center">
-  <a href="https://www.jakejh.com/jspark3/glm/"><picture><source media="(prefers-reduced-motion: reduce)" srcset="presentation/github/src/jspark3-mark-static.svg"><img src="presentation/github/src/jspark3-mark.svg" width="44" height="44" alt="JSpark3"></picture></a>
+  <a href="https://www.jakejh.com/jspark3/glm/"><picture><source media="(prefers-reduced-motion: reduce)" srcset="presentation/github/assets/mark-still.svg"><img src="presentation/github/src/jspark3-mark.svg" width="44" height="44" alt="JSpark3"></picture></a>
 </p>
