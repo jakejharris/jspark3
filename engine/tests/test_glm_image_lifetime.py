@@ -194,7 +194,7 @@ def test_prepared_byte_budget_refuses_before_pixel_decode(monkeypatch):
           "prepared image budget is busy (1024 MiB); retry with fewer or smaller images", "server_error")
 
 
-@pytest.mark.parametrize("fmt", ["TIFF", "BMP", "ICO", "TGA", "PPM", "PCX", "SGI", "DDS", "GIF", "IM", "SPIDER"])
+@pytest.mark.parametrize("fmt", ["TIFF", "BMP", "ICO", "TGA", "PPM", "PCX", "SGI", "DDS", "IM", "SPIDER"])
 def test_data_uri_cannot_invoke_other_image_decoders(fmt):
     data = io.BytesIO()
     im = Image.new("F" if fmt == "SPIDER" else "RGB", (32, 32))
@@ -203,7 +203,7 @@ def test_data_uri_cannot_invoke_other_image_decoders(fmt):
     error(wire, 400, "image 1: the image could not be decoded", "invalid_request_error")
 
 
-@pytest.mark.parametrize("fmt", ["JPEG", "PNG", "WEBP"])
+@pytest.mark.parametrize("fmt", ["JPEG", "PNG", "WEBP", "GIF"])
 def test_allowed_data_formats_still_succeed(fmt):
     data = io.BytesIO()
     Image.new("RGB", (32, 32)).save(data, fmt)

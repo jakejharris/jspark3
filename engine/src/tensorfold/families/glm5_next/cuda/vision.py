@@ -232,15 +232,15 @@ def _remote(url: str, job: _Preparation) -> bytes:
         try:
             tls.settimeout(job.remaining())
             conn.request("GET", urllib.parse.urlunsplit(("", "", u.path or "/", u.query, "")),
-                         headers={"Accept": "image/jpeg, image/png, image/webp", "Accept-Encoding": "identity"})
+                         headers={"Accept": "image/jpeg, image/png, image/webp, image/gif", "Accept-Encoding": "identity"})
             response = conn.getresponse()
             if 300 <= response.status < 400:
                 raise ValueError("remote image redirects are not allowed")
             if response.status != 200:
                 raise ValueError("remote image server must return HTTP 200")
             mime = response.getheader("Content-Type", "").split(";", 1)[0].strip().lower()
-            if mime not in ("image/jpeg", "image/png", "image/webp"):
-                raise ValueError("remote image Content-Type must be image/jpeg, image/png or image/webp")
+            if mime not in ("image/jpeg", "image/png", "image/webp", "image/gif"):
+                raise ValueError("remote image Content-Type must be image/jpeg, image/png, image/webp or image/gif")
             if response.getheader("Content-Encoding", "identity").lower() not in ("", "identity"):
                 raise ValueError("remote image Content-Encoding must be identity")
             length = response.getheader("Content-Length")
@@ -266,6 +266,7 @@ def _remote(url: str, job: _Preparation) -> bytes:
                 raise ValueError("remote image body does not match Content-Length")
             magic = ("image/png" if data.startswith(b"\x89PNG\r\n\x1a\n") else
                      "image/jpeg" if data.startswith(b"\xff\xd8\xff") else
+                     "image/gif" if data[:6] in (b"GIF87a", b"GIF89a") else
                      "image/webp" if data[:4] == b"RIFF" and data[8:12] == b"WEBP" else None)
             if magic != mime:
                 raise ValueError("remote image bytes do not match Content-Type")
@@ -381,7 +382,10 @@ def canvas(h: int, w: int, min_tokens: int = MIN_TOKENS, max_tokens: int = MAX_T
 
 
 def prepare(data: bytes, *, max_tokens: int = MAX_TOKENS, reserve=None) -> Image:
-    """Decode, fit onto the canvas keeping the aspect ratio (bicubic, zero padding right and bottom), normalize, patch."""
+    """Decode frame zero, fit the canvas (bicubic, padding right/bottom), normalize and patch.
+
+    Animated GIF/PNG/WebP inputs are still images here; later frames are never decoded.
+    """
 
     from PIL import Image as PILImage
 
@@ -389,7 +393,7 @@ def prepare(data: bytes, *, max_tokens: int = MAX_TOKENS, reserve=None) -> Image
         raise ValueError("an image is larger than 32 MB")
     digest = hashlib.sha256(data).digest()
     try:
-        img = PILImage.open(io.BytesIO(data), formats=("JPEG", "PNG", "WEBP"))
+        img = PILImage.open(io.BytesIO(data), formats=("JPEG", "PNG", "WEBP", "GIF"))
     except PILImage.DecompressionBombError:
         raise ValueError("an image exceeds 32000000 decoded pixels") from None
     except Exception:  # noqa: BLE001 - do not echo decoder internals or input bytes
@@ -405,15 +409,17 @@ def prepare(data: bytes, *, max_tokens: int = MAX_TOKENS, reserve=None) -> Image
             img.close()
             raise
     try:
-        img.load()
+        with img:
+            img.seek(0)
+            img.load()
+            if img.mode != "RGB":             # transformers' convert_to_rgb: transparency over white
+                rgba = img.convert("RGBA")
+                white = PILImage.new("RGBA", rgba.size, (255, 255, 255))
+                img = PILImage.alpha_composite(white, rgba).convert("RGB")
+            pixels = np.asarray(img, dtype=np.uint8).copy()
     except Exception:  # noqa: BLE001
-        img.close()
         raise ValueError("the image could not be decoded") from None
-    if img.mode != "RGB":                         # transformers' convert_to_rgb: transparency over white
-        rgba = img.convert("RGBA")
-        white = PILImage.new("RGBA", rgba.size, (255, 255, 255))
-        img = PILImage.alpha_composite(white, rgba).convert("RGB")
-    x = torch.from_numpy(np.asarray(img, dtype=np.uint8).copy()).permute(2, 0, 1)      # [3, H, W] uint8
+    x = torch.from_numpy(pixels).permute(2, 0, 1)  # [3, H, W] uint8
     H, W = x.shape[1:]
     ch, cw = canvas(H, W, max_tokens=max_tokens)
     scale = min(ch / H, cw / W)

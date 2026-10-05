@@ -478,7 +478,7 @@ ssh -N -L 8002:127.0.0.1:8002 <you>@<rank 0 address>
 
 Both weight variants accept images in chat messages as inline `data:` URLs (base64). Remote image URLs are refused. Each request takes up to 16 images, at most 32 MB per image and 32 MB in total, and at most 32 megapixels per image. This release does not measure how well the model understands images.
 
-- Send each image as a content part of a user message: `{"type": "image_url", "image_url": {"url": "data:image/png;base64,<the file in base64>"}}`. JPEG, PNG and WebP files are read.
+- Send each image as a content part of a user message: `{"type": "image_url", "image_url": {"url": "data:image/png;base64,<the file in base64>"}}`. JPEG, PNG, WebP and GIF files are read. Animated inputs use frame zero as a still image; later frames are not interpreted.
 - **At most 4 requests with images at a time,** counting those being prepared, waiting and answered. A fifth is refused with HTTP 503, not queued, so retry it. Requests without images don't count toward this limit.
 - [TROUBLESHOOTING.md](TROUBLESHOOTING.md#images-in-requests) lists the messages a refused image gets.
 

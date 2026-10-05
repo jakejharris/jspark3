@@ -478,7 +478,7 @@ Images go in a chat message as inline base64 `data:` URLs ([OPERATIONS.md](OPERA
 |---|---|---|
 | `remote image URLs are disabled; send a data: URI ...` (HTTP 400) | The image part points to an `http://` or `https://` address. This release does not fetch images. | Download the image yourself and send it as a base64 `data:` URL, for example `data:image/png;base64,<the file in base64>`. |
 | `image URLs must be data: URIs ...` (HTTP 400) | The image part's `url` is neither a `data:` URL nor a web address. | Send it as a base64 `data:` URL, as above. |
-| `the image data URL does not decode` or `the image could not be decoded` (HTTP 400) | The base64 text is broken, or the file is not a JPEG, PNG or WebP image. | Re-encode the file as JPEG, PNG or WebP, then base64 it again without line breaks. |
+| `the image data URL does not decode` or `the image could not be decoded` (HTTP 400) | The base64 text is broken, or the file is not a decodable JPEG, PNG, WebP or GIF image. | Re-encode the file as one of these formats, then base64 it again without line breaks. Animated inputs use frame zero only. |
 | `an image is larger than 32 MB`, `image data URL exceeds the 32 MB encoding limit` or `an image exceeds 32000000 decoded pixels` (HTTP 400) | One image is over a per-image limit. | Resize or recompress it. |
 | `a request may contain at most 16 images` (HTTP 400) | Too many images in one request, counting the whole conversation. | Send fewer images, or start a new conversation. |
 | `image requests are busy (4 active or waiting); retry later` (HTTP 503) | Four requests with images are already being prepared, waiting or answered. A fifth is refused, not queued. | Retry with backoff. Limit requests with images to 4 at a time at your proxy. |
