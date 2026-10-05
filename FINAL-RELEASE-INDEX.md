@@ -1,12 +1,28 @@
+# Current release: JSpark3 v2.0.2
+
+JSpark3 v2.0.2 fixes image-history checkpoint reuse and adds GIF frame-zero support.
+
+Live 8/9/10-image resumes were 0 -> 68 -> 174 tokens, both nonzero hits from disk; GIF passed and smoke passed 6/6. The live image-cache acceptance passed on the prepared runtime. A clean installation of the final v2.0.2 public recipe has not been demonstrated; the installation and performance receipts remain v2.0.1 evidence.
+
+- [Release and four downloadable assets](https://github.com/jakejharris/jspark3/releases/tag/v2.0.2)
+- [Source and payload checksums](https://github.com/jakejharris/jspark3/tree/v2.0.2)
+- [Public facts](https://github.com/jakejharris/jspark3/blob/v2.0.2/release/RELEASE-FACTS.md)
+- [Live acceptance evidence](https://github.com/jakejharris/jspark3/blob/v2.0.2/release/v2.0.2/ROOTCAUSE.md)
+- [Installation](https://github.com/jakejharris/jspark3/blob/v2.0.2/INSTALL.md) and [upgrade](https://github.com/jakejharris/jspark3/blob/v2.0.2/UPGRADING.md)
+- [Hugging Face card](https://huggingface.co/jakejharris/jspark3)
+- [Project page](https://www.jakejh.com/jspark3/glm/)
+
+Performance measurements remain labeled v2.0.1. Its tag and release remain unchanged.
+The historical v1.0.0 receipt follows.
+
 # Final release index: JSpark3 v1.0.0 (tagged public release)
 
 > Download clarification, 2026-09-14: Download the GLM model once, from Mia's copy or JSPARK3's copy of the same version. They contain the same model files. Cadence also needs the separate DFlash2 draft, a smaller model that helps generate answers faster.
 > [Download sources and setup](https://github.com/jakejharris/jspark3/blob/main/docs/INSTALL.md).
 
 > Historical record. This page is the terminal v1.0.0 release receipt,
-> preserved unchanged. The current release content — v1.1.0 (Cadence), dated
-> 2026-09-07 — is tracked in [RELEASE-GATE.md](RELEASE-GATE.md) and the
-> [changelog](CHANGELOG.md).
+> preserved as history. The v1.1.0 (Cadence) record, dated 2026-09-07, is tracked
+> in [RELEASE-GATE.md](RELEASE-GATE.md) and the [changelog](CHANGELOG.md).
 
 This is the receipt for the terminal v1.0.0 release state: what surfaces exist,
 how each was produced, exactly what verification ran, and where each payload
