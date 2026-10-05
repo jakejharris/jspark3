@@ -35,8 +35,7 @@
 **Current release: JSpark3 v2.0.2 (GLM-5.3 Flash).** Start with the [v2.0.2 release](https://github.com/jakejharris/jspark3/releases/tag/v2.0.2) and the [v2.0.2 installation guide](https://github.com/jakejharris/jspark3/blob/v2.0.2/INSTALL.md).
 
 > [!NOTE]
-> Historical v2.0.1 install notes: see [known issues and hotfixes](docs/TROUBLESHOOTING.md#v201-known-issues-and-hotfixes) for startup rebuilds,
-> possible compile locks, unavailable downloads and no-drafter preflight. The kernel rebuild hotfix is **validated on 3x DGX Spark (2026-10-04): retained boot reused the kernel cache; undo restored the original files**.
+> The installation and restart issues documented for v2.0.1 also apply to v2.0.2. The separate kernel-rebuild hotfix was validated with v2.0.1 on 2026-10-04; it is not a new v2.0.2 validation. See the [installation and restart notes](docs/TROUBLESHOOTING.md#v201-known-issues-and-hotfixes) for startup rebuilds, possible compile locks, unavailable downloads and no-drafter preflight.
 
 **JSpark3 v2.0.2 fixes image-history checkpoint reuse and adds GIF frame-zero support.**
 
@@ -124,6 +123,10 @@ With base weights and the draft model, eight concurrent requests produced 126.0 
 
 Every result set, with its conditions, is in the [v2.0.1 release notes](https://github.com/jakejharris/jspark3/releases/tag/v2.0.1).
 
+## Known issues
+
+These known issues also apply to JSpark3 v2.0.2. Timings and earlier test observations within the issue descriptions remain v2.0.1 evidence. See the [v2.0.2 limitations](https://github.com/jakejharris/jspark3/blob/v2.0.2/LIMITATIONS.md) and [maintained public facts](release/RELEASE-FACTS.md).
+
 ## Weights
 
 The installer offers two weight variants. The default is `base` (base weights). Choose the variant with `WEIGHTS=ablit` in `cluster.env`, or `--weights ablit` on fetch-weights.sh, split.sh and serve.sh (default `base`).
@@ -164,7 +167,7 @@ Follow the [v2.0.2 upgrade and rollback guide](https://github.com/jakejharris/js
 
 v2.0.1 is a new installation, not an in-place upgrade. The engine changes from vLLM to a fork of TensorFold 0.3.6.2 (MIT), and the weights change from the v1.8.x EXL3 files to public 4-bit MLX-format weights split across the three hosts. Stop v1.8.x before you start v2.0.1, and keep your v1.8.4 checkout and weights if you might roll back.
 
-Reasoning is now always on. v1.8.4 had it off by default and honoured requests to turn it off; v2.0.1 runs a request with no reasoning setting at High and treats a request to turn it off as low (known issue 9). Replies begin with a reasoning passage, returned as `reasoning_content`, before the visible text, and it uses part of `max_tokens`.
+Reasoning is now always on. v1.8.4 had it off by default and honoured requests to turn it off; the server runs a request with no reasoning setting at High and treats a request to turn it off as low (known issue 9). Replies begin with a reasoning passage, returned as `reasoning_content`, before the visible text, and it uses part of `max_tokens`.
 
 v1.8.4 stays available; see rolling back. With base weights, two measured cases favour it (three DGX Sparks; v1.8.4 at its default, reasoning off, and v2.0.1 at reasoning effort low; an appliance comparison with different model IDs, not a same-weights claim). On prose replies, v1.8.4 shows the first visible text about 0.1 s sooner, because v2.0.1 writes a short reasoning passage first (known issue 9). With base weights and a single client on short code replies, the first visible text arrives in about the same time, with v1.8.4 about 2% faster. If you keep very many idle keep-alive clients connected, read known issue 13 first; that fix is outside v2.0.2; no target version is assigned.
 

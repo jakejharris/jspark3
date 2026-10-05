@@ -6,7 +6,7 @@ Live 8/9/10-image resumes were 0 -> 68 -> 174 tokens, both nonzero hits from dis
 
 - [Release and four downloadable assets](https://github.com/jakejharris/jspark3/releases/tag/v2.0.2)
 - [Source and payload checksums](https://github.com/jakejharris/jspark3/tree/v2.0.2)
-- [Public facts](https://github.com/jakejharris/jspark3/blob/v2.0.2/release/RELEASE-FACTS.md)
+- [Public facts](https://github.com/jakejharris/jspark3/blob/main/release/RELEASE-FACTS.md)
 - [Live acceptance evidence](https://github.com/jakejharris/jspark3/blob/v2.0.2/release/v2.0.2/ROOTCAUSE.md)
 - [Installation](https://github.com/jakejharris/jspark3/blob/v2.0.2/INSTALL.md) and [upgrade](https://github.com/jakejharris/jspark3/blob/v2.0.2/UPGRADING.md)
 - [Hugging Face card](https://huggingface.co/jakejharris/jspark3)

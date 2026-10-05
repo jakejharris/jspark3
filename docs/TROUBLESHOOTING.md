@@ -1,5 +1,7 @@
 # Troubleshooting
 
+The installation and restart issues documented for v2.0.1 also apply to v2.0.2. The separate kernel-rebuild hotfix was validated with v2.0.1 on 2026-10-04; it is not a new v2.0.2 validation. The command examples below retain their documented v2.0.1 checkout and validation scope.
+
 This page is for JSpark3 v2.0.1 (GLM-5.3 Flash). Find the message you see, then read what it means and what to do.
 It is maintained on main alongside the [current install guide](../INSTALL.md); run the commands from your
 `v2.0.1` tagged checkout.
