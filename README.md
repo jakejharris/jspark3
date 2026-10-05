@@ -1,15 +1,56 @@
-# JSpark3
+<p align="center">
+  <a href="https://www.jakejh.com/jspark3/glm/">
+    <picture>
+      <source media="(max-width: 600px)" srcset="presentation/github/assets/hero-narrow.svg">
+      <img src="presentation/github/assets/hero.svg" width="100%" alt="JSpark3 v2.0.1: GLM-5.3 Flash on three DGX Sparks, wired in a ring to serve one endpoint">
+    </picture>
+  </a>
+</p>
 
-A serving recipe for GLM-5.3 Flash on three NVIDIA DGX Sparks.
+<p align="center">A serving recipe for GLM-5.3 Flash on three NVIDIA DGX Sparks.</p>
+
+<p align="center">
+  <a href="https://github.com/jakejharris/jspark3/releases/tag/v2.0.1"><img src="presentation/github/assets/badge-release.svg" height="28" alt="Release: v2.0.1"></a>
+  <a href="INSTALL.md#what-you-need"><img src="presentation/github/assets/badge-hardware.svg" height="28" alt="Hardware: three NVIDIA DGX Sparks"></a>
+  <a href="https://github.com/ashhart/TensorFold"><img src="presentation/github/assets/badge-engine.svg" height="28" alt="Engine: a fork of TensorFold 0.3.6.2 (MIT)"></a>
+  <a href="INSTALL.md#quick-start-base-weights-the-default"><img src="presentation/github/assets/badge-api.svg" height="28" alt="API: OpenAI-compatible"></a>
+  <br>
+  <a href="LICENSE"><img src="presentation/github/assets/badge-recipe-license.svg" height="28" alt="Recipe license: Apache-2.0"></a>
+  <a href="#weights"><img src="presentation/github/assets/badge-base-weights.svg" height="28" alt="Base weights: MIT"></a>
+  <a href="#draft-model-license"><img src="presentation/github/assets/badge-draft-model.svg" height="28" alt="Draft model: DFlash2, non-commercial"></a>
+</p>
+
+<p align="center">
+  <a href="INSTALL.md"><b>Install</b></a> ·
+  <a href="https://github.com/jakejharris/jspark3/releases/tag/v2.0.1">Release notes</a> ·
+  <a href="docs/TROUBLESHOOTING.md#v201-known-issues-and-hotfixes">Known issues</a> ·
+  <a href="#rigmark">RigMark</a> ·
+  <a href="#weights">Weights</a> ·
+  <a href="UPGRADING.md">Upgrading</a> ·
+  <a href="#licenses">Licenses</a> ·
+  <a href="#credits">Credits</a> ·
+  <a href="https://www.jakejh.com/jspark3/glm/">Project page</a>
+</p>
 
 **Current release: JSpark3 v2.0.1 (GLM-5.3 Flash).** Start with the [v2.0.1 release](https://github.com/jakejharris/jspark3/releases/tag/v2.0.1) and the [v2.0.1 installation guide](INSTALL.md).
 
-See [v2.0.1 known issues and hotfixes](docs/TROUBLESHOOTING.md#v201-known-issues-and-hotfixes) for startup rebuilds,
-possible compile locks, unavailable downloads and no-drafter preflight. The kernel rebuild hotfix is **validated on 3x DGX Spark (2026-10-04): retained boot reused the kernel cache; undo restored the original files**.
+> [!NOTE]
+> See [v2.0.1 known issues and hotfixes](docs/TROUBLESHOOTING.md#v201-known-issues-and-hotfixes) for startup rebuilds,
+> possible compile locks, unavailable downloads and no-drafter preflight. The kernel rebuild hotfix is **validated on 3x DGX Spark (2026-10-04): retained boot reused the kernel cache; undo restored the original files**.
 
 **v2.0.1 is out. New engine, new weights, still three DGX Sparks, and big RigMark throughput gains over v1.8.4.**
 
 RigMark, v2.0.1 with base weights + draft model (tok/s, higher is better):
+
+<p align="center">
+  <a href="#rigmark"><picture><source media="(prefers-color-scheme: dark)" srcset="presentation/github/assets/rigmark-code-dark.svg"><img src="presentation/github/assets/rigmark-code-light.svg" width="404" alt="Code, decode estimate, tok/s, higher is better: v1.8.4 61.1; v2.0.1 with base weights + draft model 91.3"></picture></a>
+  <a href="#rigmark"><picture><source media="(prefers-color-scheme: dark)" srcset="presentation/github/assets/rigmark-prose-dark.svg"><img src="presentation/github/assets/rigmark-prose-light.svg" width="404" alt="Prose, decode estimate, tok/s, higher is better: v1.8.4 31.5; v2.0.1 with base weights + draft model 51.6"></picture></a>
+  <a href="#rigmark"><picture><source media="(prefers-color-scheme: dark)" srcset="presentation/github/assets/rigmark-prefill-dark.svg"><img src="presentation/github/assets/rigmark-prefill-light.svg" width="404" alt="Cold prefill, 64K prompt, tok/s, higher is better: v1.8.4 1,505; v2.0.1 with base weights + draft model 2,124"></picture></a>
+  <a href="#rigmark"><picture><source media="(prefers-color-scheme: dark)" srcset="presentation/github/assets/rigmark-four-dark.svg"><img src="presentation/github/assets/rigmark-four-light.svg" width="404" alt="Four at once, end to end (short code, end-to-end, 256-token cap per agent), tok/s, higher is better: v1.8.4 86.6; v2.0.1 with base weights + draft model 113.4"></picture></a>
+</p>
+
+<details>
+<summary>The same figures as a table</summary>
 
 | RigMark row | v1.8.4 | v2.0.1 |
 |---|---:|---:|
@@ -17,6 +58,8 @@ RigMark, v2.0.1 with base weights + draft model (tok/s, higher is better):
 | Prose, decode estimate | 31.5 | **51.6** |
 | Cold prefill, 64K prompt | 1,505 | **2,124** |
 | Four at once, end to end (short code, end-to-end, 256-token cap per agent) | 86.6 | **113.4** |
+
+</details>
 
 Appliance comparison: different model IDs, not a same-weights claim. v1.8.4 ran with reasoning off, its default; v2.0.1 ran at reasoning effort low. Cold prefill and replay rows use raw token-ID completions, where reasoning effort does not apply. With base weights, v1.8.4 shows the first visible text sooner in two measured cases (about 2% on single-client short code replies, about 0.10 s on prose); both rows are in the RigMark section below.
 
@@ -42,7 +85,8 @@ v2.0.1 replaces the vLLM engine of v1.8.x with [a fork of TensorFold 0.3.6.2 (MI
 - Session cache: up to 64 GiB, written only while 150 GiB stays free
 - After splitting: the full download ($DATA/base/weights) is not needed to serve, so you may delete it.
 
-**Before you connect a client:** The server listens on loopback (127.0.0.1) only, with no authentication and no CORS. Reach it through an SSH tunnel or a reverse proxy that adds authentication; don't expose the port.
+> [!WARNING]
+> **Before you connect a client:** The server listens on loopback (127.0.0.1) only, with no authentication and no CORS. Reach it through an SSH tunnel or a reverse proxy that adds authentication; don't expose the port.
 
 ## RigMark
 
@@ -101,7 +145,8 @@ Results for both variants, and for the base weights without the draft model, are
 
 ## Draft model license
 
-The default draft model, Inco AI's [DFlash2](https://huggingface.co/incoai/GLM-5.3-Flash-DFlash2), is CC BY-NC-ND 4.0: non-commercial research and evaluation use only. The installer downloads it unmodified from Inco AI; this project never redistributes it. For commercial use, run the base weights without the draft model: start with `scripts/serve.sh --drafter none` on all three hosts (or set `DRAFTER=none` in `cluster.env`), and the model drafts with its own multi-token prediction head. That path runs MIT weights on a permissively licensed engine (MIT, with some Apache-2.0 code) and an Apache-2.0 recipe, inside NVIDIA's container under NVIDIA's terms. On the base weights, the draft model is the only non-commercial component.
+> [!IMPORTANT]
+> The default draft model, Inco AI's [DFlash2](https://huggingface.co/incoai/GLM-5.3-Flash-DFlash2), is CC BY-NC-ND 4.0: non-commercial research and evaluation use only. The installer downloads it unmodified from Inco AI; this project never redistributes it. For commercial use, run the base weights without the draft model: start with `scripts/serve.sh --drafter none` on all three hosts (or set `DRAFTER=none` in `cluster.env`), and the model drafts with its own multi-token prediction head. That path runs MIT weights on a permissively licensed engine (MIT, with some Apache-2.0 code) and an Apache-2.0 recipe, inside NVIDIA's container under NVIDIA's terms. On the base weights, the draft model is the only non-commercial component.
 
 For installation and the required `--drafter none` serving preflight, follow
 [Running without the draft model](INSTALL.md#running-without-the-draft-model).
@@ -145,11 +190,11 @@ See [upgrade and rollback](UPGRADING.md).
 
 ## Releases
 
-- **v2.0.1**: current; the engine is a fork of TensorFold 0.3.6.2 (MIT). [release](https://github.com/jakejharris/jspark3/releases/tag/v2.0.1) · [installation guide](INSTALL.md)
-- **v1.8.4** (previous, vLLM): the documented rollback. [release](https://github.com/jakejharris/jspark3/releases/tag/v1.8.4) · [installation guide](https://github.com/jakejharris/jspark3/blob/v1.8.4/docs/INSTALL.md) · [required download-source correction](UPGRADING.md#going-back-to-v184)
-- v2.0.0: internal build, not published.
-- v1.8.0: do not install. It requires a container image that was never published.
-- v1.1.0 (Cadence): [historical guide](https://github.com/jakejharris/jspark3/blob/v1.1.0/README.md)
+- <a href="#releases"><img src="presentation/github/assets/status-current.svg" height="20" alt="Current"></a> **v2.0.1**: current; the engine is a fork of TensorFold 0.3.6.2 (MIT). [release](https://github.com/jakejharris/jspark3/releases/tag/v2.0.1) · [installation guide](INSTALL.md)
+- <a href="#releases"><img src="presentation/github/assets/status-rollback.svg" height="20" alt="Rollback"></a> **v1.8.4** (previous, vLLM): the documented rollback. [release](https://github.com/jakejharris/jspark3/releases/tag/v1.8.4) · [installation guide](https://github.com/jakejharris/jspark3/blob/v1.8.4/docs/INSTALL.md) · [required download-source correction](UPGRADING.md#going-back-to-v184)
+- <a href="#releases"><img src="presentation/github/assets/status-not-published.svg" height="20" alt="Not published"></a> v2.0.0: internal build, not published.
+- <a href="#releases"><img src="presentation/github/assets/status-do-not-install.svg" height="20" alt="Do not install"></a> v1.8.0: do not install. It requires a container image that was never published.
+- <a href="#releases"><img src="presentation/github/assets/status-historical.svg" height="20" alt="Historical"></a> v1.1.0 (Cadence): [historical guide](https://github.com/jakejharris/jspark3/blob/v1.1.0/README.md)
 
 The runnable recipe files on this default branch are the frozen v1.1.0 export; the maintained v2.0.1 guides linked above accompany the separate tagged recipe. Each release since v1.8.0 lives on its own tag, so install the recipe from a tag, following the maintained guides.
 
@@ -189,3 +234,9 @@ v1.8.x credits, including Brandon M. Music's EXL3/TR3 checkpoint, are in the [v1
 The [ShapleyMcg](https://huggingface.co/brandonmusic/GLM-5.3-Flash-tr3-4bpw) attribution is reproduced below.
 
 This work includes or was produced using ShapleyMcg, created by Brandon M. Music (https://github.com/brandonmmusic-max/shapleymcg). ShapleyMcg is licensed under the ShapleyMcg License v1.0, an attribution-required license that grants no rights to the person known as "0xSero." Use of ShapleyMcg without this attribution is unlicensed.
+
+<br>
+
+<p align="center">
+  <a href="https://www.jakejh.com/jspark3/glm/"><picture><source media="(prefers-reduced-motion: reduce)" srcset="presentation/github/assets/mark-still.svg"><img src="presentation/github/src/jspark3-mark.svg" width="44" height="44" alt="JSpark3"></picture></a>
+</p>

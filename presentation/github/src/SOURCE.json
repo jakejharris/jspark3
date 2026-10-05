@@ -1,0 +1,13 @@
+{
+  "jspark3-mark.svg": {
+    "sha256": "9837244666243476c054e7c275d24efc0106494e148896870cbb519e267bac41",
+    "source_url": "https://huggingface.co/jakejharris/jspark3/resolve/1cf9f930085d3e4c3880b438964ff11db2bc1a70/jspark3/assets/jspark3-mark.svg",
+    "modifications": "none; byte-identical animated JSpark3 mark, the same file the JSpark3 site and the Tempo card carry. render.py holds it at one frame for the hero, the release badge and assets/mark-still.svg"
+  },
+  "three-sparks.svg": {
+    "sha256": "d0f4a1e0d1eeddd381633fd83eac333c86439408153356ff47c6c00ad8311937",
+    "source_url": "https://github.com/jakejharris/jakeportfolio/blob/8fdae1d759f04b037e734cb2ed05f84e414d8c23/app/(site)/jspark3/v2/ClusterIllustration.tsx",
+    "source_sha256": "0a7bd1fc3b40cc678c2d67a00d401b0c9bf9f1304b17a3b242d51be4fa02b736",
+    "modifications": "the site's three-Spark illustration, rendered once with React 18 renderToStaticMarkup at its default props, keeping only the <svg> element; render.py then applies the GLM release page's gold fabric (app/(site)/jspark3/v2/glm.css) and drops the rank and caption text the site hides"
+  }
+}
